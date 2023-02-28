@@ -7,15 +7,9 @@ import {
     getObjectDisplay,
 } from '@mysten/sui.js';
 
-import DisplayBox from '~/components/displaybox/DisplayBox';
-import { ObjectLink } from '~/ui/InternalLink';
-import { Text } from '~/ui/Text';
-import {
-    extractName,
-    parseImageURL,
-    parseObjectType,
-} from '~/utils/objectUtils';
-import { transformURL, trimStdLibPrefix } from '~/utils/stringUtils';
+import useMedia from '~/hooks/useMedia';
+import { ObjectDetails } from '~/ui/ObjectDetails';
+import { extractName, parseObjectType } from '~/utils/objectUtils';
 
 type OwnedObjectTypes = {
     obj: SuiObjectResponse;
@@ -23,8 +17,9 @@ type OwnedObjectTypes = {
 
 function OwnedObject({ obj }: OwnedObjectTypes): JSX.Element {
     const displayMeta = getObjectDisplay(obj).data;
-    const display = transformURL(parseImageURL(displayMeta));
+    const { url } = useMedia(displayMeta?.image_url ?? '');
     return (
+<<<<<<< HEAD
         <div className="w-6/12 lg:flex lg:flex-wrap lg:justify-between">
             <div className="my-2 flex h-fit w-full items-center truncate break-all sm:my-[1vh]">
                 <div className="mr-5 h-[60px] min-w-[60px] max-w-[60px]">
@@ -45,6 +40,15 @@ function OwnedObject({ obj }: OwnedObjectTypes): JSX.Element {
                 </div>
             </div>
         </div>
+=======
+        <ObjectDetails
+            id={getObjectId(obj)}
+            name={extractName(displayMeta) ?? ''}
+            variant="small"
+            type={parseObjectType(obj)}
+            image={url}
+        />
+>>>>>>> 608af721a3 (support larger variant for object page)
     );
 }
 
