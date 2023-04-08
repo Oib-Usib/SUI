@@ -16,9 +16,11 @@ use sui_json_rpc_types::{Balance, Coin as SuiCoin};
 use sui_json_rpc_types::{CoinPage, SuiCoinMetadata};
 use sui_open_rpc::Module;
 use sui_types::balance::Supply;
-use sui_types::base_types::{MoveObjectType, ObjectID, ObjectRef, ObjectType, SuiAddress};
+use sui_types::base_types::{
+    MoveObjectType, ObjectID, ObjectRef, ObjectType, SequenceNumber, SuiAddress,
+};
 use sui_types::coin::{Coin, CoinMetadata, TreasuryCap};
-use sui_types::error::SuiError;
+use sui_types::error::{SuiError, UserInputError};
 use sui_types::gas_coin::GAS;
 use sui_types::messages::TransactionEffectsAPI;
 use sui_types::object::{Object, Owner};
@@ -45,8 +47,15 @@ impl CoinReadApi {
             .map_err(SuiError::from)?)
     }
 
-    fn get_coin(&self, coin_id: &ObjectID) -> Result<SuiCoin, Error> {
-        let o = self.get_object(coin_id)?;
+    fn get_coin(&self, coin_id: &ObjectID, version: SequenceNumber) -> Result<SuiCoin, Error> {
+        let o = self
+            .state
+            .database
+            .get_object_by_key(coin_id, version)?
+            .ok_or_else(|| UserInputError::ObjectNotFound {
+                object_id: coin_id.clone(),
+                version: Some(version),
+            })?;
         if let Some(move_object) = o.data.try_as_move() {
             let (balance, locked_until_epoch) = if move_object.type_().is_coin() {
                 let coin: Coin = bcs::from_bytes(move_object.contents())?;
@@ -90,7 +99,7 @@ impl CoinReadApi {
         let limit = cap_page_limit(limit);
         let mut coins = self
             .get_owner_coin_iterator(owner, &coin_type)?
-            .skip_while(|o| matches!(&cursor, Some(cursor) if cursor != o))
+            .skip_while(|(o, _)| matches!(&cursor, Some(cursor) if cursor != o))
             // skip an extra b/c the cursor is exclusive
             .skip(usize::from(cursor.is_some()))
             .take(limit + 1)
@@ -98,11 +107,11 @@ impl CoinReadApi {
 
         let has_next_page = coins.len() > limit;
         coins.truncate(limit);
-        let next_cursor = coins.last().cloned().map_or(cursor, Some);
+        let next_cursor = coins.last().cloned().map_or(cursor, |(id, _)| Some(id));
 
         let mut data = vec![];
-        for coin in coins {
-            data.push(self.get_coin(&coin)?)
+        for (id, version) in coins {
+            data.push(self.get_coin(&id, version)?)
         }
         Ok(CoinPage {
             data,
@@ -115,12 +124,12 @@ impl CoinReadApi {
         &'a self,
         owner: SuiAddress,
         coin_type: &'a Option<StructTag>,
-    ) -> Result<impl Iterator<Item = ObjectID> + '_, Error> {
+    ) -> Result<impl Iterator<Item = (ObjectID, SequenceNumber)> + '_, Error> {
         Ok(self
             .state
             .get_owner_objects_iterator(owner, None, None)?
             .filter(move |o| matches!(&o.type_, ObjectType::Struct(type_) if is_coin_type(type_, coin_type)))
-            .map(|info|info.object_id))
+            .map(|info|(info.object_id, info.version)))
     }
 
     async fn find_package_object(
@@ -202,13 +211,15 @@ impl CoinReadApiServer for CoinReadApi {
         });
 
         // TODO: Add index to improve performance?
-        let coins = self.get_owner_coin_iterator(owner, &coin_type)?;
+        let coins = self
+            .get_owner_coin_iterator(owner, &coin_type)?
+            .collect::<Vec<_>>();
         let mut total_balance = 0u128;
         let mut locked_balance = HashMap::new();
         let mut coin_object_count = 0;
 
-        for coin in coins {
-            let coin = self.get_coin(&coin)?;
+        for (coin, version) in coins {
+            let coin = self.get_coin(&coin, version)?;
             if let Some(lock) = coin.locked_until_epoch {
                 *locked_balance.entry(lock).or_default() += coin.balance as u128
             } else {
@@ -227,11 +238,13 @@ impl CoinReadApiServer for CoinReadApi {
 
     fn get_all_balances(&self, owner: SuiAddress) -> RpcResult<Vec<Balance>> {
         // TODO: Add index to improve performance?
-        let coins = self.get_owner_coin_iterator(owner, &None)?;
+        let coins = self
+            .get_owner_coin_iterator(owner, &None)?
+            .collect::<Vec<_>>();
         let mut balances: HashMap<String, Balance> = HashMap::new();
 
-        for coin in coins {
-            let coin = self.get_coin(&coin)?;
+        for (coin, version) in coins {
+            let coin = self.get_coin(&coin, version)?;
             let balance = balances.entry(coin.coin_type.clone()).or_insert(Balance {
                 coin_type: coin.coin_type,
                 coin_object_count: 0,
