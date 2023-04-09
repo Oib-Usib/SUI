@@ -1806,6 +1806,8 @@ pub fn base_db_options() -> DBOptions {
         opt.set_max_open_files((limit / 8) as i32);
     }
 
+    opt.set_max_open_files(-1);
+
     // The table cache is locked for updates and this determines the number
     // of shards, ie 2^6. Increase in case of lock contentions.
     opt.set_table_cache_num_shard_bits(10);
