@@ -1,25 +1,3 @@
-// Copyright (c) Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-pub mod errors;
-pub(crate) mod iter;
-pub(crate) mod keys;
-pub(crate) mod safe_iter;
-pub mod util;
-pub(crate) mod values;
-
-use crate::{
-    metrics::{DBMetrics, RocksDBPerfContext, SamplingInterval},
-    traits::{Map, TableSummary},
-};
-use bincode::Options;
-use collectable::TryExtend;
-use rocksdb::{checkpoint::Checkpoint, BlockBasedOptions, Cache, LiveFile};
-use rocksdb::{
-    properties, AsColumnFamilyRef, CStrLike, ColumnFamilyDescriptor, DBWithThreadMode, Error,
-    ErrorKind, IteratorMode, MultiThreaded, OptimisticTransactionOptions, ReadOptions, Transaction,
-    WriteBatch, WriteBatchWithTransaction, WriteOptions,
-};
-use serde::{de::DeserializeOwned, Serialize};
 use std::{
     borrow::Borrow,
     collections::BTreeMap,
@@ -29,14 +7,39 @@ use std::{
     sync::Arc,
     time::Duration,
 };
+
+use bincode::Options;
+use collectable::TryExtend;
+use rocksdb::{checkpoint::Checkpoint, BlockBasedIndexType, BlockBasedOptions, Cache, LiveFile};
+use rocksdb::{
+    properties, AsColumnFamilyRef, CStrLike, ColumnFamilyDescriptor, DBWithThreadMode, Error,
+    ErrorKind, IteratorMode, MultiThreaded, OptimisticTransactionOptions, ReadOptions, Transaction,
+    WriteBatch, WriteBatchWithTransaction, WriteOptions,
+};
+use serde::{de::DeserializeOwned, Serialize};
 use tap::TapFallible;
 use tokio::sync::oneshot;
 use tracing::{debug, error, info, instrument};
 
-use self::{iter::Iter, keys::Keys, values::Values};
-use crate::rocks::safe_iter::SafeIter;
 pub use errors::TypedStoreError;
 use sui_macros::{fail_point, nondeterministic};
+
+use crate::rocks::safe_iter::SafeIter;
+use crate::{
+    metrics::{DBMetrics, RocksDBPerfContext, SamplingInterval},
+    traits::{Map, TableSummary},
+};
+
+use self::{iter::Iter, keys::Keys, values::Values};
+
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+pub mod errors;
+pub(crate) mod iter;
+pub(crate) mod keys;
+pub(crate) mod safe_iter;
+pub mod util;
+pub(crate) mod values;
 
 // Write buffer size per RocksDB instance can be set via the env var below.
 // If the env var is not set, use the default value in MiB.
@@ -1879,7 +1882,7 @@ pub fn point_lookup_db_options() -> DBOptions {
 }
 
 /// Use it only for tables which observe high write rate and grow quickly in size
-pub fn with_disabled_block_cache() -> DBOptions {
+pub fn with_partitioned_block_cache() -> DBOptions {
     let mut db_options = default_db_options();
     db_options.options.set_write_buffer_size(128 * 1024 * 1024);
     db_options.options.set_min_write_buffer_number_to_merge(2);
@@ -1897,7 +1900,25 @@ pub fn with_disabled_block_cache() -> DBOptions {
     db_options.options.set_max_background_jobs(4);
 
     let mut block_options = BlockBasedOptions::default();
-    block_options.disable_cache();
+
+    // This is to enable partitioned indexes.
+    block_options.set_index_type(BlockBasedIndexType::TwoLevelIndexSearch);
+    // Use full filters instead of block-based filter.
+    block_options.set_bloom_filter(10.0, false);
+    // This is to enable partitioned filters.
+    block_options.set_partition_filters(true);
+    // This is the block size for index partitions.
+    block_options.set_metadata_block_size(4096);
+    // This would put everything in block cache but also pin the top-level indexes, which are quite small.
+    block_options.set_cache_index_and_filter_blocks(true);
+    block_options.set_pin_top_level_index_and_filter(true);
+
+    // Configure a 64MiB block cache.
+    block_options.set_block_cache(&Cache::new_lru_cache(64 << 20).unwrap());
+
+    // From https://github.com/EighteenZi/rocksdb_wiki/blob/master/Block-Cache.md#caching-index-and-filter-blocks
+    block_options.set_pin_l0_filter_and_index_blocks_in_cache(true);
+
     db_options
         .options
         .set_block_based_table_factory(&block_options);
