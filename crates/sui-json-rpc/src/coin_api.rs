@@ -6,6 +6,7 @@ use std::sync::Arc;
 
 use anyhow::anyhow;
 use async_trait::async_trait;
+use futures::executor::block_on;
 use jsonrpsee::core::RpcResult;
 use jsonrpsee::RpcModule;
 use move_core_types::language_storage::{StructTag, TypeTag};
@@ -225,11 +226,7 @@ impl CoinReadApiServer for CoinReadApi {
         Ok(self.get_coins_internal(owner, None, cursor, limit).await?)
     }
 
-    async fn get_balance(
-        &self,
-        owner: SuiAddress,
-        coin_type: Option<String>,
-    ) -> RpcResult<Balance> {
+    fn get_balance(&self, owner: SuiAddress, coin_type: Option<String>) -> RpcResult<Balance> {
         let coin_type = TypeTag::Struct(Box::new(match coin_type {
             Some(c) => parse_sui_struct_tag(&c)?,
             None => GAS::type_(),
@@ -243,7 +240,7 @@ impl CoinReadApiServer for CoinReadApi {
         let coins = coins.map(ObjectKey::from).collect::<Vec<_>>();
         let chunked_coins = coins.chunks(100 as usize);
         for chunk in chunked_coins {
-            for coin in self.multi_get_coin(chunk).await? {
+            for coin in block_on(self.multi_get_coin(chunk))? {
                 let coin = coin?;
                 if let Some(lock) = coin.locked_until_epoch {
                     *locked_balance.entry(lock).or_default() += coin.balance as u128
@@ -262,7 +259,7 @@ impl CoinReadApiServer for CoinReadApi {
         })
     }
 
-    async fn get_all_balances(&self, owner: SuiAddress) -> RpcResult<Vec<Balance>> {
+    fn get_all_balances(&self, owner: SuiAddress) -> RpcResult<Vec<Balance>> {
         let coins = self
             .get_owner_coin_iterator(owner, None)?
             .map(ObjectKey::from)
@@ -270,7 +267,7 @@ impl CoinReadApiServer for CoinReadApi {
         let mut balances: HashMap<String, Balance> = HashMap::new();
         let chunked_coins = coins.chunks(100 as usize);
         for chunk in chunked_coins {
-            for coin in self.multi_get_coin(chunk).await? {
+            for coin in block_on(self.multi_get_coin(chunk))? {
                 let coin = coin?;
                 let balance = balances.entry(coin.coin_type.clone()).or_insert(Balance {
                     coin_type: coin.coin_type,
