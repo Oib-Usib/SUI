@@ -1,14 +1,15 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-use anyhow::anyhow;
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use anyhow::anyhow;
 use async_trait::async_trait;
 use jsonrpsee::core::RpcResult;
 use jsonrpsee::RpcModule;
 use move_core_types::language_storage::{StructTag, TypeTag};
+use tokio::sync::Semaphore;
 use tracing::debug;
 
 use sui_core::authority::AuthorityState;
@@ -31,15 +32,24 @@ use crate::SuiRpcModule;
 
 pub struct CoinReadApi {
     state: Arc<AuthorityState>,
+    limit: Semaphore,
 }
 
 impl CoinReadApi {
     pub fn new(state: Arc<AuthorityState>) -> Self {
-        Self { state }
+        Self {
+            state,
+            limit: Semaphore::new(12),
+        }
     }
 
-    fn multi_get_coin(&self, coins: &[ObjectKey]) -> Result<Vec<Result<SuiCoin, Error>>, Error> {
+    async fn multi_get_coin(
+        &self,
+        coins: &[ObjectKey],
+    ) -> Result<Vec<Result<SuiCoin, Error>>, Error> {
+        let permit = self.limit.acquire().await.map_err(|e| anyhow!(e))?;
         let o = self.state.database.multi_get_object_by_key(coins)?;
+        drop(permit);
 
         Ok(o.into_iter()
             .zip(coins)
@@ -109,7 +119,8 @@ impl CoinReadApi {
         let next_cursor = coins.last().cloned().map_or(cursor, |(id, _, _)| Some(id));
 
         let data = self
-            .multi_get_coin(&coins.into_iter().map(ObjectKey::from).collect::<Vec<_>>())?
+            .multi_get_coin(&coins.into_iter().map(ObjectKey::from).collect::<Vec<_>>())
+            .await?
             .into_iter()
             .collect::<Result<Vec<_>, _>>()?;
 
@@ -214,7 +225,11 @@ impl CoinReadApiServer for CoinReadApi {
         Ok(self.get_coins_internal(owner, None, cursor, limit).await?)
     }
 
-    fn get_balance(&self, owner: SuiAddress, coin_type: Option<String>) -> RpcResult<Balance> {
+    async fn get_balance(
+        &self,
+        owner: SuiAddress,
+        coin_type: Option<String>,
+    ) -> RpcResult<Balance> {
         let coin_type = TypeTag::Struct(Box::new(match coin_type {
             Some(c) => parse_sui_struct_tag(&c)?,
             None => GAS::type_(),
@@ -228,7 +243,7 @@ impl CoinReadApiServer for CoinReadApi {
         let coins = coins.map(ObjectKey::from).collect::<Vec<_>>();
         let chunked_coins = coins.chunks(100 as usize);
         for chunk in chunked_coins {
-            for coin in self.multi_get_coin(chunk)? {
+            for coin in self.multi_get_coin(chunk).await? {
                 let coin = coin?;
                 if let Some(lock) = coin.locked_until_epoch {
                     *locked_balance.entry(lock).or_default() += coin.balance as u128
@@ -247,7 +262,7 @@ impl CoinReadApiServer for CoinReadApi {
         })
     }
 
-    fn get_all_balances(&self, owner: SuiAddress) -> RpcResult<Vec<Balance>> {
+    async fn get_all_balances(&self, owner: SuiAddress) -> RpcResult<Vec<Balance>> {
         let coins = self
             .get_owner_coin_iterator(owner, None)?
             .map(ObjectKey::from)
@@ -255,7 +270,7 @@ impl CoinReadApiServer for CoinReadApi {
         let mut balances: HashMap<String, Balance> = HashMap::new();
         let chunked_coins = coins.chunks(100 as usize);
         for chunk in chunked_coins {
-            for coin in self.multi_get_coin(chunk)? {
+            for coin in self.multi_get_coin(chunk).await? {
                 let coin = coin?;
                 let balance = balances.entry(coin.coin_type.clone()).or_insert(Balance {
                     coin_type: coin.coin_type,
