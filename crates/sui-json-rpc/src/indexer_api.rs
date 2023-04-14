@@ -86,7 +86,7 @@ impl<R: ReadApiServer> IndexerApi<R> {
 
 #[async_trait]
 impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
-    fn get_owned_objects(
+    async fn get_owned_objects(
         &self,
         address: SuiAddress,
         query: Option<SuiObjectResponseQuery>,
@@ -113,7 +113,9 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
         let data = match options.is_not_in_object_info() {
             true => {
                 let object_ids = objects.iter().map(|obj| obj.object_id).collect();
-                self.read_api.multi_get_objects(object_ids, Some(options))?
+                self.read_api
+                    .multi_get_objects(object_ids, Some(options))
+                    .await?
             }
             false => objects
                 .into_iter()
@@ -134,7 +136,7 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
         })
     }
 
-    fn query_transaction_blocks(
+    async fn query_transaction_blocks(
         &self,
         query: SuiTransactionBlockResponseQuery,
         // If `Some`, the query will start from the next item after the specified cursor
@@ -164,7 +166,8 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
                 .collect()
         } else {
             self.read_api
-                .multi_get_transaction_blocks(digests, Some(opts))?
+                .multi_get_transaction_blocks(digests, Some(opts))
+                .await?
         };
 
         self.metrics
@@ -179,7 +182,7 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
             has_next_page,
         })
     }
-    fn query_events(
+    async fn query_events(
         &self,
         query: EventFilter,
         // exclusive cursor if `Some`, otherwise start from the beginning
@@ -222,7 +225,7 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
         Ok(())
     }
 
-    fn get_dynamic_fields(
+    async fn get_dynamic_fields(
         &self,
         parent_object_id: ObjectID,
         // If `Some`, the query will start from the next item after the specified cursor
@@ -251,7 +254,7 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
         })
     }
 
-    fn get_dynamic_field_object(
+    async fn get_dynamic_field_object(
         &self,
         parent_object_id: ObjectID,
         name: DynamicFieldName,
@@ -266,6 +269,7 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
         let id = self
             .state
             .get_dynamic_field_object_id(parent_object_id, name_type, &name_bcs_value)
+            .await
             .map_err(|e| anyhow!("{e}"))?
             .ok_or_else(|| {
                 anyhow!("Cannot find dynamic field [{name:?}] for object [{parent_object_id}].")
@@ -273,11 +277,13 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
         // TODO(chris): add options to `get_dynamic_field_object` API as well
         self.read_api
             .get_object(id, Some(SuiObjectDataOptions::full_content()))
+            .await
     }
 
     async fn resolve_name_service_address(&self, name: String) -> RpcResult<Option<SuiAddress>> {
-        let dynmaic_field_table_object_id =
-            self.get_name_service_dynamic_field_table_object_id(/* reverse_lookup */ false)?;
+        let dynmaic_field_table_object_id = self
+            .get_name_service_dynamic_field_table_object_id(/* reverse_lookup */ false)
+            .await?;
         // NOTE: 0x1::string::String is the type tag of fields in dynamic_field_table
         let name_type_tag = TypeTag::Struct(Box::new(StructTag {
             address: MOVE_STDLIB_ADDRESS,
@@ -294,6 +300,7 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
                 name_type_tag,
                 &name_bcs_value,
             )
+            .await
             .map_err(|e| {
                 anyhow!(
                     "Read name service dynamic field table failed with error: {:?}",
@@ -301,8 +308,11 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
                 )
             })?;
         if let Some(record_object_id) = record_object_id_option {
-            let record_object_read =
-                self.state.get_object_read(&record_object_id).map_err(|e| {
+            let record_object_read = self
+                .state
+                .get_object_read(&record_object_id)
+                .await
+                .map_err(|e| {
                     warn!(
                         "Failed to get object read of name: {:?} with error: {:?}",
                         record_object_id, e
@@ -347,8 +357,9 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
         _cursor: Option<ObjectID>,
         _limit: Option<usize>,
     ) -> RpcResult<Page<String, ObjectID>> {
-        let dynmaic_field_table_object_id =
-            self.get_name_service_dynamic_field_table_object_id(/* reverse_lookup */ true)?;
+        let dynmaic_field_table_object_id = self
+            .get_name_service_dynamic_field_table_object_id(/* reverse_lookup */ true)
+            .await?;
         let name_type_tag = TypeTag::Address;
         let name_bcs_value = bcs::to_bytes(&address).context("Unable to serialize address")?;
         let addr_object_id = self
@@ -358,6 +369,7 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
                 name_type_tag,
                 &name_bcs_value,
             )
+            .await
             .map_err(|e| {
                 anyhow!(
                     "Read name service reverse dynamic field table failed with error: {:?}",
@@ -365,13 +377,17 @@ impl<R: ReadApiServer> IndexerApiServer for IndexerApi<R> {
                 )
             })?
             .ok_or_else(|| anyhow!("Record not found for address: {:?}", address))?;
-        let addr_object_read = self.state.get_object_read(&addr_object_id).map_err(|e| {
-            warn!(
-                "Failed to get object read of address {:?} with error: {:?}",
-                addr_object_id, e
-            );
-            anyhow!("{e}")
-        })?;
+        let addr_object_read = self
+            .state
+            .get_object_read(&addr_object_id)
+            .await
+            .map_err(|e| {
+                warn!(
+                    "Failed to get object read of address {:?} with error: {:?}",
+                    addr_object_id, e
+                );
+                anyhow!("{e}")
+            })?;
         let addr_parsed_move_object = SuiParsedMoveObject::try_from_object_read(addr_object_read)?;
         let address_info_move_value = addr_parsed_move_object
             .read_dynamic_field_value(NAME_SERVICE_VALUE)
@@ -403,18 +419,22 @@ impl<R: ReadApiServer> SuiRpcModule for IndexerApi<R> {
 }
 
 impl<R: ReadApiServer> IndexerApi<R> {
-    fn get_name_service_dynamic_field_table_object_id(
+    async fn get_name_service_dynamic_field_table_object_id(
         &self,
         reverse_lookup: bool,
     ) -> RpcResult<ObjectID> {
         if let Some(resolver_id) = self.ns_resolver_id {
-            let resolver_object_read = self.state.get_object_read(&resolver_id).map_err(|e| {
-                warn!(
-                    "Failed to get object read of resolver {:?} with error: {:?}",
-                    resolver_id, e
-                );
-                anyhow!("{e}")
-            })?;
+            let resolver_object_read =
+                self.state
+                    .get_object_read(&resolver_id)
+                    .await
+                    .map_err(|e| {
+                        warn!(
+                            "Failed to get object read of resolver {:?} with error: {:?}",
+                            resolver_id, e
+                        );
+                        anyhow!("{e}")
+                    })?;
 
             let resolved_parsed_move_object =
                 SuiParsedMoveObject::try_from_object_read(resolver_object_read)?;
