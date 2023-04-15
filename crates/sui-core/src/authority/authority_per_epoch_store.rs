@@ -1986,7 +1986,7 @@ impl AuthorityPerEpochStore {
 fn transactions_table_default_config() -> DBOptions {
     default_db_options()
         .optimize_for_point_lookup(128)
-        .optimize_for_write_throughput(8)
+        .optimize_for_write_throughput()
 }
 
 impl ExecutionComponents {

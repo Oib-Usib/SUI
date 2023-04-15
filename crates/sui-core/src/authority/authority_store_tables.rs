@@ -408,14 +408,14 @@ impl Iterator for LiveSetIter<'_> {
 // These functions are used to initialize the DB tables
 fn owned_object_transaction_locks_table_default_config() -> DBOptions {
     default_db_options()
-        .optimize_for_write_throughput(8)
+        .optimize_for_write_throughput()
         .optimize_for_read(read_size_from_env(ENV_VAR_LOCKS_BLOCK_CACHE_SIZE).unwrap_or(1024))
 }
 
 fn objects_table_default_config() -> DBOptions {
     DBOptions {
         options: default_db_options()
-            .optimize_for_write_throughput(8)
+            .optimize_for_write_throughput()
             .optimize_for_read(
                 read_size_from_env(ENV_VAR_OBJECTS_BLOCK_CACHE_SIZE).unwrap_or(5 * 1024),
             )
@@ -428,7 +428,7 @@ fn objects_table_default_config() -> DBOptions {
 
 fn transactions_table_default_config() -> DBOptions {
     default_db_options()
-        .optimize_for_write_throughput(8)
+        .optimize_for_write_throughput()
         .optimize_for_point_lookup(
             read_size_from_env(ENV_VAR_TRANSACTIONS_BLOCK_CACHE_SIZE).unwrap_or(512),
         )
@@ -436,7 +436,7 @@ fn transactions_table_default_config() -> DBOptions {
 
 fn effects_table_default_config() -> DBOptions {
     default_db_options()
-        .optimize_for_write_throughput(8)
+        .optimize_for_write_throughput()
         .optimize_for_point_lookup(
             read_size_from_env(ENV_VAR_EFFECTS_BLOCK_CACHE_SIZE).unwrap_or(1024),
         )
@@ -444,13 +444,13 @@ fn effects_table_default_config() -> DBOptions {
 
 fn events_table_default_config() -> DBOptions {
     default_db_options()
-        .optimize_for_write_throughput(8)
+        .optimize_for_write_throughput()
         .optimize_for_read(read_size_from_env(ENV_VAR_EVENTS_BLOCK_CACHE_SIZE).unwrap_or(1024))
 }
 
 fn indirect_move_objects_table_default_config() -> DBOptions {
     let mut options = default_db_options()
-        .optimize_for_write_throughput(8)
+        .optimize_for_write_throughput()
         .optimize_for_point_lookup(
             read_size_from_env(ENV_VAR_INDIRECT_OBJECTS_BLOCK_CACHE_SIZE).unwrap_or(512),
         );

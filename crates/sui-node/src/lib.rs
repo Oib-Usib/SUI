@@ -188,7 +188,7 @@ impl SuiNode {
             None,
         ));
 
-        let perpetual_options = default_db_options().optimize_for_write_throughput(8);
+        let perpetual_options = default_db_options().optimize_db_for_write_throughput(4);
         let store = AuthorityStore::open(
             &config.db_path().join("store"),
             Some(perpetual_options.options),
@@ -211,7 +211,7 @@ impl SuiNode {
         let cache_metrics = Arc::new(ResolverMetrics::new(&prometheus_registry));
         let signature_verifier_metrics = SignatureVerifierMetrics::new(&prometheus_registry);
 
-        let epoch_options = default_db_options().optimize_for_write_throughput(8);
+        let epoch_options = default_db_options().optimize_db_for_write_throughput(4);
         let epoch_store = AuthorityPerEpochStore::new(
             config.protocol_public_key(),
             committee.clone(),

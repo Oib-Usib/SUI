@@ -13,11 +13,14 @@ use crate::{
 };
 use bincode::Options;
 use collectable::TryExtend;
-use rocksdb::{checkpoint::Checkpoint, BlockBasedOptions, Cache, LiveFile};
+use rocksdb::{
+    checkpoint::Checkpoint, BlockBasedOptions, BottommostLevelCompaction, Cache, CompactOptions,
+    LiveFile,
+};
 use rocksdb::{
     properties, AsColumnFamilyRef, CStrLike, ColumnFamilyDescriptor, DBWithThreadMode, Error,
     ErrorKind, IteratorMode, MultiThreaded, OptimisticTransactionOptions, ReadOptions, Transaction,
-    UniversalCompactOptions, WriteBatch, WriteBatchWithTransaction, WriteOptions,
+    WriteBatch, WriteBatchWithTransaction, WriteOptions,
 };
 use serde::{de::DeserializeOwned, Serialize};
 use std::collections::HashSet;
@@ -42,15 +45,24 @@ use sui_macros::{fail_point, nondeterministic};
 // Write buffer size per RocksDB instance can be set via the env var below.
 // If the env var is not set, use the default value in MiB.
 const ENV_VAR_DB_WRITE_BUFFER_SIZE: &str = "MYSTEN_DB_WRITE_BUFFER_SIZE_MB";
-const DEFAULT_DB_WRITE_BUFFER_SIZE: usize = 0;
+const DEFAULT_DB_WRITE_BUFFER_SIZE: usize = 1024;
 
 // Write ahead log size per RocksDB instance can be set via the env var below.
 // If the env var is not set, use the default value in MiB.
 const ENV_VAR_DB_WAL_SIZE: &str = "MYSTEN_DB_WAL_SIZE_MB";
-const DEFAULT_DB_WAL_SIZE: usize = 4 * 1024;
+const DEFAULT_DB_WAL_SIZE: usize = 1024;
 
 const ENV_VAR_L0_NUM_FILES_COMPACTION_TRIGGER: &str = "L0_NUM_FILES_COMPACTION_TRIGGER";
 const DEFAULT_L0_NUM_FILES_COMPACTION_TRIGGER: usize = 8;
+
+const ENV_VAR_MAX_WRITE_BUFFER_SIZE_MB: &str = "MAX_WRITE_BUFFER_SIZE_MB";
+const DEFAULT_MAX_WRITE_BUFFER_SIZE_MB: usize = 256;
+
+const ENV_VAR_MAX_WRITE_BUFFER_NUMBER: &str = "MAX_WRITE_BUFFER_NUMBER";
+const DEFAULT_MAX_WRITE_BUFFER_NUMBER: usize = 4;
+
+const ENV_VAR_TARGET_FILE_SIZE_BASE_MB: &str = "TARGET_FILE_SIZE_BASE_MB";
+const DEFAULT_TARGET_FILE_SIZE_BASE_MB: usize = 128;
 
 const ENV_VAR_MAX_BACKGROUND_JOBS: &str = "MAX_BACKGROUND_JOBS";
 
@@ -395,6 +407,17 @@ impl RocksDB {
         delegate_call!(self.compact_range_cf(cf, start, end))
     }
 
+    pub fn compact_range_to_bottom<K: AsRef<[u8]>>(
+        &self,
+        cf: &impl AsColumnFamilyRef,
+        start: Option<K>,
+        end: Option<K>,
+    ) {
+        let opt = &mut CompactOptions::default();
+        opt.set_bottommost_level_compaction(BottommostLevelCompaction::ForceOptimized);
+        delegate_call!(self.compact_range_cf_opt(cf, start, end, opt))
+    }
+
     pub fn flush(&self) -> Result<(), TypedStoreError> {
         delegate_call!(self.flush()).map_err(|e| TypedStoreError::RocksDBError(e.into_string()))
     }
@@ -700,6 +723,18 @@ impl<K, V> DBMap<K, V> {
         let to_buf = be_fix_int_ser(end.borrow())?;
         self.rocksdb
             .compact_range_cf(&self.cf(), Some(from_buf), Some(to_buf));
+        Ok(())
+    }
+
+    pub fn compact_range_to_bottom<J: Serialize>(
+        &self,
+        start: &J,
+        end: &J,
+    ) -> Result<(), TypedStoreError> {
+        let from_buf = be_fix_int_ser(start.borrow())?;
+        let to_buf = be_fix_int_ser(end.borrow())?;
+        self.rocksdb
+            .compact_range_to_bottom(&self.cf(), Some(from_buf), Some(to_buf));
         Ok(())
     }
 
@@ -1834,18 +1869,25 @@ impl DBOptions {
         self
     }
 
-    // Optmize tables receiving significant insertions.
-    pub fn optimize_for_write_throughput(mut self, db_max_total_wal_gb: u64) -> DBOptions {
+    // Optmize DB receiving significant insertions.
+    pub fn optimize_db_for_write_throughput(mut self, db_max_write_buffer_gb: u64) -> DBOptions {
         self.options
-            .set_max_total_wal_size(db_max_total_wal_gb * 1024 * 1024 * 1024);
-        self.options.set_max_write_buffer_number(8);
+            .set_db_write_buffer_size(db_max_write_buffer_gb as usize * 1024 * 1024 * 1024);
+        self.options
+            .set_max_total_wal_size(db_max_write_buffer_gb * 1024 * 1024 * 1024);
+        self
+    }
+
+    // Optmize tables receiving significant insertions.
+    pub fn optimize_for_write_throughput(mut self) -> DBOptions {
+        self.options.set_max_write_buffer_number(6);
+        self.options.set_min_write_buffer_number_to_merge(2);
         self
     }
 
     // Optimize tables receiving significant deletions.
-    // Revisit when intra-epoch pruning is enabled.
+    // TODO: revisit when intra-epoch pruning is enabled.
     pub fn optimize_for_pruning(mut self) -> DBOptions {
-        self.options.set_min_write_buffer_number_to_merge(2);
         self.options.set_target_file_size_base(64 * 1024 * 1024);
         self.options.set_max_bytes_for_level_base(512 * 1024 * 1024);
         self
@@ -1867,26 +1909,39 @@ pub fn base_db_options() -> DBOptions {
     // of shards, ie 2^10. Increase in case of lock contentions.
     opt.set_table_cache_num_shard_bits(10);
 
-    // Allow buffering 1GiB of writes before flushing to disk.
-    opt.set_write_buffer_size(256 * 1024 * 1024);
-    opt.set_max_write_buffer_number(4);
+    // Default allowing to buffer 1GiB of writes before slowing down writes.
+    let write_buffer_size = read_size_from_env(ENV_VAR_MAX_WRITE_BUFFER_SIZE_MB)
+        .unwrap_or(DEFAULT_MAX_WRITE_BUFFER_SIZE_MB)
+        * 1024
+        * 1024;
+    opt.set_write_buffer_size(write_buffer_size);
+    let max_write_buffer_number = read_size_from_env(ENV_VAR_MAX_WRITE_BUFFER_NUMBER)
+        .unwrap_or(DEFAULT_MAX_WRITE_BUFFER_NUMBER);
+    opt.set_max_write_buffer_number(max_write_buffer_number.try_into().unwrap());
+    opt.set_max_write_buffer_size_to_maintain((write_buffer_size * 2).try_into().unwrap());
 
-    opt.set_universal_compaction_options(&UniversalCompactOptions::default());
-    // Compaction trigger for universal compaction. Default to 8.
+    // Compaction trigger for level 0 compaction. Default to 8.
     opt.set_level_zero_file_num_compaction_trigger(
         read_size_from_env(ENV_VAR_L0_NUM_FILES_COMPACTION_TRIGGER)
             .unwrap_or(DEFAULT_L0_NUM_FILES_COMPACTION_TRIGGER)
             .try_into()
             .unwrap(),
     );
-    opt.set_num_levels(8);
-    // ~512MiB per sst file.
-    opt.set_target_file_size_base(512 * 1024 * 1024);
+    opt.set_level_zero_slowdown_writes_trigger(32);
+    opt.set_level_zero_stop_writes_trigger(40);
+
+    // Default to ~128MiB per sst file.
+    opt.set_target_file_size_base(
+        read_size_from_env(ENV_VAR_TARGET_FILE_SIZE_BASE_MB)
+            .unwrap_or(DEFAULT_TARGET_FILE_SIZE_BASE_MB) as u64
+            * 1024
+            * 1024,
+    );
+
+    // LSM related options.
     // Level 1 is ~16GiB.
     opt.set_max_bytes_for_level_base(16 * 1024 * 1024 * 1024);
-    opt.set_level_zero_slowdown_writes_trigger(40);
-    opt.set_level_zero_stop_writes_trigger(60);
-    opt.set_min_level_to_compress(2);
+    opt.set_min_level_to_compress(1);
     opt.set_compression_type(rocksdb::DBCompressionType::Lz4);
     opt.set_bottommost_compression_type(rocksdb::DBCompressionType::Zstd);
     opt.set_bottommost_zstd_max_train_bytes(1024 * 1024, true);
