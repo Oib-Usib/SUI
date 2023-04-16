@@ -1856,7 +1856,7 @@ async fn get_network_metrics_cached(
 #[async_trait]
 impl ObjectProvider for PgIndexerStore {
     type Error = IndexerError;
-    fn get_object(
+    async fn get_object(
         &self,
         _id: &ObjectID,
         _version: &SequenceNumber,
@@ -1867,7 +1867,7 @@ impl ObjectProvider for PgIndexerStore {
         // self.get_sui_types_object(id, version)
     }
 
-    fn find_object_lt_or_eq_version(
+    async fn find_object_lt_or_eq_version(
         &self,
         _id: &ObjectID,
         _version: &SequenceNumber,
