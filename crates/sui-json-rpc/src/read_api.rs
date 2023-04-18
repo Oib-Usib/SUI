@@ -799,7 +799,7 @@ impl ReadApiServer for ReadApi {
             .await
     }
 
-    fn get_loaded_child_objects(
+    async fn get_loaded_child_objects(
         &self,
         digest: TransactionDigest,
     ) -> RpcResult<SuiLoadedChildObjectsResponse> {

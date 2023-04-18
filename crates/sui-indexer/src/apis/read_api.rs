@@ -341,7 +341,7 @@ where
         events_resp
     }
 
-    fn get_loaded_child_objects(
+    async fn get_loaded_child_objects(
         &self,
         digest: TransactionDigest,
     ) -> RpcResult<SuiLoadedChildObjectsResponse> {
@@ -350,7 +350,7 @@ where
             .indexer_metrics()
             .get_loaded_child_objects_latency
             .start_timer();
-        let dyn_fields_resp = block_on(self.fullnode.get_loaded_child_objects(digest));
+        let dyn_fields_resp = self.fullnode.get_loaded_child_objects(digest).await;
         dynamic_fields_load_obj_guard.stop_and_record();
         dyn_fields_resp
     }
