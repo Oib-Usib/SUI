@@ -476,7 +476,7 @@ impl ReadApiServer for ReadApi {
         }
     }
 
-    fn try_get_past_object(
+    async fn try_get_past_object(
         &self,
         object_id: ObjectID,
         version: SequenceNumber,
@@ -683,9 +683,7 @@ impl ReadApiServer for ReadApi {
         digests: Vec<TransactionDigest>,
         opts: Option<SuiTransactionBlockResponseOptions>,
     ) -> RpcResult<Vec<SuiTransactionBlockResponse>> {
-        Ok(self
-            .multi_get_transaction_blocks_internal(digests, opts)
-            .await?)
+        Ok(self.multi_get_transaction_blocks_internal(digests, opts)?)
     }
 
     async fn get_events(&self, transaction_digest: TransactionDigest) -> RpcResult<Vec<SuiEvent>> {
