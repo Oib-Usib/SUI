@@ -7,7 +7,6 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use move_core_types::language_storage::TypeTag;
-use mysten_metrics::spawn_monitored_task;
 use tokio::sync::RwLock;
 
 use sui_core::authority::AuthorityState;
@@ -189,12 +188,7 @@ impl ObjectProvider for Arc<AuthorityState> {
         id: &ObjectID,
         version: &SequenceNumber,
     ) -> Result<Option<Object>, Self::Error> {
-        let database = self.database.clone();
-        let id = *id;
-        let version = *version;
-        spawn_monitored_task!(async move { database.find_object_lt_or_eq_version(id, version) })
-            .await
-            .map_err(|e| SuiError::GenericStorageError(e.to_string()))
+        Ok(self.database.find_object_lt_or_eq_version(*id, *version))
     }
 }
 

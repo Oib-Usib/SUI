@@ -19,7 +19,6 @@ use move_core_types::value::{MoveStruct, MoveStructLayout, MoveValue};
 use tap::TapFallible;
 use tracing::{debug, error, warn};
 
-use mysten_metrics::spawn_monitored_task;
 use shared_crypto::intent::{AppId, Intent, IntentMessage, IntentScope, IntentVersion};
 use sui_core::authority::AuthorityState;
 use sui_json_rpc_types::{
@@ -760,11 +759,8 @@ impl ReadApiServer for ReadApi {
 
         self.metrics.get_checkpoints_limit.report(limit as u64);
 
-        let mut data = spawn_monitored_task!(async move {
-            state.get_checkpoints(cursor.map(|s| *s), limit as u64 + 1, descending_order)
-        })
-        .await
-        .map_err(|e| anyhow!(e))??;
+        let mut data =
+            state.get_checkpoints(cursor.map(|s| *s), limit as u64 + 1, descending_order)?;
 
         let has_next_page = data.len() > limit;
         data.truncate(limit);
