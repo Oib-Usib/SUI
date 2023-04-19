@@ -2081,23 +2081,16 @@ impl AuthorityState {
         &self,
         digest: &TransactionDigest,
     ) -> SuiResult<Option<(EpochId, CheckpointSequenceNumber)>> {
-        let database = self.database.clone();
-        let digest = *digest;
-        spawn_monitored_task!(async move { database.get_transaction_checkpoint(&digest) })
-            .await
-            .map_err(|e| SuiError::GenericStorageError(e.to_string()))?
+        self.database.get_transaction_checkpoint(digest)
     }
 
     pub async fn get_checkpoint_by_sequence_number(
         &self,
         sequence_number: CheckpointSequenceNumber,
     ) -> SuiResult<Option<VerifiedCheckpoint>> {
-        let checkpoint_store = self.checkpoint_store.clone();
-        Ok(spawn_monitored_task!(async move {
-            checkpoint_store.get_checkpoint_by_sequence_number(sequence_number)
-        })
-        .await
-        .map_err(|e| SuiError::GenericStorageError(e.to_string()))??)
+        Ok(self
+            .checkpoint_store
+            .get_checkpoint_by_sequence_number(sequence_number)?)
     }
 
     pub fn get_transaction_checkpoint(
@@ -2113,46 +2106,43 @@ impl AuthorityState {
     }
 
     pub async fn get_object_read(&self, object_id: &ObjectID) -> Result<ObjectRead, SuiError> {
-        let database = self.database.clone();
         let module_cache = self
             .load_epoch_store_one_call_per_task()
             .module_cache()
             .clone();
         let object_id = *object_id;
 
-        spawn_monitored_task!(async move {
-            match database.get_object_or_tombstone(object_id)? {
-                None => Ok(ObjectRead::NotExists(object_id)),
-                Some(obj_ref) => {
-                    if obj_ref.2.is_alive() {
-                        match database.get_object_by_key(&object_id, obj_ref.1)? {
-                            None => {
-                                error!("Object with in parent_entry is missing from object store, datastore is inconsistent");
-                                Err(UserInputError::ObjectNotFound {
-                                    object_id,
-                                    version: Some(obj_ref.1),
-                                }
-                                .into())
+        match self.database.get_object_or_tombstone(object_id)? {
+            None => Ok(ObjectRead::NotExists(object_id)),
+            Some(obj_ref) => {
+                if obj_ref.2.is_alive() {
+                    match self.database.get_object_by_key(&object_id, obj_ref.1)? {
+                        None => {
+                            error!("Object with in parent_entry is missing from object store, datastore is inconsistent");
+                            Err(UserInputError::ObjectNotFound {
+                                object_id,
+                                version: Some(obj_ref.1),
                             }
-                            Some(object) => {
-                                let layout = object.get_layout(
-                                    ObjectFormatOptions::default(),
-                                    // threading the epoch_store through this API does not
-                                    // seem possible, so we just read it from the state (self) and fetch
-                                    // the module cache out of it.
-                                    // Notice that no matter what module cache we get things
-                                    // should work
-                                    module_cache.as_ref(),
-                                )?;
-                                Ok(ObjectRead::Exists(obj_ref, object, layout))
-                            }
+                            .into())
                         }
-                    } else {
-                        Ok(ObjectRead::Deleted(obj_ref))
+                        Some(object) => {
+                            let layout = object.get_layout(
+                                ObjectFormatOptions::default(),
+                                // threading the epoch_store through this API does not
+                                // seem possible, so we just read it from the state (self) and fetch
+                                // the module cache out of it.
+                                // Notice that no matter what module cache we get things
+                                // should work
+                                module_cache.as_ref(),
+                            )?;
+                            Ok(ObjectRead::Exists(obj_ref, object, layout))
+                        }
                     }
+                } else {
+                    Ok(ObjectRead::Deleted(obj_ref))
                 }
             }
-        }).await.map_err(|e|SuiError::GenericStorageError(e.to_string()))?
+        }
     }
 
     pub async fn get_move_object<T>(&self, object_id: &ObjectID) -> SuiResult<T>
@@ -2198,13 +2188,7 @@ impl AuthorityState {
         object_id: &ObjectID,
         version: SequenceNumber,
     ) -> Result<PastObjectRead, SuiError> {
-        let database = self.database.clone();
-
-        let object_id_clone = *object_id;
-        let object =
-            spawn_monitored_task!(async move { database.get_object_or_tombstone(object_id_clone) })
-                .await
-                .map_err(|e| SuiError::GenericStorageError(e.to_string()))??;
+        let object = self.database.get_object_or_tombstone(*object_id)?;
 
         // Firstly we see if the object ever exists by getting its latest data
         match object {
@@ -2219,13 +2203,7 @@ impl AuthorityState {
                 }
                 if version < obj_ref.1 {
                     // Read past objects
-                    let database = self.database.clone();
-                    let object_id_clone = *object_id;
-                    let object = spawn_monitored_task!(async move {
-                        database.get_object_by_key(&object_id_clone, version)
-                    })
-                    .await
-                    .map_err(|e| SuiError::GenericStorageError(e.to_string()))??;
+                    let object = self.database.get_object_by_key(object_id, version)?;
 
                     return Ok(match object {
                         None => PastObjectRead::VersionNotFound(*object_id, version),
@@ -2248,13 +2226,7 @@ impl AuthorityState {
                 if obj_ref.2.is_alive() {
                     let object_id_clone = *object_id;
                     let version = obj_ref.1;
-                    let database = self.database.clone();
-                    let object = spawn_monitored_task!(async move {
-                        database.get_object_by_key(&object_id_clone, version)
-                    })
-                    .await
-                    .map_err(|e| SuiError::GenericStorageError(e.to_string()))??;
-
+                    let object = self.database.get_object_by_key(&object_id_clone, version)?;
                     match object {
                         None => {
                             error!("Object with in parent_entry is missing from object store, datastore is inconsistent");
@@ -2399,11 +2371,7 @@ impl AuthorityState {
         name: &DynamicFieldName,
     ) -> SuiResult<Option<ObjectID>> {
         if let Some(indexes) = &self.indexes {
-            let indexes = indexes.clone();
-            let name = name.clone();
-            spawn_monitored_task!(async move { indexes.get_dynamic_field_object_id(owner, &name) })
-                .await
-                .map_err(|e| SuiError::GenericStorageError(e.to_string()))?
+            indexes.get_dynamic_field_object_id(owner, name)
         } else {
             Err(SuiError::IndexStoreNotAvailable)
         }
@@ -2417,27 +2385,20 @@ impl AuthorityState {
         &self,
         digest: TransactionDigest,
     ) -> Result<(VerifiedTransaction, TransactionEffects), anyhow::Error> {
-        let database = self.database.clone();
-
-        spawn_monitored_task!(async move {
-            let transaction = database.get_transaction_block(&digest)?;
-            let effects = database.get_executed_effects(&digest)?;
-            match (transaction, effects) {
-                (Some(transaction), Some(effects)) => Ok((transaction, effects)),
-                _ => Err(anyhow!(SuiError::TransactionNotFound { digest })),
-            }
-        })
-        .await?
+        let transaction = self.database.get_transaction_block(&digest)?;
+        let effects = self.database.get_executed_effects(&digest)?;
+        match (transaction, effects) {
+            (Some(transaction), Some(effects)) => Ok((transaction, effects)),
+            _ => Err(anyhow!(SuiError::TransactionNotFound { digest })),
+        }
     }
 
     pub async fn get_executed_transaction(
         &self,
         digest: TransactionDigest,
     ) -> Result<VerifiedTransaction, anyhow::Error> {
-        let database = self.database.clone();
-        spawn_monitored_task!(async move { database.get_transaction_block(&digest) })
-            .await
-            .map_err(|e| anyhow!(e))??
+        self.database
+            .get_transaction_block(&digest)?
             .ok_or_else(|| anyhow!(SuiError::TransactionNotFound { digest }))
     }
 
@@ -2445,10 +2406,8 @@ impl AuthorityState {
         &self,
         digest: TransactionDigest,
     ) -> Result<TransactionEffects, anyhow::Error> {
-        let database = self.database.clone();
-        spawn_monitored_task!(async move { database.get_executed_effects(&digest) })
-            .await
-            .map_err(|e| anyhow!(e))??
+        self.database
+            .get_executed_effects(&digest)?
             .ok_or_else(|| anyhow!(SuiError::TransactionNotFound { digest }))
     }
 
@@ -2456,39 +2415,21 @@ impl AuthorityState {
         &self,
         digests: &[TransactionDigest],
     ) -> Result<Vec<Option<VerifiedTransaction>>, anyhow::Error> {
-        let database = self.database.clone();
-        let digests = digests.to_vec();
-        Ok(
-            spawn_monitored_task!(async move { database.multi_get_transaction_blocks(&digests) })
-                .await
-                .map_err(|e| anyhow!(e))??,
-        )
+        Ok(self.database.multi_get_transaction_blocks(digests)?)
     }
 
     pub async fn multi_get_executed_effects(
         &self,
         digests: &[TransactionDigest],
     ) -> Result<Vec<Option<TransactionEffects>>, anyhow::Error> {
-        let database = self.database.clone();
-        let digests = digests.to_vec();
-        Ok(
-            spawn_monitored_task!(async move { database.multi_get_executed_effects(&digests) })
-                .await
-                .map_err(|e| anyhow!(e))??,
-        )
+        Ok(self.database.multi_get_executed_effects(digests)?)
     }
 
     pub async fn multi_get_transaction_checkpoint(
         &self,
         digests: &[TransactionDigest],
     ) -> Result<Vec<Option<(EpochId, CheckpointSequenceNumber)>>, anyhow::Error> {
-        let database = self.database.clone();
-        let digests = digests.to_vec();
-        Ok(spawn_monitored_task!(
-            async move { database.multi_get_transaction_checkpoint(&digests) }
-        )
-        .await
-        .map_err(|e| anyhow!(e))??)
+        Ok(self.database.multi_get_transaction_checkpoint(digests)?)
     }
 
     pub fn multi_get_events(
@@ -2511,11 +2452,8 @@ impl AuthorityState {
         &self,
         digest: &TransactionEventsDigest,
     ) -> SuiResult<TransactionEvents> {
-        let database = self.database.clone();
-        let digest_clone = *digest;
-        spawn_monitored_task!(async move { database.get_events(&digest_clone) })
-            .await
-            .map_err(|e| SuiError::GenericStorageError(e.to_string()))??
+        self.database
+            .get_events(digest)?
             .ok_or(SuiError::TransactionEventsNotFound { digest: *digest })
     }
 

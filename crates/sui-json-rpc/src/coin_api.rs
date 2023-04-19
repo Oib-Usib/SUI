@@ -4,14 +4,12 @@
 use std::sync::Arc;
 
 use anyhow::anyhow;
-
 use async_trait::async_trait;
 use jsonrpsee::core::RpcResult;
 use jsonrpsee::RpcModule;
 use move_core_types::language_storage::{StructTag, TypeTag};
 use tracing::debug;
 
-use mysten_metrics::spawn_monitored_task;
 use sui_core::authority::AuthorityState;
 use sui_json_rpc_types::{Balance, Coin as SuiCoin};
 use sui_json_rpc_types::{CoinPage, SuiCoinMetadata};
@@ -48,30 +46,20 @@ impl CoinReadApi {
     ) -> anyhow::Result<CoinPage> {
         let limit = cap_page_limit(limit);
         self.metrics.get_coins_limit.report(limit as u64);
-        let state = self.state.clone();
 
-        let mut data = spawn_monitored_task!(async move {
-            Ok::<_, SuiError>(
-                state
-                    .get_owned_coins_iterator_with_cursor(
-                        owner,
-                        cursor,
-                        limit + 1,
-                        one_coin_type_only,
-                    )?
-                    .map(|(coin_type, coin_object_id, coin)| SuiCoin {
-                        coin_type,
-                        coin_object_id,
-                        version: coin.version,
-                        digest: coin.digest,
-                        balance: coin.balance,
-                        locked_until_epoch: None,
-                        previous_transaction: coin.previous_transaction,
-                    })
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .await??;
+        let mut data = self
+            .state
+            .get_owned_coins_iterator_with_cursor(owner, cursor, limit + 1, one_coin_type_only)?
+            .map(|(coin_type, coin_object_id, coin)| SuiCoin {
+                coin_type,
+                coin_object_id,
+                version: coin.version,
+                digest: coin.digest,
+                balance: coin.balance,
+                locked_until_epoch: None,
+                previous_transaction: coin.previous_transaction,
+            })
+            .collect::<Vec<_>>();
 
         let has_next_page = data.len() > limit;
         data.truncate(limit);
