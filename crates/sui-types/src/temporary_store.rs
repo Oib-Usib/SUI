@@ -991,6 +991,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
                     *execution_result = Err(err);
                 }
             }
+            println!("GAS BUCKETIZE: {:#?}", gas_status);
 
             // On error we need to dump writes, deletes, etc before charging storage gas
             if execution_result.is_err() {
@@ -1010,6 +1011,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
                 self.handle_storage_and_rebate_v2(gas, gas_object_id, gas_status, execution_result)
             }
 
+            println!("GAS SUMMARY: {:#?}", gas_status);
             let cost_summary = gas_status.summary();
             let gas_used = cost_summary.net_gas_usage();
 
@@ -1033,6 +1035,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
         execution_result: &mut Result<T, ExecutionError>,
     ) {
         if let Err(err) = gas_status.charge_storage_and_rebate() {
+            println!("GAS STORAGE OOG: {:#?}", gas_status);
             self.reset(gas, gas_status);
             gas_status.adjust_computation_on_out_of_gas();
             self.ensure_gas_and_input_mutated(Some(gas_object_id));
@@ -1051,6 +1054,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
         execution_result: &mut Result<T, ExecutionError>,
     ) {
         if let Err(err) = gas_status.charge_storage_and_rebate() {
+            println!("GAS STORAGE OOG: {:#?}", gas_status);
             // we run out of gas charging storage, reset and try charging for storage again.
             // Input objects are touched and so they have a storage cost
             self.reset(gas, gas_status);

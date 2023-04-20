@@ -46,6 +46,7 @@ pub trait SuiGasStatusAPI {
 }
 
 #[enum_dispatch(SuiGasStatusAPI)]
+#[derive(Debug)]
 pub enum SuiGasStatus {
     V1(SuiGasStatusV1),
     V2(SuiGasStatusV2),

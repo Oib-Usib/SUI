@@ -342,6 +342,7 @@ impl GasStatus {
     // Charge the number of bytes with the cost per byte value
     // As more bytes are read throughout the computation the cost per bytes is increased.
     pub fn charge_bytes(&mut self, size: usize, cost_per_byte: u64) -> PartialVMResult<()> {
+        println!("GAS BYTES: {}", size);
         let computation_cost = if self.gas_model_version == 4 {
             self.increase_stack_size(size as u64)?;
             self.stack_size_current_tier_mult * size as u64 * cost_per_byte
