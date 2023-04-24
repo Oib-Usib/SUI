@@ -2050,17 +2050,19 @@ impl AuthorityState {
                             .into())
                         }
                         Some(object) => {
-                            let layout = object.get_layout(
-                                ObjectFormatOptions::default(),
-                                // threading the epoch_store through this API does not
-                                // seem possible, so we just read it from the state (self) and fetch
-                                // the module cache out of it.
-                                // Notice that no matter what module cache we get things
-                                // should work
-                                self.load_epoch_store_one_call_per_task()
-                                    .module_cache()
-                                    .as_ref(),
-                            )?;
+                            let layout = object
+                                .get_layout(
+                                    ObjectFormatOptions::default(),
+                                    // threading the epoch_store through this API does not
+                                    // seem possible, so we just read it from the state (self) and fetch
+                                    // the module cache out of it.
+                                    // Notice that no matter what module cache we get things
+                                    // should work
+                                    self.load_epoch_store_one_call_per_task()
+                                        .module_cache()
+                                        .as_ref(),
+                                )
+                                .unwrap_or_default();
                             Ok(ObjectRead::Exists(obj_ref, object, layout))
                         }
                     }
