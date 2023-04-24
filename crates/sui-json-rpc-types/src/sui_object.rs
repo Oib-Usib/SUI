@@ -498,10 +498,8 @@ impl
         let bcs: Option<SuiRawData> = if show_bcs {
             let data = match o.data.clone() {
                 Data::Move(m) => {
-                    let layout = layout.clone().ok_or_else(|| {
-                        anyhow!("Layout is required to convert Move object to json")
-                    })?;
-                    SuiRawData::try_from_object(m, layout)?
+                    // Raw data do not need layout
+                    SuiRawData::try_from_object(m, MoveStructLayout::Runtime(vec![]))?
                 }
                 Data::Package(p) => SuiRawData::try_from_package(p)
                     .map_err(|e| anyhow!("Error getting raw data from package: {e:#?}"))?,
