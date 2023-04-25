@@ -3753,6 +3753,17 @@
 <a href="#3753" id="3753">3753</a>
 <a href="#3754" id="3754">3754</a>
 <a href="#3755" id="3755">3755</a>
+<a href="#3756" id="3756">3756</a>
+<a href="#3757" id="3757">3757</a>
+<a href="#3758" id="3758">3758</a>
+<a href="#3759" id="3759">3759</a>
+<a href="#3760" id="3760">3760</a>
+<a href="#3761" id="3761">3761</a>
+<a href="#3762" id="3762">3762</a>
+<a href="#3763" id="3763">3763</a>
+<a href="#3764" id="3764">3764</a>
+<a href="#3765" id="3765">3765</a>
+<a href="#3766" id="3766">3766</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3784,7 +3795,7 @@
 <span class="kw">use </span>sui_types::TypeTag;
 <span class="kw">use </span>tap::TapFallible;
 <span class="kw">use </span>tokio::sync::mpsc::unbounded_channel;
-<span class="kw">use </span>tokio::sync::oneshot;
+<span class="kw">use </span>tokio::sync::{oneshot, Semaphore};
 <span class="kw">use </span>tokio_retry::strategy::{jitter, ExponentialBackoff};
 <span class="kw">use </span>tracing::{debug, error, info, instrument, trace, warn, Instrument};
 
@@ -3859,7 +3870,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::checkpoints::CheckpointStore;
 <span class="kw">use </span><span class="kw">crate</span>::epoch::committee_store::CommitteeStore;
 <span class="kw">use </span><span class="kw">crate</span>::event_handler::EventHandler;
-<span class="kw">use </span><span class="kw">crate</span>::execution_driver::execution_process;
+<span class="kw">use </span><span class="kw">crate</span>::execution_driver::{execution_process, ExecutionDispatcher};
 <span class="kw">use </span><span class="kw">crate</span>::module_cache_metrics::ResolverMetrics;
 <span class="kw">use </span><span class="kw">crate</span>::stake_aggregator::StakeAggregator;
 <span class="kw">use </span><span class="kw">crate</span>::state_accumulator::StateAccumulator;
@@ -5465,10 +5476,16 @@
 
         <span class="kw">let </span>metrics = Arc::new(AuthorityMetrics::new(prometheus_registry));
         <span class="kw">let </span>(tx_ready_certificates, rx_ready_certificates) = unbounded_channel();
+        <span class="kw">let </span>execution_limit = Arc::new(Semaphore::new(num_cpus::get() * <span class="number">2</span>));
+        <span class="kw">let </span>execution_dispatcher = Arc::new(ExecutionDispatcher::new(
+            tx_ready_certificates,
+            execution_limit.clone(),
+            metrics.clone(),
+        ));
         <span class="kw">let </span>transaction_manager = Arc::new(TransactionManager::new(
             store.clone(),
             <span class="kw-2">&amp;</span>epoch_store,
-            tx_ready_certificates,
+            execution_dispatcher.clone(),
             metrics.clone(),
         ));
         <span class="kw">let </span>(tx_execution_shutdown, rx_execution_shutdown) = oneshot::channel();
@@ -5504,10 +5521,12 @@
 
         <span class="comment">// Start a task to execute ready certificates.
         </span><span class="kw">let </span>authority_state = Arc::downgrade(<span class="kw-2">&amp;</span>state);
+        execution_dispatcher.set_authority(authority_state.clone());
         <span class="macro">spawn_monitored_task!</span>(execution_process(
             authority_state,
             rx_ready_certificates,
-            rx_execution_shutdown
+            rx_execution_shutdown,
+            execution_limit
         ));
 
         <span class="comment">// TODO: This doesn&#39;t belong to the constructor of AuthorityState.
@@ -7268,6 +7287,9 @@
             .unwrap()
             .send(())
             .unwrap();
+        <span class="self">self</span>.transaction_manager
+            .execution_dispatcher
+            .shutdown_execution_for_test();
     }
 }
 
