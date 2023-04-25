@@ -847,6 +847,14 @@
 <a href="#847" id="847">847</a>
 <a href="#848" id="848">848</a>
 <a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>once_cell::sync::OnceCell;
@@ -1089,6 +1097,7 @@
 </span><span class="kw">pub struct </span>OperationMetrics {
     <span class="kw">pub </span>rocksdb_iter_latency_seconds: HistogramVec,
     <span class="kw">pub </span>rocksdb_iter_bytes: HistogramVec,
+    <span class="kw">pub </span>rocksdb_iter_keys: HistogramVec,
     <span class="kw">pub </span>rocksdb_get_latency_seconds: HistogramVec,
     <span class="kw">pub </span>rocksdb_get_bytes: HistogramVec,
     <span class="kw">pub </span>rocksdb_multiget_latency_seconds: HistogramVec,
@@ -1114,6 +1123,13 @@
             .unwrap(),
             rocksdb_iter_bytes: <span class="macro">register_histogram_vec_with_registry!</span>(
                 <span class="string">&quot;rocksdb_iter_bytes&quot;</span>,
+                <span class="string">&quot;Rocksdb iter size in bytes&quot;</span>,
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;cf_name&quot;</span>],
+                registry,
+            )
+            .unwrap(),
+            rocksdb_iter_keys: <span class="macro">register_histogram_vec_with_registry!</span>(
+                <span class="string">&quot;rocksdb_iter_keys&quot;</span>,
                 <span class="string">&quot;Rocksdb iter size in bytes&quot;</span>,
                 <span class="kw-2">&amp;</span>[<span class="string">&quot;cf_name&quot;</span>],
                 registry,
