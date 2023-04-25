@@ -3,7 +3,7 @@
     fn <a href="#tymethod.verify_secure" class="fn">verify_secure</a>&lt;T: <a class="trait" href="https://docs.rs/serde/1.0.152/serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a>&gt;(
         &amp;self,
         data: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;T</a>,
-        intent: Intent,
+        intent: <a class="struct" href="../../shared_crypto/intent/struct.Intent.html" title="struct shared_crypto::intent::Intent">Intent</a>,
         committee: &amp;<a class="struct" href="../committee/struct.Committee.html" title="struct sui_types::committee::Committee">Committee</a>
     ) -&gt; <a class="type" href="../error/type.SuiResult.html" title="type sui_types::error::SuiResult">SuiResult</a>;
 <span class="item-spacer"></span>    fn <a href="#tymethod.add_to_verification_obligation" class="fn">add_to_verification_obligation</a>&lt;'a&gt;(
@@ -20,7 +20,7 @@ This will make CertifiedTransaction also an instance of the same struct.</p>
 </div></details><h2 id="required-methods" class="small-section-header">Required Methods<a href="#required-methods" class="anchor">§</a></h2><div class="methods"><section id="tymethod.verify_secure" class="method"><a class="srclink rightside" href="../../src/sui_types/crypto.rs.html#1027-1032">source</a><h4 class="code-header">fn <a href="#tymethod.verify_secure" class="fn">verify_secure</a>&lt;T: <a class="trait" href="https://docs.rs/serde/1.0.152/serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a>&gt;(
     &amp;self,
     data: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;T</a>,
-    intent: Intent,
+    intent: <a class="struct" href="../../shared_crypto/intent/struct.Intent.html" title="struct shared_crypto::intent::Intent">Intent</a>,
     committee: &amp;<a class="struct" href="../committee/struct.Committee.html" title="struct sui_types::committee::Committee">Committee</a>
 ) -&gt; <a class="type" href="../error/type.SuiResult.html" title="type sui_types::error::SuiResult">SuiResult</a></h4></section><section id="tymethod.add_to_verification_obligation" class="method"><a class="srclink rightside" href="../../src/sui_types/crypto.rs.html#1034-1039">source</a><h4 class="code-header">fn <a href="#tymethod.add_to_verification_obligation" class="fn">add_to_verification_obligation</a>&lt;'a&gt;(
     &amp;self,
