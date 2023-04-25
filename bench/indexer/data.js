@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682464889118,
+  "lastUpdate": 1682465098666,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -179,6 +179,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 382511,
             "range": "± 39454",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "distinct": true,
+          "id": "514246ccdcae845ee8e81ac1640cb1c096ffc1fd",
+          "message": "Re-enable snapshot tests",
+          "timestamp": "2023-04-25T16:15:06-07:00",
+          "tree_id": "42fb4918491299b72b09ee638b268925d36f4d3f",
+          "url": "https://github.com/MystenLabs/sui/commit/514246ccdcae845ee8e81ac1640cb1c096ffc1fd"
+        },
+        "date": 1682465095788,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144531284,
+            "range": "± 5244749",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 307620,
+            "range": "± 32442",
             "unit": "ns/iter"
           }
         ]
