@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682459300989,
+  "lastUpdate": 1682461360897,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -71,6 +71,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 364996,
             "range": "± 79768",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrey@mystenlabs.com",
+            "name": "Andrey Chursin",
+            "username": "andll"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b52e54d98319b754deac442c17f29d97e02515c9",
+          "message": "[execution_driver] Avoid dispatching thread when permit is available immediately (#11269)\n\nUnder high load we see that execution queue has a lot of certificates,\r\nwhile execution tasks are not fully utilized. It is possible that we are\r\nmaxing out on execution dispatch task throughput, this change avoids it\r\nby spawning tasks directly when possible",
+          "timestamp": "2023-04-25T22:10:09Z",
+          "tree_id": "bcfbb7802e03f88c4106310cc7498e1ec5d8ab71",
+          "url": "https://github.com/MystenLabs/sui/commit/b52e54d98319b754deac442c17f29d97e02515c9"
+        },
+        "date": 1682461357910,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148372077,
+            "range": "± 4740664",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 338701,
+            "range": "± 41589",
             "unit": "ns/iter"
           }
         ]
