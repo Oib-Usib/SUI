@@ -1333,7 +1333,7 @@
         opts: <span class="prelude-ty">Option</span>&lt;SuiTransactionBlockResponseOptions&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiTransactionBlockResponse&gt;, Error&gt; {
         <span class="kw">let </span>num_digests = digests.len();
-        <span class="kw">if </span>num_digests &gt; QUERY_MAX_RESULT_LIMIT {
+        <span class="kw">if </span>num_digests &gt; <span class="kw-2">*</span>QUERY_MAX_RESULT_LIMIT {
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(UserInputError::SizeLimitExceeded {
                 limit: <span class="string">&quot;multi get transaction input limit&quot;</span>.to_string(),
                 value: QUERY_MAX_RESULT_LIMIT.to_string()
@@ -1653,7 +1653,7 @@
         options: <span class="prelude-ty">Option</span>&lt;SuiObjectDataOptions&gt;,
     ) -&gt; RpcResult&lt;Vec&lt;SuiObjectResponse&gt;&gt; {
         <span class="macro">info!</span>(<span class="string">&quot;multi_get_objects&quot;</span>);
-        <span class="kw">if </span>object_ids.len() &lt;= QUERY_MAX_RESULT_LIMIT {
+        <span class="kw">if </span>object_ids.len() &lt;= <span class="kw-2">*</span>QUERY_MAX_RESULT_LIMIT {
             <span class="self">self</span>.metrics
                 .get_objects_limit
                 .report(object_ids.len() <span class="kw">as </span>u64);
@@ -1748,7 +1748,7 @@
         options: <span class="prelude-ty">Option</span>&lt;SuiObjectDataOptions&gt;,
     ) -&gt; RpcResult&lt;Vec&lt;SuiPastObjectResponse&gt;&gt; {
         <span class="macro">info!</span>(<span class="string">&quot;try_multi_get_past_objects&quot;</span>);
-        <span class="kw">if </span>past_objects.len() &lt;= QUERY_MAX_RESULT_LIMIT {
+        <span class="kw">if </span>past_objects.len() &lt;= <span class="kw-2">*</span>QUERY_MAX_RESULT_LIMIT {
             <span class="kw">let </span><span class="kw-2">mut </span>futures = <span class="macro">vec!</span>[];
             <span class="kw">for </span>past_object <span class="kw">in </span>past_objects {
                 futures.push(<span class="self">self</span>.try_get_past_object(

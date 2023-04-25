@@ -151,8 +151,6 @@
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
 <a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -294,10 +292,8 @@
 
 <span class="kw">impl </span>EpochFlag {
     <span class="kw">pub fn </span>default_flags_for_new_epoch() -&gt; Vec&lt;<span class="self">Self</span>&gt; {
-        <span class="macro">vec!</span>[]
-        <span class="comment">// todo - enable after switching to single DBBatch in consensus handler
-        // vec![EpochFlag::InMemoryCheckpointRoots]
-    </span>}
+        <span class="macro">vec!</span>[EpochFlag::InMemoryCheckpointRoots]
+    }
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>EpochFlag {

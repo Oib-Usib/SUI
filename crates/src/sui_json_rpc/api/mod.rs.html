@@ -257,6 +257,12 @@
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
 <a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -278,6 +284,7 @@
 <span class="kw">pub use </span>move_utils::MoveUtilsClient;
 <span class="kw">pub use </span>move_utils::MoveUtilsOpenRpc;
 <span class="kw">pub use </span>move_utils::MoveUtilsServer;
+<span class="kw">use </span>once_cell::sync::Lazy;
 <span class="kw">use </span>prometheus::{register_int_counter_with_registry, IntCounter};
 <span class="kw">pub use </span>read::ReadApiClient;
 <span class="kw">pub use </span>read::ReadApiOpenRpc;
@@ -285,6 +292,7 @@
 <span class="kw">pub use </span>transaction_builder::TransactionBuilderClient;
 <span class="kw">pub use </span>transaction_builder::TransactionBuilderOpenRpc;
 <span class="kw">pub use </span>transaction_builder::TransactionBuilderServer;
+<span class="kw">use </span>typed_store::rocks::read_size_from_env;
 <span class="kw">pub use </span>write::WriteApiClient;
 <span class="kw">pub use </span>write::WriteApiOpenRpc;
 <span class="kw">pub use </span>write::WriteApiServer;
@@ -298,16 +306,20 @@
 <span class="kw">mod </span>transaction_builder;
 <span class="kw">mod </span>write;
 
-<span class="kw">pub const </span>QUERY_MAX_RESULT_LIMIT: usize = <span class="number">50</span>;
+<span class="kw">const </span>RPC_QUERY_MAX_RESULT_LIMIT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;RPC_QUERY_MAX_RESULT_LIMIT&quot;</span>;
+<span class="kw">const </span>DEFAULT_RPC_QUERY_MAX_RESULT_LIMIT: usize = <span class="number">50</span>;
+
+<span class="kw">pub static </span>QUERY_MAX_RESULT_LIMIT: Lazy&lt;usize&gt; = Lazy::new(|| {
+    read_size_from_env(RPC_QUERY_MAX_RESULT_LIMIT).unwrap_or(DEFAULT_RPC_QUERY_MAX_RESULT_LIMIT)
+});
+
 <span class="comment">// TODOD(chris): make this configurable
 </span><span class="kw">pub const </span>QUERY_MAX_RESULT_LIMIT_CHECKPOINTS: usize = <span class="number">100</span>;
 
-<span class="kw">pub const </span>QUERY_MAX_RESULT_LIMIT_OBJECTS: usize = <span class="number">50</span>;
-
 <span class="kw">pub fn </span>cap_page_limit(limit: <span class="prelude-ty">Option</span>&lt;usize&gt;) -&gt; usize {
     <span class="kw">let </span>limit = limit.unwrap_or_default();
-    <span class="kw">if </span>limit &gt; QUERY_MAX_RESULT_LIMIT || limit == <span class="number">0 </span>{
-        QUERY_MAX_RESULT_LIMIT
+    <span class="kw">if </span>limit &gt; <span class="kw-2">*</span>QUERY_MAX_RESULT_LIMIT || limit == <span class="number">0 </span>{
+        <span class="kw-2">*</span>QUERY_MAX_RESULT_LIMIT
     } <span class="kw">else </span>{
         limit
     }

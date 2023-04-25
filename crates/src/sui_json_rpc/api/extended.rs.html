@@ -90,7 +90,7 @@
         </span>query: SuiObjectResponseQuery,
         <span class="doccomment">/// An optional paging cursor. If provided, the query will start from the next item after the specified cursor. Default to start from the first item if not specified.
         </span>cursor: <span class="prelude-ty">Option</span>&lt;CheckpointedObjectID&gt;,
-        <span class="doccomment">/// Max number of items returned per page, default to [QUERY_MAX_RESULT_LIMIT_OBJECTS] if not specified.
+        <span class="doccomment">/// Max number of items returned per page, default to [QUERY_MAX_RESULT_LIMIT] if not specified.
         </span>limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     ) -&gt; RpcResult&lt;QueryObjectsPage&gt;;
 
