@@ -1644,6 +1644,14 @@
 <a href="#1644" id="1644">1644</a>
 <a href="#1645" id="1645">1645</a>
 <a href="#1646" id="1646">1646</a>
+<a href="#1647" id="1647">1647</a>
+<a href="#1648" id="1648">1648</a>
+<a href="#1649" id="1649">1649</a>
+<a href="#1650" id="1650">1650</a>
+<a href="#1651" id="1651">1651</a>
+<a href="#1652" id="1652">1652</a>
+<a href="#1653" id="1653">1653</a>
+<a href="#1654" id="1654">1654</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2030,10 +2038,18 @@
         <span class="self">self</span>.checkpoint_sequence_by_contents_digest
             .insert(<span class="kw-2">&amp;</span>checkpoint.content_digest, checkpoint.sequence_number())<span class="question-mark">?</span>;
         <span class="kw">let </span>full_contents = full_contents.into_inner();
-        <span class="self">self</span>.full_checkpoint_content
-            .insert(checkpoint.sequence_number(), <span class="kw-2">&amp;</span>full_contents)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>batch = <span class="self">self</span>.full_checkpoint_content.batch();
+        batch.insert_batch(
+            <span class="kw-2">&amp;</span><span class="self">self</span>.full_checkpoint_content,
+            [(checkpoint.sequence_number(), <span class="kw-2">&amp;</span>full_contents)],
+        )<span class="question-mark">?</span>;
+
         <span class="kw">let </span>contents = full_contents.into_checkpoint_contents();
-        <span class="self">self</span>.insert_checkpoint_contents(contents)
+
+        batch.insert_batch(<span class="kw-2">&amp;</span><span class="self">self</span>.checkpoint_content, [(contents.digest(), <span class="kw-2">&amp;</span>contents)])<span class="question-mark">?</span>;
+
+        batch.write()
     }
 
     <span class="kw">pub fn </span>delete_full_checkpoint_contents(
