@@ -855,6 +855,9 @@
 <a href="#855" id="855">855</a>
 <a href="#856" id="856">856</a>
 <a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>once_cell::sync::OnceCell;
@@ -893,8 +896,8 @@
 
 <span class="kw">impl </span>Default <span class="kw">for </span>SamplingInterval {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="comment">// Enabled with 10 second interval
-        </span>SamplingInterval::new(Duration::ZERO, <span class="number">100</span>)
+        <span class="comment">// Enabled with 60 second interval
+        </span>SamplingInterval::new(Duration::from_secs(<span class="number">60</span>), <span class="number">0</span>)
     }
 }
 
@@ -917,6 +920,9 @@
             after_num_ops,
             counter,
         }
+    }
+    <span class="kw">pub fn </span>new_from_self(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SamplingInterval {
+        SamplingInterval::new(<span class="self">self</span>.once_every_duration, <span class="self">self</span>.after_num_ops)
     }
     <span class="kw">pub fn </span>sample(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="kw">if </span><span class="self">self</span>.once_every_duration.is_zero() {

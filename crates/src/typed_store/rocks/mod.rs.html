@@ -2862,29 +2862,29 @@
 
     <span class="kw">pub fn </span>get_sampling_interval(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SamplingInterval {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::DBWithThreadMode(d) =&gt; d.metric_conf.read_sample_interval.clone(),
-            <span class="self">Self</span>::OptimisticTransactionDB(d) =&gt; d.metric_conf.read_sample_interval.clone(),
+            <span class="self">Self</span>::DBWithThreadMode(d) =&gt; d.metric_conf.read_sample_interval.new_from_self(),
+            <span class="self">Self</span>::OptimisticTransactionDB(d) =&gt; d.metric_conf.read_sample_interval.new_from_self(),
         }
     }
 
     <span class="kw">pub fn </span>multiget_sampling_interval(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SamplingInterval {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::DBWithThreadMode(d) =&gt; d.metric_conf.read_sample_interval.clone(),
-            <span class="self">Self</span>::OptimisticTransactionDB(d) =&gt; d.metric_conf.read_sample_interval.clone(),
+            <span class="self">Self</span>::DBWithThreadMode(d) =&gt; d.metric_conf.read_sample_interval.new_from_self(),
+            <span class="self">Self</span>::OptimisticTransactionDB(d) =&gt; d.metric_conf.read_sample_interval.new_from_self(),
         }
     }
 
     <span class="kw">pub fn </span>write_sampling_interval(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SamplingInterval {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::DBWithThreadMode(d) =&gt; d.metric_conf.write_sample_interval.clone(),
-            <span class="self">Self</span>::OptimisticTransactionDB(d) =&gt; d.metric_conf.write_sample_interval.clone(),
+            <span class="self">Self</span>::DBWithThreadMode(d) =&gt; d.metric_conf.write_sample_interval.new_from_self(),
+            <span class="self">Self</span>::OptimisticTransactionDB(d) =&gt; d.metric_conf.write_sample_interval.new_from_self(),
         }
     }
 
     <span class="kw">pub fn </span>iter_sampling_interval(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SamplingInterval {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::DBWithThreadMode(d) =&gt; d.metric_conf.iter_sample_interval.clone(),
-            <span class="self">Self</span>::OptimisticTransactionDB(d) =&gt; d.metric_conf.iter_sample_interval.clone(),
+            <span class="self">Self</span>::DBWithThreadMode(d) =&gt; d.metric_conf.iter_sample_interval.new_from_self(),
+            <span class="self">Self</span>::OptimisticTransactionDB(d) =&gt; d.metric_conf.iter_sample_interval.new_from_self(),
         }
     }
 
