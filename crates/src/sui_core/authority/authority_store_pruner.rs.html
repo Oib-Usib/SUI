@@ -673,6 +673,13 @@
 <a href="#673" id="673">673</a>
 <a href="#674" id="674">674</a>
 <a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -852,26 +859,33 @@
                 })
                 .collect();
 
-            checkpoint_number = checkpoints
-                .last()
-                .map(|c| <span class="kw-2">*</span>c.sequence_number())
-                .unwrap_or(checkpoint_number);
-            <span class="kw">let </span>is_last_iteration = checkpoints.len() &lt; config.max_checkpoints_in_batch;
+            <span class="kw">let </span><span class="kw-2">mut </span>is_last_iteration = checkpoints.len() &lt; config.max_checkpoints_in_batch;
 
-            <span class="kw">let </span>digests: Vec&lt;<span class="kw">_</span>&gt; = checkpoints.into_iter().map(|c| c.content_digest).collect();
+            <span class="kw">let </span>digests: Vec&lt;<span class="kw">_</span>&gt; = checkpoints.iter().map(|c| c.content_digest).collect();
             <span class="kw">let </span>execution_digests = checkpoint_store
                 .multi_get_checkpoint_content(<span class="kw-2">&amp;</span>digests)<span class="question-mark">?
                 </span>.into_iter()
-                .flat_map(|contents| {
+                .map(|contents| {
                     contents
                         .expect(<span class="string">&quot;checkpoint content is missing&quot;</span>)
                         .into_inner()
-                })
-                .map(|tx| tx.effects);
+                        .into_iter()
+                        .map(|tx| tx.effects)
+                });
+
+            <span class="kw">let </span><span class="kw-2">mut </span>digests = <span class="macro">vec!</span>[];
+            <span class="kw">for </span>(idx, checkpoint_digests) <span class="kw">in </span>execution_digests.enumerate() {
+                checkpoint_number = <span class="kw-2">*</span>checkpoints[idx].sequence_number();
+                digests.extend(checkpoint_digests);
+                <span class="kw">if </span>digests.len() &gt;= config.max_transactions_in_batch {
+                    is_last_iteration = <span class="bool-val">false</span>;
+                    <span class="kw">break</span>;
+                }
+            }
 
             <span class="kw">let </span>effects = perpetual_db
                 .effects
-                .multi_get(execution_digests)<span class="question-mark">?
+                .multi_get(digests)<span class="question-mark">?
                 </span>.into_iter()
                 .map(|effects| effects.expect(<span class="string">&quot;missing effects in pruner&quot;</span>))
                 .collect();
