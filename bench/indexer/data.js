@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682534574010,
+  "lastUpdate": 1682535138383,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -503,6 +503,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314344,
             "range": "± 25391",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "2895723+tzakian@users.noreply.github.com",
+            "name": "Tim Zakian",
+            "username": "tzakian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ec85b4a46b4a9c74155aef18ffd99dd4c0bc3cfe",
+          "message": "[transaction fuzzer] Fuzz with valid type tags (#11339)\n\nAdds a fuzzer generating random valid type tags, one that uses valid\r\ntype tags but an invalid number of type arguments, and another that\r\ngenerates almost wholly-correct typetags but possibly with some invalid\r\ntype tags.",
+          "timestamp": "2023-04-26T11:41:52-07:00",
+          "tree_id": "f70e41b60ebcdb50320f936038c1a24376c8514d",
+          "url": "https://github.com/MystenLabs/sui/commit/ec85b4a46b4a9c74155aef18ffd99dd4c0bc3cfe"
+        },
+        "date": 1682535135361,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 155310929,
+            "range": "± 4434362",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 384307,
+            "range": "± 67550",
             "unit": "ns/iter"
           }
         ]
