@@ -128,6 +128,8 @@
 <a href="#128" id="128">128</a>
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -190,7 +192,9 @@
 }
 
 <span class="kw">pub fn </span>gen_transaction_kind() -&gt; <span class="kw">impl </span>Strategy&lt;Value = TransactionKind&gt; {
-    (vec(gen_type_tag(), <span class="number">0</span>..<span class="number">10</span>)).prop_map(pt_for_tags)
+    (vec(gen_type_tag(), <span class="number">0</span>..<span class="number">10</span>))
+        .prop_map(pt_for_tags)
+        .prop_map(TransactionKind::ProgrammableTransaction)
 }
 
 <span class="kw">pub fn </span>transaction_data_gen(sender: SuiAddress) -&gt; <span class="kw">impl </span>Strategy&lt;Value = TransactionData&gt; {
