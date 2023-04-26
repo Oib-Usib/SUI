@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["StateAccumulator"]};
+window.SIDEBAR_ITEMS = {"fn":["accumulate_effects"],"struct":["StateAccumulator","WrappedObject"],"trait":["AccumulatorReadStore"]};
