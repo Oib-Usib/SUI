@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682549871993,
+  "lastUpdate": 1682549975863,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -863,6 +863,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 304140,
             "range": "± 32331",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90a1c044b8e1da767e4cea449556738a936dcc94",
+          "message": "indexer stability: re-enable move call population (#11384)\n\n## Description \r\n\r\nmove calls are still used by Explorer move call metrics\r\n\r\n## Test Plan \r\n\r\nTest locally and make sure that only move calls can be populated while\r\nothers are not.",
+          "timestamp": "2023-04-26T15:49:53-07:00",
+          "tree_id": "28af6fbcf4950ecdebe125309b4ce7655c1a8f0e",
+          "url": "https://github.com/MystenLabs/sui/commit/90a1c044b8e1da767e4cea449556738a936dcc94"
+        },
+        "date": 1682549972636,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 153335854,
+            "range": "± 5084349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 337444,
+            "range": "± 41998",
             "unit": "ns/iter"
           }
         ]
