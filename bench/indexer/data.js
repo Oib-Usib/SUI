@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682535138383,
+  "lastUpdate": 1682536461976,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -539,6 +539,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 384307,
             "range": "± 67550",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrey@mystenlabs.com",
+            "name": "Andrey Chursin",
+            "username": "andll"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "879310599dc5733dc296f28458b9170e5d0f451a",
+          "message": "[metrics] Measure HistogramReporter::report (#11368)\n\nWe now have quite a few usages of precise histogram (and adding more).\r\nMake sense to keep an eye on how much time we spend on calculations.",
+          "timestamp": "2023-04-26T19:03:29Z",
+          "tree_id": "316089d70cc28ad7f83ba520a50813f2cba866cb",
+          "url": "https://github.com/MystenLabs/sui/commit/879310599dc5733dc296f28458b9170e5d0f451a"
+        },
+        "date": 1682536458460,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 153788193,
+            "range": "± 6726579",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 316058,
+            "range": "± 17532",
             "unit": "ns/iter"
           }
         ]
