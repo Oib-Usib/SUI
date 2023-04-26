@@ -103,7 +103,6 @@
 <a href="#103" id="103">103</a>
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -116,12 +115,13 @@
 <span class="kw">use </span>arc_swap::ArcSwap;
 <span class="kw">use </span>mysten_network::{multiaddr::Protocol, Multiaddr};
 <span class="kw">use </span>thiserror::Error;
+<span class="kw">use </span>tracing::info;
 <span class="kw">use </span>types::{metered_channel::Sender, Transaction, TxResponse};
 
 <span class="doccomment">/// Uses a map to allow running multiple Narwhal instances in the same process.
 /// TODO: after Rust 1.66, use BTreeMap::new() instead of wrapping it in an Option.
-</span><span class="kw">static </span>LOCAL_NARWHAL_CLIENTS: Mutex&lt;<span class="prelude-ty">Option</span>&lt;BTreeMap&lt;Multiaddr, Arc&lt;ArcSwap&lt;LocalNarwhalClient&gt;&gt;&gt;&gt;&gt; =
-    Mutex::new(<span class="prelude-val">None</span>);
+</span><span class="kw">static </span>LOCAL_NARWHAL_CLIENTS: Mutex&lt;BTreeMap&lt;Multiaddr, Arc&lt;ArcSwap&lt;LocalNarwhalClient&gt;&gt;&gt;&gt; =
+    Mutex::new(BTreeMap::new());
 
 <span class="doccomment">/// The maximum allowed size of transactions into Narwhal.
 /// TODO: maybe move to TxValidator?
@@ -157,12 +157,10 @@
     <span class="doccomment">/// Sets the instance of LocalNarwhalClient for the local address.
     /// Address is only used as the key.
     </span><span class="kw">pub fn </span>set_global(addr: Multiaddr, instance: Arc&lt;<span class="self">Self</span>&gt;) {
+        <span class="macro">info!</span>(<span class="string">&quot;Narwhal worker client added ({})&quot;</span>, addr);
         <span class="kw">let </span>addr = <span class="self">Self</span>::canonicalize_address_key(addr);
         <span class="kw">let </span><span class="kw-2">mut </span>clients = LOCAL_NARWHAL_CLIENTS.lock().unwrap();
-        <span class="kw">if </span>clients.is_none() {
-            <span class="kw-2">*</span>clients = <span class="prelude-val">Some</span>(BTreeMap::new());
-        }
-        <span class="kw">match </span>clients.as_mut().unwrap().entry(addr) {
+        <span class="kw">match </span>clients.entry(addr) {
             Entry::Vacant(entry) =&gt; {
                 entry.insert(Arc::new(ArcSwap::from(instance)));
             }
@@ -177,7 +175,7 @@
     </span><span class="kw">pub fn </span>get_global(addr: <span class="kw-2">&amp;</span>Multiaddr) -&gt; <span class="prelude-ty">Option</span>&lt;Arc&lt;ArcSwap&lt;<span class="self">Self</span>&gt;&gt;&gt; {
         <span class="kw">let </span>addr = <span class="self">Self</span>::canonicalize_address_key(addr.clone());
         <span class="kw">let </span>clients = LOCAL_NARWHAL_CLIENTS.lock().unwrap();
-        clients.as_ref()<span class="question-mark">?</span>.get(<span class="kw-2">&amp;</span>addr).cloned()
+        clients.get(<span class="kw-2">&amp;</span>addr).cloned()
     }
 
     <span class="doccomment">/// Submits a transaction to the local Narwhal worker.

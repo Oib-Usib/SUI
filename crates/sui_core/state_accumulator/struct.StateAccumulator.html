@@ -7,7 +7,7 @@
 </div></details><details class="toggle method-toggle" open><summary><section id="method.accumulate_effects" class="method"><a class="srclink rightside" href="../../src/sui_core/state_accumulator.rs.html#272-278">source</a><h4 class="code-header">pub fn <a href="#method.accumulate_effects" class="fn">accumulate_effects</a>(
     &amp;self,
     effects: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="enum" href="../../sui_types/messages/enum.TransactionEffects.html" title="enum sui_types::messages::TransactionEffects">TransactionEffects</a>&gt;,
-    protocol_config: &amp;ProtocolConfig
+    protocol_config: &amp;<a class="struct" href="../../sui_protocol_config/struct.ProtocolConfig.html" title="struct sui_protocol_config::ProtocolConfig">ProtocolConfig</a>
 ) -&gt; <a class="type" href="../../sui_types/accumulator/type.Accumulator.html" title="type sui_types::accumulator::Accumulator">Accumulator</a></h4></section></summary><div class="docblock"><p>Accumulates given effects and returns the accumulator without side effects.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.accumulate_epoch" class="method"><a class="srclink rightside" href="../../src/sui_core/state_accumulator.rs.html#284-363">source</a><h4 class="code-header">pub async fn <a href="#method.accumulate_epoch" class="fn">accumulate_epoch</a>(
     &amp;self,

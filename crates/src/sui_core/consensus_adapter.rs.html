@@ -989,6 +989,9 @@
 <a href="#989" id="989">989</a>
 <a href="#990" id="990">990</a>
 <a href="#991" id="991">991</a>
+<a href="#992" id="992">992</a>
+<a href="#993" id="993">993</a>
+<a href="#994" id="994">994</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1197,13 +1200,13 @@
     <span class="kw">async fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;ArcSwap&lt;LocalNarwhalClient&gt;&gt; {
         <span class="comment">// Narwhal may not have started and created LocalNarwhalClient, so retry in a loop.
         // Retries should only happen on Sui process start.
-        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(client) = timeout(Duration::from_secs(<span class="number">30</span>), <span class="kw">async </span>{
+        </span><span class="kw">const </span>NARWHAL_WORKER_START_TIMEOUT: Duration = Duration::from_secs(<span class="number">30</span>);
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(client) = timeout(NARWHAL_WORKER_START_TIMEOUT, <span class="kw">async </span>{
             <span class="kw">loop </span>{
                 <span class="kw">match </span>LocalNarwhalClient::get_global(<span class="kw-2">&amp;</span><span class="self">self</span>.addr) {
                     <span class="prelude-val">Some</span>(c) =&gt; <span class="kw">return </span>c,
                     <span class="prelude-val">None </span>=&gt; {
                         sleep(Duration::from_millis(<span class="number">100</span>)).<span class="kw">await</span>;
-                        <span class="kw">continue</span>;
                     }
                 };
             }
@@ -1212,7 +1215,10 @@
         </span>{
             <span class="kw">return </span>client;
         }
-        <span class="macro">panic!</span>(<span class="string">&quot;Timed out waiting for Narwhal to start on {}!&quot;</span>, <span class="self">self</span>.addr);
+        <span class="macro">panic!</span>(
+            <span class="string">&quot;Timed out after {:?} waiting for Narwhal worker ({}) to start!&quot;</span>,
+            NARWHAL_WORKER_START_TIMEOUT, <span class="self">self</span>.addr,
+        );
     }
 }
 

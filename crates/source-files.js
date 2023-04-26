@@ -2,7 +2,7 @@ var sourcesIndex = JSON.parse('{\
 "demo_client":["",[],["demo_client.rs"]],\
 "indexer_data_validation":["",[],["indexer_data_validation.rs"]],\
 "merge_coins":["",[],["merge_coins.rs"]],\
-"mysten_common":["",[["sync",[],["mod.rs","notify_once.rs","notify_read.rs"]]],["lib.rs"]],\
+"mysten_common":["",[["sync",[],["async_once_cell.rs","mod.rs","notify_once.rs","notify_read.rs"]]],["lib.rs"]],\
 "mysten_metrics":["",[],["guards.rs","histogram.rs","lib.rs"]],\
 "mysten_network":["",[],["client.rs","codec.rs","config.rs","lib.rs","metrics.rs","multiaddr.rs","server.rs"]],\
 "mysten_util_mem":["",[],["allocators.rs","external_impls.rs","lib.rs","malloc_size.rs","memory_stats_noop.rs","sizeof.rs"]],\
