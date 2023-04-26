@@ -121,18 +121,137 @@
 <a href="#121" id="121">121</a>
 <a href="#122" id="122">122</a>
 <a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>clap::Parser;
+</span><span class="kw">use </span>async_recursion::async_recursion;
+<span class="kw">use </span>clap::Parser;
 
 <span class="kw">use </span><span class="kw">crate</span>::replay::LocalExec;
+<span class="kw">use </span><span class="kw">crate</span>::replay::ProtocolVersionSummary;
 <span class="kw">use </span>std::str::FromStr;
 <span class="kw">use </span>sui_config::node::ExpensiveSafetyCheckConfig;
 <span class="kw">use </span>sui_types::digests::TransactionDigest;
-<span class="kw">use </span>tracing::info;
-
+<span class="kw">use </span>tracing::{error, info};
+<span class="kw">mod </span>data_fetcher;
+<span class="kw">mod </span>db_rider;
 <span class="kw">mod </span>replay;
+<span class="kw">mod </span>types;
 
 <span class="attr">#[derive(Parser, Clone)]
 #[clap(rename_all = <span class="string">&quot;kebab-case&quot;</span>)]
@@ -145,7 +264,7 @@
         </span>show_effects: bool,
     },
 
-    <span class="attr">#[clap(name = <span class="string">&quot;checkpoints&quot;</span>)]
+    <span class="attr">#[clap(name = <span class="string">&quot;ch&quot;</span>)]
     </span>ReplayCheckpoints {
         <span class="attr">#[clap(long, short)]
         </span>start: u64,
@@ -153,23 +272,36 @@
         </span>end: u64,
         <span class="attr">#[clap(long, short)]
         </span>terminate_early: bool,
+        <span class="attr">#[clap(long, short, default_value = <span class="string">&quot;16&quot;</span>)]
+        </span>max_tasks: u64,
+    },
+
+    <span class="attr">#[clap(name = <span class="string">&quot;ep&quot;</span>)]
+    </span>ReplayEpoch {
+        <span class="attr">#[clap(long, short)]
+        </span>epoch: u64,
+        <span class="attr">#[clap(long, short)]
+        </span>terminate_early: bool,
+        <span class="attr">#[clap(long, short, default_value = <span class="string">&quot;16&quot;</span>)]
+        </span>max_tasks: u64,
     },
 
     <span class="attr">#[clap(name = <span class="string">&quot;report&quot;</span>)]
     </span>Report,
 }
 
-<span class="kw">pub async fn </span>execute_replay_command(
+<span class="attr">#[async_recursion]
+</span><span class="kw">pub async fn </span>execute_replay_command(
     rpc_url: String,
     safety_checks: bool,
     cmd: ReplayToolCommand,
-) -&gt; anyhow::Result&lt;()&gt; {
+) -&gt; anyhow::Result&lt;(u64, u64)&gt; {
     <span class="kw">let </span>safety = <span class="kw">if </span>safety_checks {
         ExpensiveSafetyCheckConfig::new_enable_all()
     } <span class="kw">else </span>{
         ExpensiveSafetyCheckConfig::default()
     };
-    <span class="kw">match </span>cmd {
+    <span class="prelude-val">Ok</span>(<span class="kw">match </span>cmd {
         ReplayToolCommand::ReplayTransaction {
             tx_digest,
             show_effects,
@@ -188,34 +320,9 @@
             }
 
             <span class="macro">info!</span>(<span class="string">&quot;Execution finished successfully. Local and on-chain effects match.&quot;</span>);
+            (<span class="number">1u64</span>, <span class="number">1u64</span>)
         }
-        ReplayToolCommand::ReplayCheckpoints {
-            start,
-            end,
-            terminate_early,
-        } =&gt; {
-            <span class="kw">let </span><span class="kw-2">mut </span>total_tx = <span class="number">0</span>;
-            <span class="macro">info!</span>(<span class="string">&quot;Executing checkpoints starting at {}&quot;</span>, start,);
-            <span class="kw">for </span>checkpoint <span class="kw">in </span>start..=end {
-                total_tx += LocalExec::new_from_fn_url(<span class="kw-2">&amp;</span>rpc_url)
-                    .<span class="kw">await</span><span class="question-mark">?
-                    </span>.init_for_execution()
-                    .<span class="kw">await</span><span class="question-mark">?
-                    </span>.execute_all_in_checkpoint(checkpoint, safety.clone(), terminate_early)
-                    .<span class="kw">await</span><span class="question-mark">?</span>;
-                <span class="kw">if </span>checkpoint % <span class="number">10 </span>== <span class="number">0 </span>{
-                    <span class="macro">info!</span>(
-                        <span class="string">&quot;Executed {} checkpoints @ {} total transactions&quot;</span>,
-                        checkpoint - start + <span class="number">1</span>,
-                        total_tx
-                    );
-                }
-            }
-            <span class="macro">info!</span>(
-                <span class="string">&quot;Executing checkpoints ended at {}. Ran {} total transactions&quot;</span>,
-                end, total_tx
-            );
-        }
+
         ReplayToolCommand::Report =&gt; {
             <span class="kw">let </span><span class="kw-2">mut </span>lx = LocalExec::new_from_fn_url(<span class="kw-2">&amp;</span>rpc_url).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">let </span>epoch_table = lx.protocol_ver_to_epoch_map().<span class="kw">await</span><span class="question-mark">?</span>;
@@ -223,13 +330,29 @@
             <span class="comment">// We need this for other activities in this session
             </span>lx.current_protocol_version = <span class="kw-2">*</span>epoch_table.keys().peekable().last().unwrap();
 
-            <span class="macro">println!</span>(<span class="string">&quot;  Protocol Version  |                Epoch Change TX               |      Epoch Range&quot;</span>);
-            <span class="macro">println!</span>(<span class="string">&quot;-------------------------------------------------------------------------------------&quot;</span>);
+            <span class="macro">println!</span>(<span class="string">&quot;  Protocol Version  |                Epoch Change TX               |      Epoch Range     |   Checkpoint Range   &quot;</span>);
+            <span class="macro">println!</span>(<span class="string">&quot;---------------------------------------------------------------------------------------------------------------&quot;</span>);
 
-            <span class="kw">for </span>(protocol_version, (tx_digest, start_epoch, end_epoch)) <span class="kw">in </span>epoch_table {
+            <span class="kw">for </span>(
+                protocol_version,
+                ProtocolVersionSummary {
+                    epoch_change_tx: tx_digest,
+                    epoch_start: start_epoch,
+                    epoch_end: end_epoch,
+                    checkpoint_start,
+                    checkpoint_end,
+                    ..
+                },
+            ) <span class="kw">in </span>epoch_table
+            {
                 <span class="macro">println!</span>(
-                    <span class="string">&quot; {:^16}   | {:^32} | {:^10}-{:^10}&quot;</span>,
-                    protocol_version, tx_digest, start_epoch, end_epoch
+                    <span class="string">&quot; {:^16}   | {:^43} | {:^10}-{:^10}| {:^10}-{:^10} &quot;</span>,
+                    protocol_version,
+                    tx_digest,
+                    start_epoch,
+                    end_epoch,
+                    checkpoint_start,
+                    checkpoint_end
                 );
             }
 
@@ -240,8 +363,115 @@
                     <span class="macro">println!</span>(<span class="string">&quot;Package: {} Seq: {}&quot;</span>, package_id, seq_num);
                 }
             }
+            (<span class="number">0u64</span>, <span class="number">0u64</span>)
         }
-    }
-    <span class="prelude-val">Ok</span>(())
+
+        ReplayToolCommand::ReplayCheckpoints {
+            start,
+            end,
+            terminate_early,
+            max_tasks,
+        } =&gt; {
+            <span class="macro">assert!</span>(start &lt;= end, <span class="string">&quot;Start checkpoint must be &lt;= end checkpoint&quot;</span>);
+            <span class="macro">assert!</span>(max_tasks &gt; <span class="number">0</span>, <span class="string">&quot;Max tasks must be &gt; 0&quot;</span>);
+            <span class="kw">let </span>checkpoints_per_task = ((end - start + max_tasks) / max_tasks) <span class="kw">as </span>usize;
+            <span class="kw">let </span><span class="kw-2">mut </span>handles = <span class="macro">vec!</span>[];
+            <span class="macro">info!</span>(
+                <span class="string">&quot;Executing checkpoints {} to {} with at most {} tasks and at most {} checkpoints per task&quot;</span>,
+                start, end, max_tasks, checkpoints_per_task
+            );
+
+            <span class="kw">let </span>range: Vec&lt;<span class="kw">_</span>&gt; = (start..=end).collect();
+            <span class="kw">for </span>(task_count, checkpoints) <span class="kw">in </span>range.chunks(checkpoints_per_task).enumerate() {
+                <span class="kw">let </span>checkpoints = checkpoints.to_vec();
+                <span class="kw">let </span>rpc_url = rpc_url.clone();
+                <span class="kw">let </span>safety = safety.clone();
+                handles.push(tokio::spawn(<span class="kw">async move </span>{
+                    <span class="macro">info!</span>(<span class="string">&quot;Spawning task {task_count} for checkpoints {checkpoints:?}&quot;</span>);
+                    <span class="kw">let </span>time = std::time::Instant::now();
+                    <span class="kw">let </span>(succeeded, total) = LocalExec::new_from_fn_url(<span class="kw-2">&amp;</span>rpc_url)
+                        .<span class="kw">await
+                        </span>.unwrap()
+                        .init_for_execution()
+                        .<span class="kw">await
+                        </span>.unwrap()
+                        .execute_all_in_checkpoints(<span class="kw-2">&amp;</span>checkpoints, <span class="kw-2">&amp;</span>safety, terminate_early)
+                        .<span class="kw">await
+                        </span>.unwrap();
+                    <span class="kw">let </span>time = time.elapsed();
+                    <span class="macro">info!</span>(
+                        <span class="string">&quot;Task {task_count}: executed checkpoints {:?} @ {} total transactions, {} succeeded&quot;</span>,
+                        checkpoints, total, succeeded
+                    );
+                    (succeeded, total, time)
+                }));
+            }
+
+            <span class="kw">let </span><span class="kw-2">mut </span>total_tx = <span class="number">0</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>total_time_ms = <span class="number">0</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>total_succeeded = <span class="number">0</span>;
+            futures::future::join_all(handles)
+                .<span class="kw">await
+                </span>.into_iter()
+                .for_each(|x| <span class="kw">match </span>x {
+                    <span class="prelude-val">Ok</span>((suceeded, total, time)) =&gt; {
+                        total_tx += total;
+                        total_time_ms += time.as_millis() <span class="kw">as </span>u64;
+                        total_succeeded += suceeded;
+                    }
+                    <span class="prelude-val">Err</span>(e) =&gt; {
+                        <span class="macro">error!</span>(<span class="string">&quot;Task failed: {:?}&quot;</span>, e);
+                    }
+                });
+            <span class="macro">info!</span>(
+                <span class="string">&quot;Executed {} checkpoints @ {}/{} total TXs succeeded in {} ms ({}) avg TX/s&quot;</span>,
+                end - start + <span class="number">1</span>,
+                total_succeeded,
+                total_tx,
+                total_time_ms,
+                (total_tx <span class="kw">as </span>f64) / (total_time_ms <span class="kw">as </span>f64 / <span class="number">1000.0</span>)
+            );
+            (total_succeeded, total_tx)
+        }
+        ReplayToolCommand::ReplayEpoch {
+            epoch,
+            terminate_early,
+            max_tasks,
+        } =&gt; {
+            <span class="kw">let </span>lx = LocalExec::new_from_fn_url(<span class="kw-2">&amp;</span>rpc_url).<span class="kw">await</span><span class="question-mark">?</span>;
+
+            <span class="kw">let </span>(start, end) = lx.checkpoints_for_epoch(epoch).<span class="kw">await</span><span class="question-mark">?</span>;
+
+            <span class="macro">info!</span>(
+                <span class="string">&quot;Executing epoch {} (checkpoint range {}-{}) with at most {} tasks&quot;</span>,
+                epoch, start, end, max_tasks
+            );
+            <span class="kw">let </span>status = execute_replay_command(
+                rpc_url,
+                safety_checks,
+                ReplayToolCommand::ReplayCheckpoints {
+                    start,
+                    end,
+                    terminate_early,
+                    max_tasks,
+                },
+            )
+            .<span class="kw">await</span>;
+            <span class="kw">match </span>status {
+                <span class="prelude-val">Ok</span>((succeeded, total)) =&gt; {
+                    <span class="macro">info!</span>(
+                        <span class="string">&quot;Epoch {} replay finished {} out of {} TXs&quot;</span>,
+                        epoch, succeeded, total
+                    );
+
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>((succeeded, total));
+                }
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">error!</span>(<span class="string">&quot;Epoch {} replay failed: {:?}&quot;</span>, epoch, e);
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(e);
+                }
+            }
+        }
+    })
 }
 </code></pre></div></section></main></body></html>

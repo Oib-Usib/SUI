@@ -1605,12 +1605,14 @@
 <a href="#1605" id="1605">1605</a>
 <a href="#1606" id="1606">1606</a>
 <a href="#1607" id="1607">1607</a>
-<a href="#1608" id="1608">1608</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Display, Formatter, Write};
 
+<span class="kw">use </span><span class="kw">crate</span>::balance_changes::BalanceChange;
+<span class="kw">use </span><span class="kw">crate</span>::object_changes::ObjectChange;
+<span class="kw">use crate</span>::{Page, SuiEvent, SuiMovePackage, SuiObjectRef};
 <span class="kw">use </span>enum_dispatch::enum_dispatch;
 <span class="kw">use </span>fastcrypto::encoding::Base64;
 <span class="kw">use </span>move_binary_format::access::ModuleAccess;
@@ -1646,10 +1648,6 @@
 <span class="kw">use </span>sui_types::sui_serde::{
     BigInt, SequenceNumber <span class="kw">as </span>AsSequenceNumber, SuiTypeTag <span class="kw">as </span>AsSuiTypeTag,
 };
-
-<span class="kw">use </span><span class="kw">crate</span>::balance_changes::BalanceChange;
-<span class="kw">use </span><span class="kw">crate</span>::object_changes::ObjectChange;
-<span class="kw">use crate</span>::{Page, SuiEvent, SuiMovePackage, SuiObjectRef};
 
 <span class="comment">// similar to EpochId of sui-types but BigInt
 </span><span class="kw">pub type </span>SuiEpochId = BigInt&lt;u64&gt;;

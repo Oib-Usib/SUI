@@ -51,7 +51,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_protocol_config":["",[],["lib.rs"]],\
 "sui_protocol_config_macros":["",[],["lib.rs"]],\
 "sui_proxy":["",[],["admin.rs","config.rs","consumer.rs","handlers.rs","histogram_relay.rs","lib.rs","metrics.rs","middleware.rs","peers.rs","prom_to_mimir.rs","remote_write.rs"]],\
-"sui_replay":["",[],["lib.rs","replay.rs"]],\
+"sui_replay":["",[],["data_fetcher.rs","db_rider.rs","lib.rs","replay.rs","types.rs"]],\
 "sui_rosetta":["",[],["account.rs","block.rs","construction.rs","errors.rs","lib.rs","network.rs","operations.rs","state.rs","types.rs"]],\
 "sui_rpc_loadgen":["",[["payload",[],["checkpoint_utils.rs","get_all_balances.rs","get_checkpoints.rs","get_object.rs","get_reference_gas_price.rs","mod.rs","multi_get_objects.rs","multi_get_transaction_blocks.rs","pay_sui.rs","query_transactions.rs","rpc_command_processor.rs","validation.rs"]]],["load_test.rs","main.rs"]],\
 "sui_sdk":["",[],["apis.rs","error.rs","lib.rs"]],\

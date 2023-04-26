@@ -1405,43 +1405,21 @@
 <a href="#1405" id="1405">1405</a>
 <a href="#1406" id="1406">1406</a>
 <a href="#1407" id="1407">1407</a>
-<a href="#1408" id="1408">1408</a>
-<a href="#1409" id="1409">1409</a>
-<a href="#1410" id="1410">1410</a>
-<a href="#1411" id="1411">1411</a>
-<a href="#1412" id="1412">1412</a>
-<a href="#1413" id="1413">1413</a>
-<a href="#1414" id="1414">1414</a>
-<a href="#1415" id="1415">1415</a>
-<a href="#1416" id="1416">1416</a>
-<a href="#1417" id="1417">1417</a>
-<a href="#1418" id="1418">1418</a>
-<a href="#1419" id="1419">1419</a>
-<a href="#1420" id="1420">1420</a>
-<a href="#1421" id="1421">1421</a>
-<a href="#1422" id="1422">1422</a>
-<a href="#1423" id="1423">1423</a>
-<a href="#1424" id="1424">1424</a>
-<a href="#1425" id="1425">1425</a>
-<a href="#1426" id="1426">1426</a>
-<a href="#1427" id="1427">1427</a>
-<a href="#1428" id="1428">1428</a>
-<a href="#1429" id="1429">1429</a>
-<a href="#1430" id="1430">1430</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>futures::executor::block_on;
+</span><span class="kw">use </span><span class="kw">crate</span>::data_fetcher::DataFetcher;
+<span class="kw">use </span><span class="kw">crate</span>::data_fetcher::RemoteFetcher;
+<span class="kw">use </span><span class="kw">crate</span>::types::<span class="kw-2">*</span>;
+<span class="kw">use </span>futures::executor::block_on;
 <span class="kw">use </span>move_binary_format::CompiledModule;
 <span class="kw">use </span>move_bytecode_utils::module_cache::GetModule;
 <span class="kw">use </span>move_core_types::account_address::AccountAddress;
 <span class="kw">use </span>move_core_types::language_storage::{ModuleId, StructTag};
 <span class="kw">use </span>move_core_types::parser::parse_struct_tag;
 <span class="kw">use </span>move_core_types::resolver::{ModuleResolver, ResourceResolver};
-<span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>similar::{ChangeTag, TextDiff};
 <span class="kw">use </span>std::collections::BTreeMap;
-<span class="kw">use </span>std::fmt::Debug;
 <span class="kw">use </span>std::str::FromStr;
 <span class="kw">use </span>std::sync::{Arc, Mutex};
 <span class="kw">use </span>sui_adapter::adapter;
@@ -1450,21 +1428,14 @@
 <span class="kw">use </span>sui_config::node::ExpensiveSafetyCheckConfig;
 <span class="kw">use </span>sui_core::authority::TemporaryStore;
 <span class="kw">use </span>sui_framework::BuiltInFramework;
-<span class="kw">use </span>sui_json_rpc_types::{
-    EventFilter, SuiEvent, SuiGetPastObjectRequest, SuiObjectData, SuiObjectDataOptions,
-    SuiObjectRef, SuiPastObjectResponse, SuiTransactionBlockEffectsV1,
-    SuiTransactionBlockResponseOptions,
-};
-<span class="kw">use </span>sui_json_rpc_types::{
-    SuiObjectResponse, SuiTransactionBlockEffects, SuiTransactionBlockEffectsAPI,
-};
+<span class="kw">use </span>sui_json_rpc_types::{EventFilter, SuiEvent, SuiTransactionBlockEffectsV1};
+<span class="kw">use </span>sui_json_rpc_types::{SuiTransactionBlockEffects, SuiTransactionBlockEffectsAPI};
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
-<span class="kw">use </span>sui_sdk::error::Error <span class="kw">as </span>SuiRpcError;
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
 <span class="kw">use </span>sui_types::base_types::{ObjectID, ObjectRef, SequenceNumber, SuiAddress, VersionNumber};
 <span class="kw">use </span>sui_types::committee::EpochId;
-<span class="kw">use </span>sui_types::digests::{ObjectDigest, TransactionDigest};
-<span class="kw">use </span>sui_types::error::{SuiError, SuiObjectResponseError, SuiResult, UserInputError};
+<span class="kw">use </span>sui_types::digests::TransactionDigest;
+<span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 <span class="kw">use </span>sui_types::gas::SuiGasStatus;
 <span class="kw">use </span>sui_types::messages::{InputObjectKind, InputObjects, TransactionKind};
 <span class="kw">use </span>sui_types::messages::{SenderSignedData, TransactionDataAPI};
@@ -1473,205 +1444,193 @@
 <span class="kw">use </span>sui_types::storage::get_module_by_id;
 <span class="kw">use </span>sui_types::storage::{BackingPackageStore, ChildObjectResolver, ObjectStore, ParentSync};
 <span class="kw">use </span>sui_types::DEEPBOOK_OBJECT_ID;
-<span class="kw">use </span>thiserror::Error;
 <span class="kw">use </span>tracing::{error, warn};
 
 <span class="comment">// TODO: add persistent cache. But perf is good enough already.
 // TODO: handle safe mode
 
-// These are very testnet specific
-</span><span class="kw">const </span>GENESIX_TX_DIGEST: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Cgww1sn7XViCPSdDcAPmVcARueWuexJ8af8zD842Ff43&quot;</span>;
-<span class="kw">const </span>SAFE_MODETX_1_DIGEST: <span class="kw-2">&amp;</span>str = <span class="string">&quot;AGBCaUGj4iGpGYyQvto9Bke1EwouY8LGMoTzzuPMx4nd&quot;</span>;
+</span><span class="attr">#[derive(Debug, Clone, PartialEq, Eq)]
+</span><span class="kw">pub struct </span>ProtocolVersionSummary {
+    <span class="doccomment">/// Protocol version at this point
+    </span><span class="kw">pub </span>protocol_version: u64,
+    <span class="doccomment">/// The first epoch that uses this protocol version
+    </span><span class="kw">pub </span>epoch_start: u64,
+    <span class="doccomment">/// The last epoch that uses this protocol version
+    </span><span class="kw">pub </span>epoch_end: u64,
+    <span class="doccomment">/// The first checkpoint in this protocol v ersion
+    </span><span class="kw">pub </span>checkpoint_start: u64,
+    <span class="doccomment">/// The last checkpoint in this protocol version
+    </span><span class="kw">pub </span>checkpoint_end: u64,
+    <span class="doccomment">/// The transaction which triggered this epoch change
+    </span><span class="kw">pub </span>epoch_change_tx: TransactionDigest,
+}
 
-<span class="kw">const </span>EPOCH_CHANGE_STRUCT_TAG: <span class="kw-2">&amp;</span>str = <span class="string">&quot;0x3::sui_system_state_inner::SystemEpochInfoEvent&quot;</span>;
+<span class="kw">pub struct </span>Storage {
+    <span class="doccomment">/// These are objects at the frontier of the execution&#39;s view
+    /// They might not be the latest object currently but they are the latest objects
+    /// for the TX at the time it was run
+    /// This store cannot be shared between runners
+    </span><span class="kw">pub </span>live_objects_store: BTreeMap&lt;ObjectID, Object&gt;,
+
+    <span class="doccomment">/// Package cache and object version cache can be shared between runners
+    /// Non system packages are immutable so we can cache these
+    </span><span class="kw">pub </span>package_cache: Arc&lt;Mutex&lt;BTreeMap&lt;ObjectID, Object&gt;&gt;&gt;,
+    <span class="doccomment">/// Object contents are frozen at their versions so we can cache these
+    /// We must place system packages here as well
+    </span><span class="kw">pub </span>object_version_cache: Arc&lt;Mutex&lt;BTreeMap&lt;(ObjectID, SequenceNumber), Object&gt;&gt;&gt;,
+}
+
+<span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>Storage {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
+        <span class="macro">writeln!</span>(f, <span class="string">&quot;Live object store&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">for </span>(id, obj) <span class="kw">in </span><span class="self">self</span>.live_objects_store.iter() {
+            <span class="macro">writeln!</span>(f, <span class="string">&quot;{}: {:?}&quot;</span>, id, obj.compute_object_reference())<span class="question-mark">?</span>;
+        }
+        <span class="macro">writeln!</span>(f, <span class="string">&quot;Package cache&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">for </span>(id, obj) <span class="kw">in </span><span class="self">self</span>.package_cache.lock().expect(<span class="string">&quot;Unable to lock&quot;</span>).iter() {
+            <span class="macro">writeln!</span>(f, <span class="string">&quot;{}: {:?}&quot;</span>, id, obj.compute_object_reference())<span class="question-mark">?</span>;
+        }
+        <span class="macro">writeln!</span>(f, <span class="string">&quot;Object version cache&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">for </span>(id, <span class="kw">_</span>) <span class="kw">in </span><span class="self">self
+            </span>.object_version_cache
+            .lock()
+            .expect(<span class="string">&quot;Unable to lock&quot;</span>)
+            .iter()
+        {
+            <span class="macro">writeln!</span>(f, <span class="string">&quot;{}: {}&quot;</span>, id.<span class="number">0</span>, id.<span class="number">1</span>)<span class="question-mark">?</span>;
+        }
+
+        <span class="macro">write!</span>(f, <span class="string">&quot;&quot;</span>)
+    }
+}
+
+<span class="kw">impl </span>Storage {
+    <span class="kw">pub fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            live_objects_store: BTreeMap::new(),
+            package_cache: Arc::new(Mutex::new(BTreeMap::new())),
+            object_version_cache: Arc::new(Mutex::new(BTreeMap::new())),
+        }
+    }
+}
 
 <span class="kw">pub struct </span>LocalExec {
     <span class="kw">pub </span>client: SuiClient,
     <span class="comment">// For a given protocol version, what TX created it, and what is the valid range of epochs
     // at this protocol version.
-    </span><span class="kw">pub </span>protocol_version_epoch_table: BTreeMap&lt;u64, (TransactionDigest, u64, u64)&gt;,
+    </span><span class="kw">pub </span>protocol_version_epoch_table: BTreeMap&lt;u64, ProtocolVersionSummary&gt;,
     <span class="comment">// For a given protocol version, the mapping valid sequence numbers for each framework package
     </span><span class="kw">pub </span>protocol_version_system_package_table: BTreeMap&lt;u64, BTreeMap&lt;ObjectID, SequenceNumber&gt;&gt;,
+    <span class="comment">// The current protocol version for this execution
+    </span><span class="kw">pub </span>current_protocol_version: u64,
+    <span class="comment">// All state is contained here
+    </span><span class="kw">pub </span>storage: Storage,
+    <span class="comment">// Debug events
+    </span><span class="kw">pub </span>exec_store_events: Arc&lt;Mutex&lt;Vec&lt;ExecutionStoreEvent&gt;&gt;&gt;,
+    <span class="comment">// Debug events
+    </span><span class="kw">pub </span>metrics: Arc&lt;LimitsMetrics&gt;,
+    <span class="comment">// Used for fetching data from the network or remote store
+    </span><span class="kw">pub </span>fetcher: RemoteFetcher,
 
-    <span class="kw">pub </span>current_protocol_version: u64,
-
-    <span class="kw">pub </span>store: BTreeMap&lt;ObjectID, Object&gt;,
-    <span class="kw">pub </span>package_cache: Arc&lt;Mutex&lt;BTreeMap&lt;ObjectID, Object&gt;&gt;&gt;,
-    <span class="kw">pub </span>object_version_cache: Arc&lt;Mutex&lt;BTreeMap&lt;(ObjectID, SequenceNumber), Object&gt;&gt;&gt;,
-
-    <span class="kw">pub </span>exec_store_events: Arc&lt;Mutex&lt;Vec&lt;ExecutionStoreEvent&gt;&gt;&gt;,
-
-    <span class="kw">pub </span>metrics: Arc&lt;LimitsMetrics&gt;,
-}
-
-<span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">struct </span>TxInfo {
-    <span class="kw">pub </span>sender: SuiAddress,
-    <span class="kw">pub </span>input_objects: Vec&lt;InputObjectKind&gt;,
-    <span class="kw">pub </span>kind: TransactionKind,
-    <span class="kw">pub </span>modified_at_versions: Vec&lt;(ObjectID, SequenceNumber)&gt;,
-    <span class="kw">pub </span>shared_object_refs: Vec&lt;SuiObjectRef&gt;,
-    <span class="kw">pub </span>gas: Vec&lt;(ObjectID, SequenceNumber, ObjectDigest)&gt;,
-    <span class="kw">pub </span>gas_budget: u64,
-    <span class="kw">pub </span>gas_price: u64,
-    <span class="kw">pub </span>executed_epoch: u64,
-    <span class="kw">pub </span>dependencies: Vec&lt;TransactionDigest&gt;,
-    <span class="kw">pub </span>effects: SuiTransactionBlockEffectsV1,
-    <span class="kw">pub </span>protocol_config: ProtocolConfig,
-}
-
-<span class="attr">#[allow(clippy::large_enum_variant)]
-#[derive(Debug, Serialize, Deserialize, Error, Clone)]
-</span><span class="kw">pub enum </span>LocalExecError {
-    <span class="attr">#[error(<span class="string">&quot;SuiError: {:#?}&quot;</span>, err)]
-    </span>SuiError { err: SuiError },
-
-    <span class="attr">#[error(<span class="string">&quot;SuiRpcError: {:#?}&quot;</span>, err)]
-    </span>SuiRpcError { err: String },
-
-    <span class="attr">#[error(<span class="string">&quot;SuiObjectResponseError: {:#?}&quot;</span>, err)]
-    </span>SuiObjectResponseError { err: SuiObjectResponseError },
-
-    <span class="attr">#[error(<span class="string">&quot;UserInputError: {:#?}&quot;</span>, err)]
-    </span>UserInputError { err: UserInputError },
-
-    <span class="attr">#[error(<span class="string">&quot;GeneralError: {:#?}&quot;</span>, err)]
-    </span>GeneralError { err: String },
-
-    <span class="attr">#[error(<span class="string">&quot;ObjectNotExist: {:#?}&quot;</span>, id)]
-    </span>ObjectNotExist { id: ObjectID },
-
-    <span class="attr">#[error(<span class="string">&quot;ObjectVersionNotFound: {:#?} version {}&quot;</span>, id, version)]
-    </span>ObjectVersionNotFound {
-        id: ObjectID,
-        version: SequenceNumber,
-    },
-
-    <span class="attr">#[error(
-        <span class="string">&quot;ObjectVersionTooHigh: {:#?}, requested version {}, latest version found {}&quot;</span>,
-        id,
-        asked_version,
-        latest_version
-    )]
-    </span>ObjectVersionTooHigh {
-        id: ObjectID,
-        asked_version: SequenceNumber,
-        latest_version: SequenceNumber,
-    },
-
-    <span class="attr">#[error(
-        <span class="string">&quot;ObjectDeleted: {:#?} at version {:#?} digest {:#?}&quot;</span>,
-        id,
-        version,
-        digest
-    )]
-    </span>ObjectDeleted {
-        id: ObjectID,
-        version: SequenceNumber,
-        digest: ObjectDigest,
-    },
-
-    <span class="attr">#[error(
-        <span class="string">&quot;EffectsForked: Effects for digest {} forked with diff {}&quot;</span>,
-        digest,
-        diff
-    )]
-    </span>EffectsForked {
-        digest: TransactionDigest,
-        diff: String,
-        on_chain: Box&lt;SuiTransactionBlockEffectsV1&gt;,
-        local: Box&lt;SuiTransactionBlockEffectsV1&gt;,
-    },
-
-    <span class="attr">#[error(<span class="string">&quot;Genesis replay not supported digest {:#?}&quot;</span>, digest)]
-    </span>GenesisReplayNotSupported { digest: TransactionDigest },
-}
-
-<span class="kw">impl </span>From&lt;SuiObjectResponseError&gt; <span class="kw">for </span>LocalExecError {
-    <span class="kw">fn </span>from(err: SuiObjectResponseError) -&gt; <span class="self">Self </span>{
-        <span class="kw">match </span>err {
-            SuiObjectResponseError::NotExists { object_id } =&gt; {
-                LocalExecError::ObjectNotExist { id: object_id }
-            }
-            SuiObjectResponseError::Deleted {
-                object_id,
-                digest,
-                version,
-            } =&gt; LocalExecError::ObjectDeleted {
-                id: object_id,
-                version,
-                digest,
-            },
-            <span class="kw">_ </span>=&gt; LocalExecError::SuiObjectResponseError { err },
-        }
-    }
-}
-
-<span class="kw">fn </span>convert_past_obj_response(resp: SuiPastObjectResponse) -&gt; <span class="prelude-ty">Result</span>&lt;Object, LocalExecError&gt; {
-    <span class="kw">match </span>resp {
-        SuiPastObjectResponse::VersionFound(o) =&gt; obj_from_sui_obj_data(<span class="kw-2">&amp;</span>o),
-        SuiPastObjectResponse::ObjectDeleted(r) =&gt; <span class="prelude-val">Err</span>(LocalExecError::ObjectDeleted {
-            id: r.object_id,
-            version: r.version,
-            digest: r.digest,
-        }),
-        SuiPastObjectResponse::ObjectNotExists(id) =&gt; <span class="prelude-val">Err</span>(LocalExecError::ObjectNotExist { id }),
-        SuiPastObjectResponse::VersionNotFound(id, version) =&gt; {
-            <span class="prelude-val">Err</span>(LocalExecError::ObjectVersionNotFound { id, version })
-        }
-        SuiPastObjectResponse::VersionTooHigh {
-            object_id,
-            asked_version,
-            latest_version,
-        } =&gt; <span class="prelude-val">Err</span>(LocalExecError::ObjectVersionTooHigh {
-            id: object_id,
-            asked_version,
-            latest_version,
-        }),
-    }
-}
-
-<span class="kw">impl </span>From&lt;LocalExecError&gt; <span class="kw">for </span>SuiError {
-    <span class="kw">fn </span>from(err: LocalExecError) -&gt; <span class="self">Self </span>{
-        SuiError::Unknown(<span class="macro">format!</span>(<span class="string">&quot;{:#?}&quot;</span>, err))
-    }
-}
-
-<span class="kw">impl </span>From&lt;SuiError&gt; <span class="kw">for </span>LocalExecError {
-    <span class="kw">fn </span>from(err: SuiError) -&gt; <span class="self">Self </span>{
-        LocalExecError::SuiError { err }
-    }
-}
-<span class="kw">impl </span>From&lt;SuiRpcError&gt; <span class="kw">for </span>LocalExecError {
-    <span class="kw">fn </span>from(err: SuiRpcError) -&gt; <span class="self">Self </span>{
-        LocalExecError::SuiRpcError {
-            err: <span class="macro">format!</span>(<span class="string">&quot;{:#?}&quot;</span>, err),
-        }
-    }
-}
-
-<span class="kw">impl </span>From&lt;UserInputError&gt; <span class="kw">for </span>LocalExecError {
-    <span class="kw">fn </span>from(err: UserInputError) -&gt; <span class="self">Self </span>{
-        LocalExecError::UserInputError { err }
-    }
-}
-
-<span class="kw">impl </span>From&lt;anyhow::Error&gt; <span class="kw">for </span>LocalExecError {
-    <span class="kw">fn </span>from(err: anyhow::Error) -&gt; <span class="self">Self </span>{
-        LocalExecError::GeneralError {
-            err: <span class="macro">format!</span>(<span class="string">&quot;{:#?}&quot;</span>, err),
-        }
-    }
+    <span class="comment">// Retry policies due to RPC errors
+    </span><span class="kw">pub </span>num_retries_for_timeout: u32,
+    <span class="kw">pub </span>sleep_period_for_timeout: std::time::Duration,
 }
 
 <span class="kw">impl </span>LocalExec {
+    <span class="doccomment">/// Wrapper around fetcher in case we want to add more functionality
+    /// Such as fetching from local DB from snapshot
+    </span><span class="kw">pub async fn </span>multi_download(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        objs: <span class="kw-2">&amp;</span>[(ObjectID, SequenceNumber)],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>num_retries_for_timeout = <span class="self">self</span>.num_retries_for_timeout <span class="kw">as </span>i64;
+        <span class="kw">while </span>num_retries_for_timeout &gt;= <span class="number">0 </span>{
+            <span class="kw">match </span><span class="self">self</span>.fetcher.multi_get_versioned(objs).<span class="kw">await </span>{
+                <span class="prelude-val">Ok</span>(objs) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(objs),
+                <span class="prelude-val">Err</span>(LocalExecError::SuiRpcRequestTimeout) =&gt; {
+                    <span class="macro">warn!</span>(
+                        <span class="string">&quot;RPC request timed out. Retries left {}. Sleeping for {}s&quot;</span>,
+                        num_retries_for_timeout,
+                        <span class="self">self</span>.sleep_period_for_timeout.as_secs()
+                    );
+                    num_retries_for_timeout -= <span class="number">1</span>;
+                    tokio::time::sleep(<span class="self">self</span>.sleep_period_for_timeout).<span class="kw">await</span>;
+                }
+                <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
+            }
+        }
+        <span class="prelude-val">Err</span>(LocalExecError::SuiRpcRequestTimeout)
+    }
+    <span class="doccomment">/// Wrapper around fetcher in case we want to add more functionality
+    /// Such as fetching from local DB from snapshot
+    </span><span class="kw">pub async fn </span>multi_download_latest(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        objs: <span class="kw-2">&amp;</span>[ObjectID],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>num_retries_for_timeout = <span class="self">self</span>.num_retries_for_timeout <span class="kw">as </span>i64;
+        <span class="kw">while </span>num_retries_for_timeout &gt;= <span class="number">0 </span>{
+            <span class="kw">match </span><span class="self">self</span>.fetcher.multi_get_latest(objs).<span class="kw">await </span>{
+                <span class="prelude-val">Ok</span>(objs) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(objs),
+                <span class="prelude-val">Err</span>(LocalExecError::SuiRpcRequestTimeout) =&gt; {
+                    <span class="macro">warn!</span>(
+                        <span class="string">&quot;RPC request timed out. Retries left {}. Sleeping for {}s&quot;</span>,
+                        num_retries_for_timeout,
+                        <span class="self">self</span>.sleep_period_for_timeout.as_secs()
+                    );
+                    num_retries_for_timeout -= <span class="number">1</span>;
+                    tokio::time::sleep(<span class="self">self</span>.sleep_period_for_timeout).<span class="kw">await</span>;
+                }
+                <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
+            }
+        }
+        <span class="prelude-val">Err</span>(LocalExecError::SuiRpcRequestTimeout)
+    }
+
+    <span class="kw">pub async fn </span>fetch_loaded_child_refs(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, LocalExecError&gt; {
+        <span class="comment">// Get the child objects loaded
+        </span><span class="self">self</span>.fetcher.get_loaded_child_objects(tx_digest).<span class="kw">await
+    </span>}
+
+    <span class="doccomment">/// Gets all the epoch change events
+    </span><span class="kw">pub async fn </span>get_epoch_change_events(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        reverse: bool,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = SuiEvent&gt;, LocalExecError&gt; {
+        <span class="kw">let </span>struct_tag_str = EPOCH_CHANGE_STRUCT_TAG.to_string();
+        <span class="kw">let </span>struct_tag = parse_struct_tag(<span class="kw-2">&amp;</span>struct_tag_str)<span class="question-mark">?</span>;
+
+        <span class="comment">// TODO: Should probably limit/page this but okay for now?
+        </span><span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.client
+            .event_api()
+            .query_events(EventFilter::MoveEventType(struct_tag), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, reverse)
+            .<span class="kw">await
+            </span>.map_err(|e| LocalExecError::UnableToQuerySystemEvents {
+                rpc_err: e.to_string(),
+            })<span class="question-mark">?
+            </span>.data
+            .into_iter())
+    }
+
     <span class="kw">pub async fn </span>new_from_fn_url(http_url: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">Self</span>::new(
-            SuiClientBuilder::default().build(http_url).<span class="kw">await</span><span class="question-mark">?</span>,
+            SuiClientBuilder::default()
+                .request_timeout(RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD)
+                .max_concurrent_requests(MAX_CONCURRENT_REQUESTS)
+                .build(http_url)
+                .<span class="kw">await</span><span class="question-mark">?</span>,
         ))
     }
 
-    <span class="kw">pub async fn </span>init_for_execution(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
+    <span class="doccomment">/// This captures the state of the network at a given point in time and populates
+    /// prptocol version tables including which system packages to fetch
+    /// If this function is called across epoch boundaries, the info might be stale.
+    /// But it should only be called once per epoch.
+    </span><span class="kw">pub async fn </span>init_for_execution(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
         <span class="self">self</span>.populate_protocol_version_tables().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
@@ -1681,15 +1640,17 @@
         </span><span class="kw">let </span>registry = prometheus::Registry::new();
         <span class="kw">let </span>metrics = Arc::new(LimitsMetrics::new(<span class="kw-2">&amp;</span>registry));
         <span class="self">Self </span>{
-            client,
-            store: BTreeMap::new(),
-            package_cache: Arc::new(Mutex::new(BTreeMap::new())),
-            object_version_cache: Arc::new(Mutex::new(BTreeMap::new())),
+            client: client.clone(),
             protocol_version_epoch_table: BTreeMap::new(),
             protocol_version_system_package_table: BTreeMap::new(),
             current_protocol_version: <span class="number">0</span>,
             exec_store_events: Arc::new(Mutex::new(Vec::new())),
             metrics,
+            storage: Storage::default(),
+            fetcher: RemoteFetcher { rpc_client: client },
+            <span class="comment">// TODO: make this configurable
+            </span>num_retries_for_timeout: RPC_TIMEOUT_ERR_NUM_RETRIES,
+            sleep_period_for_timeout: RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD,
         }
     }
 
@@ -1703,54 +1664,24 @@
         TemporaryStore::new(<span class="self">self</span>, input_objects, <span class="kw-2">*</span>tx_digest, protocol_config)
     }
 
-    <span class="kw">pub async fn </span>multi_download_and_store_sui_obj_ref(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        refs: <span class="kw-2">&amp;</span>[SuiObjectRef],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
-        <span class="kw">let </span>sub_refs: Vec&lt;<span class="kw">_</span>&gt; = refs.iter().map(|r| (r.object_id, r.version)).collect();
-        <span class="self">self</span>.multi_download_and_store(<span class="kw-2">&amp;</span>sub_refs).<span class="kw">await
-    </span>}
-
-    <span class="kw">pub async fn </span>multi_download(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        objs: <span class="kw-2">&amp;</span>[(ObjectID, SequenceNumber)],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
-        <span class="kw">let </span>objs: Vec&lt;<span class="kw">_</span>&gt; = objs
-            .iter()
-            .map(|(object_id, version)| SuiGetPastObjectRequest {
-                object_id: <span class="kw-2">*</span>object_id,
-                version: <span class="kw-2">*</span>version,
-            })
-            .collect();
-        <span class="kw">let </span>options = SuiObjectDataOptions::bcs_lossless();
-        <span class="kw">let </span>objects = <span class="self">self
-            </span>.client
-            .read_api()
-            .try_multi_get_parsed_past_object(objs, options)
-            .<span class="kw">await
-            </span>.map_err(|q| LocalExecError::SuiRpcError { err: q.to_string() })<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>objects: Vec&lt;<span class="kw">_</span>&gt; = objects
-            .iter()
-            .map(|o| convert_past_obj_response(o.clone()))
-            .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(objects)
-    }
-
     <span class="kw">pub async fn </span>multi_download_and_store(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         objs: <span class="kw-2">&amp;</span>[(ObjectID, SequenceNumber)],
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
         <span class="kw">let </span>objs = <span class="self">self</span>.multi_download(objs).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">for </span>obj <span class="kw">in </span>objs.iter() {
+
+        <span class="comment">// Backfill the store
+        </span><span class="kw">for </span>obj <span class="kw">in </span>objs.iter() {
             <span class="kw">let </span>o_ref = obj.compute_object_reference();
-            <span class="self">self</span>.store.insert(o_ref.<span class="number">0</span>, obj.clone());
-            <span class="self">self</span>.object_version_cache
+            <span class="self">self</span>.storage.live_objects_store.insert(o_ref.<span class="number">0</span>, obj.clone());
+            <span class="self">self</span>.storage
+                .object_version_cache
                 .lock()
                 .expect(<span class="string">&quot;Cannot lock&quot;</span>)
                 .insert((o_ref.<span class="number">0</span>, o_ref.<span class="number">1</span>), obj.clone());
             <span class="kw">if </span>obj.is_package() {
-                <span class="self">self</span>.package_cache
+                <span class="self">self</span>.storage
+                    .package_cache
                     .lock()
                     .expect(<span class="string">&quot;Cannot lock&quot;</span>)
                     .insert(o_ref.<span class="number">0</span>, obj.clone());
@@ -1774,7 +1705,7 @@
             .filter(|o| !<span class="self">self</span>.system_package_ids().contains(o))
             .collect();
         <span class="kw">let </span>objs = <span class="self">self
-            </span>.multi_download_latest(non_system_package_objs)
+            </span>.multi_download_latest(<span class="kw-2">&amp;</span>non_system_package_objs)
             .<span class="kw">await</span><span class="question-mark">?
             </span>.into_iter()
             .chain(syst_packages_objs.into_iter());
@@ -1782,38 +1713,21 @@
         <span class="kw">for </span>obj <span class="kw">in </span>objs.clone() {
             <span class="kw">let </span>o_ref = obj.compute_object_reference();
             <span class="comment">// We dont always want the latest in store
-            //self.store.insert(o_ref.0, obj.clone());
-            </span><span class="self">self</span>.object_version_cache
+            //self.storage.store.insert(o_ref.0, obj.clone());
+            </span><span class="self">self</span>.storage
+                .object_version_cache
                 .lock()
                 .expect(<span class="string">&quot;Cannot lock&quot;</span>)
                 .insert((o_ref.<span class="number">0</span>, o_ref.<span class="number">1</span>), obj.clone());
             <span class="kw">if </span>obj.is_package() {
-                <span class="self">self</span>.package_cache
+                <span class="self">self</span>.storage
+                    .package_cache
                     .lock()
                     .expect(<span class="string">&quot;Cannot lock&quot;</span>)
                     .insert(o_ref.<span class="number">0</span>, obj.clone());
             }
         }
         <span class="prelude-val">Ok</span>(objs.collect())
-    }
-
-    <span class="kw">pub async fn </span>multi_download_latest(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        objs: Vec&lt;ObjectID&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
-        <span class="kw">let </span>options = SuiObjectDataOptions::bcs_lossless();
-        <span class="kw">let </span>objects = <span class="self">self
-            </span>.client
-            .read_api()
-            .multi_get_object_with_options(objs, options)
-            .<span class="kw">await
-            </span>.map_err(|q| LocalExecError::SuiRpcError { err: q.to_string() })<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>objects: Vec&lt;<span class="kw">_</span>&gt; = objects
-            .iter()
-            .map(obj_from_sui_obj_response)
-            .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(objects)
     }
 
     <span class="comment">// TODO: remove this after `futures::executor::block_on` is removed.
@@ -1823,36 +1737,38 @@
         object_id: <span class="kw-2">&amp;</span>ObjectID,
         version: SequenceNumber,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Object, LocalExecError&gt; {
-        <span class="macro">println!</span>(<span class="string">&quot;Downloading object {} {}&quot;</span>, object_id, version);
         <span class="kw">if </span><span class="self">self
-            </span>.object_version_cache
+            </span>.storage
+            .object_version_cache
             .lock()
             .expect(<span class="string">&quot;Cannot lock&quot;</span>)
             .contains_key(<span class="kw-2">&amp;</span>(<span class="kw-2">*</span>object_id, version))
         {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="self">self
-                </span>.object_version_cache
+                </span>.storage
+                .object_version_cache
                 .lock()
                 .expect(<span class="string">&quot;Cannot lock&quot;</span>)
                 .get(<span class="kw-2">&amp;</span>(<span class="kw-2">*</span>object_id, version))
-                .ok_or(LocalExecError::GeneralError {
-                    err: <span class="macro">format!</span>(<span class="string">&quot;Object not found in cache {} {}&quot;</span>, object_id, version),
+                .ok_or(LocalExecError::InternalCacheInvariantViolation {
+                    id: <span class="kw-2">*</span>object_id,
+                    version: <span class="prelude-val">Some</span>(version),
                 })<span class="question-mark">?
                 </span>.clone());
         }
 
-        <span class="kw">let </span>options = SuiObjectDataOptions::bcs_lossless();
-        <span class="comment">// TODO: replace use of `block_on`
-        </span><span class="kw">let </span>object = block_on({
-            <span class="self">self</span>.client
-                .read_api()
-                .try_get_parsed_past_object(<span class="kw-2">*</span>object_id, version, options)
-        })
-        .map_err(|q| LocalExecError::SuiRpcError { err: q.to_string() })<span class="question-mark">?</span>;
+        <span class="kw">let </span>o = block_on(<span class="self">self</span>.multi_download(<span class="kw-2">&amp;</span>[(<span class="kw-2">*</span>object_id, version)])).map(|<span class="kw-2">mut </span>q| {
+            q.pop().unwrap_or_else(|| {
+                <span class="macro">panic!</span>(
+                    <span class="string">&quot;Downloaded obj response cannot be empty {:?}&quot;</span>,
+                    (<span class="kw-2">*</span>object_id, version)
+                )
+            })
+        })<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>o = convert_past_obj_response(object)<span class="question-mark">?</span>;
         <span class="kw">let </span>o_ref = o.compute_object_reference();
-        <span class="self">self</span>.object_version_cache
+        <span class="self">self</span>.storage
+            .object_version_cache
             .lock()
             .expect(<span class="string">&quot;Cannot lock&quot;</span>)
             .insert((o_ref.<span class="number">0</span>, o_ref.<span class="number">1</span>), o.clone());
@@ -1865,52 +1781,54 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         object_id: <span class="kw-2">&amp;</span>ObjectID,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;, LocalExecError&gt; {
-        block_on({
+        <span class="kw">let </span>resp = block_on({
             <span class="comment">//info!(&quot;Downloading latest object {object_id}&quot;);
-            </span><span class="self">self</span>.download_latest_object_impl(object_id)
+            </span><span class="self">self</span>.multi_download_latest(<span class="kw-2">&amp;</span>[<span class="kw-2">*</span>object_id])
         })
-    }
+        .map(|<span class="kw-2">mut </span>q| {
+            q.pop()
+                .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Downloaded obj response cannot be empty {}&quot;</span>, <span class="kw-2">*</span>object_id))
+        });
 
-    <span class="kw">pub async fn </span>download_latest_object_impl(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        object_id: <span class="kw-2">&amp;</span>ObjectID,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;, LocalExecError&gt; {
-        <span class="kw">let </span>options = SuiObjectDataOptions::bcs_lossless();
-
-        <span class="self">self
-        </span>.client
-        .read_api()
-        .get_object_with_options(<span class="kw-2">*</span>object_id, options)
-        .<span class="kw">await</span>.map(|q| <span class="kw">match </span>obj_from_sui_obj_response(<span class="kw-2">&amp;</span>q){
+        <span class="kw">match </span>resp {
             <span class="prelude-val">Ok</span>(v) =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(v)),
             <span class="prelude-val">Err</span>(LocalExecError::ObjectNotExist { id }) =&gt; {
                 <span class="macro">error!</span>(<span class="string">&quot;Could not find object {id} on RPC server. It might have been pruned, deleted, or never existed.&quot;</span>);
                 <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
             }
-            <span class="prelude-val">Err</span>(LocalExecError::ObjectDeleted { id, version, digest }) =&gt; {
+            <span class="prelude-val">Err</span>(LocalExecError::ObjectDeleted {
+                id,
+                version,
+                digest,
+            }) =&gt; {
                 <span class="macro">error!</span>(<span class="string">&quot;Object {id} {version} {digest} was deleted on RPC server.&quot;</span>);
                 <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
-            },
+            }
             <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(LocalExecError::SuiRpcError {
                 err: err.to_string(),
-            })
-        })<span class="question-mark">?
-    </span>}
+            }),
+        }
+    }
 
-    <span class="kw">pub async fn </span>execute_all_in_checkpoint(
+    <span class="kw">pub async fn </span>execute_all_in_checkpoints(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        checkpoint_id: u64,
-        expensive_safety_check_config: ExpensiveSafetyCheckConfig,
+        checkpoint_ids: <span class="kw-2">&amp;</span>[u64],
+        expensive_safety_check_config: <span class="kw-2">&amp;</span>ExpensiveSafetyCheckConfig,
         terminate_early: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;u64, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
         <span class="comment">// Get all the TXs at this checkpoint
-        </span><span class="kw">let </span>checkp = <span class="self">self
-            </span>.client
-            .read_api()
-            .get_checkpoint(checkpoint_id.into())
-            .<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">let </span>num = checkp.transactions.len();
-        <span class="kw">for </span>tx <span class="kw">in </span>checkp.transactions {
+        </span><span class="kw">let </span><span class="kw-2">mut </span>txs = Vec::new();
+        <span class="kw">for </span>checkpoint_id <span class="kw">in </span>checkpoint_ids {
+            txs.extend(
+                <span class="self">self</span>.fetcher
+                    .get_checkpoint_txs(<span class="kw-2">*</span>checkpoint_id)
+                    .<span class="kw">await
+                    </span>.map_err(|e| LocalExecError::SuiRpcError { err: e.to_string() })<span class="question-mark">?</span>,
+            );
+        }
+        <span class="kw">let </span>num = txs.len();
+        <span class="kw">let </span><span class="kw-2">mut </span>succeeded = <span class="number">0</span>;
+        <span class="kw">for </span>tx <span class="kw">in </span>txs {
             <span class="kw">let </span>status = <span class="self">self
                 </span>.execute(<span class="kw-2">&amp;</span>tx, expensive_safety_check_config.clone())
                 .<span class="kw">await</span>;
@@ -1921,8 +1839,9 @@
                 <span class="macro">error!</span>(<span class="string">&quot;Error executing tx: {},  {:#?}&quot;</span>, tx, status);
                 <span class="kw">continue</span>;
             }
+            succeeded += <span class="number">1</span>;
         }
-        <span class="prelude-val">Ok</span>(num <span class="kw">as </span>u64)
+        <span class="prelude-val">Ok</span>((succeeded, num <span class="kw">as </span>u64))
     }
 
     <span class="doccomment">/// Should be called after `init_for_execution`
@@ -1931,41 +1850,35 @@
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
         expensive_safety_check_config: ExpensiveSafetyCheckConfig,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockEffectsV1, LocalExecError&gt; {
+        <span class="macro">assert!</span>(
+            !<span class="self">self</span>.protocol_version_system_package_table.is_empty()
+                || !<span class="self">self</span>.protocol_version_epoch_table.is_empty(),
+            <span class="string">&quot;Required tables not populated. Must call `init_for_execution` first&quot;
+        </span>);
+
         <span class="kw">let </span>tx_info = <span class="self">self</span>.resolve_tx_components(tx_digest).<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="comment">// We need this for other activities in this session
-        </span><span class="self">self</span>.current_protocol_version = tx_info.protocol_config.version.as_u64();
         <span class="comment">// A lot of the logic here isnt designed for genesis
-        </span><span class="kw">if </span>tx_info.sender == SuiAddress::ZERO {
+        </span><span class="kw">if </span><span class="kw-2">*</span>tx_digest == TransactionDigest::genesis() || tx_info.sender == SuiAddress::ZERO {
             <span class="comment">// Genesis.
-            </span><span class="kw">return </span><span class="prelude-val">Err</span>(LocalExecError::GenesisReplayNotSupported { digest: <span class="kw-2">*</span>tx_digest });
-        }
+            </span><span class="macro">warn!</span>(
+                <span class="string">&quot;Genesis replay not supported: {}, skipping transaction&quot;</span>,
+                tx_digest
+            );
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(tx_info.effects);
+            <span class="comment">// return Err(LocalExecError::GenesisReplayNotSupported { digest: *tx_digest });
+        </span>}
 
-        <span class="comment">// Download the objects at the version right before the execution of this TX
-        </span><span class="self">self</span>.multi_download_and_store(<span class="kw-2">&amp;</span>tx_info.modified_at_versions)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="comment">// Initialize the state necessary for execution
+        // Get the input objects
+        </span><span class="kw">let </span>input_objects = <span class="self">self</span>.initialize_execution_env_state(<span class="kw-2">&amp;</span>tx_info).<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="comment">// Download shared objects at the version right before the execution of this TX
-        </span><span class="kw">let </span>shared_obj_refs = <span class="kw-2">&amp;</span>tx_info.shared_object_refs;
+        <span class="comment">// At this point we have all the objects needed for replay
 
-        <span class="self">self</span>.multi_download_and_store_sui_obj_ref(shared_obj_refs)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="comment">// Download gas (although this should already be in cache from modified at versions?)
-        </span><span class="kw">let </span>gas_refs: Vec&lt;<span class="kw">_</span>&gt; = tx_info.gas.iter().map(|w| (w.<span class="number">0</span>, w.<span class="number">1</span>)).collect();
-        <span class="self">self</span>.multi_download_and_store(<span class="kw-2">&amp;</span>gas_refs).<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="comment">// This assumes we already initialized the protocol version table `protocol_version_epoch_table`
+        // This assumes we already initialized the protocol version table `protocol_version_epoch_table`
         </span><span class="kw">let </span>protocol_config = <span class="kw-2">&amp;</span>tx_info.protocol_config;
 
         <span class="kw">let </span>metrics = <span class="self">self</span>.metrics.clone();
-
-        <span class="comment">// Resolve and download the input objects
-        </span><span class="kw">let </span>input_objects = <span class="self">self</span>.resolve_download_input_objects(<span class="kw-2">&amp;</span>tx_info).<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="comment">// Prep the object runtime for dynamic fields
-        // Download the child objects accessed at the version right before the execution of this TX
-        </span><span class="self">self</span>.prepare_object_runtime(tx_digest).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Extract the epoch start timestamp
         </span><span class="kw">let </span>epoch_start_timestamp = <span class="self">self
@@ -1980,11 +1893,12 @@
         </span><span class="kw">let </span>temporary_store =
             <span class="self">self</span>.to_temporary_store(tx_digest, InputObjects::new(input_objects), protocol_config);
 
-        <span class="kw">let </span>move_vm = get_vm(protocol_config, expensive_safety_check_config)<span class="question-mark">?</span>;
+        <span class="comment">// We could probably cache the VM per protocol config
+        </span><span class="kw">let </span>move_vm = get_vm(protocol_config, expensive_safety_check_config)<span class="question-mark">?</span>;
 
         <span class="comment">// All prep done
         </span><span class="kw">let </span>res = execute_transaction_to_effects_impl::&lt;execution_mode::Normal, <span class="kw">_</span>&gt;(
-            shared_obj_refs.iter().map(|r| r.to_object_ref()).collect(),
+            tx_info.shared_object_refs,
             temporary_store,
             tx_info.kind,
             tx_info.sender,
@@ -2000,8 +1914,7 @@
             <span class="bool-val">true</span>,
         );
 
-        <span class="kw">let </span>new_effects: SuiTransactionBlockEffects = res.<span class="number">1</span>.try_into().unwrap();
-        <span class="kw">let </span>SuiTransactionBlockEffects::V1(new_effects) = new_effects;
+        <span class="kw">let </span>SuiTransactionBlockEffects::V1(new_effects) = res.<span class="number">1</span>.try_into().unwrap();
 
         <span class="kw">if </span>tx_info.effects != new_effects {
             <span class="macro">error!</span>(<span class="string">&quot;Replay tool forked {}&quot;</span>, tx_digest);
@@ -2025,67 +1938,48 @@
         ids
     }
 
-    <span class="kw">pub async fn </span>prepare_object_runtime(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), LocalExecError&gt; {
-        <span class="comment">// Get the child objects loaded
-
-        </span><span class="kw">let </span>loaded_child_objs = <span class="kw">match </span><span class="self">self
-            </span>.client
-            .read_api()
-            .get_loaded_child_objects(<span class="kw-2">*</span>tx_digest)
-            .<span class="kw">await
-        </span>{
-            <span class="prelude-val">Ok</span>(objs) =&gt; objs,
-            <span class="prelude-val">Err</span>(e) =&gt; {
-                <span class="macro">error!</span>(<span class="string">&quot;Error getting dynamic fields loaded objects: {}. This RPC server might not support this feature yet&quot;</span>, e);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(LocalExecError::GeneralError {
-                    err: <span class="macro">format!</span>(<span class="string">&quot;Error getting dynamic fields loaded objects: {}&quot;</span>, e),
-                });
-            }
-        };
-
-        <span class="comment">// Fetch the refs
-        </span><span class="kw">let </span>loaded_child_refs = loaded_child_objs
-            .loaded_child_objects
-            .iter()
-            .map(|obj| (obj.object_id(), obj.sequence_number()))
-            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-
-        <span class="comment">// Download and save the specific versions needed
-        </span><span class="self">self</span>.multi_download_and_store(<span class="kw-2">&amp;</span>loaded_child_refs).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(())
-    }
-
-    <span class="kw">pub fn </span>get_or_download_object(
+    <span class="doccomment">/// This is the only function which accesses the network during execution
+    </span><span class="kw">pub fn </span>get_or_download_object(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         obj_id: <span class="kw-2">&amp;</span>ObjectID,
+        package_expected: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;, LocalExecError&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(obj) = <span class="self">self</span>.package_cache.lock().expect(<span class="string">&quot;Cannot lock&quot;</span>).get(obj_id) {
+        <span class="kw">if </span>package_expected {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(obj) = <span class="self">self
+                </span>.storage
+                .package_cache
+                .lock()
+                .expect(<span class="string">&quot;Cannot lock&quot;</span>)
+                .get(obj_id)
+            {
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(obj.clone()));
+            };
+            <span class="comment">// Check if its a system package because we must&#39;ve downloaded all
+            </span><span class="macro">assert!</span>(
+                !<span class="self">self</span>.system_package_ids().contains(obj_id),
+                <span class="string">&quot;All system packages should be downloaded already&quot;
+            </span>);
+        } <span class="kw">else if let </span><span class="prelude-val">Some</span>(obj) = <span class="self">self</span>.storage.live_objects_store.get(obj_id) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(obj.clone()));
-        };
+        }
 
-        <span class="kw">let </span>o = <span class="kw">match </span><span class="self">self</span>.store.get(obj_id) {
-            <span class="prelude-val">Some</span>(obj) =&gt; <span class="prelude-val">Some</span>(obj.clone()),
-            <span class="prelude-val">None </span>=&gt; {
-                <span class="macro">assert!</span>(
-                    !<span class="self">self</span>.system_package_ids().contains(obj_id),
-                    <span class="string">&quot;All system packages should be downloaded already&quot;
-                </span>);
-                <span class="self">self</span>.download_latest_object(obj_id)<span class="question-mark">?
-            </span>}
-        };
-        <span class="kw">let </span><span class="prelude-val">Some</span>(o) = o <span class="kw">else </span>{ <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) };
+        <span class="kw">let </span><span class="prelude-val">Some</span>(o) =  <span class="self">self</span>.download_latest_object(obj_id)<span class="question-mark">? </span><span class="kw">else </span>{ <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) };
 
         <span class="kw">if </span>o.is_package() {
-            <span class="self">self</span>.package_cache
+            <span class="macro">assert!</span>(
+                package_expected,
+                <span class="string">&quot;Did not expect package but downloaded object is a package: {obj_id}&quot;
+            </span>);
+
+            <span class="self">self</span>.storage
+                .package_cache
                 .lock()
                 .expect(<span class="string">&quot;Cannot lock&quot;</span>)
                 .insert(<span class="kw-2">*</span>obj_id, o.clone());
         }
         <span class="kw">let </span>o_ref = o.compute_object_reference();
-        <span class="self">self</span>.object_version_cache
+        <span class="self">self</span>.storage
+            .object_version_cache
             .lock()
             .expect(<span class="string">&quot;Cannot lock&quot;</span>)
             .insert((o_ref.<span class="number">0</span>, o_ref.<span class="number">1</span>), o.clone());
@@ -2097,14 +1991,18 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch: u64,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, LocalExecError&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.protocol_version_system_package_table.get(<span class="kw-2">&amp;</span>epoch).ok_or(LocalExecError::GeneralError {
-            err: <span class="macro">format!</span>(<span class="string">&quot;Fatal! N framework versions for epoch {}. Make sure version tables are populated &quot;</span>, epoch)
-        })<span class="question-mark">?</span>.clone().into_iter().collect())
+        <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.protocol_version_system_package_table
+            .get(<span class="kw-2">&amp;</span>epoch)
+            .ok_or(LocalExecError::FrameworkObjectVersionTableNotPopulated { epoch })<span class="question-mark">?
+            </span>.clone()
+            .into_iter()
+            .collect())
     }
 
     <span class="kw">pub async fn </span>protocol_ver_to_epoch_map(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;BTreeMap&lt;u64, (TransactionDigest, u64, u64)&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;BTreeMap&lt;u64, ProtocolVersionSummary&gt;, LocalExecError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>range_map = BTreeMap::new();
         <span class="kw">let </span>epoch_change_events = <span class="self">self</span>.get_epoch_change_events(<span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
 
@@ -2112,21 +2010,39 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>tx_digest = TransactionDigest::from_str(GENESIX_TX_DIGEST).unwrap();
         <span class="comment">// Somehow the genesis TX did not emit any event, but we know it was the start of version 1
         // So we need to manually add this range
-        </span><span class="kw">let </span>(<span class="kw-2">mut </span>start_epoch, <span class="kw-2">mut </span>start_protocol_version) = (<span class="number">0</span>, <span class="number">1</span>);
+        </span><span class="kw">let </span>(<span class="kw-2">mut </span>start_epoch, <span class="kw-2">mut </span>start_protocol_version, <span class="kw-2">mut </span>start_checkpoint) = (<span class="number">0</span>, <span class="number">1</span>, <span class="number">0u64</span>);
 
         <span class="comment">// Exception for incident: Protocol version 2 started epoch 742
         // But this was in safe mode so no events emmitted
         // So we need to manually add this range
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>curr_epoch, <span class="kw-2">mut </span>curr_protocol_version) = (<span class="number">742</span>, <span class="number">2</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>curr_checkpoint = <span class="self">self
+            </span>.fetcher
+            .get_transaction(<span class="kw-2">&amp;</span>TransactionDigest::from_str(SAFE_MODE_TX_1_DIGEST).unwrap())
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.checkpoint
+            .expect(<span class="string">&quot;Checkpoint should be present&quot;</span>);
         range_map.insert(
             start_protocol_version,
-            (tx_digest, start_epoch, curr_epoch - <span class="number">1</span>),
+            ProtocolVersionSummary {
+                protocol_version: start_protocol_version,
+                epoch_start: start_epoch,
+                epoch_end: curr_epoch - <span class="number">1</span>,
+                checkpoint_start: start_checkpoint,
+                checkpoint_end: curr_checkpoint - <span class="number">1</span>,
+                epoch_change_tx: tx_digest,
+            },
         );
-        (start_epoch, start_protocol_version) = (curr_epoch, curr_protocol_version);
-        tx_digest = TransactionDigest::from_str(SAFE_MODETX_1_DIGEST).unwrap();
+
+        (start_epoch, start_protocol_version, start_checkpoint) =
+            (curr_epoch, curr_protocol_version, curr_checkpoint);
+        tx_digest = TransactionDigest::from_str(SAFE_MODE_TX_1_DIGEST).unwrap();
+        <span class="comment">// This is the final tx digest for the epoch change. We need this to track the final checkpoint
+        </span><span class="kw">let </span><span class="kw-2">mut </span>end_epoch_tx_digest = tx_digest;
 
         <span class="kw">for </span>event <span class="kw">in </span>epoch_change_events {
             (curr_epoch, curr_protocol_version) = extract_epoch_and_version(event.clone())<span class="question-mark">?</span>;
+            end_epoch_tx_digest = event.id.tx_digest;
 
             <span class="kw">if </span>curr_protocol_version &lt; <span class="number">3 </span>{
                 <span class="comment">// Ignore protocol versions before 3 as we&#39;ve handled before the loop
@@ -2139,18 +2055,49 @@
             }
 
             <span class="comment">// Change in prot version
-            // Insert the last range
+            // Find the last checkpoint
+            </span>curr_checkpoint = <span class="self">self
+                </span>.fetcher
+                .get_transaction(<span class="kw-2">&amp;</span>event.id.tx_digest)
+                .<span class="kw">await</span><span class="question-mark">?
+                </span>.checkpoint
+                .expect(<span class="string">&quot;Checkpoint should be present&quot;</span>);
+            <span class="comment">// Insert the last range
             </span>range_map.insert(
                 start_protocol_version,
-                (tx_digest, start_epoch, curr_epoch - <span class="number">1</span>),
+                ProtocolVersionSummary {
+                    protocol_version: start_protocol_version,
+                    epoch_start: start_epoch,
+                    epoch_end: curr_epoch - <span class="number">1</span>,
+                    checkpoint_start: start_checkpoint,
+                    checkpoint_end: curr_checkpoint - <span class="number">1</span>,
+                    epoch_change_tx: tx_digest,
+                },
             );
+
             start_epoch = curr_epoch;
             start_protocol_version = curr_protocol_version;
             tx_digest = event.id.tx_digest;
+            start_checkpoint = curr_checkpoint;
         }
 
         <span class="comment">// Insert the last range
-        </span>range_map.insert(curr_protocol_version, (tx_digest, start_epoch, curr_epoch));
+        </span>range_map.insert(
+            curr_protocol_version,
+            ProtocolVersionSummary {
+                protocol_version: curr_protocol_version,
+                epoch_start: start_epoch,
+                epoch_end: curr_epoch,
+                checkpoint_start: curr_checkpoint,
+                checkpoint_end: <span class="self">self
+                    </span>.fetcher
+                    .get_transaction(<span class="kw-2">&amp;</span>end_epoch_tx_digest)
+                    .<span class="kw">await</span><span class="question-mark">?
+                    </span>.checkpoint
+                    .expect(<span class="string">&quot;Checkpoint should be present&quot;</span>),
+                epoch_change_tx: tx_digest,
+            },
+        );
 
         <span class="prelude-val">Ok</span>(range_map)
     }
@@ -2178,7 +2125,14 @@
 
         <span class="comment">// This can be more efficient but small footprint so okay for now
         //Table is sorted from earliest to latest
-        </span><span class="kw">for </span>(prot_ver, (tx_digest, <span class="kw">_</span>, <span class="kw">_</span>)) <span class="kw">in </span><span class="self">self</span>.protocol_version_epoch_table.clone() {
+        </span><span class="kw">for </span>(
+            prot_ver,
+            ProtocolVersionSummary {
+                epoch_change_tx: tx_digest,
+                ..
+            },
+        ) <span class="kw">in </span><span class="self">self</span>.protocol_version_epoch_table.clone()
+        {
             <span class="comment">// Use the previous versions protocol version table
             </span><span class="kw">let </span><span class="kw-2">mut </span>working = <span class="self">self
                 </span>.protocol_version_system_package_table
@@ -2206,7 +2160,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;BTreeMap&lt;ObjectID, Vec&lt;(SequenceNumber, TransactionDigest)&gt;&gt;, LocalExecError&gt; {
         <span class="kw">let </span>system_package_ids = <span class="self">self</span>.system_package_ids();
-        <span class="kw">let </span><span class="kw-2">mut </span>system_package_objs = <span class="self">self</span>.multi_download_latest(system_package_ids).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>system_package_objs = <span class="self">self</span>.multi_download_latest(<span class="kw-2">&amp;</span>system_package_ids).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>mapping = BTreeMap::new();
 
@@ -2283,37 +2237,50 @@
         <span class="self">self</span>.protocol_version_epoch_table
             .iter()
             .rev()
-            .find(|(<span class="kw">_</span>, rg)| epoch_id &gt;= rg.<span class="number">1</span>)
+            .find(|(<span class="kw">_</span>, rg)| epoch_id &gt;= rg.epoch_start)
             .map(|(p, _rg)| <span class="prelude-val">Ok</span>(ProtocolConfig::get_for_version((<span class="kw-2">*</span>p).into())))
-            .unwrap_or_else(|| {
-                <span class="prelude-val">Err</span>(LocalExecError::GeneralError {
-                    err: <span class="string">&quot;Protocol version not found for epoch&quot;</span>.to_string(),
-                })
-            })
+            .unwrap_or_else(|| <span class="prelude-val">Err</span>(LocalExecError::ProtocolVersionNotFound { epoch: epoch_id }))
     }
 
-    <span class="doccomment">/// Gets all the epoch change events
-    </span><span class="kw">pub async fn </span>get_epoch_change_events(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        reverse: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = SuiEvent&gt;, LocalExecError&gt; {
-        <span class="kw">let </span>struct_tag_str = EPOCH_CHANGE_STRUCT_TAG.to_string();
-        <span class="kw">let </span>struct_tag =
-            parse_struct_tag(<span class="kw-2">&amp;</span>struct_tag_str).map_err(|err| LocalExecError::GeneralError {
-                err: <span class="macro">format!</span>(<span class="string">&quot;Error parsing struct tag: {:#?}&quot;</span>, err),
-            })<span class="question-mark">?</span>;
+    <span class="kw">pub async fn </span>checkpoints_for_epoch(<span class="kw-2">&amp;</span><span class="self">self</span>, epoch_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
+        <span class="kw">let </span>epoch_change_events = <span class="self">self
+            </span>.get_epoch_change_events(<span class="bool-val">true</span>)
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+        <span class="kw">let </span>(start_checkpoint, start_epoch_idx) = <span class="kw">if </span>epoch_id == <span class="number">0 </span>{
+            (<span class="number">0</span>, <span class="number">1</span>)
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>idx = epoch_change_events
+                .iter()
+                .position(|ev| <span class="kw">match </span>extract_epoch_and_version(ev.clone()) {
+                    <span class="prelude-val">Ok</span>((epoch, <span class="kw">_</span>)) =&gt; epoch == epoch_id,
+                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+                })
+                .ok_or(LocalExecError::EventNotFound { epoch: epoch_id })<span class="question-mark">?</span>;
+            <span class="kw">let </span>epoch_change_tx = epoch_change_events[idx].id.tx_digest;
+            (
+                <span class="self">self</span>.fetcher
+                    .get_transaction(<span class="kw-2">&amp;</span>epoch_change_tx)
+                    .<span class="kw">await</span><span class="question-mark">?
+                    </span>.checkpoint
+                    .expect(<span class="string">&quot;Checkpoint should be present&quot;</span>),
+                idx,
+            )
+        };
 
-        <span class="comment">// TODO: Should probably limit/page this but okay for now?
-        </span><span class="prelude-val">Ok</span>(<span class="self">self
-            </span>.client
-            .event_api()
-            .query_events(EventFilter::MoveEventType(struct_tag), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, reverse)
-            .<span class="kw">await
-            </span>.map_err(|w| LocalExecError::GeneralError {
-                err: <span class="macro">format!</span>(<span class="string">&quot;Error querying system events: {:#?}&quot;</span>, w),
-            })<span class="question-mark">?
-            </span>.data
-            .into_iter())
+        <span class="kw">let </span>next_epoch_change_tx = epoch_change_events
+            .get(start_epoch_idx + <span class="number">1</span>)
+            .map(|v| v.id.tx_digest)
+            .ok_or(LocalExecError::UnableToDetermineCheckpoint { epoch: epoch_id })<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>next_epoch_checkpoint = <span class="self">self
+            </span>.fetcher
+            .get_transaction(<span class="kw-2">&amp;</span>next_epoch_change_tx)
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.checkpoint
+            .expect(<span class="string">&quot;Checkpoint should be present&quot;</span>);
+
+        <span class="prelude-val">Ok</span>((start_checkpoint, next_epoch_checkpoint - <span class="number">1</span>))
     }
 
     <span class="kw">pub async fn </span>get_epoch_start_timestamp(<span class="kw-2">&amp;</span><span class="self">self</span>, epoch_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;u64, LocalExecError&gt; {
@@ -2322,30 +2289,19 @@
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
 
-        <span class="kw">let </span>event = <span class="self">self</span>.get_epoch_change_events(<span class="bool-val">true</span>).<span class="kw">await</span><span class="question-mark">?</span>.find(|ev| {
-            <span class="kw">match </span>extract_epoch_and_version(ev.clone()) {
+        <span class="kw">let </span>event = <span class="self">self
+            </span>.get_epoch_change_events(<span class="bool-val">true</span>)
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.find(|ev| <span class="kw">match </span>extract_epoch_and_version(ev.clone()) {
                 <span class="prelude-val">Ok</span>((epoch, <span class="kw">_</span>)) =&gt; epoch == epoch_id,
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
-            }
-        });
-
-        <span class="kw">let </span>event = event.ok_or(LocalExecError::GeneralError {
-            err: <span class="macro">format!</span>(
-                <span class="string">&quot;Unable to find event and hence epoch start timestamp for  {}&quot;</span>,
-                epoch_id
-            ),
-        })<span class="question-mark">?</span>;
+            })
+            .ok_or(LocalExecError::EventNotFound { epoch: epoch_id })<span class="question-mark">?</span>;
 
         <span class="kw">let </span>epoch_change_tx = event.id.tx_digest;
 
         <span class="comment">// Fetch full transaction content
-        </span><span class="kw">let </span>tx_fetch_opts = SuiTransactionBlockResponseOptions::full_content();
-        <span class="kw">let </span>tx_info = <span class="self">self
-            </span>.client
-            .read_api()
-            .get_transaction_with_options(epoch_change_tx, tx_fetch_opts)
-            .<span class="kw">await
-            </span>.map_err(LocalExecError::from)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>tx_info = <span class="self">self</span>.fetcher.get_transaction(<span class="kw-2">&amp;</span>epoch_change_tx).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let </span>orig_tx: SenderSignedData = bcs::from_bytes(<span class="kw-2">&amp;</span>tx_info.raw_transaction).unwrap();
         <span class="kw">let </span>tx_kind_orig = orig_tx.transaction_data().kind();
@@ -2353,12 +2309,7 @@
         <span class="kw">if let </span>TransactionKind::ChangeEpoch(change) = tx_kind_orig {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(change.epoch_start_timestamp_ms);
         }
-        <span class="prelude-val">Err</span>(LocalExecError::GeneralError {
-            err: <span class="macro">format!</span>(
-                <span class="string">&quot;Invalid epoch change transaction in events for  {}&quot;</span>,
-                epoch_id
-            ),
-        })
+        <span class="prelude-val">Err</span>(LocalExecError::InvalidEpochChangeTx { epoch: epoch_id })
     }
 
     <span class="kw">async fn </span>resolve_tx_components(
@@ -2366,16 +2317,11 @@
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;TxInfo, LocalExecError&gt; {
         <span class="comment">// Fetch full transaction content
-        </span><span class="kw">let </span>tx_fetch_opts = SuiTransactionBlockResponseOptions::full_content();
-        <span class="kw">let </span>tx_info = <span class="self">self
-            </span>.client
-            .read_api()
-            .get_transaction_with_options(<span class="kw-2">*</span>tx_digest, tx_fetch_opts)
-            .<span class="kw">await
-            </span>.map_err(LocalExecError::from)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>tx_info = <span class="self">self</span>.fetcher.get_transaction(tx_digest).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>sender = <span class="kw">match </span>tx_info.clone().transaction.unwrap().data {
             sui_json_rpc_types::SuiTransactionBlockData::V1(tx) =&gt; tx.sender,
         };
+        <span class="kw">let </span>SuiTransactionBlockEffects::V1(effects) = tx_info.clone().effects.unwrap();
 
         <span class="kw">let </span>raw_tx_bytes = tx_info.clone().raw_transaction;
         <span class="kw">let </span>orig_tx: SenderSignedData = bcs::from_bytes(<span class="kw-2">&amp;</span>raw_tx_bytes).unwrap();
@@ -2385,13 +2331,10 @@
             .map_err(|e| LocalExecError::UserInputError { err: e })<span class="question-mark">?</span>;
         <span class="kw">let </span>tx_kind_orig = orig_tx.transaction_data().kind();
 
-        <span class="kw">let </span>SuiTransactionBlockEffects::V1(effects) = tx_info.clone().effects.unwrap();
-
         <span class="comment">// Download the objects at the version right before the execution of this TX
         </span><span class="kw">let </span>modified_at_versions: Vec&lt;(ObjectID, SequenceNumber)&gt; = effects.modified_at_versions();
 
         <span class="kw">let </span>shared_obj_refs = effects.shared_objects();
-
         <span class="kw">let </span>gas_data = <span class="kw">match </span>tx_info.clone().transaction.unwrap().data {
             sui_json_rpc_types::SuiTransactionBlockData::V1(tx) =&gt; tx.gas_data,
         };
@@ -2408,7 +2351,7 @@
             sender,
             modified_at_versions,
             input_objects: input_objs,
-            shared_object_refs: shared_obj_refs.to_vec(),
+            shared_object_refs: shared_obj_refs.iter().map(|r| r.to_object_ref()).collect(),
             gas: gas_object_refs,
             gas_budget: gas_data.budget,
             gas_price: gas_data.price,
@@ -2418,6 +2361,7 @@
             <span class="comment">// Find the protocol version for this epoch
             // This assumes we already initialized the protocol version table `protocol_version_epoch_table`
             </span>protocol_config: <span class="self">self</span>.get_protocol_config(epoch_id).<span class="kw">await</span><span class="question-mark">?</span>,
+            tx_digest: <span class="kw-2">*</span>tx_digest,
         })
     }
 
@@ -2448,15 +2392,13 @@
                     mutable: <span class="kw">_</span>,
                 } =&gt; {
                     <span class="comment">// We already downloaded
-                    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(o) = <span class="self">self</span>.store.get(id) {
+                    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(o) = <span class="self">self</span>.storage.live_objects_store.get(id) {
                         shared_inputs.push(o.clone());
                         <span class="prelude-val">Ok</span>(())
                     } <span class="kw">else </span>{
-                        <span class="prelude-val">Err</span>(LocalExecError::GeneralError {
-                            err: <span class="macro">format!</span>(
-                                <span class="string">&quot;Object not found in cache {}. Should&#39;ve been downloaded&quot;</span>,
-                                id
-                            ),
+                        <span class="prelude-val">Err</span>(LocalExecError::InternalCacheInvariantViolation {
+                            id: <span class="kw-2">*</span>id,
+                            version: <span class="prelude-val">None</span>,
                         })
                     }
                 }
@@ -2486,7 +2428,8 @@
                     <span class="comment">// Okay to unwrap since we downloaded it
                     </span>(
                         <span class="kw-2">*</span>kind,
-                        <span class="self">self</span>.package_cache
+                        <span class="self">self</span>.storage
+                            .package_cache
                             .lock()
                             .expect(<span class="string">&quot;Cannot lock&quot;</span>)
                             .get(i)
@@ -2496,7 +2439,8 @@
                 }
                 InputObjectKind::ImmOrOwnedMoveObject(o_ref) =&gt; (
                     <span class="kw-2">*</span>kind,
-                    <span class="self">self</span>.object_version_cache
+                    <span class="self">self</span>.storage
+                        .object_version_cache
                         .lock()
                         .expect(<span class="string">&quot;Cannot lock&quot;</span>)
                         .get(<span class="kw-2">&amp;</span>(o_ref.<span class="number">0</span>, o_ref.<span class="number">1</span>))
@@ -2509,21 +2453,64 @@
                     mutable: <span class="kw">_</span>,
                 } =&gt; {
                     <span class="comment">// we already downloaded
-                    </span>(<span class="kw-2">*</span>kind, <span class="self">self</span>.store.get(id).unwrap().clone())
+                    </span>(
+                        <span class="kw-2">*</span>kind,
+                        <span class="self">self</span>.storage.live_objects_store.get(id).unwrap().clone(),
+                    )
                 }
             })
             .collect();
 
         <span class="prelude-val">Ok</span>(resolved_input_objs)
     }
+
+    <span class="doccomment">/// Given the TxInfo, download and store the input objects, and other info necessary
+    /// for execution
+    </span><span class="kw">async fn </span>initialize_execution_env_state(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        tx_info: <span class="kw-2">&amp;</span>TxInfo,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(InputObjectKind, Object)&gt;, LocalExecError&gt; {
+        <span class="comment">// We need this for other activities in this session
+        </span><span class="self">self</span>.current_protocol_version = tx_info.protocol_config.version.as_u64();
+
+        <span class="comment">// Download the objects at the version right before the execution of this TX
+        </span><span class="self">self</span>.multi_download_and_store(<span class="kw-2">&amp;</span>tx_info.modified_at_versions)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="comment">// Download shared objects at the version right before the execution of this TX
+        </span><span class="kw">let </span>shared_refs: Vec&lt;<span class="kw">_</span>&gt; = tx_info
+            .shared_object_refs
+            .iter()
+            .map(|r| (r.<span class="number">0</span>, r.<span class="number">1</span>))
+            .collect();
+        <span class="self">self</span>.multi_download_and_store(<span class="kw-2">&amp;</span>shared_refs).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="comment">// Download gas (although this should already be in cache from modified at versions?)
+        </span><span class="kw">let </span>gas_refs: Vec&lt;<span class="kw">_</span>&gt; = tx_info.gas.iter().map(|w| (w.<span class="number">0</span>, w.<span class="number">1</span>)).collect();
+        <span class="self">self</span>.multi_download_and_store(<span class="kw-2">&amp;</span>gas_refs).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="comment">// Fetch the input objects we know from the raw transaction
+        </span><span class="kw">let </span>input_objs = <span class="self">self</span>.resolve_download_input_objects(tx_info).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="comment">// Prep the object runtime for dynamic fields
+        // Download the child objects accessed at the version right before the execution of this TX
+        </span><span class="kw">let </span>loaded_child_refs = <span class="self">self</span>.fetch_loaded_child_refs(<span class="kw-2">&amp;</span>tx_info.tx_digest).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="self">self</span>.multi_download_and_store(<span class="kw-2">&amp;</span>loaded_child_refs).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(input_objs)
+    }
 }
 
-<span class="kw">impl </span>BackingPackageStore <span class="kw">for </span>LocalExec {
-    <span class="kw">fn </span>get_package_object(<span class="kw-2">&amp;</span><span class="self">self</span>, package_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt; {
+<span class="comment">// &lt;---------------------  Implement necessary traits for LocalExec to work with exec engine -----------------------&gt;
+
+</span><span class="kw">impl </span>BackingPackageStore <span class="kw">for </span>LocalExec {
+    <span class="doccomment">/// In this case we might need to download a dependency package which was not present in the
+    /// modified at versions list because packages are immutable
+    </span><span class="kw">fn </span>get_package_object(<span class="kw-2">&amp;</span><span class="self">self</span>, package_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt; {
         <span class="kw">fn </span>inner(self_: <span class="kw-2">&amp;</span>LocalExec, package_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt; {
             <span class="comment">// If package not present fetch it from the network
             </span>self_
-                .get_or_download_object(package_id)
+                .get_or_download_object(package_id, <span class="bool-val">true </span><span class="comment">/* we expect a Move package*/</span>)
                 .map_err(|e| SuiError::GenericStorageError(e.to_string()))
         }
 
@@ -2540,7 +2527,9 @@
 }
 
 <span class="kw">impl </span>ChildObjectResolver <span class="kw">for </span>LocalExec {
-    <span class="kw">fn </span>read_child_object(<span class="kw-2">&amp;</span><span class="self">self</span>, parent: <span class="kw-2">&amp;</span>ObjectID, child: <span class="kw-2">&amp;</span>ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt; {
+    <span class="doccomment">/// This uses `get_object`, which does not download from the network
+    /// Hence all objects must be in store already
+    </span><span class="kw">fn </span>read_child_object(<span class="kw-2">&amp;</span><span class="self">self</span>, parent: <span class="kw-2">&amp;</span>ObjectID, child: <span class="kw-2">&amp;</span>ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt; {
         <span class="kw">fn </span>inner(
             self_: <span class="kw-2">&amp;</span>LocalExec,
             parent: <span class="kw-2">&amp;</span>ObjectID,
@@ -2577,9 +2566,11 @@
 }
 
 <span class="kw">impl </span>ParentSync <span class="kw">for </span>LocalExec {
-    <span class="kw">fn </span>get_latest_parent_entry_ref(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;ObjectRef&gt;&gt; {
+    <span class="doccomment">/// The objects here much already exist in the store because we downloaded them earlier
+    /// No download from network
+    </span><span class="kw">fn </span>get_latest_parent_entry_ref(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;ObjectRef&gt;&gt; {
         <span class="kw">fn </span>inner(self_: <span class="kw-2">&amp;</span>LocalExec, object_id: ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;ObjectRef&gt;&gt; {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = self_.store.get(<span class="kw-2">&amp;</span>object_id) {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = self_.storage.live_objects_store.get(<span class="kw-2">&amp;</span>object_id) {
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(v.compute_object_reference()));
             }
             <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
@@ -2601,7 +2592,9 @@
 <span class="kw">impl </span>ResourceResolver <span class="kw">for </span>LocalExec {
     <span class="kw">type </span>Error = LocalExecError;
 
-    <span class="kw">fn </span>get_resource(
+    <span class="doccomment">/// In this case we might need to download a Move object on the fly which was not present in the
+    /// modified at versions list because packages are immutable
+    </span><span class="kw">fn </span>get_resource(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         address: <span class="kw-2">&amp;</span>AccountAddress,
         typ: <span class="kw-2">&amp;</span>StructTag,
@@ -2611,7 +2604,9 @@
             address: <span class="kw-2">&amp;</span>AccountAddress,
             typ: <span class="kw-2">&amp;</span>StructTag,
         ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, LocalExecError&gt; {
-            <span class="kw">let </span><span class="prelude-val">Some</span>(object) = self_.get_or_download_object(<span class="kw-2">&amp;</span>ObjectID::from(<span class="kw-2">*</span>address))<span class="question-mark">? </span><span class="kw">else </span>{
+            <span class="comment">// If package not present fetch it from the network or some remote location
+            </span><span class="kw">let </span><span class="prelude-val">Some</span>(object) = self_.get_or_download_object(
+                <span class="kw-2">&amp;</span>ObjectID::from(<span class="kw-2">*</span>address),<span class="bool-val">false </span><span class="comment">/* we expect a Move obj*/</span>)<span class="question-mark">? </span><span class="kw">else </span>{
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
             };
 
@@ -2647,7 +2642,9 @@
 <span class="kw">impl </span>ModuleResolver <span class="kw">for </span>LocalExec {
     <span class="kw">type </span>Error = LocalExecError;
 
-    <span class="kw">fn </span>get_module(<span class="kw-2">&amp;</span><span class="self">self</span>, module_id: <span class="kw-2">&amp;</span>ModuleId) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, <span class="self">Self</span>::Error&gt; {
+    <span class="doccomment">/// This fetches a module which must already be present in the store
+    /// We do not download
+    </span><span class="kw">fn </span>get_module(<span class="kw-2">&amp;</span><span class="self">self</span>, module_id: <span class="kw-2">&amp;</span>ModuleId) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, <span class="self">Self</span>::Error&gt; {
         <span class="kw">fn </span>inner(
             self_: <span class="kw-2">&amp;</span>LocalExec,
             module_id: <span class="kw-2">&amp;</span>ModuleId,
@@ -2685,8 +2682,10 @@
 }
 
 <span class="kw">impl </span>ObjectStore <span class="kw">for </span>LocalExec {
-    <span class="kw">fn </span>get_object(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;, SuiError&gt; {
-        <span class="kw">let </span>res = <span class="prelude-val">Ok</span>(<span class="self">self</span>.store.get(object_id).cloned());
+    <span class="doccomment">/// The object must be present in store by normal process we used to backfill store in init
+    /// We dont download if not present
+    </span><span class="kw">fn </span>get_object(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;, SuiError&gt; {
+        <span class="kw">let </span>res = <span class="prelude-val">Ok</span>(<span class="self">self</span>.storage.live_objects_store.get(object_id).cloned());
         <span class="self">self</span>.exec_store_events
             .lock()
             .expect(<span class="string">&quot;Unable to lock events list&quot;</span>)
@@ -2697,18 +2696,24 @@
         res
     }
 
-    <span class="kw">fn </span>get_object_by_key(
+    <span class="doccomment">/// The object must be present in store by normal process we used to backfill store in init
+    /// We dont download if not present
+    </span><span class="kw">fn </span>get_object_by_key(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         object_id: <span class="kw-2">&amp;</span>ObjectID,
         version: VersionNumber,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;, SuiError&gt; {
-        <span class="kw">let </span>res = <span class="prelude-val">Ok</span>(<span class="self">self</span>.store.get(object_id).and_then(|obj| {
-            <span class="kw">if </span>obj.version() == version {
-                <span class="prelude-val">Some</span>(obj.clone())
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }));
+        <span class="kw">let </span>res = <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.storage
+            .live_objects_store
+            .get(object_id)
+            .and_then(|obj| {
+                <span class="kw">if </span>obj.version() == version {
+                    <span class="prelude-val">Some</span>(obj.clone())
+                } <span class="kw">else </span>{
+                    <span class="prelude-val">None
+                </span>}
+            }));
 
         <span class="self">self</span>.exec_store_events
             .lock()
@@ -2757,19 +2762,9 @@
     }
 }
 
-<span class="kw">fn </span>obj_from_sui_obj_response(o: <span class="kw-2">&amp;</span>SuiObjectResponse) -&gt; <span class="prelude-ty">Result</span>&lt;Object, LocalExecError&gt; {
-    <span class="kw">let </span>o = o.object().map_err(LocalExecError::from)<span class="question-mark">?</span>.clone();
-    obj_from_sui_obj_data(<span class="kw-2">&amp;</span>o)
-}
+<span class="comment">// &lt;--------------------- Util funcitons -----------------------&gt;
 
-<span class="kw">fn </span>obj_from_sui_obj_data(o: <span class="kw-2">&amp;</span>SuiObjectData) -&gt; <span class="prelude-ty">Result</span>&lt;Object, LocalExecError&gt; {
-    <span class="kw">match </span>TryInto::&lt;Object&gt;::try_into(o.clone()) {
-        <span class="prelude-val">Ok</span>(obj) =&gt; <span class="prelude-val">Ok</span>(obj),
-        <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(e.into()),
-    }
-}
-
-<span class="kw">pub fn </span>get_vm(
+</span><span class="kw">pub fn </span>get_vm(
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     expensive_safety_check_config: ExpensiveSafetyCheckConfig,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;adapter::MoveVM&gt;, LocalExecError&gt; {
@@ -2792,12 +2787,11 @@
         <span class="kw">return </span><span class="prelude-val">Ok</span>((epoch, version));
     }
 
-    <span class="prelude-val">Err</span>(LocalExecError::GeneralError {
-        err: <span class="string">&quot;Unexpected event format&quot;</span>.to_string(),
-    })
+    <span class="prelude-val">Err</span>(LocalExecError::UnexpectedEventFormat { event: ev })
 }
 
-<span class="kw">fn </span>diff_effects(
+<span class="doccomment">/// Utility ti diff effects in a human readable format
+</span><span class="kw">fn </span>diff_effects(
     eff1: <span class="kw-2">&amp;</span>SuiTransactionBlockEffectsV1,
     eff2: <span class="kw-2">&amp;</span>SuiTransactionBlockEffectsV1,
 ) -&gt; String {
@@ -2817,45 +2811,5 @@
     }
 
     res.join(<span class="string">&quot;\n&quot;</span>)
-}
-
-<span class="doccomment">/// TODO: Limited set but will add more
-</span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub enum </span>ExecutionStoreEvent {
-    BackingPackageGetPackageObject {
-        package_id: ObjectID,
-        result: SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt;,
-    },
-    ChildObjectResolverStoreReadChildObject {
-        parent: ObjectID,
-        child: ObjectID,
-        result: SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt;,
-    },
-    ParentSyncStoreGetLatestParentEntryRef {
-        object_id: ObjectID,
-        result: SuiResult&lt;<span class="prelude-ty">Option</span>&lt;ObjectRef&gt;&gt;,
-    },
-    ResourceResolverGetResource {
-        address: AccountAddress,
-        typ: StructTag,
-        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, LocalExecError&gt;,
-    },
-    ModuleResolverGetModule {
-        module_id: ModuleId,
-        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, LocalExecError&gt;,
-    },
-    ObjectStoreGetObject {
-        object_id: ObjectID,
-        result: SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt;,
-    },
-    ObjectStoreGetObjectByKey {
-        object_id: ObjectID,
-        version: VersionNumber,
-        result: SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt;,
-    },
-    GetModuleGetModuleByModuleId {
-        id: ModuleId,
-        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;CompiledModule&gt;, LocalExecError&gt;,
-    },
 }
 </code></pre></div></section></main></body></html>

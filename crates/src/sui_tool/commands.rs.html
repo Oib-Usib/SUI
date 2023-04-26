@@ -322,6 +322,8 @@
 <a href="#322" id="322">322</a>
 <a href="#323" id="323">323</a>
 <a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -641,7 +643,9 @@
                 rpc_url,
                 safety_checks,
                 cmd,
-            } =&gt; execute_replay_command(rpc_url, safety_checks, cmd).<span class="kw">await</span><span class="question-mark">?</span>,
+            } =&gt; {
+                execute_replay_command(rpc_url, safety_checks, cmd).<span class="kw">await</span><span class="question-mark">?</span>;
+            }
         };
         <span class="prelude-val">Ok</span>(())
     }
