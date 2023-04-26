@@ -412,10 +412,13 @@
 <a href="#412" id="412">412</a>
 <a href="#413" id="413">413</a>
 <a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>futures::FutureExt;
+</span><span class="kw">use </span><span class="kw">crate</span>::monitored_scope;
+<span class="kw">use </span>futures::FutureExt;
 <span class="kw">use </span>parking_lot::Mutex;
 <span class="kw">use </span>prometheus::{
     register_int_counter_vec_with_registry, register_int_gauge_vec_with_registry, IntCounterVec,
@@ -670,6 +673,7 @@
 
 <span class="kw">impl </span>HistogramReporter {
     <span class="kw">pub fn </span>report(<span class="kw-2">&amp;mut </span><span class="self">self</span>, labeled_data: HashMap&lt;HistogramLabels, Vec&lt;Point&gt;&gt;) {
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;HistogramReporter::report&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>reset_labels = <span class="self">self</span>.known_labels.clone();
         <span class="kw">for </span>(label, <span class="kw-2">mut </span>data) <span class="kw">in </span>labeled_data {
             <span class="self">self</span>.known_labels.insert(label.clone());
