@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682532973257,
+  "lastUpdate": 1682534574010,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -467,6 +467,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 320789,
             "range": "± 23326",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrey@mystenlabs.com",
+            "name": "Andrey Chursin",
+            "username": "andll"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca19d3594c7cb8decca1f781df60267221b72cdf",
+          "message": "[mysten-common] Introduce AsyncOnceCell (#11366)\n\nThis is somewhat similar to tokio::sync::watch, see doc for\r\n`AsyncOnceCell` for differences.",
+          "timestamp": "2023-04-26T11:33:05-07:00",
+          "tree_id": "965e6906248281a46e0cf36550a94c0aa0a1d990",
+          "url": "https://github.com/MystenLabs/sui/commit/ca19d3594c7cb8decca1f781df60267221b72cdf"
+        },
+        "date": 1682534570795,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144016538,
+            "range": "± 4749673",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314344,
+            "range": "± 25391",
             "unit": "ns/iter"
           }
         ]
