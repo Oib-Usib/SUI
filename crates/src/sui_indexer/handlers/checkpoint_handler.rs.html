@@ -1125,6 +1125,30 @@
 <a href="#1125" id="1125">1125</a>
 <a href="#1126" id="1126">1126</a>
 <a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
+<a href="#1141" id="1141">1141</a>
+<a href="#1142" id="1142">1142</a>
+<a href="#1143" id="1143">1143</a>
+<a href="#1144" id="1144">1144</a>
+<a href="#1145" id="1145">1145</a>
+<a href="#1146" id="1146">1146</a>
+<a href="#1147" id="1147">1147</a>
+<a href="#1148" id="1148">1148</a>
+<a href="#1149" id="1149">1149</a>
+<a href="#1150" id="1150">1150</a>
+<a href="#1151" id="1151">1151</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1553,7 +1577,7 @@
                     checkpoint,
                     transactions,
                     events,
-                    object_changes: _tx_object_changes,
+                    object_changes: <span class="kw">_</span>,
                     addresses: <span class="kw">_</span>,
                     packages: <span class="kw">_</span>,
                     input_objects: <span class="kw">_</span>,
@@ -1684,7 +1708,7 @@
                     addresses: <span class="kw">_</span>,
                     packages,
                     input_objects: <span class="kw">_</span>,
-                    move_calls: <span class="kw">_</span>,
+                    move_calls,
                     recipients: <span class="kw">_</span>,
                 } = indexed_checkpoint;
                 <span class="kw">let </span>checkpoint_seq = checkpoint.sequence_number;
@@ -1704,6 +1728,30 @@
                         .<span class="kw">await</span>;
                         package_commit_res =
                             packages_handler.state.persist_packages(<span class="kw-2">&amp;</span>packages).<span class="kw">await</span>;
+                    }
+                });
+
+                <span class="kw">let </span>transactions_handler = <span class="self">self</span>.clone();
+                <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
+                    <span class="comment">// NOTE: only index move_calls for Explorer metrics for now,
+                    // will re-enable others later.
+                    </span><span class="kw">let </span><span class="kw-2">mut </span>transaction_index_tables_commit_res = transactions_handler
+                        .state
+                        .persist_transaction_index_tables(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span>move_calls, <span class="kw-2">&amp;</span>[])
+                        .<span class="kw">await</span>;
+                    <span class="kw">while let </span><span class="prelude-val">Err</span>(e) = transaction_index_tables_commit_res {
+                        <span class="macro">warn!</span>(
+                            <span class="string">&quot;Indexer transaction index tables commit failed with error: {:?}, retrying after {:?} milli-secs...&quot;</span>,
+                            e, DB_COMMIT_RETRY_INTERVAL_IN_MILLIS
+                        );
+                        tokio::time::sleep(std::time::Duration::from_millis(
+                            DB_COMMIT_RETRY_INTERVAL_IN_MILLIS,
+                        ))
+                        .<span class="kw">await</span>;
+                        transaction_index_tables_commit_res = transactions_handler
+                            .state
+                            .persist_transaction_index_tables(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span>move_calls, <span class="kw-2">&amp;</span>[])
+                            .<span class="kw">await</span>;
                     }
                 });
 
