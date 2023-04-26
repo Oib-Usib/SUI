@@ -58,7 +58,6 @@ exclude = [
 ]
 
 members = [
-    "crates/move-binary-format-wasm",
     "crates/mysten-common",
     "crates/mysten-metrics",
     "crates/mysten-network",
@@ -134,6 +133,7 @@ members = [
     "narwhal/test-utils",
     "narwhal/types",
     "narwhal/worker",
+    "sdk/move-binary-format",
 ]
 
 [workspace.package]
