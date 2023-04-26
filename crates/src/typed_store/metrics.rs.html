@@ -858,6 +858,28 @@
 <a href="#858" id="858">858</a>
 <a href="#859" id="859">859</a>
 <a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>once_cell::sync::OnceCell;
@@ -1136,7 +1158,7 @@
             .unwrap(),
             rocksdb_iter_keys: <span class="macro">register_histogram_vec_with_registry!</span>(
                 <span class="string">&quot;rocksdb_iter_keys&quot;</span>,
-                <span class="string">&quot;Rocksdb iter size in bytes&quot;</span>,
+                <span class="string">&quot;Rocksdb iter num keys&quot;</span>,
                 <span class="kw-2">&amp;</span>[<span class="string">&quot;cf_name&quot;</span>],
                 registry,
             )
@@ -1268,6 +1290,8 @@
     <span class="kw">pub </span>bloom_sst_miss_count: IntCounterVec,
     <span class="kw">pub </span>key_lock_wait_time: IntCounterVec,
     <span class="kw">pub </span>key_lock_wait_count: IntCounterVec,
+    <span class="kw">pub </span>internal_delete_skipped_count: IntCounterVec,
+    <span class="kw">pub </span>internal_skipped_count: IntCounterVec,
 }
 
 <span class="kw">impl </span>ReadPerfContextMetrics {
@@ -1477,6 +1501,20 @@
                 registry,
             )
             .unwrap(),
+            internal_delete_skipped_count: <span class="macro">register_int_counter_vec_with_registry!</span>(
+                <span class="string">&quot;internal_delete_skipped_count&quot;</span>,
+                <span class="string">&quot;Total number of deleted keys skipped during iteration&quot;</span>,
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;cf_name&quot;</span>],
+                registry,
+            )
+                .unwrap(),
+            internal_skipped_count: <span class="macro">register_int_counter_vec_with_registry!</span>(
+                <span class="string">&quot;internal_skipped_count&quot;</span>,
+                <span class="string">&quot;Totall number of internal keys skipped during iteration&quot;</span>,
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;cf_name&quot;</span>],
+                registry,
+            )
+                .unwrap(),
         }
     }
 
@@ -1571,6 +1609,12 @@
             <span class="self">self</span>.key_lock_wait_count
                 .with_label_values(<span class="kw-2">&amp;</span>[cf_name])
                 .inc_by(perf_context.metric(PerfMetric::KeyLockWaitCount));
+            <span class="self">self</span>.internal_delete_skipped_count
+                .with_label_values(<span class="kw-2">&amp;</span>[cf_name])
+                .inc_by(perf_context.metric(PerfMetric::InternalDeleteSkippedCount));
+            <span class="self">self</span>.internal_skipped_count
+                .with_label_values(<span class="kw-2">&amp;</span>[cf_name])
+                .inc_by(perf_context.metric(PerfMetric::InternalKeySkippedCount));
         });
     }
 }
