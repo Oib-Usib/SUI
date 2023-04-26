@@ -1122,6 +1122,9 @@
 <a href="#1122" id="1122">1122</a>
 <a href="#1123" id="1123">1123</a>
 <a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1319,7 +1322,10 @@
         <span class="macro">info!</span>(<span class="string">&quot;Indexer object checkpoint download &amp; index task started...&quot;</span>);
         <span class="comment">// NOTE: important not to cast i64 to u64 here,
         // because -1 will be returned when checkpoints table is empty.
-        </span><span class="kw">let </span>last_seq_from_db = <span class="self">self</span>.state.get_latest_checkpoint_sequence_number().<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>last_seq_from_db = <span class="self">self
+            </span>.state
+            .get_latest_object_checkpoint_sequence_number()
+            .<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">if </span>last_seq_from_db &gt; <span class="number">0 </span>{
             <span class="macro">info!</span>(<span class="string">&quot;Resuming from checkpoint {last_seq_from_db}&quot;</span>);
         }
@@ -1549,7 +1555,7 @@
                     events,
                     object_changes: _tx_object_changes,
                     addresses: <span class="kw">_</span>,
-                    packages,
+                    packages: <span class="kw">_</span>,
                     input_objects: <span class="kw">_</span>,
                     move_calls: <span class="kw">_</span>,
                     recipients: <span class="kw">_</span>,
@@ -1591,25 +1597,7 @@
                 //     }
                 // });
 
-                </span><span class="kw">let </span>packages_handler = <span class="self">self</span>.clone();
-                <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-                    <span class="kw">let </span><span class="kw-2">mut </span>package_commit_res =
-                        packages_handler.state.persist_packages(<span class="kw-2">&amp;</span>packages).<span class="kw">await</span>;
-                    <span class="kw">while let </span><span class="prelude-val">Err</span>(e) = package_commit_res {
-                        <span class="macro">warn!</span>(
-                            <span class="string">&quot;Indexer package commit failed with error: {:?}, retrying after {:?} milli-secs...&quot;</span>,
-                            e, DB_COMMIT_RETRY_INTERVAL_IN_MILLIS
-                        );
-                        tokio::time::sleep(std::time::Duration::from_millis(
-                            DB_COMMIT_RETRY_INTERVAL_IN_MILLIS,
-                        ))
-                        .<span class="kw">await</span>;
-                        package_commit_res =
-                            packages_handler.state.persist_packages(<span class="kw-2">&amp;</span>packages).<span class="kw">await</span>;
-                    }
-                });
-
-                <span class="comment">// MUSTFIX(gegaowp): temp. turn off tx index table commit to reduce short-term storage consumption.
+                // MUSTFIX(gegaowp): temp. turn off tx index table commit to reduce short-term storage consumption.
                 // this include recipients, input_objects and move_calls.
                 // let transactions_handler = self.clone();
                 // spawn_monitored_task!(async move {
@@ -1694,14 +1682,32 @@
                     events: <span class="kw">_</span>,
                     object_changes: tx_object_changes,
                     addresses: <span class="kw">_</span>,
-                    packages: <span class="kw">_</span>,
+                    packages,
                     input_objects: <span class="kw">_</span>,
                     move_calls: <span class="kw">_</span>,
                     recipients: <span class="kw">_</span>,
                 } = indexed_checkpoint;
                 <span class="kw">let </span>checkpoint_seq = checkpoint.sequence_number;
 
-                <span class="comment">// NOTE: commit object changes in the curren task to stick to the original order.
+                <span class="kw">let </span>packages_handler = <span class="self">self</span>.clone();
+                <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
+                    <span class="kw">let </span><span class="kw-2">mut </span>package_commit_res =
+                        packages_handler.state.persist_packages(<span class="kw-2">&amp;</span>packages).<span class="kw">await</span>;
+                    <span class="kw">while let </span><span class="prelude-val">Err</span>(e) = package_commit_res {
+                        <span class="macro">warn!</span>(
+                            <span class="string">&quot;Indexer package commit failed with error: {:?}, retrying after {:?} milli-secs...&quot;</span>,
+                            e, DB_COMMIT_RETRY_INTERVAL_IN_MILLIS
+                        );
+                        tokio::time::sleep(std::time::Duration::from_millis(
+                            DB_COMMIT_RETRY_INTERVAL_IN_MILLIS,
+                        ))
+                        .<span class="kw">await</span>;
+                        package_commit_res =
+                            packages_handler.state.persist_packages(<span class="kw-2">&amp;</span>packages).<span class="kw">await</span>;
+                    }
+                });
+
+                <span class="comment">// NOTE: commit object changes in the current task to stick to the original order.
                 </span><span class="kw">let </span>object_db_guard = <span class="self">self</span>.metrics.object_db_commit_latency.start_timer();
                 <span class="kw">let </span><span class="kw-2">mut </span>object_changes_commit_res = <span class="self">self
                     </span>.state

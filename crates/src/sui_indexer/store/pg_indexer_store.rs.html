@@ -1837,6 +1837,17 @@
 <a href="#1837" id="1837">1837</a>
 <a href="#1838" id="1838">1838</a>
 <a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
+<a href="#1847" id="1847">1847</a>
+<a href="#1848" id="1848">1848</a>
+<a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2058,6 +2069,17 @@ GROUP BY table_name;
                 </span>.map(|o| o.unwrap_or(-<span class="number">1</span>))
         })
         .context(<span class="string">&quot;Failed reading latest checkpoint sequence number from PostgresDB&quot;</span>)
+    }
+
+    <span class="kw">async fn </span>get_latest_object_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i64, IndexerError&gt; {
+        <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            objects::dsl::objects
+                .select(max(objects::checkpoint))
+                .first::&lt;<span class="prelude-ty">Option</span>&lt;i64&gt;&gt;(conn)
+                <span class="comment">// -1 to differentiate between no checkpoints and the first checkpoint
+                </span>.map(|o| o.unwrap_or(-<span class="number">1</span>))
+        })
+        .context(<span class="string">&quot;Failed reading latest object checkpoint sequence number from PostgresDB&quot;</span>)
     }
 
     <span class="kw">async fn </span>get_checkpoint(
