@@ -113,13 +113,29 @@
 <a href="#113" id="113">113</a>
 <a href="#114" id="114">114</a>
 <a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>std::collections::BTreeMap;
+<span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::time::{SystemTime, UNIX_EPOCH};
+<span class="kw">use </span>sui_core::authority::AuthorityState;
 <span class="kw">use </span>tracing::trace;
+
+<span class="kw">use </span>fastcrypto::encoding::Encoding;
+<span class="kw">use </span>fastcrypto::encoding::Hex;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>GA_API_SECRET: <span class="kw-2">&amp;</span>str = <span class="string">&quot;zeq-aYEzS0aGdRJ8kNZTEg&quot;</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>GA_EVENT_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;node_telemetry_event&quot;</span>;
@@ -151,16 +167,22 @@
     ip: String,
 }
 
-<span class="kw">pub async fn </span>send_telemetry_event(is_validator: bool) {
+<span class="kw">pub async fn </span>send_telemetry_event(state: Arc&lt;AuthorityState&gt;, is_validator: bool) {
     <span class="kw">let </span>git_rev = <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>).to_string();
     <span class="kw">let </span>ip_address = get_ip().<span class="kw">await</span>;
+    <span class="kw">let </span>chain_identifier = <span class="kw">match </span>state.get_chain_identifier() {
+        <span class="comment">// Unwrap safe: Checkpoint Digest is 32 bytes long
+        </span><span class="prelude-val">Some</span>(chain_identifier) =&gt; Hex::encode(chain_identifier.into_inner().get(<span class="number">0</span>..<span class="number">4</span>).unwrap()),
+        <span class="prelude-val">None </span>=&gt; <span class="string">&quot;Unknown&quot;</span>.to_string(),
+    };
     <span class="kw">let </span>since_the_epoch = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .expect(<span class="string">&quot;Now should be later than epoch!&quot;</span>);
     <span class="kw">let </span>telemetry_event = TelemetryEvent {
         name: GA_EVENT_NAME.into(),
         params: BTreeMap::from([
-            (<span class="string">&quot;node_address&quot;</span>.into(), ip_address.clone()),
+            (<span class="string">&quot;chain_identifier&quot;</span>.into(), chain_identifier),
+            (<span class="string">&quot;node_address&quot;</span>.into(), ip_address),
             (
                 <span class="string">&quot;node_type&quot;</span>.into(),
                 <span class="kw">if </span>is_validator {

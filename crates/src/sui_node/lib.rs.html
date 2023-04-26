@@ -1191,6 +1191,13 @@
 <a href="#1191" id="1191">1191</a>
 <a href="#1192" id="1192">1192</a>
 <a href="#1193" id="1193">1193</a>
+<a href="#1194" id="1194">1194</a>
+<a href="#1195" id="1195">1195</a>
+<a href="#1196" id="1196">1196</a>
+<a href="#1197" id="1197">1197</a>
+<a href="#1198" id="1198">1198</a>
+<a href="#1199" id="1199">1199</a>
+<a href="#1200" id="1200">1200</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1211,6 +1218,7 @@
 <span class="kw">use </span>anyhow::Result;
 <span class="kw">use </span>arc_swap::ArcSwap;
 <span class="kw">use </span>futures::TryFutureExt;
+<span class="kw">use </span>mysten_common::sync::async_once_cell::AsyncOnceCell;
 <span class="kw">use </span>prometheus::Registry;
 <span class="kw">use </span>sui_core::consensus_adapter::LazyNarwhalClient;
 <span class="kw">use </span>sui_json_rpc::api::JsonRpcMetrics;
@@ -1352,15 +1360,21 @@
         registry_service: RegistryService,
         custom_rpc_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;SuiNode&gt;&gt; {
-        <span class="kw">let </span>(sender, receiver) = oneshot::channel();
-        <span class="self">Self</span>::start_async(config, registry_service, sender, custom_rpc_runtime).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(receiver.<span class="kw">await</span><span class="question-mark">?</span>)
+        <span class="kw">let </span>node_one_cell = Arc::new(AsyncOnceCell::&lt;Arc&lt;SuiNode&gt;&gt;::new());
+        <span class="self">Self</span>::start_async(
+            config,
+            registry_service,
+            node_one_cell.clone(),
+            custom_rpc_runtime,
+        )
+        .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(node_one_cell.get().<span class="kw">await</span>)
     }
 
     <span class="kw">pub async fn </span>start_async(
         config: <span class="kw-2">&amp;</span>NodeConfig,
         registry_service: RegistryService,
-        node_sender: oneshot::Sender&lt;Arc&lt;SuiNode&gt;&gt;,
+        node_once_cell: Arc&lt;AsyncOnceCell&lt;Arc&lt;SuiNode&gt;&gt;&gt;,
         custom_rpc_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>config = config.clone();
@@ -1644,9 +1658,9 @@
         <span class="kw">let </span>node_copy = node.clone();
         <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{ <span class="self">Self</span>::monitor_reconfiguration(node_copy).<span class="kw">await </span>});
 
-        node_sender
-            .send(node)
-            .map_err(|_e| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to send node&quot;</span>))<span class="question-mark">?</span>;
+        node_once_cell
+            .set(node)
+            .expect(<span class="string">&quot;Failed to set Arc&lt;Node&gt; in node_once_cell&quot;</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
