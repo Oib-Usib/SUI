@@ -144,6 +144,7 @@
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -185,6 +186,7 @@
     #[serde_as(<span class="kw">as </span>= <span class="string">&quot;BigInt&lt;u64&gt;&quot;</span>)]
     </span><span class="kw">pub </span>epoch_start_timestamp: u64,
     <span class="kw">pub </span>end_of_epoch_info: <span class="prelude-ty">Option</span>&lt;EndOfEpochInfo&gt;,
+    <span class="kw">pub </span>reference_gas_price: <span class="prelude-ty">Option</span>&lt;u64&gt;,
 }
 
 <span class="attr">#[serde_as]

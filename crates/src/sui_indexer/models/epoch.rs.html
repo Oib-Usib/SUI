@@ -124,6 +124,7 @@
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
 <a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -231,6 +232,7 @@
             first_checkpoint_id: <span class="self">self</span>.first_checkpoint_id <span class="kw">as </span>u64,
             epoch_start_timestamp: <span class="self">self</span>.epoch_start_timestamp <span class="kw">as </span>u64,
             end_of_epoch_info,
+            reference_gas_price: <span class="self">self</span>.reference_gas_price.map(|v| v <span class="kw">as </span>u64),
         })
     }
 }
