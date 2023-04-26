@@ -2865,10 +2865,10 @@
     }
 
     <span class="kw">fn </span>record_rpc_error_maybe(<span class="kw-2">&amp;</span><span class="self">self</span>, name: ConciseAuthorityPublicKeyBytesRef, error: <span class="kw-2">&amp;</span>SuiError) {
-        <span class="kw">if let </span>SuiError::RpcError(message, _code) = error {
+        <span class="kw">if let </span>SuiError::RpcError(_message, code) = error {
             <span class="self">self</span>.metrics
                 .total_rpc_err
-                .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>name.to_string(), message.as_str()])
+                .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>name.to_string(), code.as_str()])
                 .inc();
         }
     }
