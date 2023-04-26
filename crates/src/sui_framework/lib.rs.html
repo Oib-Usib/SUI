@@ -249,6 +249,7 @@
 <a href="#249" id="249">249</a>
 <a href="#250" id="250">250</a>
 <a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -470,6 +471,7 @@
         check_friend_linking: <span class="bool-val">false</span>,
         check_private_entry_linking: <span class="bool-val">true</span>,
         disallowed_new_abilities: AbilitySet::ALL,
+        disallow_change_struct_type_params: <span class="bool-val">true</span>,
     };
 
     <span class="kw">let </span>new_pkg = new_object

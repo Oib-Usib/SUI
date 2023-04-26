@@ -760,6 +760,8 @@
 <a href="#760" id="760">760</a>
 <a href="#761" id="761">761</a>
 <a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -909,6 +911,8 @@
             check_friend_linking: <span class="bool-val">false</span>,
             check_private_entry_linking: <span class="bool-val">false</span>,
             disallowed_new_abilities,
+            disallow_change_struct_type_params: protocol_config
+                .disallow_change_struct_type_params_on_upgrade(),
         }
     }
 
