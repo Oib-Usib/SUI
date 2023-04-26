@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682543468281,
+  "lastUpdate": 1682543876867,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -683,6 +683,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311922,
             "range": "± 13450",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9c23e8d55c56692319fef39c4cdd6ee6c6ac0dcd",
+          "message": "pass in tokio runtime and handle drop correctly (#11357)",
+          "timestamp": "2023-04-26T14:07:50-07:00",
+          "tree_id": "6c20894844023d9cbab9d48e74193f3b3f7ddd84",
+          "url": "https://github.com/MystenLabs/sui/commit/9c23e8d55c56692319fef39c4cdd6ee6c6ac0dcd"
+        },
+        "date": 1682543873524,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150444607,
+            "range": "± 5853057",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312600,
+            "range": "± 21187",
             "unit": "ns/iter"
           }
         ]
