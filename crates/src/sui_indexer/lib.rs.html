@@ -471,6 +471,19 @@
 <a href="#471" id="471">471</a>
 <a href="#472" id="472">472</a>
 <a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="attr">#![recursion_limit = <span class="string">&quot;256&quot;</span>]
@@ -500,6 +513,7 @@
 <span class="kw">use </span>regex::Regex;
 <span class="kw">use </span>rustls::client::{ServerCertVerified, ServerCertVerifier};
 <span class="kw">use </span>rustls::{Certificate, Error, ServerName};
+<span class="kw">use </span>tokio::runtime::Handle;
 <span class="kw">use </span>tracing::{info, warn};
 <span class="kw">use </span>url::Url;
 
@@ -658,6 +672,7 @@
         registry: <span class="kw-2">&amp;</span>Registry,
         store: S,
         metrics: IndexerMetrics,
+        custom_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt; {
         <span class="macro">info!</span>(
             <span class="string">&quot;Sui indexer of version {:?} started...&quot;</span>,
@@ -667,10 +682,15 @@
 
         <span class="kw">if </span>config.rpc_server_worker &amp;&amp; config.fullnode_sync_worker {
             <span class="macro">info!</span>(<span class="string">&quot;Starting indexer with both fullnode sync and RPC server&quot;</span>);
-            <span class="kw">let </span>handle =
-                build_json_rpc_server(registry, store.clone(), event_handler.clone(), config)
-                    .<span class="kw">await
-                    </span>.expect(<span class="string">&quot;Json rpc server should not run into errors upon start.&quot;</span>);
+            <span class="kw">let </span>handle = build_json_rpc_server(
+                registry,
+                store.clone(),
+                event_handler.clone(),
+                config,
+                custom_runtime,
+            )
+            .<span class="kw">await
+            </span>.expect(<span class="string">&quot;Json rpc server should not run into errors upon start.&quot;</span>);
             <span class="comment">// let JSON RPC server run forever.
             </span><span class="macro">spawn_monitored_task!</span>(handle.stopped());
 
@@ -693,10 +713,15 @@
             .<span class="kw">await
         </span>} <span class="kw">else if </span>config.rpc_server_worker {
             <span class="macro">info!</span>(<span class="string">&quot;Starting indexer with only RPC server&quot;</span>);
-            <span class="kw">let </span>handle =
-                build_json_rpc_server(registry, store.clone(), event_handler.clone(), config)
-                    .<span class="kw">await
-                    </span>.expect(<span class="string">&quot;Json rpc server should not run into errors upon start.&quot;</span>);
+            <span class="kw">let </span>handle = build_json_rpc_server(
+                registry,
+                store.clone(),
+                event_handler.clone(),
+                config,
+                custom_runtime,
+            )
+            .<span class="kw">await
+            </span>.expect(<span class="string">&quot;Json rpc server should not run into errors upon start.&quot;</span>);
             handle.stopped().<span class="kw">await</span>;
             <span class="prelude-val">Ok</span>(())
         } <span class="kw">else if </span>config.fullnode_sync_worker {
@@ -866,6 +891,7 @@
     state: S,
     event_handler: Arc&lt;EventHandler&gt;,
     config: <span class="kw-2">&amp;</span>IndexerConfig,
+    custom_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;ServerHandle, IndexerError&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>builder = JsonRpcServerBuilder::new(<span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>), prometheus_registry);
     <span class="kw">let </span>http_client = get_http_client(config.rpc_client_url.as_str())<span class="question-mark">?</span>;
@@ -892,7 +918,7 @@
         </span>config.rpc_server_url.as_str().parse().unwrap(),
         config.rpc_server_port,
     );
-    <span class="prelude-val">Ok</span>(builder.start(default_socket_addr).<span class="kw">await</span><span class="question-mark">?</span>)
+    <span class="prelude-val">Ok</span>(builder.start(default_socket_addr, custom_runtime).<span class="kw">await</span><span class="question-mark">?</span>)
 }
 
 <span class="kw">fn </span>convert_url(url_str: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;String&gt; {

@@ -1184,6 +1184,13 @@
 <a href="#1184" id="1184">1184</a>
 <a href="#1185" id="1185">1185</a>
 <a href="#1186" id="1186">1186</a>
+<a href="#1187" id="1187">1187</a>
+<a href="#1188" id="1188">1188</a>
+<a href="#1189" id="1189">1189</a>
+<a href="#1190" id="1190">1190</a>
+<a href="#1191" id="1191">1191</a>
+<a href="#1192" id="1192">1192</a>
+<a href="#1193" id="1193">1193</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1209,6 +1216,7 @@
 <span class="kw">use </span>sui_json_rpc::api::JsonRpcMetrics;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>tap::tap::TapFallible;
+<span class="kw">use </span>tokio::runtime::Handle;
 <span class="kw">use </span>tokio::sync::broadcast;
 <span class="kw">use </span>tokio::sync::oneshot;
 <span class="kw">use </span>tokio::sync::{watch, Mutex};
@@ -1342,9 +1350,10 @@
     <span class="kw">pub async fn </span>start(
         config: <span class="kw-2">&amp;</span>NodeConfig,
         registry_service: RegistryService,
+        custom_rpc_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;SuiNode&gt;&gt; {
         <span class="kw">let </span>(sender, receiver) = oneshot::channel();
-        <span class="self">Self</span>::start_async(config, registry_service, sender).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="self">Self</span>::start_async(config, registry_service, sender, custom_rpc_runtime).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(receiver.<span class="kw">await</span><span class="question-mark">?</span>)
     }
 
@@ -1352,6 +1361,7 @@
         config: <span class="kw-2">&amp;</span>NodeConfig,
         registry_service: RegistryService,
         node_sender: oneshot::Sender&lt;Arc&lt;SuiNode&gt;&gt;,
+        custom_rpc_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>config = config.clone();
         <span class="kw">if </span>config.supported_protocol_versions.is_none() {
@@ -1550,6 +1560,7 @@
             <span class="kw-2">&amp;</span>transaction_orchestrator.clone(),
             <span class="kw-2">&amp;</span>config,
             <span class="kw-2">&amp;</span>prometheus_registry,
+            custom_rpc_runtime,
         )
         .<span class="kw">await</span><span class="question-mark">?</span>;
 
@@ -2327,6 +2338,7 @@
     transaction_orchestrator: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Arc&lt;TransactiondOrchestrator&lt;NetworkAuthorityClient&gt;&gt;&gt;,
     config: <span class="kw-2">&amp;</span>NodeConfig,
     prometheus_registry: <span class="kw-2">&amp;</span>Registry,
+    custom_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;ServerHandle&gt;&gt; {
     <span class="comment">// Validators do not expose these APIs
     </span><span class="kw">if </span>config.consensus_config().is_some() {
@@ -2356,7 +2368,9 @@
     ))<span class="question-mark">?</span>;
     server.register_module(MoveUtils::new(state.clone()))<span class="question-mark">?</span>;
 
-    <span class="kw">let </span>rpc_server_handle = server.start(config.json_rpc_address).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>rpc_server_handle = server
+        .start(config.json_rpc_address, custom_runtime)
+        .<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(rpc_server_handle))
 }

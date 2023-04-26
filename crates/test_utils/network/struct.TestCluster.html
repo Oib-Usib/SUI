@@ -26,7 +26,7 @@ Note that this function does not guarantee that every node is at the target epoc
     timeout_dur: <a class="struct" href="https://doc.rust-lang.org/nightly/core/time/struct.Duration.html" title="struct core::time::Duration">Duration</a>
 ) -&gt; <a class="enum" href="../../sui_types/sui_system_state/enum.SuiSystemState.html" title="enum sui_types::sui_system_state::SuiSystemState">SuiSystemState</a></h4></section><details class="toggle method-toggle" open><summary><section id="method.update_validator_supported_versions" class="method"><a class="srclink rightside" href="../../src/test_utils/network.rs.html#230-245">source</a><h4 class="code-header">pub async fn <a href="#method.update_validator_supported_versions" class="fn">update_validator_supported_versions</a>(
     &amp;mut self,
-    new_supported_versions: SupportedProtocolVersions
+    new_supported_versions: <a class="struct" href="../../sui_protocol_config/struct.SupportedProtocolVersions.html" title="struct sui_protocol_config::SupportedProtocolVersions">SupportedProtocolVersions</a>
 )</h4></section></summary><div class="docblock"><p>Upgrade the network protocol version, by restarting every validator with a new
 supported versions.
 Note that we don’t restart the fullnode here, and it is assumed that the fulnode supports

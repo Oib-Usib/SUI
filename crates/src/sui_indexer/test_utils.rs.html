@@ -164,7 +164,7 @@
     <span class="kw">let </span>store = PgIndexerStore::new(async_pool, blocking_pool, indexer_metrics.clone()).<span class="kw">await</span>;
     <span class="kw">let </span>store_clone = store.clone();
     <span class="kw">let </span>handle = tokio::spawn(<span class="kw">async move </span>{
-        Indexer::start(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>registry, store_clone, indexer_metrics).<span class="kw">await
+        Indexer::start(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>registry, store_clone, indexer_metrics, <span class="prelude-val">None</span>).<span class="kw">await
     </span>});
     <span class="prelude-val">Ok</span>((store, handle))
 }

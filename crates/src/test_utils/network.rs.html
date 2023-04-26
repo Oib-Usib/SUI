@@ -1203,7 +1203,7 @@
     config: NodeConfig,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;FullNodeHandle, anyhow::Error&gt; {
     <span class="kw">let </span>registry_service = RegistryService::new(Registry::new());
-    <span class="kw">let </span>sui_node = SuiNode::start(<span class="kw-2">&amp;</span>config, registry_service).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>sui_node = SuiNode::start(<span class="kw-2">&amp;</span>config, registry_service, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">let </span>rpc_url = <span class="macro">format!</span>(<span class="string">&quot;http://{}&quot;</span>, config.json_rpc_address);
     <span class="kw">let </span>rpc_client = HttpClientBuilder::default().build(<span class="kw-2">&amp;</span>rpc_url)<span class="question-mark">?</span>;

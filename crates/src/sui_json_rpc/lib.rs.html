@@ -195,28 +195,6 @@
 <a href="#195" id="195">195</a>
 <a href="#196" id="196">196</a>
 <a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a>
-<a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a>
-<a href="#205" id="205">205</a>
-<a href="#206" id="206">206</a>
-<a href="#207" id="207">207</a>
-<a href="#208" id="208">208</a>
-<a href="#209" id="209">209</a>
-<a href="#210" id="210">210</a>
-<a href="#211" id="211">211</a>
-<a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -231,7 +209,7 @@
 <span class="kw">use </span>jsonrpsee::RpcModule;
 <span class="kw">use </span>prometheus::Registry;
 <span class="kw">use </span>tap::TapFallible;
-<span class="kw">use </span>tokio::runtime::{Handle, Runtime};
+<span class="kw">use </span>tokio::runtime::Handle;
 <span class="kw">use </span>tower_http::cors::{AllowOrigin, CorsLayer};
 <span class="kw">use </span>tracing::{info, warn};
 
@@ -307,7 +285,11 @@
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.module.merge(module.rpc())<span class="question-mark">?</span>)
     }
 
-    <span class="kw">pub async fn </span>start(<span class="kw-2">mut </span><span class="self">self</span>, listen_address: SocketAddr) -&gt; <span class="prelude-ty">Result</span>&lt;ServerHandle, Error&gt; {
+    <span class="kw">pub async fn </span>start(
+        <span class="kw-2">mut </span><span class="self">self</span>,
+        listen_address: SocketAddr,
+        custom_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;ServerHandle, Error&gt; {
         <span class="kw">let </span>acl = <span class="kw">match </span>env::var(<span class="string">&quot;ACCESS_CONTROL_ALLOW_ORIGIN&quot;</span>) {
             <span class="prelude-val">Ok</span>(value) =&gt; {
                 <span class="kw">let </span>allow_hosts = value
@@ -369,37 +351,23 @@
             .layer(cors)
             .layer(routing_layer);
 
-        <span class="kw">let </span>worker_thread = env::var(<span class="string">&quot;RPC_WORKER_THREAD&quot;</span>)
-            .ok()
-            .and_then(|o| {
-                usize::from_str(<span class="kw-2">&amp;</span>o)
-                    .tap_err(|e| <span class="macro">warn!</span>(<span class="string">&quot;Cannot parse RPC_WORKER_THREAD to usize: {e}&quot;</span>))
-                    .ok()
-            })
-            .unwrap_or(num_cpus::get() / <span class="number">2</span>);
-
-        <span class="kw">let </span>rt = tokio::runtime::Builder::new_multi_thread()
-            .thread_name(<span class="string">&quot;sui-node-jsonrpc-worker&quot;</span>)
-            .worker_threads(worker_thread)
-            .enable_all()
-            .build()
-            .unwrap();
-
-        <span class="kw">let </span>server = ServerBuilder::default()
+        <span class="kw">let </span><span class="kw-2">mut </span>builder = ServerBuilder::default()
             .batch_requests_supported(<span class="bool-val">false</span>)
             .max_response_body_size(MAX_REQUEST_SIZE)
             .max_connections(max_connection)
             .set_host_filtering(AllowHosts::Any)
             .set_middleware(middleware)
-            .custom_tokio_runtime(rt.handle().clone())
-            .set_logger(metrics_logger)
-            .build(listen_address)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+            .set_logger(metrics_logger);
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(custom_runtime) = custom_runtime {
+            builder = builder.custom_tokio_runtime(custom_runtime);
+        }
+
+        <span class="kw">let </span>server = builder.build(listen_address).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let </span>addr = server.local_addr()<span class="question-mark">?</span>;
         <span class="kw">let </span>handle = ServerHandle {
-            rt: <span class="prelude-val">Some</span>(rt),
-            handle: <span class="prelude-val">Some</span>(server.start(<span class="self">self</span>.module)<span class="question-mark">?</span>),
+            handle: server.start(<span class="self">self</span>.module)<span class="question-mark">?</span>,
         };
         <span class="macro">info!</span>(local_addr =<span class="question-mark">? </span>addr, <span class="string">&quot;Sui JSON-RPC server listening on {addr}&quot;</span>);
         <span class="macro">info!</span>(<span class="string">&quot;Available JSON-RPC methods : {:?}&quot;</span>, methods_names);
@@ -408,25 +376,13 @@
 }
 
 <span class="kw">pub struct </span>ServerHandle {
-    rt: <span class="prelude-ty">Option</span>&lt;Runtime&gt;,
-    handle: <span class="prelude-ty">Option</span>&lt;jsonrpsee::server::ServerHandle&gt;,
+    handle: jsonrpsee::server::ServerHandle,
 }
 
 <span class="kw">impl </span>ServerHandle {
-    <span class="kw">pub async fn </span>stopped(<span class="kw-2">mut </span><span class="self">self</span>) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(handle) = <span class="self">self</span>.handle.take() {
-            handle.stopped().<span class="kw">await
-        </span>}
-    }
-}
-
-<span class="kw">impl </span>Drop <span class="kw">for </span>ServerHandle {
-    <span class="comment">// This is to prevent the runtime from being dropped in a existing runtime.
-    </span><span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">if let </span>(<span class="prelude-val">Ok</span>(handle), <span class="prelude-val">Some</span>(rt)) = (Handle::try_current(), <span class="self">self</span>.rt.take()) {
-            handle.spawn_blocking(<span class="kw">move </span>|| drop(rt));
-        }
-    }
+    <span class="kw">pub async fn </span>stopped(<span class="self">self</span>) {
+        <span class="self">self</span>.handle.stopped().<span class="kw">await
+    </span>}
 }
 
 <span class="kw">pub trait </span>SuiRpcModule
