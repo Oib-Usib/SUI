@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682467226655,
+  "lastUpdate": 1682481248452,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -251,6 +251,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 331179,
             "range": "± 90792",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fe6ae8484d2df34f7a3b94f3f17ac83deb52fa64",
+          "message": "Verify accumulator behavior in sui transactional tests (#11205)\n\nUnfortunately, the transactional tests don't use AuthorityStore, so we\r\nhave to duplicate some logic here, but I think this is well worth it for\r\nthe increased coverage.",
+          "timestamp": "2023-04-25T20:41:30-07:00",
+          "tree_id": "0dec68d93c43a0a835869d647a919dde2272c9c0",
+          "url": "https://github.com/MystenLabs/sui/commit/fe6ae8484d2df34f7a3b94f3f17ac83deb52fa64"
+        },
+        "date": 1682481245512,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150811391,
+            "range": "± 5056657",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 307561,
+            "range": "± 16415",
             "unit": "ns/iter"
           }
         ]
