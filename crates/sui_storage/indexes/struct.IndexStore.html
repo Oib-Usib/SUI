@@ -121,7 +121,7 @@
     owner: SuiAddress,
     cursor: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;ObjectID&gt;,
     limit: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>,
-    filter: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../../sui_json_rpc_types/sui_object/enum.SuiObjectDataFilter.html" title="enum sui_json_rpc_types::sui_object::SuiObjectDataFilter">SuiObjectDataFilter</a>&gt;
+    filter: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;SuiObjectDataFilter&gt;
 ) -&gt; SuiResult&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;ObjectInfo&gt;&gt;</h4></section><section id="method.get_owned_coins_iterator" class="method"><a class="srclink rightside" href="../../src/sui_storage/indexes.rs.html#1159-1180">source</a><h4 class="code-header">pub fn <a href="#method.get_owned_coins_iterator" class="fn">get_owned_coins_iterator</a>(
     coin_index: &amp;DBMap&lt;(SuiAddress, <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>, ObjectID), <a class="struct" href="struct.CoinInfo.html" title="struct sui_storage::indexes::CoinInfo">CoinInfo</a>&gt;,
     owner: SuiAddress,
@@ -136,7 +136,7 @@
     &amp;self,
     owner: SuiAddress,
     starting_object_id: ObjectID,
-    filter: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../../sui_json_rpc_types/sui_object/enum.SuiObjectDataFilter.html" title="enum sui_json_rpc_types::sui_object::SuiObjectDataFilter">SuiObjectDataFilter</a>&gt;
+    filter: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;SuiObjectDataFilter&gt;
 ) -&gt; SuiResult&lt;impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html" title="trait core::iter::traits::iterator::Iterator">Iterator</a>&lt;Item = ObjectInfo&gt; + '_&gt;</h4></section></summary><div class="docblock"><p>starting_object_id can be used to implement pagination, where a client remembers the last
 object id of each page, and use it to query the next page.</p>
 </div></details><section id="method.insert_genesis_objects" class="method"><a class="srclink rightside" href="../../src/sui_storage/indexes.rs.html#1238-1250">source</a><h4 class="code-header">pub fn <a href="#method.insert_genesis_objects" class="fn">insert_genesis_objects</a>(

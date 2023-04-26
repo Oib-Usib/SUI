@@ -58,6 +58,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_simulator":["",[],["lib.rs"]],\
 "sui_source_validation":["",[],["lib.rs"]],\
 "sui_storage":["",[["object_store",[],["mod.rs","util.rs"]]],["indexes.rs","lib.rs","mutex_table.rs","package_object_cache.rs","sharded_lru.rs","write_path_pending_tx_log.rs"]],\
+"sui_surfer":["",[],["default_surf_strategy.rs","lib.rs","surf_strategy.rs","surfer_state.rs","surfer_task.rs"]],\
 "sui_swarm":["",[["memory",[],["container.rs","mod.rs","node.rs","swarm.rs"]]],["lib.rs"]],\
 "sui_telemetry":["",[],["lib.rs"]],\
 "sui_test_validator":["",[],["main.rs"]],\

@@ -39,7 +39,7 @@
     package_object_id: ObjectID,
     module: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,
     function: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,
-    type_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../sui_json_rpc_types/sui_transaction/struct.SuiTypeTag.html" title="struct sui_json_rpc_types::sui_transaction::SuiTypeTag">SuiTypeTag</a>&gt;,
+    type_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;SuiTypeTag&gt;,
     call_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;SuiJsonValue&gt;,
     gas: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;ObjectID&gt;,
     gas_budget: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>
@@ -49,7 +49,7 @@
     package: ObjectID,
     module: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,
     function: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,
-    type_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../sui_json_rpc_types/sui_transaction/struct.SuiTypeTag.html" title="struct sui_json_rpc_types::sui_transaction::SuiTypeTag">SuiTypeTag</a>&gt;,
+    type_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;SuiTypeTag&gt;,
     call_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;SuiJsonValue&gt;
 ) -&gt; <a class="type" href="https://docs.rs/anyhow/1.0.69/anyhow/type.Result.html" title="type anyhow::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</h4></section><section id="method.publish" class="method"><a class="srclink rightside" href="../src/sui_transaction_builder/lib.rs.html#438-458">source</a><h4 class="code-header">pub async fn <a href="#method.publish" class="fn">publish</a>(
     &amp;self,
@@ -93,7 +93,7 @@
 ) -&gt; <a class="type" href="https://docs.rs/anyhow/1.0.69/anyhow/type.Result.html" title="type anyhow::Result">Result</a>&lt;TransactionData&gt;</h4></section><section id="method.batch_transaction" class="method"><a class="srclink rightside" href="../src/sui_transaction_builder/lib.rs.html#619-674">source</a><h4 class="code-header">pub async fn <a href="#method.batch_transaction" class="fn">batch_transaction</a>(
     &amp;self,
     signer: SuiAddress,
-    single_transaction_params: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="enum" href="../sui_json_rpc_types/sui_transaction/enum.RPCTransactionRequestParams.html" title="enum sui_json_rpc_types::sui_transaction::RPCTransactionRequestParams">RPCTransactionRequestParams</a>&gt;,
+    single_transaction_params: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;RPCTransactionRequestParams&gt;,
     gas: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;ObjectID&gt;,
     gas_budget: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>
 ) -&gt; <a class="type" href="https://docs.rs/anyhow/1.0.69/anyhow/type.Result.html" title="type anyhow::Result">Result</a>&lt;TransactionData&gt;</h4></section><section id="method.request_add_stake" class="method"><a class="srclink rightside" href="../src/sui_transaction_builder/lib.rs.html#676-748">source</a><h4 class="code-header">pub async fn <a href="#method.request_add_stake" class="fn">request_add_stake</a>(

@@ -586,6 +586,42 @@
 <a href="#586" id="586">586</a>
 <a href="#587" id="587">587</a>
 <a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -604,10 +640,11 @@
 <span class="kw">use </span>tracing::info;
 
 <span class="kw">use </span>mysten_metrics::RegistryService;
+<span class="kw">use </span>shared_crypto::intent::Intent;
 <span class="kw">use </span>sui::config::SuiEnv;
 <span class="kw">use </span>sui::{client_commands::WalletContext, config::SuiClientConfig};
 <span class="kw">use </span>sui_config::builder::{ProtocolVersionsConfig, SupportedProtocolVersionsCallback};
-<span class="kw">use </span>sui_config::genesis_config::GenesisConfig;
+<span class="kw">use </span>sui_config::genesis_config::{AccountConfig, GenesisConfig};
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
 <span class="kw">use </span>sui_config::{Config, SUI_CLIENT_CONFIG, SUI_NETWORK_CONFIG};
 <span class="kw">use </span>sui_config::{FullnodeConfigBuilder, NodeConfig, PersistedConfig, SUI_KEYSTORE_FILENAME};
@@ -619,11 +656,11 @@
 <span class="kw">use </span>sui_sdk::error::SuiRpcResult;
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
 <span class="kw">use </span>sui_swarm::memory::{Swarm, SwarmBuilder};
-<span class="kw">use </span>sui_types::base_types::{AuthorityName, SuiAddress};
+<span class="kw">use </span>sui_types::base_types::{AuthorityName, ObjectID, SuiAddress};
 <span class="kw">use </span>sui_types::committee::EpochId;
 <span class="kw">use </span>sui_types::crypto::KeypairTraits;
 <span class="kw">use </span>sui_types::crypto::SuiKeyPair;
-<span class="kw">use </span>sui_types::messages::VerifiedTransaction;
+<span class="kw">use </span>sui_types::messages::{SenderSignedData, Transaction, TransactionData, VerifiedTransaction};
 <span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>sui_types::sui_system_state::epoch_start_sui_system_state::EpochStartSystemStateTrait;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
@@ -697,6 +734,27 @@
             .unwrap()
     }
 
+    <span class="comment">// Sign a transaction with a key currently managed by the WalletContext
+    </span><span class="kw">pub fn </span>sign_transaction(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        signer_address: <span class="kw-2">&amp;</span>SuiAddress,
+        data: <span class="kw-2">&amp;</span>TransactionData,
+    ) -&gt; VerifiedTransaction {
+        <span class="kw">let </span>sig = <span class="self">self
+            </span>.wallet
+            .config
+            .keystore
+            .sign_secure(signer_address, data, Intent::sui_transaction())
+            .unwrap();
+        VerifiedTransaction::new_unchecked(Transaction::new(
+            SenderSignedData::new_from_sender_signature(
+                data.clone(),
+                Intent::sui_transaction(),
+                sig,
+            ),
+        ))
+    }
+
     <span class="kw">pub fn </span>fullnode_config_builder(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; FullnodeConfigBuilder {
         <span class="self">self</span>.swarm.config().fullnode_config_builder()
     }
@@ -742,6 +800,15 @@
             .get_reference_gas_price()
             .<span class="kw">await
             </span>.expect(<span class="string">&quot;failed to get reference gas price&quot;</span>)
+    }
+
+    <span class="kw">pub async fn </span>get_object_from_fullnode_store(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; <span class="prelude-ty">Option</span>&lt;Object&gt; {
+        <span class="self">self</span>.fullnode_handle
+            .sui_node
+            .state()
+            .get_object(object_id)
+            .<span class="kw">await
+            </span>.unwrap()
     }
 
     <span class="doccomment">/// To detect whether the network has reached such state, we use the fullnode as the
@@ -1010,6 +1077,11 @@
     ) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.validator_supported_protocol_versions_config =
             ProtocolVersionsConfig::PerValidator(func);
+        <span class="self">self
+    </span>}
+
+    <span class="kw">pub fn </span>with_accounts(<span class="kw-2">mut </span><span class="self">self</span>, accounts: Vec&lt;AccountConfig&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.get_or_init_genesis_config().accounts = accounts;
         <span class="self">self
     </span>}
 
