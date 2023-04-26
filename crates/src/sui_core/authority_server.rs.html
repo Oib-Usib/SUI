@@ -586,37 +586,15 @@
 <a href="#586" id="586">586</a>
 <a href="#587" id="587">587</a>
 <a href="#588" id="588">588</a>
-<a href="#589" id="589">589</a>
-<a href="#590" id="590">590</a>
-<a href="#591" id="591">591</a>
-<a href="#592" id="592">592</a>
-<a href="#593" id="593">593</a>
-<a href="#594" id="594">594</a>
-<a href="#595" id="595">595</a>
-<a href="#596" id="596">596</a>
-<a href="#597" id="597">597</a>
-<a href="#598" id="598">598</a>
-<a href="#599" id="599">599</a>
-<a href="#600" id="600">600</a>
-<a href="#601" id="601">601</a>
-<a href="#602" id="602">602</a>
-<a href="#603" id="603">603</a>
-<a href="#604" id="604">604</a>
-<a href="#605" id="605">605</a>
-<a href="#606" id="606">606</a>
-<a href="#607" id="607">607</a>
-<a href="#608" id="608">608</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>anyhow::Result;
 <span class="kw">use </span>async_trait::async_trait;
+<span class="kw">use </span>mysten_metrics::histogram::Histogram <span class="kw">as </span>MystenHistogram;
 <span class="kw">use </span>mysten_metrics::spawn_monitored_task;
-<span class="kw">use </span>prometheus::{
-    register_histogram_with_registry, register_int_counter_with_registry, Histogram, IntCounter,
-    Registry,
-};
+<span class="kw">use </span>prometheus::{register_int_counter_with_registry, IntCounter, Registry};
 <span class="kw">use </span>std::{io, sync::Arc};
 <span class="kw">use </span>sui_network::{
     api::{Validator, ValidatorServer},
@@ -745,21 +723,17 @@
 
 <span class="kw">pub struct </span>ValidatorServiceMetrics {
     <span class="kw">pub </span>signature_errors: IntCounter,
-    <span class="kw">pub </span>tx_verification_latency: Histogram,
-    <span class="kw">pub </span>cert_verification_latency: Histogram,
-    <span class="kw">pub </span>consensus_latency: Histogram,
-    <span class="kw">pub </span>handle_transaction_latency: Histogram,
-    <span class="kw">pub </span>submit_certificate_consensus_latency: Histogram,
-    <span class="kw">pub </span>handle_certificate_consensus_latency: Histogram,
-    <span class="kw">pub </span>handle_certificate_non_consensus_latency: Histogram,
+    <span class="kw">pub </span>tx_verification_latency: MystenHistogram,
+    <span class="kw">pub </span>cert_verification_latency: MystenHistogram,
+    <span class="kw">pub </span>consensus_latency: MystenHistogram,
+    <span class="kw">pub </span>handle_transaction_latency: MystenHistogram,
+    <span class="kw">pub </span>submit_certificate_consensus_latency: MystenHistogram,
+    <span class="kw">pub </span>handle_certificate_consensus_latency: MystenHistogram,
+    <span class="kw">pub </span>handle_certificate_non_consensus_latency: MystenHistogram,
 
     num_rejected_tx_in_epoch_boundary: IntCounter,
     num_rejected_cert_in_epoch_boundary: IntCounter,
 }
-
-<span class="kw">const </span>LATENCY_SEC_BUCKETS: <span class="kw-2">&amp;</span>[f64] = <span class="kw-2">&amp;</span>[
-    <span class="number">0.001</span>, <span class="number">0.005</span>, <span class="number">0.01</span>, <span class="number">0.025</span>, <span class="number">0.05</span>, <span class="number">0.1</span>, <span class="number">0.25</span>, <span class="number">0.5</span>, <span class="number">1.</span>, <span class="number">2.5</span>, <span class="number">5.</span>, <span class="number">10.</span>, <span class="number">20.</span>, <span class="number">30.</span>, <span class="number">60.</span>, <span class="number">90.</span>,
-];
 
 <span class="kw">impl </span>ValidatorServiceMetrics {
     <span class="kw">pub fn </span>new(registry: <span class="kw-2">&amp;</span>Registry) -&gt; <span class="self">Self </span>{
@@ -770,55 +744,41 @@
                 registry,
             )
             .unwrap(),
-            tx_verification_latency: <span class="macro">register_histogram_with_registry!</span>(
+            tx_verification_latency: MystenHistogram::new_in_registry(
                 <span class="string">&quot;validator_service_tx_verification_latency&quot;</span>,
                 <span class="string">&quot;Latency of verifying a transaction&quot;</span>,
-                LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
-            )
-            .unwrap(),
-            cert_verification_latency: <span class="macro">register_histogram_with_registry!</span>(
+            ),
+            cert_verification_latency: MystenHistogram::new_in_registry(
                 <span class="string">&quot;validator_service_cert_verification_latency&quot;</span>,
                 <span class="string">&quot;Latency of verifying a certificate&quot;</span>,
-                LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
-            )
-            .unwrap(),
-            consensus_latency: <span class="macro">register_histogram_with_registry!</span>(
+            ),
+            consensus_latency: MystenHistogram::new_in_registry(
                 <span class="string">&quot;validator_service_consensus_latency&quot;</span>,
                 <span class="string">&quot;Time spent between submitting a shared obj txn to consensus and getting result&quot;</span>,
-                LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
-            )
-            .unwrap(),
-            handle_transaction_latency: <span class="macro">register_histogram_with_registry!</span>(
+            ),
+            handle_transaction_latency: MystenHistogram::new_in_registry(
                 <span class="string">&quot;validator_service_handle_transaction_latency&quot;</span>,
                 <span class="string">&quot;Latency of handling a transaction&quot;</span>,
-                LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
-            )
-            .unwrap(),
-            handle_certificate_consensus_latency: <span class="macro">register_histogram_with_registry!</span>(
+            ),
+            handle_certificate_consensus_latency: MystenHistogram::new_in_registry(
                 <span class="string">&quot;validator_service_handle_certificate_consensus_latency&quot;</span>,
                 <span class="string">&quot;Latency of handling a consensus transaction certificate&quot;</span>,
-                LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
-            )
-            .unwrap(),
-            submit_certificate_consensus_latency: <span class="macro">register_histogram_with_registry!</span>(
+            ),
+            submit_certificate_consensus_latency: MystenHistogram::new_in_registry(
                 <span class="string">&quot;validator_service_submit_certificate_consensus_latency&quot;</span>,
                 <span class="string">&quot;Latency of submit_certificate RPC handler&quot;</span>,
-                LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
-            )
-            .unwrap(),
-            handle_certificate_non_consensus_latency: <span class="macro">register_histogram_with_registry!</span>(
+            ),
+            handle_certificate_non_consensus_latency: MystenHistogram::new_in_registry(
                 <span class="string">&quot;validator_service_handle_certificate_non_consensus_latency&quot;</span>,
                 <span class="string">&quot;Latency of handling a non-consensus transaction certificate&quot;</span>,
-                LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
-            )
-            .unwrap(),
+            ),
             num_rejected_tx_in_epoch_boundary: <span class="macro">register_int_counter_with_registry!</span>(
                 <span class="string">&quot;validator_service_num_rejected_tx_in_epoch_boundary&quot;</span>,
                 <span class="string">&quot;Number of rejected transaction during epoch transitioning&quot;</span>,
@@ -946,9 +906,9 @@
             Arc::clone(<span class="kw-2">&amp;</span>consensus_adapter),
             transaction.data(),
         )<span class="question-mark">?</span>;
-        <span class="kw">let </span>_metrics_guard = metrics.handle_transaction_latency.start_timer();
-        <span class="kw">let </span>tx_verif_metrics_guard = metrics.tx_verification_latency.start_timer();
+        <span class="kw">let </span>_handel_tx_metrics_guard = metrics.handle_transaction_latency.start_timer();
 
+        <span class="kw">let </span>tx_verif_metrics_guard = metrics.tx_verification_latency.start_timer();
         <span class="kw">let </span>transaction = epoch_store
             .signature_verifier
             .verify_tx(transaction.data())
@@ -956,7 +916,7 @@
             .tap_err(|<span class="kw">_</span>| {
                 metrics.signature_errors.inc();
             })<span class="question-mark">?</span>;
-        tx_verif_metrics_guard.stop_and_record();
+        drop(tx_verif_metrics_guard);
 
         <span class="kw">let </span>tx_digest = transaction.digest();
 
