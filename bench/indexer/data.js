@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682536461976,
+  "lastUpdate": 1682542117807,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -575,6 +575,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 316058,
             "range": "± 17532",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "2895723+tzakian@users.noreply.github.com",
+            "name": "Tim Zakian",
+            "username": "tzakian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1dce15b59d28e3882accc3660c6d7976261218be",
+          "message": "[package upgrades] change upgrade criteria for struct type params (#11369)",
+          "timestamp": "2023-04-26T20:39:18Z",
+          "tree_id": "8f3123f283eeb649bb3d67df606a85be58fbb4a6",
+          "url": "https://github.com/MystenLabs/sui/commit/1dce15b59d28e3882accc3660c6d7976261218be"
+        },
+        "date": 1682542113475,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109054976,
+            "range": "± 4225688",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 303540,
+            "range": "± 17432",
             "unit": "ns/iter"
           }
         ]
