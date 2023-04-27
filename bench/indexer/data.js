@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682579840395,
+  "lastUpdate": 1682607686563,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1151,6 +1151,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 313839,
             "range": "± 13781",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "51927076+phoenix-o@users.noreply.github.com",
+            "name": "phoenix",
+            "username": "phoenix-o"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "081cd51e76f3d930b4147b36cded71b2bf4c0b37",
+          "message": "[pruner] revert 9ae7afbf6a20466b23cd7d90a46280d284ef9f2f (#11397)\n\nthis PR:\r\n* reverts\r\nhttps://github.com/MystenLabs/sui/commit/9ae7afbf6a20466b23cd7d90a46280d284ef9f2f\r\n* disables multi_get objects call in environments that do not have\r\nindirect objects",
+          "timestamp": "2023-04-27T07:52:04-07:00",
+          "tree_id": "8d5384581b87859b728d6b1d44265b32c944405b",
+          "url": "https://github.com/MystenLabs/sui/commit/081cd51e76f3d930b4147b36cded71b2bf4c0b37"
+        },
+        "date": 1682607682153,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109527796,
+            "range": "± 6736483",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310634,
+            "range": "± 8056",
             "unit": "ns/iter"
           }
         ]
