@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682617046652,
+  "lastUpdate": 1682618691232,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1259,6 +1259,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 371771,
             "range": "± 47126",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "76067158+666lcz@users.noreply.github.com",
+            "name": "Chris Li",
+            "username": "666lcz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "334a7f1e19bbf81548e1a61aaa4728f9afe408a4",
+          "message": "[rpc] wrap multi_get_transaction_blocks with spawn async (#11414)\n\n## Description \r\n\r\nLoad testing shows that there's some perf regression in\r\n`multi_get_transaction_blocks` after\r\nhttps://github.com/MystenLabs/sui/pull/10913 because some of the\r\nblocking queries such as computing object/balance changes are not\r\nwrapped in spawn_async. This also impacts the perf for\r\n`query_transaction_blocks` which also uses\r\n`multi_get_transaction_blocks` under the hood.\r\n\r\n## Next steps\r\nAudit rest of the codebase and make sure all blocking calls are wrapped\r\nin spawn_async\r\n\r\n## Test Plan \r\n\r\nTested against loadgen client and observed that performance regression\r\nis gone\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-04-27T17:55:14Z",
+          "tree_id": "24ee1ff2fc45d6ed127b8b7190f23f14c1936a04",
+          "url": "https://github.com/MystenLabs/sui/commit/334a7f1e19bbf81548e1a61aaa4728f9afe408a4"
+        },
+        "date": 1682618687944,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 153694870,
+            "range": "± 4779345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 317552,
+            "range": "± 32131",
             "unit": "ns/iter"
           }
         ]
