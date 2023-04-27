@@ -474,6 +474,10 @@
 <a href="#474" id="474">474</a>
 <a href="#475" id="475">475</a>
 <a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -489,6 +493,7 @@
 <span class="kw">use </span>move_bytecode_utils::layout::TypeLayoutBuilder;
 <span class="kw">use </span>serde::Serialize;
 <span class="kw">use </span>sui_json::SuiJsonValue;
+<span class="kw">use </span>sui_types::error::SuiObjectResponseError;
 <span class="kw">use </span>sui_types::MOVE_STDLIB_ADDRESS;
 <span class="kw">use </span>tracing::{instrument, warn};
 
@@ -753,15 +758,18 @@
             <span class="kw">let </span>id = <span class="self">self
                 </span>.state
                 .get_dynamic_field_object_id(parent_object_id, name_type, <span class="kw-2">&amp;</span>name_bcs_value)
-                .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>))<span class="question-mark">?
-                </span>.ok_or_else(|| {
-                    <span class="macro">anyhow!</span>(<span class="string">&quot;Cannot find dynamic field [{name:?}] for object [{parent_object_id}].&quot;</span>)
-                })<span class="question-mark">?</span>;
+                .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>))<span class="question-mark">?</span>;
             <span class="comment">// TODO(chris): add options to `get_dynamic_field_object` API as well
-            </span><span class="self">self</span>.read_api
-                .get_object(id, <span class="prelude-val">Some</span>(SuiObjectDataOptions::full_content()))
-                .<span class="kw">await
-        </span>})
+            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(id) = id {
+                <span class="self">self</span>.read_api
+                    .get_object(id, <span class="prelude-val">Some</span>(SuiObjectDataOptions::full_content()))
+                    .<span class="kw">await
+            </span>} <span class="kw">else </span>{
+                <span class="prelude-val">Ok</span>(SuiObjectResponse::new_with_error(
+                    SuiObjectResponseError::DynamicFieldNotFound { parent_object_id },
+                ))
+            }
+        })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]

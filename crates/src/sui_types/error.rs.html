@@ -761,6 +761,8 @@
 <a href="#761" id="761">761</a>
 <a href="#762" id="762">762</a>
 <a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -964,6 +966,8 @@
 </span><span class="kw">pub enum </span>SuiObjectResponseError {
     <span class="attr">#[error(<span class="string">&quot;Object {:?} does not exist.&quot;</span>, object_id)]
     </span>NotExists { object_id: ObjectID },
+    <span class="attr">#[error(<span class="string">&quot;Cannot find dynamic field for parent object {:?}.&quot;</span>, parent_object_id)]
+    </span>DynamicFieldNotFound { parent_object_id: ObjectID },
     <span class="attr">#[error(
         <span class="string">&quot;Object has been deleted object_id: {:?} at version: {:?} in digest {:?}&quot;</span>,
         object_id,
