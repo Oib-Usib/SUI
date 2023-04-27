@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682569777922,
+  "lastUpdate": 1682573126104,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1079,6 +1079,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 320377,
             "range": "± 73488",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "127570466+wlmyng@users.noreply.github.com",
+            "name": "wlmyng",
+            "username": "wlmyng"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "39b55e8bfd503bf2e46604bb2c0117b97767138a",
+          "message": "new DynamicFieldNotFound error (#11356)\n\n## Description \r\nIf a DynamicFieldName is not found on a parent object, return\r\nSuiObjectResponse error response instead of stock RpcResult error\r\nPreviously:\r\n```\r\ncurl --location 'http://127.0.0.1:9000' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n    \"method\": \"suix_getDynamicFieldObject\",\r\n    \"jsonrpc\": \"2.0\",\r\n    \"params\": [\r\n        \"0x12d392ea9753ca2313e3f954fe2deadca0eda906e158e0901bacca21501b0398\",\r\n        {\r\n            \"type\": \"address\",\r\n            \"value\": \"0x672ed3533decef3721c463b599f934cce4d13c894dd9f14d2f65d773ce604f21\"\r\n        }\r\n    ],\r\n    \"id\": 1\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"error\":{\"code\":-32000,\"message\":\"Cannot find dynamic field [DynamicFieldName { type_: Address, value: String(\\\"0x672ed3533decef3721c463b599f934cce4d13c894dd9f14d2f65d773ce604f21\\\") }] for object [0x12d392ea9753ca2313e3f954fe2deadca0eda906e158e0901bacca21501b0398].\"},\"id\":1}%    \r\n```\r\nNow:\r\n```\r\ncurl --location 'http://127.0.0.1:9000' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n    \"method\": \"suix_getDynamicFieldObject\",\r\n    \"jsonrpc\": \"2.0\",\r\n    \"params\": [\r\n        \"0x12d392ea9753ca2313e3f954fe2deadca0eda906e158e0901bacca21501b0398\",\r\n        {\r\n            \"type\": \"address\",\r\n            \"value\": \"0x672ed3533decef3721c463b599f934cce4d13c894dd9f14d2f65d773ce604f21\"\r\n        }\r\n    ],\r\n    \"id\": 1\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":{\"error\":{\"code\":\"dynamicFieldNotFound\",\"parent_object_id\":\"0x12d392ea9753ca2313e3f954fe2deadca0eda906e158e0901bacca21501b0398\"}},\"id\":1}%  \r\n```\r\n\r\nNote: chose not to include the dynamicFieldName itself as\r\nDynamicFieldName.value is a serde_json object that does not appear to\r\n`#[derive(Hash)]` which is required by `SuiObjectResponseError`. And\r\nit's in the client call anyways.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-04-26T22:14:33-07:00",
+          "tree_id": "8f4795d69cc5bad45b8e148adb946312f8730e8c",
+          "url": "https://github.com/MystenLabs/sui/commit/39b55e8bfd503bf2e46604bb2c0117b97767138a"
+        },
+        "date": 1682573122396,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 110401512,
+            "range": "± 5600324",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 349917,
+            "range": "± 26021",
             "unit": "ns/iter"
           }
         ]
