@@ -22,7 +22,7 @@ var sourcesIndex = JSON.parse('{\
 "prometheus_closure_metric":["",[],["lib.rs"]],\
 "shared_crypto":["",[],["intent.rs","lib.rs"]],\
 "stress":["",[],["stress.rs"]],\
-"sui":["",[["config",[],["mod.rs"]]],["client_commands.rs","console.rs","fire_drill.rs","genesis_ceremony.rs","genesis_inspector.rs","keytool.rs","lib.rs","shell.rs","sui_commands.rs","validator_commands.rs"]],\
+"sui":["",[],["client_commands.rs","console.rs","fire_drill.rs","genesis_ceremony.rs","genesis_inspector.rs","keytool.rs","lib.rs","shell.rs","sui_commands.rs","validator_commands.rs"]],\
 "sui_adapter":["",[["programmable_transactions",[],["context.rs","execution.rs","linkage_view.rs","mod.rs","types.rs"]]],["adapter.rs","error.rs","execution_engine.rs","execution_mode.rs","lib.rs"]],\
 "sui_adapter_transactional_tests":["",[],["lib.rs"]],\
 "sui_benchmark":["",[["drivers",[],["bench_driver.rs","driver.rs","mod.rs"]],["workloads",[],["adversarial.rs","batch_payment.rs","delegation.rs","mod.rs","payload.rs","shared_counter.rs","transfer_object.rs","workload.rs","workload_configuration.rs"]]],["bank.rs","benchmark_setup.rs","embedded_reconfig_observer.rs","fullnode_reconfig_observer.rs","in_memory_wallet.rs","lib.rs","options.rs","system_state_observer.rs","util.rs"]],\
@@ -54,7 +54,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_replay":["",[],["data_fetcher.rs","db_rider.rs","lib.rs","replay.rs","types.rs"]],\
 "sui_rosetta":["",[],["account.rs","block.rs","construction.rs","errors.rs","lib.rs","network.rs","operations.rs","state.rs","types.rs"]],\
 "sui_rpc_loadgen":["",[["payload",[],["checkpoint_utils.rs","get_all_balances.rs","get_checkpoints.rs","get_object.rs","get_reference_gas_price.rs","mod.rs","multi_get_objects.rs","multi_get_transaction_blocks.rs","pay_sui.rs","query_transactions.rs","rpc_command_processor.rs","validation.rs"]]],["load_test.rs","main.rs"]],\
-"sui_sdk":["",[],["apis.rs","error.rs","lib.rs"]],\
+"sui_sdk":["",[],["apis.rs","error.rs","lib.rs","sui_client_config.rs","wallet_context.rs"]],\
 "sui_simulator":["",[],["lib.rs"]],\
 "sui_source_validation":["",[],["lib.rs"]],\
 "sui_storage":["",[["object_store",[],["mod.rs","util.rs"]]],["indexes.rs","lib.rs","mutex_table.rs","package_object_cache.rs","sharded_lru.rs","write_path_pending_tx_log.rs"]],\

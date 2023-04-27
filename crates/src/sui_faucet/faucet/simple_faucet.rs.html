@@ -937,6 +937,7 @@
 <a href="#937" id="937">937</a>
 <a href="#938" id="938">938</a>
 <a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -952,12 +953,12 @@
 <span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>typed_store::Map;
 
-<span class="kw">use </span>sui::client_commands::WalletContext;
 <span class="kw">use </span>sui_json_rpc_types::{
     SuiObjectDataOptions, SuiTransactionBlockEffectsAPI, SuiTransactionBlockResponse,
     SuiTransactionBlockResponseOptions,
 };
 <span class="kw">use </span>sui_keys::keystore::AccountKeystore;
+<span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_types::object::Owner;
 <span class="kw">use </span>sui_types::{
     base_types::{ObjectID, SuiAddress, TransactionDigest},
@@ -1536,6 +1537,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span>sui::client_commands::{SuiClientCommandResult, SuiClientCommands};
     <span class="kw">use </span>sui_json_rpc_types::SuiExecutionStatus;
+    <span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
     <span class="kw">use </span>test_utils::network::TestClusterBuilder;
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;

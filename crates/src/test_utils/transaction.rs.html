@@ -763,6 +763,8 @@
 <a href="#763" id="763">763</a>
 <a href="#764" id="764">764</a>
 <a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -771,7 +773,6 @@
 <span class="kw">use </span>shared_crypto::intent::Intent;
 <span class="kw">use </span>std::collections::{HashMap, HashSet};
 <span class="kw">use </span>std::path::PathBuf;
-<span class="kw">use </span>sui::client_commands::WalletContext;
 <span class="kw">use </span>sui::client_commands::{SuiClientCommandResult, SuiClientCommands};
 <span class="kw">use </span>sui_core::authority_client::AuthorityAPI;
 <span class="kw">pub use </span>sui_core::test_utils::{
@@ -785,6 +786,7 @@
 };
 <span class="kw">use </span>sui_keys::keystore::AccountKeystore;
 <span class="kw">use </span>sui_sdk::json::SuiJsonValue;
+<span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_types::base_types::ObjectRef;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SuiAddress, TransactionDigest};
 <span class="kw">use </span>sui_types::committee::Committee;
@@ -810,8 +812,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::authority::get_client;
 <span class="kw">use </span><span class="kw">crate</span>::messages::{
-    create_publish_move_package_transaction, get_account_and_gas_coins,
-    get_gas_object_with_wallet_context, make_tx_certs_and_signed_effects,
+    create_publish_move_package_transaction, make_tx_certs_and_signed_effects,
     make_tx_certs_and_signed_effects_with_committee,
 };
 
@@ -1154,8 +1155,7 @@
     context: <span class="kw-2">&amp;mut </span>WalletContext,
     nfts_package: ObjectID,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(SuiAddress, ObjectID, TransactionDigest), anyhow::Error&gt; {
-    <span class="kw">let </span>(sender, gas_objects) = get_account_and_gas_coins(context).<span class="kw">await</span><span class="question-mark">?</span>.swap_remove(<span class="number">0</span>);
-    <span class="kw">let </span>gas_object = gas_objects.get(<span class="number">0</span>).unwrap().id();
+    <span class="kw">let </span>(sender, gas_object) = context.get_one_gas_object().<span class="kw">await</span><span class="question-mark">?</span>.unwrap();
     <span class="kw">let </span>gas_price = context.get_reference_gas_price().<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">let </span>args_json = <span class="macro">json!</span>([
@@ -1174,7 +1174,7 @@
         function: <span class="string">&quot;mint&quot;</span>.into(),
         type_args: <span class="macro">vec!</span>[],
         args,
-        gas: <span class="prelude-val">Some</span>(<span class="kw-2">*</span>gas_object),
+        gas: <span class="prelude-val">Some</span>(gas_object.<span class="number">0</span>),
         gas_budget: TEST_ONLY_GAS_UNIT_FOR_GENERIC * gas_price,
         serialize_output: <span class="bool-val">false</span>,
     }
@@ -1215,9 +1215,11 @@
         <span class="prelude-val">None </span>=&gt; context.config.keystore.addresses().get(<span class="number">1</span>).cloned().unwrap(),
         <span class="prelude-val">Some</span>(addr) =&gt; addr,
     };
-    <span class="kw">let </span>gas_ref = get_gas_object_with_wallet_context(context, <span class="kw-2">&amp;</span>sender)
+    <span class="kw">let </span>gas_ref = context
+        .get_one_gas_object_owned_by_address(sender)
         .<span class="kw">await
-        </span>.unwrap();
+        </span>.unwrap()
+        .unwrap();
 
     <span class="kw">let </span>res = SuiClientCommands::TransferSui {
         to: receiver,
@@ -1351,9 +1353,11 @@
     nfts_package: ObjectID,
     nft_to_delete: ObjectRef,
 ) -&gt; SuiTransactionBlockResponse {
-    <span class="kw">let </span>gas = get_gas_object_with_wallet_context(context, sender)
+    <span class="kw">let </span>gas = context
+        .get_one_gas_object_owned_by_address(<span class="kw-2">*</span>sender)
         .<span class="kw">await
-        </span>.unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Expect {sender} to have at least one gas object&quot;</span>));
+        </span>.unwrap()
+        .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Expect {sender} to have at least one gas object&quot;</span>));
     <span class="kw">let </span>rgp = context.get_reference_gas_price().<span class="kw">await</span>.unwrap();
     <span class="kw">let </span>data = TransactionData::new_move_call(
         <span class="kw-2">*</span>sender,

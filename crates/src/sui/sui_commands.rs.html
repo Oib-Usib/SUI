@@ -594,6 +594,7 @@
 <a href="#594" id="594">594</a>
 <a href="#595" id="595">595</a>
 <a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -623,14 +624,15 @@
 <span class="kw">use </span>sui_swarm::memory::Swarm;
 <span class="kw">use </span>sui_types::crypto::{SignatureScheme, SuiKeyPair};
 
-<span class="kw">use </span><span class="kw">crate</span>::client_commands::{SuiClientCommands, WalletContext};
-<span class="kw">use </span><span class="kw">crate</span>::config::{SuiClientConfig, SuiEnv};
+<span class="kw">use </span><span class="kw">crate</span>::client_commands::SuiClientCommands;
 <span class="kw">use </span><span class="kw">crate</span>::console::start_console;
 <span class="kw">use </span><span class="kw">crate</span>::fire_drill::{run_fire_drill, FireDrill};
 <span class="kw">use </span><span class="kw">crate</span>::genesis_ceremony::{run, Ceremony};
 <span class="kw">use </span><span class="kw">crate</span>::keytool::KeyToolCommand;
 <span class="kw">use </span><span class="kw">crate</span>::validator_commands::SuiValidatorCommand;
 <span class="kw">use </span>sui_move::{<span class="self">self</span>, execute_move_command};
+<span class="kw">use </span>sui_sdk::sui_client_config::{SuiClientConfig, SuiEnv};
+<span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 
 <span class="attr">#[allow(clippy::large_enum_variant)]
 #[derive(Parser)]

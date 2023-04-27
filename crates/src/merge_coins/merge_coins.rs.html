@@ -85,11 +85,11 @@
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>shared_crypto::intent::Intent;
 <span class="kw">use </span>std::{str::FromStr, time::Duration};
-<span class="kw">use </span>sui::client_commands::WalletContext;
 <span class="kw">use </span>sui_config::{sui_config_dir, SUI_CLIENT_CONFIG};
 <span class="kw">use </span>sui_faucet::FaucetError;
 <span class="kw">use </span>sui_json_rpc_types::SuiTransactionBlockResponseOptions;
 <span class="kw">use </span>sui_keys::keystore::AccountKeystore;
+<span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_types::{
     base_types::ObjectID,
     gas_coin::GasCoin,

@@ -643,8 +643,6 @@
 
 <span class="kw">use </span>mysten_metrics::RegistryService;
 <span class="kw">use </span>shared_crypto::intent::Intent;
-<span class="kw">use </span>sui::config::SuiEnv;
-<span class="kw">use </span>sui::{client_commands::WalletContext, config::SuiClientConfig};
 <span class="kw">use </span>sui_config::builder::{ProtocolVersionsConfig, SupportedProtocolVersionsCallback};
 <span class="kw">use </span>sui_config::genesis_config::{AccountConfig, GenesisConfig};
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
@@ -656,6 +654,8 @@
 <span class="kw">use </span>sui_node::SuiNodeHandle;
 <span class="kw">use </span>sui_protocol_config::{ProtocolVersion, SupportedProtocolVersions};
 <span class="kw">use </span>sui_sdk::error::SuiRpcResult;
+<span class="kw">use </span>sui_sdk::sui_client_config::{SuiClientConfig, SuiEnv};
+<span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
 <span class="kw">use </span>sui_swarm::memory::{Swarm, SwarmBuilder};
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, ObjectID, SuiAddress};

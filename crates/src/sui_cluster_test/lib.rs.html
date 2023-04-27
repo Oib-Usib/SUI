@@ -345,12 +345,12 @@
 <span class="kw">use </span>jsonrpsee::core::params::ArrayParams;
 <span class="kw">use </span>jsonrpsee::{core::client::ClientT, http_client::HttpClientBuilder};
 <span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>sui::client_commands::WalletContext;
 <span class="kw">use </span>sui_faucet::CoinInfo;
 <span class="kw">use </span>sui_json_rpc_types::{
     SuiExecutionStatus, SuiTransactionBlockEffectsAPI, SuiTransactionBlockResponse,
     SuiTransactionBlockResponseOptions, TransactionBlockBytes,
 };
+<span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_types::base_types::TransactionDigest;
 <span class="kw">use </span>sui_types::messages::ExecuteTransactionRequestType;
 <span class="kw">use </span>sui_types::object::Owner;
