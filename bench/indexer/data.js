@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682626777685,
+  "lastUpdate": 1682628167885,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1331,6 +1331,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 343045,
             "range": "± 21611",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "distinct": true,
+          "id": "f88e450c28ddabe0d0686cb70f6f291d12028430",
+          "message": "[TestInfra] Consolidate WalletContext gas code (#11392)\n\nThis PR moves all the gas object read code using wallet context into\r\nWalletContext.",
+          "timestamp": "2023-04-27T13:32:58-07:00",
+          "tree_id": "395db168b6317d9b85f46a7d52320bf52c3ece7d",
+          "url": "https://github.com/MystenLabs/sui/commit/f88e450c28ddabe0d0686cb70f6f291d12028430"
+        },
+        "date": 1682628164222,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148567786,
+            "range": "± 4218436",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 319165,
+            "range": "± 55819",
             "unit": "ns/iter"
           }
         ]
