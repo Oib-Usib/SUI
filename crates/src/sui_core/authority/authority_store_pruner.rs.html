@@ -843,7 +843,7 @@
     }
 
     <span class="doccomment">/// Prunes old object versions based on effects from all checkpoints from epochs eligible for pruning
-    </span><span class="kw">async fn </span>prune_objects_for_eligible_epochs(
+    </span><span class="kw">pub async fn </span>prune_objects_for_eligible_epochs(
         perpetual_db: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerpetualTables&gt;,
         checkpoint_store: <span class="kw-2">&amp;</span>Arc&lt;CheckpointStore&gt;,
         objects_lock_table: <span class="kw-2">&amp;</span>Arc&lt;RwLockTable&lt;ObjectContentDigest&gt;&gt;,

@@ -23,7 +23,7 @@ tables.</p>
     &amp;self,
     storage_id: <a class="struct" href="../base_types/struct.ObjectID.html" title="struct sui_types::base_types::ObjectID">ObjectID</a>,
     modules: &amp;[CompiledModule],
-    protocol_config: &amp;ProtocolConfig,
+    protocol_config: &amp;<a class="struct" href="../../sui_protocol_config/struct.ProtocolConfig.html" title="struct sui_protocol_config::ProtocolConfig">ProtocolConfig</a>,
     transitive_dependencies: impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/collect/trait.IntoIterator.html" title="trait core::iter::traits::collect::IntoIterator">IntoIterator</a>&lt;Item = &amp;'p <a class="struct" href="struct.MovePackage.html" title="struct sui_types::move_package::MovePackage">MovePackage</a>&gt;
 ) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../error/struct.ExecutionError.html" title="struct sui_types::error::ExecutionError">ExecutionError</a>&gt;</h4></section></summary><div class="docblock"><p>Create an upgraded version of the package along with this version’s type origin and linkage
 tables.</p>

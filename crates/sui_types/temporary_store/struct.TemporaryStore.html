@@ -2,14 +2,14 @@
     store: S,
     input_objects: <a class="struct" href="../messages/struct.InputObjects.html" title="struct sui_types::messages::InputObjects">InputObjects</a>,
     tx_digest: <a class="struct" href="../digests/struct.TransactionDigest.html" title="struct sui_types::digests::TransactionDigest">TransactionDigest</a>,
-    protocol_config: &amp;ProtocolConfig
+    protocol_config: &amp;<a class="struct" href="../../sui_protocol_config/struct.ProtocolConfig.html" title="struct sui_protocol_config::ProtocolConfig">ProtocolConfig</a>
 ) -&gt; Self</h4></section></summary><div class="docblock"><p>Creates a new store associated with an authority store, and populates it with
 initial objects.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.new_for_mock_transaction" class="method"><a class="srclink rightside" href="../../src/sui_types/temporary_store.rs.html#196-219">source</a><h4 class="code-header">pub fn <a href="#method.new_for_mock_transaction" class="fn">new_for_mock_transaction</a>(
     store: S,
     input_objects: <a class="struct" href="../messages/struct.InputObjects.html" title="struct sui_types::messages::InputObjects">InputObjects</a>,
     tx_digest: <a class="struct" href="../digests/struct.TransactionDigest.html" title="struct sui_types::digests::TransactionDigest">TransactionDigest</a>,
-    protocol_config: &amp;ProtocolConfig
+    protocol_config: &amp;<a class="struct" href="../../sui_protocol_config/struct.ProtocolConfig.html" title="struct sui_protocol_config::ProtocolConfig">ProtocolConfig</a>
 ) -&gt; Self</h4></section></summary><div class="docblock"><p>WARNING! Should only be used for dry run and dev inspect!
 In dry run and dev inspect, you might load a dynamic field that is actually too new for
 the transaction. Ideally, we would want to load the “correct” dynamic fields, but as that
@@ -76,7 +76,7 @@ gas_object_id can be None if this is a system transaction.</li>
 </div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-TemporaryStore%3CS%3E-4" class="impl"><a class="srclink rightside" href="../../src/sui_types/temporary_store.rs.html#1210-1221">source</a><a href="#impl-TemporaryStore%3CS%3E-4" class="anchor">§</a><h3 class="code-header">impl&lt;S: <a class="trait" href="../storage/trait.ObjectStore.html" title="trait sui_types::storage::ObjectStore">ObjectStore</a>&gt; <a class="struct" href="struct.TemporaryStore.html" title="struct sui_types::temporary_store::TemporaryStore">TemporaryStore</a>&lt;S&gt;</h3></section></summary><div class="impl-items"><section id="method.advance_epoch_safe_mode" class="method"><a class="srclink rightside" href="../../src/sui_types/temporary_store.rs.html#1211-1220">source</a><h4 class="code-header">pub fn <a href="#method.advance_epoch_safe_mode" class="fn">advance_epoch_safe_mode</a>(
     &amp;mut self,
     params: &amp;<a class="struct" href="../sui_system_state/struct.AdvanceEpochParams.html" title="struct sui_types::sui_system_state::AdvanceEpochParams">AdvanceEpochParams</a>,
-    protocol_config: &amp;ProtocolConfig
+    protocol_config: &amp;<a class="struct" href="../../sui_protocol_config/struct.ProtocolConfig.html" title="struct sui_protocol_config::ProtocolConfig">ProtocolConfig</a>
 )</h4></section></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-TemporaryStore%3CS%3E-5" class="impl"><a class="srclink rightside" href="../../src/sui_types/temporary_store.rs.html#1223-1449">source</a><a href="#impl-TemporaryStore%3CS%3E-5" class="anchor">§</a><h3 class="code-header">impl&lt;S: GetModule + <a class="trait" href="../storage/trait.ObjectStore.html" title="trait sui_types::storage::ObjectStore">ObjectStore</a> + <a class="trait" href="../storage/trait.BackingPackageStore.html" title="trait sui_types::storage::BackingPackageStore">BackingPackageStore</a>&gt; <a class="struct" href="struct.TemporaryStore.html" title="struct sui_types::temporary_store::TemporaryStore">TemporaryStore</a>&lt;S&gt;</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.check_sui_conserved" class="method"><a class="srclink rightside" href="../../src/sui_types/temporary_store.rs.html#1315-1448">source</a><h4 class="code-header">pub fn <a href="#method.check_sui_conserved" class="fn">check_sui_conserved</a>(
     &amp;self,
     advance_epoch_gas_summary: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;(<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>)&gt;,

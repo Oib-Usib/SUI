@@ -815,6 +815,8 @@
 <a href="#815" id="815">815</a>
 <a href="#816" id="816">816</a>
 <a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1275,6 +1277,8 @@
     </span><span class="kw">pub </span>object_store_config: <span class="prelude-ty">Option</span>&lt;ObjectStoreConfig&gt;,
     <span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
     </span><span class="kw">pub </span>perform_index_db_checkpoints_at_epoch_end: <span class="prelude-ty">Option</span>&lt;bool&gt;,
+    <span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
+    </span><span class="kw">pub </span>prune_and_compact_before_upload: <span class="prelude-ty">Option</span>&lt;bool&gt;,
 }
 
 <span class="doccomment">/// Publicly known information about a validator
