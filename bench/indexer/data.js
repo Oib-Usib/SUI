@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682560249217,
+  "lastUpdate": 1682569777922,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1043,6 +1043,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 379366,
             "range": "± 43811",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "127570466+wlmyng@users.noreply.github.com",
+            "name": "wlmyng",
+            "username": "wlmyng"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9c416d4557e42e8ac16be17e93430a636ac5310e",
+          "message": "with_tracing to instrument info or error logs (#11324)\n\n## Description \r\n\r\nWrapper function to help instrument info or error logs. info logs are\r\nstill subject to sampling, but error logs will always log.\r\n\r\n```\r\ncurl --location 'http://127.0.0.1:9000' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n    \"method\": \"suix_getDynamicFieldObject\",\r\n    \"jsonrpc\": \"2.0\",\r\n    \"params\": [\r\n        \"0x7d1237b9f8ab28ce64322b1f7b09d18909205a55c0f301f36838abbbfb234516\",\r\n        {\r\n            \"type\": \"address\",\r\n            \"value\": \"0x82d7715ff1213dbfd740b5761133c6b7b19d5a5d1e1854d74ba6be53b36a9ca0\"\r\n        }\r\n    ],\r\n    \"id\": 1\r\n}'\r\n```\r\n```\r\n2023-04-25T19:55:34.558917Z ERROR connection{remote_addr=127.0.0.1:63470 conn_id=6}:get_dynamic_field_object{parent_object_id=0x7d1237b9f8ab28ce64322b1f7b09d18909205a55c0f301f36838abbbfb234516 name=DynamicFieldName { type_: Address, value: String(\"0x82d7715ff1213dbfd740b5761133c6b7b19d5a5d1e1854d74ba6be53b36a9ca0\") }}: sui_json_rpc::indexer_api: get_dynamic_field_object failed: Call(Failed(Cannot find dynamic field [DynamicFieldName { type_: Address, value: String(\"0x82d7715ff1213dbfd740b5761133c6b7b19d5a5d1e1854d74ba6be53b36a9ca0\") }] for object [0x7d1237b9f8ab28ce64322b1f7b09d18909205a55c0f301f36838abbbfb234516].))\r\n```\r\n\r\n\r\n```\r\ncurl --location 'http://127.0.0.1:9000' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"suix_getOwnedObjects\",\r\n    \"params\": [\r\n        \"0xadfb89b000e97a30bd485bffbff80f883096a8a98cdce33641ec924393d8fbe8\",\r\n        {\r\n            \"options\": {\r\n                \"showType\": true,\r\n                \"showOwner\": false,\r\n                \"showPreviousTransaction\": false,\r\n                \"showDisplay\": false,\r\n                \"showContent\": true,\r\n                \"showBcs\": false,\r\n                \"showStorageRebate\": false\r\n            }\r\n        }\r\n    ],\r\n    \"id\": 1\r\n}'\r\n```\r\n\r\n```\r\n2023-04-25T19:56:01.066520Z  INFO connection{remote_addr=127.0.0.1:63477 conn_id=12}:get_owned_objects{address=0xadfb89b000e97a30bd485bffbff80f883096a8a98cdce33641ec924393d8fbe8 query=Some(SuiObjectResponseQuery { filter: None, options: Some(SuiObjectDataOptions { show_type: true, show_owner: false, show_previous_transaction: false, show_display: false, show_content: true, show_bcs: false, show_storage_rebate: false }) }) cursor=None limit=None}:multi_get_objects{object_ids=[] options=Some(SuiObjectDataOptions { show_type: true, show_owner: false, show_previous_transaction: false, show_display: false, show_content: true, show_bcs: false, show_storage_rebate: false })}: sui_json_rpc::read_api: multi_get_objects\r\n```\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-04-26T21:19:49-07:00",
+          "tree_id": "4a8f0e00c1e69e1fbfb57b37b7407322af5d8c0f",
+          "url": "https://github.com/MystenLabs/sui/commit/9c416d4557e42e8ac16be17e93430a636ac5310e"
+        },
+        "date": 1682569774762,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148640330,
+            "range": "± 4720566",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 320377,
+            "range": "± 73488",
             "unit": "ns/iter"
           }
         ]
