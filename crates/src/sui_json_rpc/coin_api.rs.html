@@ -320,6 +320,15 @@
 <a href="#320" id="320">320</a>
 <a href="#321" id="321">321</a>
 <a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -349,7 +358,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::api::{cap_page_limit, CoinReadApiServer, JsonRpcMetrics};
 <span class="kw">use </span><span class="kw">crate</span>::error::Error;
-<span class="kw">use </span><span class="kw">crate</span>::SuiRpcModule;
+<span class="kw">use crate</span>::{with_tracing, SuiRpcModule};
 
 <span class="kw">pub struct </span>CoinReadApi {
     state: Arc&lt;AuthorityState&gt;,
@@ -480,25 +489,26 @@
         </span>cursor: <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
         limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     ) -&gt; RpcResult&lt;CoinPage&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_coins&quot;</span>);
-        <span class="kw">let </span>coin_type_tag = TypeTag::Struct(Box::new(<span class="kw">match </span>coin_type {
-            <span class="prelude-val">Some</span>(c) =&gt; parse_sui_struct_tag(<span class="kw-2">&amp;</span>c)<span class="question-mark">?</span>,
-            <span class="prelude-val">None </span>=&gt; GAS::type_(),
-        }));
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_coins&quot;</span>, <span class="kw">async move </span>{
+            <span class="kw">let </span>coin_type_tag = TypeTag::Struct(Box::new(<span class="kw">match </span>coin_type {
+                <span class="prelude-val">Some</span>(c) =&gt; parse_sui_struct_tag(<span class="kw-2">&amp;</span>c)<span class="question-mark">?</span>,
+                <span class="prelude-val">None </span>=&gt; GAS::type_(),
+            }));
 
-        <span class="kw">let </span>cursor = <span class="kw">match </span>cursor {
-            <span class="prelude-val">Some</span>(c) =&gt; (coin_type_tag.to_string(), c),
-            <span class="comment">// If cursor is not specified, we need to start from the beginning of the coin type, which is the minimal possible ObjectID.
-            </span><span class="prelude-val">None </span>=&gt; (coin_type_tag.to_string(), ObjectID::ZERO),
-        };
+            <span class="kw">let </span>cursor = <span class="kw">match </span>cursor {
+                <span class="prelude-val">Some</span>(c) =&gt; (coin_type_tag.to_string(), c),
+                <span class="comment">// If cursor is not specified, we need to start from the beginning of the coin type, which is the minimal possible ObjectID.
+                </span><span class="prelude-val">None </span>=&gt; (coin_type_tag.to_string(), ObjectID::ZERO),
+            };
 
-        <span class="kw">let </span>coins = <span class="self">self
-            </span>.get_coins_iterator(
-                owner, cursor, limit, <span class="bool-val">true</span>, <span class="comment">// only care about one type of coin
-            </span>)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>coins = <span class="self">self
+                </span>.get_coins_iterator(
+                    owner, cursor, limit, <span class="bool-val">true</span>, <span class="comment">// only care about one type of coin
+                </span>)
+                .<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(coins)
+            <span class="prelude-val">Ok</span>(coins)
+        })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
@@ -509,42 +519,43 @@
         </span>cursor: <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
         limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     ) -&gt; RpcResult&lt;CoinPage&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_all_coins&quot;</span>);
-        <span class="kw">let </span>cursor = <span class="kw">match </span>cursor {
-            <span class="prelude-val">Some</span>(object_id) =&gt; {
-                <span class="kw">let </span>obj = <span class="self">self
-                    </span>.state
-                    .get_object(<span class="kw-2">&amp;</span>object_id)
-                    .<span class="kw">await
-                    </span>.map_err(Error::from)<span class="question-mark">?</span>;
-                <span class="kw">match </span>obj {
-                    <span class="prelude-val">Some</span>(obj) =&gt; {
-                        <span class="kw">let </span>coin_type = obj.coin_type_maybe();
-                        <span class="kw">if </span>coin_type.is_none() {
-                            <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                                <span class="string">&quot;Invalid Cursor {:?}, Object is not a coin&quot;</span>,
-                                object_id
-                            ))
-                        } <span class="kw">else </span>{
-                            <span class="prelude-val">Ok</span>((coin_type.unwrap().to_string(), object_id))
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_all_coins&quot;</span>, <span class="kw">async move </span>{
+            <span class="kw">let </span>cursor = <span class="kw">match </span>cursor {
+                <span class="prelude-val">Some</span>(object_id) =&gt; {
+                    <span class="kw">let </span>obj = <span class="self">self
+                        </span>.state
+                        .get_object(<span class="kw-2">&amp;</span>object_id)
+                        .<span class="kw">await
+                        </span>.map_err(Error::from)<span class="question-mark">?</span>;
+                    <span class="kw">match </span>obj {
+                        <span class="prelude-val">Some</span>(obj) =&gt; {
+                            <span class="kw">let </span>coin_type = obj.coin_type_maybe();
+                            <span class="kw">if </span>coin_type.is_none() {
+                                <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
+                                    <span class="string">&quot;Invalid Cursor {:?}, Object is not a coin&quot;</span>,
+                                    object_id
+                                ))
+                            } <span class="kw">else </span>{
+                                <span class="prelude-val">Ok</span>((coin_type.unwrap().to_string(), object_id))
+                            }
                         }
+                        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Invalid Cursor {:?}, Object not found&quot;</span>, object_id)),
                     }
-                    <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Invalid Cursor {:?}, Object not found&quot;</span>, object_id)),
                 }
-            }
-            <span class="prelude-val">None </span>=&gt; {
-                <span class="comment">// If cursor is None, start from the beginning
-                </span><span class="prelude-val">Ok</span>((String::from_utf8([<span class="number">0u8</span>].to_vec()).unwrap(), ObjectID::ZERO))
-            }
-        }<span class="question-mark">?</span>;
+                <span class="prelude-val">None </span>=&gt; {
+                    <span class="comment">// If cursor is None, start from the beginning
+                    </span><span class="prelude-val">Ok</span>((String::from_utf8([<span class="number">0u8</span>].to_vec()).unwrap(), ObjectID::ZERO))
+                }
+            }<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>coins = <span class="self">self
-            </span>.get_coins_iterator(
-                owner, cursor, limit, <span class="bool-val">false</span>, <span class="comment">// return all types of coins
-            </span>)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>coins = <span class="self">self
+                </span>.get_coins_iterator(
+                    owner, cursor, limit, <span class="bool-val">false</span>, <span class="comment">// return all types of coins
+                </span>)
+                .<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(coins)
+            <span class="prelude-val">Ok</span>(coins)
+        })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
@@ -553,92 +564,99 @@
         owner: SuiAddress,
         coin_type: <span class="prelude-ty">Option</span>&lt;String&gt;,
     ) -&gt; RpcResult&lt;Balance&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_balance&quot;</span>);
-        <span class="kw">let </span>coin_type = TypeTag::Struct(Box::new(<span class="kw">match </span>coin_type {
-            <span class="prelude-val">Some</span>(c) =&gt; parse_sui_struct_tag(<span class="kw-2">&amp;</span>c)<span class="question-mark">?</span>,
-            <span class="prelude-val">None </span>=&gt; GAS::type_(),
-        }));
-        <span class="kw">let </span>balance = <span class="self">self
-            </span>.state
-            .indexes
-            .as_ref()
-            .ok_or(Error::SuiError(SuiError::IndexStoreNotAvailable))<span class="question-mark">?
-            </span>.get_balance(owner, coin_type.clone())
-            .<span class="kw">await
-            </span>.map_err(|e: SuiError| {
-                <span class="macro">debug!</span>(<span class="question-mark">?</span>owner, <span class="string">&quot;Failed to get balance with error: {:?}&quot;</span>, e);
-                Error::from(e)
-            })<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(Balance {
-            coin_type: coin_type.to_string(),
-            coin_object_count: balance.num_coins <span class="kw">as </span>usize,
-            total_balance: balance.balance <span class="kw">as </span>u128,
-            <span class="comment">// note: LockedCoin is deprecated
-            </span>locked_balance: Default::default(),
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_balance&quot;</span>, <span class="kw">async move </span>{
+            <span class="kw">let </span>coin_type = TypeTag::Struct(Box::new(<span class="kw">match </span>coin_type {
+                <span class="prelude-val">Some</span>(c) =&gt; parse_sui_struct_tag(<span class="kw-2">&amp;</span>c)<span class="question-mark">?</span>,
+                <span class="prelude-val">None </span>=&gt; GAS::type_(),
+            }));
+            <span class="kw">let </span>balance = <span class="self">self
+                </span>.state
+                .indexes
+                .as_ref()
+                .ok_or(Error::SuiError(SuiError::IndexStoreNotAvailable))<span class="question-mark">?
+                </span>.get_balance(owner, coin_type.clone())
+                .<span class="kw">await
+                </span>.map_err(|e: SuiError| {
+                    <span class="macro">debug!</span>(<span class="question-mark">?</span>owner, <span class="string">&quot;Failed to get balance with error: {:?}&quot;</span>, e);
+                    Error::from(e)
+                })<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(Balance {
+                coin_type: coin_type.to_string(),
+                coin_object_count: balance.num_coins <span class="kw">as </span>usize,
+                total_balance: balance.balance <span class="kw">as </span>u128,
+                <span class="comment">// note: LockedCoin is deprecated
+                </span>locked_balance: Default::default(),
+            })
         })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">async fn </span>get_all_balances(<span class="kw-2">&amp;</span><span class="self">self</span>, owner: SuiAddress) -&gt; RpcResult&lt;Vec&lt;Balance&gt;&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_all_balances&quot;</span>);
-        <span class="kw">let </span>all_balance = <span class="self">self
-            </span>.state
-            .indexes
-            .as_ref()
-            .ok_or(Error::SuiError(SuiError::IndexStoreNotAvailable))<span class="question-mark">?
-            </span>.get_all_balance(owner)
-            .<span class="kw">await
-            </span>.map_err(|e: SuiError| {
-                <span class="macro">debug!</span>(<span class="question-mark">?</span>owner, <span class="string">&quot;Failed to get all balance with error: {:?}&quot;</span>, e);
-                Error::from(e)
-            })<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(all_balance
-            .iter()
-            .map(|(coin_type, balance)| {
-                Balance {
-                    coin_type: coin_type.to_string(),
-                    coin_object_count: balance.num_coins <span class="kw">as </span>usize,
-                    total_balance: balance.balance <span class="kw">as </span>u128,
-                    <span class="comment">// note: LockedCoin is deprecated
-                    </span>locked_balance: Default::default(),
-                }
-            })
-            .collect())
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_all_balances&quot;</span>, <span class="kw">async move </span>{
+            <span class="kw">let </span>all_balance = <span class="self">self
+                </span>.state
+                .indexes
+                .as_ref()
+                .ok_or(Error::SuiError(SuiError::IndexStoreNotAvailable))<span class="question-mark">?
+                </span>.get_all_balance(owner)
+                .<span class="kw">await
+                </span>.map_err(|e: SuiError| {
+                    <span class="macro">debug!</span>(<span class="question-mark">?</span>owner, <span class="string">&quot;Failed to get all balance with error: {:?}&quot;</span>, e);
+                    Error::from(e)
+                })<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(all_balance
+                .iter()
+                .map(|(coin_type, balance)| {
+                    Balance {
+                        coin_type: coin_type.to_string(),
+                        coin_object_count: balance.num_coins <span class="kw">as </span>usize,
+                        total_balance: balance.balance <span class="kw">as </span>u128,
+                        <span class="comment">// note: LockedCoin is deprecated
+                        </span>locked_balance: Default::default(),
+                    }
+                })
+                .collect())
+        })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">async fn </span>get_coin_metadata(<span class="kw-2">&amp;</span><span class="self">self</span>, coin_type: String) -&gt; RpcResult&lt;<span class="prelude-ty">Option</span>&lt;SuiCoinMetadata&gt;&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_coin_metadata&quot;</span>);
-        <span class="kw">let </span>coin_struct = parse_sui_struct_tag(<span class="kw-2">&amp;</span>coin_type)<span class="question-mark">?</span>;
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_coin_metadata&quot;</span>, <span class="kw">async move </span>{
+            <span class="kw">let </span>coin_struct = parse_sui_struct_tag(<span class="kw-2">&amp;</span>coin_type)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>metadata_object = <span class="self">self
-            </span>.find_package_object(
-                <span class="kw-2">&amp;</span>coin_struct.address.into(),
-                CoinMetadata::type_(coin_struct),
-            )
-            .<span class="kw">await
-            </span>.ok();
+            <span class="kw">let </span>metadata_object = <span class="self">self
+                </span>.find_package_object(
+                    <span class="kw-2">&amp;</span>coin_struct.address.into(),
+                    CoinMetadata::type_(coin_struct),
+                )
+                .<span class="kw">await
+                </span>.ok();
 
-        <span class="prelude-val">Ok</span>(metadata_object.and_then(|v: Object| v.try_into().ok()))
+            <span class="prelude-val">Ok</span>(metadata_object.and_then(|v: Object| v.try_into().ok()))
+        })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">async fn </span>get_total_supply(<span class="kw-2">&amp;</span><span class="self">self</span>, coin_type: String) -&gt; RpcResult&lt;Supply&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_total_supply&quot;</span>);
-        <span class="kw">let </span>coin_struct = parse_sui_struct_tag(<span class="kw-2">&amp;</span>coin_type)<span class="question-mark">?</span>;
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_total_supply&quot;</span>, <span class="kw">async move </span>{
+            <span class="kw">let </span>coin_struct = parse_sui_struct_tag(<span class="kw-2">&amp;</span>coin_type)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="kw">if </span>GAS::is_gas(<span class="kw-2">&amp;</span>coin_struct) {
-            Supply { value: <span class="number">0 </span>}
-        } <span class="kw">else </span>{
-            <span class="kw">let </span>treasury_cap_object = <span class="self">self
-                </span>.find_package_object(<span class="kw-2">&amp;</span>coin_struct.address.into(), TreasuryCap::type_(coin_struct))
-                .<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(<span class="kw">if </span>GAS::is_gas(<span class="kw-2">&amp;</span>coin_struct) {
+                Supply { value: <span class="number">0 </span>}
+            } <span class="kw">else </span>{
+                <span class="kw">let </span>treasury_cap_object = <span class="self">self
+                    </span>.find_package_object(
+                        <span class="kw-2">&amp;</span>coin_struct.address.into(),
+                        TreasuryCap::type_(coin_struct),
+                    )
+                    .<span class="kw">await</span><span class="question-mark">?</span>;
 
-            <span class="kw">let </span>treasury_cap = TreasuryCap::from_bcs_bytes(
-                treasury_cap_object.data.try_as_move().unwrap().contents(),
-            )
-            .map_err(Error::from)<span class="question-mark">?</span>;
-            treasury_cap.total_supply
+                <span class="kw">let </span>treasury_cap = TreasuryCap::from_bcs_bytes(
+                    treasury_cap_object.data.try_as_move().unwrap().contents(),
+                )
+                .map_err(Error::from)<span class="question-mark">?</span>;
+                treasury_cap.total_supply
+            })
         })
     }
 }

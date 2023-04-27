@@ -304,6 +304,12 @@
 <a href="#304" id="304">304</a>
 <a href="#305" id="305">305</a>
 <a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -338,7 +344,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::api::{GovernanceReadApiServer, JsonRpcMetrics};
 <span class="kw">use </span><span class="kw">crate</span>::error::Error;
-<span class="kw">use crate</span>::{ObjectProvider, SuiRpcModule};
+<span class="kw">use crate</span>::{with_tracing, ObjectProvider, SuiRpcModule};
 
 <span class="kw">pub struct </span>GovernanceReadApi {
     state: Arc&lt;AuthorityState&gt;,
@@ -561,43 +567,49 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         staked_sui_ids: Vec&lt;ObjectID&gt;,
     ) -&gt; RpcResult&lt;Vec&lt;DelegatedStake&gt;&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_stakes_by_ids&quot;</span>);
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.get_stakes_by_ids(staked_sui_ids).<span class="kw">await</span><span class="question-mark">?</span>)
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_stakes_by_ids&quot;</span>, <span class="kw">async move </span>{
+            <span class="prelude-val">Ok</span>(<span class="self">self</span>.get_stakes_by_ids(staked_sui_ids).<span class="kw">await</span><span class="question-mark">?</span>)
+        })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">async fn </span>get_stakes(<span class="kw-2">&amp;</span><span class="self">self</span>, owner: SuiAddress) -&gt; RpcResult&lt;Vec&lt;DelegatedStake&gt;&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_stakes&quot;</span>);
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.get_stakes(owner).<span class="kw">await</span><span class="question-mark">?</span>)
+        <span class="macro">with_tracing!</span>(
+            <span class="string">&quot;get_stakes&quot;</span>,
+            <span class="kw">async move </span>{ <span class="prelude-val">Ok</span>(<span class="self">self</span>.get_stakes(owner).<span class="kw">await</span><span class="question-mark">?</span>) }
+        )
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">async fn </span>get_committee_info(<span class="kw-2">&amp;</span><span class="self">self</span>, epoch: <span class="prelude-ty">Option</span>&lt;BigInt&lt;u64&gt;&gt;) -&gt; RpcResult&lt;SuiCommittee&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_committee_info&quot;</span>);
-        <span class="prelude-val">Ok</span>(<span class="self">self
-            </span>.state
-            .committee_store()
-            .get_or_latest_committee(epoch.map(|e| <span class="kw-2">*</span>e))
-            .map(|committee| committee.into())
-            .map_err(Error::from)<span class="question-mark">?</span>)
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_committee_info&quot;</span>, <span class="kw">async move </span>{
+            <span class="prelude-val">Ok</span>(<span class="self">self
+                </span>.state
+                .committee_store()
+                .get_or_latest_committee(epoch.map(|e| <span class="kw-2">*</span>e))
+                .map(|committee| committee.into())
+                .map_err(Error::from)<span class="question-mark">?</span>)
+        })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">async fn </span>get_latest_sui_system_state(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;SuiSystemStateSummary&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_latest_sui_system_state&quot;</span>);
-        <span class="prelude-val">Ok</span>(<span class="self">self
-            </span>.state
-            .database
-            .get_sui_system_state_object()
-            .map_err(Error::from)<span class="question-mark">?
-            </span>.into_sui_system_state_summary())
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_latest_sui_system_state&quot;</span>, <span class="kw">async move </span>{
+            <span class="prelude-val">Ok</span>(<span class="self">self
+                </span>.state
+                .database
+                .get_sui_system_state_object()
+                .map_err(Error::from)<span class="question-mark">?
+                </span>.into_sui_system_state_summary())
+        })
     }
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">async fn </span>get_reference_gas_price(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;BigInt&lt;u64&gt;&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;get_reference_gas_price&quot;</span>);
-        <span class="kw">let </span>epoch_store = <span class="self">self</span>.state.load_epoch_store_one_call_per_task();
-        <span class="prelude-val">Ok</span>(epoch_store.reference_gas_price().into())
+        <span class="macro">with_tracing!</span>(<span class="string">&quot;get_reference_gas_price&quot;</span>, <span class="kw">async move </span>{
+            <span class="kw">let </span>epoch_store = <span class="self">self</span>.state.load_epoch_store_one_call_per_task();
+            <span class="prelude-val">Ok</span>(epoch_store.reference_gas_price().into())
+        })
     }
 }
 
