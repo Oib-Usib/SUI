@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682632248140,
+  "lastUpdate": 1682635720037,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1403,6 +1403,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 318799,
             "range": "± 18980",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4d394f8f67ca74dd557fdba972c25fab18965ba4",
+          "message": "Fix checkpoint store used in db checkpoint handler (#11434)\n\n## Description \r\n\r\nAs title says\r\n## Test Plan \r\n\r\nExisting",
+          "timestamp": "2023-04-27T22:38:42Z",
+          "tree_id": "abda2fd6f3b4be2b679ec8bf7d61caf44c05bd40",
+          "url": "https://github.com/MystenLabs/sui/commit/4d394f8f67ca74dd557fdba972c25fab18965ba4"
+        },
+        "date": 1682635716600,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146444313,
+            "range": "± 4694172",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 365770,
+            "range": "± 54763",
             "unit": "ns/iter"
           }
         ]
