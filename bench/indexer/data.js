@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682607686563,
+  "lastUpdate": 1682616712230,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1187,6 +1187,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310634,
             "range": "± 8056",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "51927076+phoenix-o@users.noreply.github.com",
+            "name": "phoenix",
+            "username": "phoenix-o"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "524c109514650662ba19f62e304306a758f28048",
+          "message": "[pruner] delay first execution (#11415)",
+          "timestamp": "2023-04-27T10:19:56-07:00",
+          "tree_id": "cd55d039d22cf122a2a608a3327a484a431df727",
+          "url": "https://github.com/MystenLabs/sui/commit/524c109514650662ba19f62e304306a758f28048"
+        },
+        "date": 1682616708527,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145547311,
+            "range": "± 6588881",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309316,
+            "range": "± 21759",
             "unit": "ns/iter"
           }
         ]
