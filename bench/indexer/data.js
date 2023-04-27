@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682555512971,
+  "lastUpdate": 1682560249217,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1007,6 +1007,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 392970,
             "range": "± 65985",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "2895723+tzakian@users.noreply.github.com",
+            "name": "Tim Zakian",
+            "username": "tzakian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3c5d52b5e182440760c2fce8a7e16695a08b7cb8",
+          "message": "[transaction fuzzer] Add bounds testing within programmable transactions (#11394)",
+          "timestamp": "2023-04-26T18:40:39-07:00",
+          "tree_id": "8e0e26a64e8030fc872cbb201f5f948414d20e30",
+          "url": "https://github.com/MystenLabs/sui/commit/3c5d52b5e182440760c2fce8a7e16695a08b7cb8"
+        },
+        "date": 1682560245955,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 160704045,
+            "range": "± 5033535",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 379366,
+            "range": "± 43811",
             "unit": "ns/iter"
           }
         ]
