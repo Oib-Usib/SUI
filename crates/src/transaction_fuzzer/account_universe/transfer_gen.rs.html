@@ -548,6 +548,34 @@
 <a href="#548" id="548">548</a>
 <a href="#549" id="549">549</a>
 <a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -578,6 +606,7 @@
 };
 
 <span class="kw">const </span>GAS_UNIT_PRICE: u64 = <span class="number">2</span>;
+<span class="kw">const </span>DEAFULT_TRANSFER_AMOUNT: u64 = <span class="number">1</span>;
 <span class="kw">const </span>P2P_COMPUTE_GAS_USAGE: u64 = <span class="number">1000</span>;
 <span class="kw">const </span>P2P_SUCCESS_STORAGE_USAGE: u64 = <span class="number">1976000</span>;
 <span class="kw">const </span>P2P_FAILURE_STORAGE_USAGE: u64 = <span class="number">988000</span>;
@@ -619,6 +648,14 @@
     <span class="attr">#[proptest(strategy = <span class="string">&quot;gas_budget_selection_strategy()&quot;</span>)]
     </span>gas: u64,
     <span class="attr">#[proptest(strategy = <span class="string">&quot;gas_price_selection_strategy()&quot;</span>)]
+    </span>gas_price: u64,
+}
+
+<span class="attr">#[derive(Arbitrary, Clone, Debug)]
+#[proptest(params = <span class="string">&quot;(u64, u64)&quot;</span>)]
+</span><span class="kw">pub struct </span>P2PTransferGenGasPriceInRange {
+    sender_receiver: AccountPairGen,
+    <span class="attr">#[proptest(strategy = <span class="string">&quot;params.0 ..= params.1&quot;</span>)]
     </span>gas_price: u64,
 }
 
@@ -829,6 +866,24 @@
     }
 }
 
+<span class="kw">impl </span>AUTransactionGen <span class="kw">for </span>P2PTransferGenGasPriceInRange {
+    <span class="kw">fn </span>apply(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        universe: <span class="kw-2">&amp;mut </span>AccountUniverse,
+        exec: <span class="kw-2">&amp;mut </span>Executor,
+    ) -&gt; (VerifiedTransaction, ExecutionResult) {
+        P2PTransferGenRandomGasRandomPriceRandomSponsorship {
+            sender_receiver: <span class="self">self</span>.sender_receiver.clone(),
+            amount: DEAFULT_TRANSFER_AMOUNT,
+            gas: p2p_success_gas(<span class="self">self</span>.gas_price),
+            gas_price: <span class="self">self</span>.gas_price,
+            gas_coins: <span class="number">1</span>,
+            sponsorship: TransactionSponsorship::None,
+        }
+        .apply(universe, exec)
+    }
+}
+
 <span class="kw">impl </span>AUTransactionGen <span class="kw">for </span>P2PTransferGenRandomGasRandomPrice {
     <span class="kw">fn </span>apply(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -884,6 +939,7 @@
 <span class="kw">impl </span>RunInfo {
     <span class="kw">pub fn </span>new(
         payer_balance: u64,
+        rgp: u64,
         p2p: <span class="kw-2">&amp;</span>P2PTransferGenRandomGasRandomPriceRandomSponsorship,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>to_deduct = p2p.amount <span class="kw">as </span>u128 + p2p.gas <span class="kw">as </span>u128;
@@ -893,7 +949,7 @@
         <span class="kw">let </span>gas_budget_too_high = p2p.gas &gt; PROTOCOL_CONFIG.max_tx_gas();
         <span class="kw">let </span>gas_budget_too_low = p2p.gas &lt; PROTOCOL_CONFIG.base_tx_cost_fixed();
         <span class="kw">let </span>not_enough_gas = p2p.gas &lt; p2p_success_gas(p2p.gas_price);
-        <span class="kw">let </span>gas_price_too_low = p2p.gas_price &lt; <span class="number">1</span>;
+        <span class="kw">let </span>gas_price_too_low = p2p.gas_price &lt; rgp;
         <span class="kw">let </span>gas_price_too_high = p2p.gas_price &gt;= PROTOCOL_CONFIG.max_gas_price();
         <span class="kw">let </span>gas_price_greater_than_budget = p2p.gas_price &gt; p2p.gas;
         <span class="kw">let </span>gas_units_too_low = p2p.gas_price &gt; <span class="number">0
@@ -953,7 +1009,7 @@
         <span class="kw">let </span>signed_txn = <span class="self">self</span>.sponsorship.sign_transaction(<span class="kw-2">&amp;</span>account_triple, tx_data);
         <span class="kw">let </span>payer = <span class="self">self</span>.sponsorship.sponsor(<span class="kw-2">&amp;mut </span>account_triple);
         <span class="comment">// *sender.current_balances.last().unwrap();
-        </span><span class="kw">let </span>run_info = RunInfo::new(gas_balance, <span class="self">self</span>);
+        </span><span class="kw">let </span>run_info = RunInfo::new(gas_balance, exec.get_reference_gas_price(), <span class="self">self</span>);
         <span class="kw">let </span>status = <span class="kw">match </span>run_info {
             RunInfo {
                 enough_max_gas: <span class="bool-val">true</span>,
@@ -986,7 +1042,7 @@
             } =&gt; <span class="prelude-val">Err</span>(SuiError::UserInputError {
                 error: UserInputError::GasPriceUnderRGP {
                     gas_price: <span class="self">self</span>.gas_price,
-                    reference_gas_price: <span class="number">1</span>,
+                    reference_gas_price: exec.get_reference_gas_price(),
                 },
             }),
             RunInfo {
