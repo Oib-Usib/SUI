@@ -1299,6 +1299,25 @@
 <a href="#1299" id="1299">1299</a>
 <a href="#1300" id="1300">1300</a>
 <a href="#1301" id="1301">1301</a>
+<a href="#1302" id="1302">1302</a>
+<a href="#1303" id="1303">1303</a>
+<a href="#1304" id="1304">1304</a>
+<a href="#1305" id="1305">1305</a>
+<a href="#1306" id="1306">1306</a>
+<a href="#1307" id="1307">1307</a>
+<a href="#1308" id="1308">1308</a>
+<a href="#1309" id="1309">1309</a>
+<a href="#1310" id="1310">1310</a>
+<a href="#1311" id="1311">1311</a>
+<a href="#1312" id="1312">1312</a>
+<a href="#1313" id="1313">1313</a>
+<a href="#1314" id="1314">1314</a>
+<a href="#1315" id="1315">1315</a>
+<a href="#1316" id="1316">1316</a>
+<a href="#1317" id="1317">1317</a>
+<a href="#1318" id="1318">1318</a>
+<a href="#1319" id="1319">1319</a>
+<a href="#1320" id="1320">1320</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1311,7 +1330,7 @@
 
 <span class="doccomment">/// The minimum and maximum protocol versions supported by this build.
 </span><span class="kw">const </span>MIN_PROTOCOL_VERSION: u64 = <span class="number">1</span>;
-<span class="kw">const </span>MAX_PROTOCOL_VERSION: u64 = <span class="number">8</span>;
+<span class="kw">const </span>MAX_PROTOCOL_VERSION: u64 = <span class="number">9</span>;
 
 <span class="comment">// Record history of protocol version allocations here:
 //
@@ -1332,6 +1351,7 @@
 //            hash module bytes individually before computing package digest.
 // Version 8: Disallow changing abilities and type constraints for type parameters in structs
 //            during upgrades.
+// Version 9: Limit the length of Move idenfitiers to 128.
 
 </span><span class="attr">#[derive(Copy, Clone, Debug, Hash, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 </span><span class="kw">pub struct </span>ProtocolVersion(u64);
@@ -1631,6 +1651,9 @@
 
     <span class="doccomment">/// Maximum length of a vector in Move. Enforced by the VM during execution, and for constants, by the verifier.
     </span>max_move_vector_len: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+
+    <span class="doccomment">/// Maximum length of an `Identifier` in Move. Enforced by the bytecode verifier at signing.
+    </span>max_move_identifier_len: <span class="prelude-ty">Option</span>&lt;u64&gt;,
 
     <span class="doccomment">/// Maximum number of back edges in Move function. Enforced by the bytecode verifier at signing.
     </span>max_back_edges_per_function: <span class="prelude-ty">Option</span>&lt;u64&gt;,
@@ -2002,6 +2025,12 @@
     </span><span class="kw">pub fn </span>max_size_written_objects_system_tx_as_option(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
         <span class="self">self</span>.max_size_written_objects_system_tx
     }
+
+    <span class="doccomment">/// We don&#39;t want to use the default getter which unwraps and could panic.
+    /// Instead we want to be able to selectively fetch this value
+    </span><span class="kw">pub fn </span>max_move_identifier_len_as_option(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
+        <span class="self">self</span>.max_move_identifier_len
+    }
 }
 
 <span class="attr">#[cfg(not(msim))]
@@ -2335,6 +2364,9 @@
                 </span>scoring_decision_mad_divisor: <span class="prelude-val">None</span>,
                 scoring_decision_cutoff_value: <span class="prelude-val">None</span>,
 
+              <span class="comment">// Limits the length of a Move identifier
+              </span>max_move_identifier_len: <span class="prelude-val">None</span>,
+
                 <span class="comment">// When adding a new constant, set it to None in the earliest version, like this:
                 // new_constant: None,
             </span>},
@@ -2400,6 +2432,12 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>);
                 cfg.feature_flags
                     .disallow_change_struct_type_params_on_upgrade = <span class="bool-val">true</span>;
+                cfg
+            }
+            <span class="number">9 </span>=&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>);
+                <span class="comment">// Limits the length of a Move identifier
+                </span>cfg.max_move_identifier_len = <span class="prelude-val">Some</span>(<span class="number">128</span>);
                 cfg
             }
             <span class="comment">// Use this template when making changes:

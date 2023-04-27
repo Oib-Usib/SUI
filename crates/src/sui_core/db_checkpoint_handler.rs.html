@@ -482,15 +482,6 @@
 <a href="#482" id="482">482</a>
 <a href="#483" id="483">483</a>
 <a href="#484" id="484">484</a>
-<a href="#485" id="485">485</a>
-<a href="#486" id="486">486</a>
-<a href="#487" id="487">487</a>
-<a href="#488" id="488">488</a>
-<a href="#489" id="489">489</a>
-<a href="#490" id="490">490</a>
-<a href="#491" id="491">491</a>
-<a href="#492" id="492">492</a>
-<a href="#493" id="493">493</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -519,6 +510,7 @@
 <span class="kw">use </span>tokio::sync::oneshot;
 <span class="kw">use </span>tokio::sync::oneshot::Sender;
 <span class="kw">use </span>tracing::{debug, error, info};
+<span class="kw">use </span>typed_store::rocks::MetricConf;
 <span class="kw">use </span>url::Url;
 
 <span class="kw">pub const </span>SUCCESS_MARKER: <span class="kw-2">&amp;</span>str = <span class="string">&quot;_SUCCESS&quot;</span>;
@@ -536,8 +528,6 @@
     </span>interval: Duration,
     <span class="doccomment">/// File markers which signal that local db checkpoint can be garbage collected
     </span>gc_markers: Vec&lt;String&gt;,
-    <span class="doccomment">/// Checkpoint store
-    </span>checkpoint_store: Arc&lt;CheckpointStore&gt;,
     <span class="doccomment">/// Boolean flag to enable/disable object pruning and manual compaction before upload
     </span>prune_and_compact_before_upload: bool,
     <span class="doccomment">/// Indirect object config for pruner
@@ -549,7 +539,6 @@
         input_path: <span class="kw-2">&amp;</span>std::path::Path,
         output_object_store_config: <span class="kw-2">&amp;</span>ObjectStoreConfig,
         interval_s: u64,
-        checkpoint_store: Arc&lt;CheckpointStore&gt;,
         prune_and_compact_before_upload: bool,
         indirect_objects_threshold: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
@@ -564,7 +553,6 @@
             output_object_store: output_object_store_config.make()<span class="question-mark">?</span>,
             interval: Duration::from_secs(interval_s),
             gc_markers: <span class="macro">vec!</span>[UPLOAD_COMPLETED_MARKER.to_string()],
-            checkpoint_store,
             prune_and_compact_before_upload,
             indirect_objects_threshold,
         })
@@ -573,7 +561,6 @@
         input_object_store_config: <span class="kw-2">&amp;</span>ObjectStoreConfig,
         output_object_store_config: <span class="kw-2">&amp;</span>ObjectStoreConfig,
         interval_s: u64,
-        checkpoint_store: Arc&lt;CheckpointStore&gt;,
         prune_and_compact_before_upload: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="prelude-val">Ok</span>(DBCheckpointHandler {
@@ -586,7 +573,6 @@
             output_object_store: output_object_store_config.make()<span class="question-mark">?</span>,
             interval: Duration::from_secs(interval_s),
             gc_markers: <span class="macro">vec!</span>[UPLOAD_COMPLETED_MARKER.to_string(), TEST_MARKER.to_string()],
-            checkpoint_store,
             prune_and_compact_before_upload,
             indirect_objects_threshold: <span class="number">0</span>,
         })
@@ -611,6 +597,12 @@
     }
     <span class="kw">async fn </span>prune_and_compact(<span class="kw-2">&amp;</span><span class="self">self</span>, db_path: PathBuf, epoch: u32) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span>perpetual_db = Arc::new(AuthorityPerpetualTables::open(<span class="kw-2">&amp;</span>db_path.join(<span class="string">&quot;store&quot;</span>), <span class="prelude-val">None</span>));
+        <span class="kw">let </span>checkpoint_store = Arc::new(CheckpointStore::open_tables_read_write(
+            db_path.join(<span class="string">&quot;checkpoints&quot;</span>),
+            MetricConf::default(),
+            <span class="prelude-val">None</span>,
+            <span class="prelude-val">None</span>,
+        ));
         <span class="kw">let </span>config = AuthorityStorePruningConfig {
             num_epochs_to_retain: <span class="number">0</span>,
             ..Default::default()
@@ -623,7 +615,7 @@
         );
         AuthorityStorePruner::prune_objects_for_eligible_epochs(
             <span class="kw-2">&amp;</span>perpetual_db,
-            <span class="kw-2">&amp;</span><span class="self">self</span>.checkpoint_store,
+            <span class="kw-2">&amp;</span>checkpoint_store,
             <span class="kw-2">&amp;</span>lock_table,
             config,
             metrics,
@@ -785,11 +777,9 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span><span class="kw">crate</span>::checkpoints::CheckpointStore;
     <span class="kw">use </span><span class="kw">crate</span>::db_checkpoint_handler::{
         DBCheckpointHandler, SUCCESS_MARKER, TEST_MARKER, UPLOAD_COMPLETED_MARKER,
     };
-    <span class="kw">use </span>narwhal_test_utils::temp_dir;
     <span class="kw">use </span>std::fs;
     <span class="kw">use </span>sui_storage::object_store::{ObjectStoreConfig, ObjectStoreType};
     <span class="kw">use </span>tempfile::TempDir;
@@ -823,14 +813,10 @@
             directory: <span class="prelude-val">Some</span>(remote_checkpoint_dir_path.to_path_buf()),
             ..Default::default()
         };
-        <span class="comment">// Create a temporary checkpoint store to initialize the db checkpoint handler, we are not
-        // actually going to trigger pruning in the test
-        </span><span class="kw">let </span>checkpoint_store = CheckpointStore::new(<span class="kw-2">&amp;</span>temp_dir());
         <span class="kw">let </span>db_checkpoint_handler = DBCheckpointHandler::new_for_test(
             <span class="kw-2">&amp;</span>input_store_config,
             <span class="kw-2">&amp;</span>output_store_config,
             <span class="number">10</span>,
-            checkpoint_store,
             <span class="bool-val">false</span>,
         )<span class="question-mark">?</span>;
         <span class="kw">let </span>local_checkpoints_by_epoch = db_checkpoint_handler
@@ -891,14 +877,10 @@
             directory: <span class="prelude-val">Some</span>(remote_checkpoint_dir_path.to_path_buf()),
             ..Default::default()
         };
-        <span class="comment">// Create a temporary checkpoint store to initialize the db checkpoint handler, we are not
-        // actually going to trigger pruning in the test
-        </span><span class="kw">let </span>checkpoint_store = CheckpointStore::new(<span class="kw-2">&amp;</span>temp_dir());
         <span class="kw">let </span>db_checkpoint_handler = DBCheckpointHandler::new_for_test(
             <span class="kw-2">&amp;</span>input_store_config,
             <span class="kw-2">&amp;</span>output_store_config,
             <span class="number">10</span>,
-            checkpoint_store,
             <span class="bool-val">false</span>,
         )<span class="question-mark">?</span>;
 

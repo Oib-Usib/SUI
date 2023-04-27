@@ -794,6 +794,7 @@
 <a href="#794" id="794">794</a>
 <a href="#795" id="795">795</a>
 <a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -886,7 +887,8 @@
         max_basic_blocks_in_script: <span class="prelude-val">None</span>,
         max_per_fun_meter_units,
         max_per_mod_meter_units,
-    }
+        max_idenfitier_len: protocol_config.max_move_identifier_len_as_option() <span class="comment">// Before protocol version 9, there was no limit
+    </span>}
 }
 
 <span class="kw">pub fn </span>new_move_vm(
