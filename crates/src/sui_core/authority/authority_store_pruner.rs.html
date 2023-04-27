@@ -698,6 +698,7 @@
 <a href="#698" id="698">698</a>
 <a href="#699" id="699">699</a>
 <a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -951,12 +952,13 @@
         );
         <span class="kw">let </span>tick_duration = Duration::from_secs(config.pruning_run_delay_seconds.unwrap_or(
             <span class="kw">if </span>config.num_epochs_to_retain &gt; <span class="number">0 </span>{
-                epoch_duration_ms / <span class="number">2
-            </span>} <span class="kw">else </span>{
+                min(<span class="number">1000 </span>* epoch_duration_ms / <span class="number">2</span>, <span class="number">60 </span>* <span class="number">60</span>)
+            } <span class="kw">else </span>{
                 <span class="number">60
             </span>},
         ));
-        <span class="kw">let </span>pruning_initial_delay = min(tick_duration, Duration::from_secs(<span class="number">300</span>));
+        <span class="kw">let </span>pruning_initial_delay =
+            Duration::from_secs(config.pruning_run_delay_seconds.unwrap_or(<span class="number">60 </span>* <span class="number">60</span>));
         <span class="kw">let </span><span class="kw-2">mut </span>prune_interval =
             tokio::time::interval_at(Instant::now() + pruning_initial_delay, tick_duration);
 
