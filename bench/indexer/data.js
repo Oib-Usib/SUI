@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682618691232,
+  "lastUpdate": 1682626777685,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1295,6 +1295,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 317552,
             "range": "± 32131",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "95463a9ff22da72feb0fc850341966cd39b0cad2",
+          "message": "Prune and compact checkpoints before upload (#11343)\n\n## Description \r\n\r\nAs title says, we are enabling a config which allows us to prune objects\r\nand invoke compaction on the objects table before uploading the snapshot\r\nto s3.\r\n## Test Plan \r\n\r\nEnhanced current unit tests.",
+          "timestamp": "2023-04-27T20:07:29Z",
+          "tree_id": "ab21bb09eeea0e18e4b7ab87da2392d9f3218300",
+          "url": "https://github.com/MystenLabs/sui/commit/95463a9ff22da72feb0fc850341966cd39b0cad2"
+        },
+        "date": 1682626773308,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105725177,
+            "range": "± 3717455",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 343045,
+            "range": "± 21611",
             "unit": "ns/iter"
           }
         ]
