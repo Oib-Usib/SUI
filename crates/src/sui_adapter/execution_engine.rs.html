@@ -1444,7 +1444,7 @@
     );
 
     <span class="attr">#[cfg(msim)]
-    </span><span class="kw">let </span>result = maybe_modify_result(result);
+    </span><span class="kw">let </span>result = maybe_modify_result(result, change_epoch.epoch);
 
     <span class="kw">if </span>result.is_err() {
         <span class="macro">tracing::error!</span>(
