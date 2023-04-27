@@ -17,7 +17,7 @@
     epoch: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>,
     checkpoint: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
     status: &amp;<a class="enum" href="enum.ObjectStatus.html" title="enum sui_indexer::models::objects::ObjectStatus">ObjectStatus</a>,
-    o: &amp;<a class="struct" href="../../../sui_json_rpc_types/sui_object/struct.SuiObjectData.html" title="struct sui_json_rpc_types::sui_object::SuiObjectData">SuiObjectData</a>
+    o: &amp;SuiObjectData
 ) -&gt; Self</h4></section><section id="method.try_into_object_read" class="method"><a class="srclink rightside" href="../../../src/sui_indexer/models/objects.rs.html#174-189">source</a><h4 class="code-header">pub fn <a href="#method.try_into_object_read" class="fn">try_into_object_read</a>(
     self,
     module_cache: &amp;impl GetModule

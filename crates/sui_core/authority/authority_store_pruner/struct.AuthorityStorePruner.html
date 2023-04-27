@@ -2,7 +2,7 @@
     perpetual_db: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html" title="struct alloc::sync::Arc">Arc</a>&lt;<a class="struct" href="../authority_store_tables/struct.AuthorityPerpetualTables.html" title="struct sui_core::authority::authority_store_tables::AuthorityPerpetualTables">AuthorityPerpetualTables</a>&gt;,
     checkpoint_store: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html" title="struct alloc::sync::Arc">Arc</a>&lt;<a class="struct" href="../../checkpoints/struct.CheckpointStore.html" title="struct sui_core::checkpoints::CheckpointStore">CheckpointStore</a>&gt;,
     objects_lock_table: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html" title="struct alloc::sync::Arc">Arc</a>&lt;RwLockTable&lt;<a class="type" href="../authority_store_types/type.ObjectContentDigest.html" title="type sui_core::authority::authority_store_types::ObjectContentDigest">ObjectContentDigest</a>&gt;&gt;,
-    pruning_config: <a class="struct" href="../../../sui_config/node/struct.AuthorityStorePruningConfig.html" title="struct sui_config::node::AuthorityStorePruningConfig">AuthorityStorePruningConfig</a>,
+    pruning_config: AuthorityStorePruningConfig,
     epoch_duration_ms: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>,
     registry: &amp;Registry,
     indirect_objects_threshold: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>

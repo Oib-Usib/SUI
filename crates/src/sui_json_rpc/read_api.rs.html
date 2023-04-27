@@ -1384,12 +1384,10 @@
         <span class="kw">if </span>opts.require_input() {
             <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
             <span class="kw">let </span>digest_clone = digests.clone();
-            <span class="kw">let </span>transactions = <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
+            <span class="kw">let </span>transactions =
                 state.multi_get_executed_transactions(<span class="kw-2">&amp;</span>digest_clone).tap_err(
                     |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digest_clone, <span class="string">&quot;Failed to multi get transaction: {:?}&quot;</span>, err),
-                )
-            })
-                .<span class="kw">await</span><span class="question-mark">??</span>;
+                )<span class="question-mark">?</span>;
 
             <span class="kw">for </span>((_digest, cache_entry), txn) <span class="kw">in
                 </span>temp_response.iter_mut().zip(transactions.into_iter())
@@ -1402,12 +1400,9 @@
         </span><span class="kw">if </span>opts.require_effects() {
             <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
             <span class="kw">let </span>digests_clone = digests.clone();
-            <span class="kw">let </span>effects_list = <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-                state.multi_get_executed_effects(<span class="kw-2">&amp;</span>digests_clone).tap_err(
-                    |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digests_clone, <span class="string">&quot;Failed to multi get effects: {:?}&quot;</span>, err),
-                )
-            })
-            .<span class="kw">await</span><span class="question-mark">??</span>;
+            <span class="kw">let </span>effects_list = state.multi_get_executed_effects(<span class="kw-2">&amp;</span>digests_clone).tap_err(
+                |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digests_clone, <span class="string">&quot;Failed to multi get effects: {:?}&quot;</span>, err),
+            )<span class="question-mark">?</span>;
             <span class="kw">for </span>((_digest, cache_entry), e) <span class="kw">in
                 </span>temp_response.iter_mut().zip(effects_list.into_iter())
             {
@@ -1417,11 +1412,11 @@
 
         <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
         <span class="kw">let </span>digests_clone = digests.clone();
-        <span class="kw">let </span>checkpoint_seq_list = <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
+        <span class="kw">let </span>checkpoint_seq_list =
             state
             .multi_get_transaction_checkpoint(<span class="kw-2">&amp;</span>digests_clone)
             .tap_err(
-                |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digests_clone, <span class="string">&quot;Failed to multi get checkpoint sequence number: {:?}&quot;</span>, err))}).<span class="kw">await</span><span class="question-mark">??</span>;
+                |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digests_clone, <span class="string">&quot;Failed to multi get checkpoint sequence number: {:?}&quot;</span>, err))<span class="question-mark">?</span>;
         <span class="kw">for </span>((_digest, cache_entry), seq) <span class="kw">in </span>temp_response
             .iter_mut()
             .zip(checkpoint_seq_list.into_iter())
@@ -1960,9 +1955,14 @@
         opts: <span class="prelude-ty">Option</span>&lt;SuiTransactionBlockResponseOptions&gt;,
     ) -&gt; RpcResult&lt;Vec&lt;SuiTransactionBlockResponse&gt;&gt; {
         <span class="macro">with_tracing!</span>(<span class="string">&quot;multi_get_transaction_blocks&quot;</span>, <span class="kw">async move </span>{
-            <span class="prelude-val">Ok</span>(<span class="self">self
-                </span>.multi_get_transaction_blocks_internal(digests, opts)
-                .<span class="kw">await</span><span class="question-mark">?</span>)
+            <span class="kw">let </span>cloned_self = <span class="self">self</span>.clone();
+            <span class="prelude-val">Ok</span>(<span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
+                cloned_self
+                    .multi_get_transaction_blocks_internal(digests, opts)
+                    .<span class="kw">await
+            </span>})
+            .<span class="kw">await
+            </span>.map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">??</span>)
         })
     }
 
