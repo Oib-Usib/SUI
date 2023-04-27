@@ -72,7 +72,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_verifier_transactional_tests":["",[],["lib.rs"]],\
 "telemetry_subscribers":["",[],["lib.rs","span_latency_prom.rs"]],\
 "test_utils":["",[],["authority.rs","lib.rs","messages.rs","network.rs","transaction.rs"]],\
-"transaction_fuzzer":["",[["account_universe",[],["account.rs","helpers.rs","transfer_gen.rs","universe.rs"]]],["account_universe.rs","executor.rs","lib.rs","transaction_data_gen.rs","type_arg_fuzzer.rs"]],\
+"transaction_fuzzer":["",[["account_universe",[],["account.rs","helpers.rs","transfer_gen.rs","universe.rs"]]],["account_universe.rs","executor.rs","lib.rs","programmable_transaction_gen.rs","transaction_data_gen.rs","type_arg_fuzzer.rs"]],\
 "typed_store":["",[["rocks",[],["errors.rs","iter.rs","keys.rs","mod.rs","safe_iter.rs","util.rs","values.rs"]],["sally",[],["mod.rs"]]],["lib.rs","metrics.rs","test_db.rs","traits.rs"]],\
 "typed_store_derive":["",[],["lib.rs"]],\
 "workspace_hack":["",[],["lib.rs"]],\

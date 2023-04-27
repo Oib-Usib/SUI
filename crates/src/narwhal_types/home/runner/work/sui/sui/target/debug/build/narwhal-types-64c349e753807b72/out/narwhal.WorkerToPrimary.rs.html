@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/work/sui/sui/target/debug/build/narwhal-types-ea242f87825bd097/out/narwhal.PrimaryToWorker.rs`."><title>narwhal.PrimaryToWorker.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../../../../../../" data-static-root-path="../../../../../../../../../../../../static.files/" data-current-crate="narwhal_types" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (458d4dae8 2023-04-25)" data-search-js="search-618e954b235f6acc.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../../../../../../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../../../../../../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../../../../../../../../../source-files.js"></script><script defer src="../../../../../../../../../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../../../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../../../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../../../../../../narwhal_types/index.html"><img class="rust-logo" src="../../../../../../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/work/sui/sui/target/debug/build/narwhal-types-64c349e753807b72/out/narwhal.WorkerToPrimary.rs`."><title>narwhal.WorkerToPrimary.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../../../../../../" data-static-root-path="../../../../../../../../../../../../static.files/" data-current-crate="narwhal_types" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (1c42cb4ef 2023-04-26)" data-search-js="search-618e954b235f6acc.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../../../../../../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../../../../../../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../../../../../../../../../source-files.js"></script><script defer src="../../../../../../../../../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../../../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../../../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../../../../../../narwhal_types/index.html"><img class="rust-logo" src="../../../../../../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -258,96 +258,15 @@
 <a href="#258" id="258">258</a>
 <a href="#259" id="259">259</a>
 <a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a>
-<a href="#309" id="309">309</a>
-<a href="#310" id="310">310</a>
-<a href="#311" id="311">311</a>
-<a href="#312" id="312">312</a>
-<a href="#313" id="313">313</a>
-<a href="#314" id="314">314</a>
-<a href="#315" id="315">315</a>
-<a href="#316" id="316">316</a>
-<a href="#317" id="317">317</a>
-<a href="#318" id="318">318</a>
-<a href="#319" id="319">319</a>
-<a href="#320" id="320">320</a>
-<a href="#321" id="321">321</a>
-<a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
-<a href="#324" id="324">324</a>
-<a href="#325" id="325">325</a>
-<a href="#326" id="326">326</a>
-<a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// Generated client implementations.
-</span><span class="kw">pub mod </span>primary_to_worker_client {
+</span><span class="kw">pub mod </span>worker_to_primary_client {
     <span class="attr">#![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     </span><span class="kw">use </span>anemo::codegen::<span class="kw-2">*</span>;
     <span class="attr">#[derive(Debug, Clone)]
-    </span><span class="kw">pub struct </span>PrimaryToWorkerClient&lt;T&gt; {
+    </span><span class="kw">pub struct </span>WorkerToPrimaryClient&lt;T&gt; {
         inner: anemo::rpc::client::Rpc&lt;T&gt;,
     }
-    <span class="kw">impl</span>&lt;T&gt; PrimaryToWorkerClient&lt;T&gt;
+    <span class="kw">impl</span>&lt;T&gt; WorkerToPrimaryClient&lt;T&gt;
     <span class="kw">where
         </span>T: Service&lt;Request&lt;Bytes&gt;, Response = Response&lt;Bytes&gt;&gt;,
         T::Error: Into&lt;BoxError&gt;,
@@ -368,10 +287,10 @@
         </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; T {
             <span class="self">self</span>.inner.into_inner()
         }
-        <span class="kw">pub async fn </span>synchronize(
+        <span class="kw">pub async fn </span>report_our_batch(
             <span class="kw-2">&amp;mut </span><span class="self">self</span>,
             request: <span class="kw">impl </span>anemo::types::request::IntoRequest&lt;
-                <span class="kw">crate</span>::WorkerSynchronizeMessage,
+                <span class="kw">crate</span>::WorkerOurBatchMessage,
             &gt;,
         ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;()&gt;, anemo::rpc::Status&gt; {
             <span class="self">self</span>.inner
@@ -384,30 +303,13 @@
                 })<span class="question-mark">?</span>;
             <span class="kw">let </span>codec = mysten_network::codec::anemo::BcsSnappyCodec::default();
             <span class="kw">let </span><span class="kw-2">mut </span>request = request.into_request();
-            <span class="kw-2">*</span>request.route_mut() = <span class="string">&quot;/narwhal.PrimaryToWorker/Synchronize&quot;</span>.into();
+            <span class="kw-2">*</span>request.route_mut() = <span class="string">&quot;/narwhal.WorkerToPrimary/ReportOurBatch&quot;</span>.into();
             <span class="self">self</span>.inner.unary(request, codec).<span class="kw">await
         </span>}
-        <span class="kw">pub async fn </span>fetch_batches(
-            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-            request: <span class="kw">impl </span>anemo::types::request::IntoRequest&lt;<span class="kw">crate</span>::FetchBatchesRequest&gt;,
-        ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;<span class="kw">crate</span>::FetchBatchesResponse&gt;, anemo::rpc::Status&gt; {
-            <span class="self">self</span>.inner
-                .ready()
-                .<span class="kw">await
-                </span>.map_err(|e| {
-                    anemo::rpc::Status::unknown(
-                        <span class="macro">format!</span>(<span class="string">&quot;Service was not ready: {}&quot;</span>, e.into()),
-                    )
-                })<span class="question-mark">?</span>;
-            <span class="kw">let </span>codec = mysten_network::codec::anemo::BcsSnappyCodec::default();
-            <span class="kw">let </span><span class="kw-2">mut </span>request = request.into_request();
-            <span class="kw-2">*</span>request.route_mut() = <span class="string">&quot;/narwhal.PrimaryToWorker/FetchBatches&quot;</span>.into();
-            <span class="self">self</span>.inner.unary(request, codec).<span class="kw">await
-        </span>}
-        <span class="kw">pub async fn </span>delete_batches(
+        <span class="kw">pub async fn </span>report_others_batch(
             <span class="kw-2">&amp;mut </span><span class="self">self</span>,
             request: <span class="kw">impl </span>anemo::types::request::IntoRequest&lt;
-                <span class="kw">crate</span>::WorkerDeleteBatchesMessage,
+                <span class="kw">crate</span>::WorkerOthersBatchMessage,
             &gt;,
         ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;()&gt;, anemo::rpc::Status&gt; {
             <span class="self">self</span>.inner
@@ -420,53 +322,47 @@
                 })<span class="question-mark">?</span>;
             <span class="kw">let </span>codec = mysten_network::codec::anemo::BcsSnappyCodec::default();
             <span class="kw">let </span><span class="kw-2">mut </span>request = request.into_request();
-            <span class="kw-2">*</span>request.route_mut() = <span class="string">&quot;/narwhal.PrimaryToWorker/DeleteBatches&quot;</span>.into();
+            <span class="kw-2">*</span>request.route_mut() = <span class="string">&quot;/narwhal.WorkerToPrimary/ReportOthersBatch&quot;</span>.into();
             <span class="self">self</span>.inner.unary(request, codec).<span class="kw">await
         </span>}
     }
 }
 <span class="doccomment">/// Generated server implementations.
-</span><span class="kw">pub mod </span>primary_to_worker_server {
+</span><span class="kw">pub mod </span>worker_to_primary_server {
     <span class="attr">#![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     </span><span class="kw">use </span>anemo::codegen::<span class="kw-2">*</span>;
     <span class="kw">pub use </span>anemo::codegen::InboundRequestLayer;
-    <span class="doccomment">///Generated trait containing RPC methods that should be implemented for use with PrimaryToWorkerServer.
+    <span class="doccomment">///Generated trait containing RPC methods that should be implemented for use with WorkerToPrimaryServer.
     </span><span class="attr">#[mockall::automock]
     #[async_trait]
-    </span><span class="kw">pub trait </span>PrimaryToWorker: Send + Sync + <span class="lifetime">&#39;static </span>{
-        <span class="kw">async fn </span>synchronize(
+    </span><span class="kw">pub trait </span>WorkerToPrimary: Send + Sync + <span class="lifetime">&#39;static </span>{
+        <span class="kw">async fn </span>report_our_batch(
             <span class="kw-2">&amp;</span><span class="self">self</span>,
-            request: anemo::Request&lt;<span class="kw">crate</span>::WorkerSynchronizeMessage&gt;,
+            request: anemo::Request&lt;<span class="kw">crate</span>::WorkerOurBatchMessage&gt;,
         ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;()&gt;, anemo::rpc::Status&gt;;
-        <span class="kw">async fn </span>fetch_batches(
+        <span class="kw">async fn </span>report_others_batch(
             <span class="kw-2">&amp;</span><span class="self">self</span>,
-            request: anemo::Request&lt;<span class="kw">crate</span>::FetchBatchesRequest&gt;,
-        ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;<span class="kw">crate</span>::FetchBatchesResponse&gt;, anemo::rpc::Status&gt;;
-        <span class="kw">async fn </span>delete_batches(
-            <span class="kw-2">&amp;</span><span class="self">self</span>,
-            request: anemo::Request&lt;<span class="kw">crate</span>::WorkerDeleteBatchesMessage&gt;,
+            request: anemo::Request&lt;<span class="kw">crate</span>::WorkerOthersBatchMessage&gt;,
         ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;()&gt;, anemo::rpc::Status&gt;;
     }
     <span class="attr">#[derive(Debug)]
-    </span><span class="kw">pub struct </span>PrimaryToWorkerServer&lt;T: PrimaryToWorker&gt; {
+    </span><span class="kw">pub struct </span>WorkerToPrimaryServer&lt;T: WorkerToPrimary&gt; {
         inner: Arc&lt;T&gt;,
-        synchronize_layer: InboundRequestLayer&lt;<span class="kw">crate</span>::WorkerSynchronizeMessage, ()&gt;,
-        fetch_batches_layer: InboundRequestLayer&lt;
-            <span class="kw">crate</span>::FetchBatchesRequest,
-            <span class="kw">crate</span>::FetchBatchesResponse,
+        report_our_batch_layer: InboundRequestLayer&lt;<span class="kw">crate</span>::WorkerOurBatchMessage, ()&gt;,
+        report_others_batch_layer: InboundRequestLayer&lt;
+            <span class="kw">crate</span>::WorkerOthersBatchMessage,
+            (),
         &gt;,
-        delete_batches_layer: InboundRequestLayer&lt;<span class="kw">crate</span>::WorkerDeleteBatchesMessage, ()&gt;,
     }
-    <span class="kw">impl</span>&lt;T: PrimaryToWorker&gt; PrimaryToWorkerServer&lt;T&gt; {
+    <span class="kw">impl</span>&lt;T: WorkerToPrimary&gt; WorkerToPrimaryServer&lt;T&gt; {
         <span class="kw">pub fn </span>new(inner: T) -&gt; <span class="self">Self </span>{
             <span class="self">Self</span>::from_arc(Arc::new(inner))
         }
         <span class="kw">pub fn </span>from_arc(inner: Arc&lt;T&gt;) -&gt; <span class="self">Self </span>{
             <span class="self">Self </span>{
                 inner,
-                synchronize_layer: InboundRequestLayer::new(Identity::new()),
-                fetch_batches_layer: InboundRequestLayer::new(Identity::new()),
-                delete_batches_layer: InboundRequestLayer::new(Identity::new()),
+                report_our_batch_layer: InboundRequestLayer::new(Identity::new()),
+                report_others_batch_layer: InboundRequestLayer::new(Identity::new()),
             }
         }
         <span class="kw">pub fn </span>inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
@@ -475,47 +371,34 @@
         <span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; Arc&lt;T&gt; {
             <span class="self">self</span>.inner
         }
-        <span class="kw">pub fn </span>add_layer_for_synchronize(
+        <span class="kw">pub fn </span>add_layer_for_report_our_batch(
             <span class="kw-2">mut </span><span class="self">self</span>,
-            layer: InboundRequestLayer&lt;<span class="kw">crate</span>::WorkerSynchronizeMessage, ()&gt;,
+            layer: InboundRequestLayer&lt;<span class="kw">crate</span>::WorkerOurBatchMessage, ()&gt;,
         ) -&gt; <span class="self">Self </span>{
             <span class="self">self
-                </span>.synchronize_layer = InboundRequestLayer::new(
-                Stack::new(<span class="self">self</span>.synchronize_layer, layer),
+                </span>.report_our_batch_layer = InboundRequestLayer::new(
+                Stack::new(<span class="self">self</span>.report_our_batch_layer, layer),
             );
             <span class="self">self
         </span>}
-        <span class="kw">pub fn </span>add_layer_for_fetch_batches(
+        <span class="kw">pub fn </span>add_layer_for_report_others_batch(
             <span class="kw-2">mut </span><span class="self">self</span>,
-            layer: InboundRequestLayer&lt;
-                <span class="kw">crate</span>::FetchBatchesRequest,
-                <span class="kw">crate</span>::FetchBatchesResponse,
-            &gt;,
+            layer: InboundRequestLayer&lt;<span class="kw">crate</span>::WorkerOthersBatchMessage, ()&gt;,
         ) -&gt; <span class="self">Self </span>{
             <span class="self">self
-                </span>.fetch_batches_layer = InboundRequestLayer::new(
-                Stack::new(<span class="self">self</span>.fetch_batches_layer, layer),
-            );
-            <span class="self">self
-        </span>}
-        <span class="kw">pub fn </span>add_layer_for_delete_batches(
-            <span class="kw-2">mut </span><span class="self">self</span>,
-            layer: InboundRequestLayer&lt;<span class="kw">crate</span>::WorkerDeleteBatchesMessage, ()&gt;,
-        ) -&gt; <span class="self">Self </span>{
-            <span class="self">self
-                </span>.delete_batches_layer = InboundRequestLayer::new(
-                Stack::new(<span class="self">self</span>.delete_batches_layer, layer),
+                </span>.report_others_batch_layer = InboundRequestLayer::new(
+                Stack::new(<span class="self">self</span>.report_others_batch_layer, layer),
             );
             <span class="self">self
         </span>}
     }
     <span class="attr">#[allow(non_camel_case_types)]
     #[derive(Debug)]
-    </span><span class="kw">struct </span>SynchronizeSvc&lt;T: PrimaryToWorker&gt;(<span class="kw">pub </span>Arc&lt;T&gt;);
+    </span><span class="kw">struct </span>ReportOurBatchSvc&lt;T: WorkerToPrimary&gt;(<span class="kw">pub </span>Arc&lt;T&gt;);
     <span class="kw">impl</span>&lt;
-        T: PrimaryToWorker,
-    &gt; anemo::codegen::Service&lt;anemo::Request&lt;<span class="kw">crate</span>::WorkerSynchronizeMessage&gt;&gt;
-    <span class="kw">for </span>SynchronizeSvc&lt;T&gt; {
+        T: WorkerToPrimary,
+    &gt; anemo::codegen::Service&lt;anemo::Request&lt;<span class="kw">crate</span>::WorkerOurBatchMessage&gt;&gt;
+    <span class="kw">for </span>ReportOurBatchSvc&lt;T&gt; {
         <span class="kw">type </span>Response = anemo::Response&lt;()&gt;;
         <span class="kw">type </span>Error = anemo::rpc::Status;
         <span class="kw">type </span>Future = BoxFuture&lt;<span class="lifetime">&#39;static</span>, <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Response, anemo::rpc::Status&gt;&gt;;
@@ -527,55 +410,25 @@
         }
         <span class="kw">fn </span>call(
             <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-            request: anemo::Request&lt;<span class="kw">crate</span>::WorkerSynchronizeMessage&gt;,
+            request: anemo::Request&lt;<span class="kw">crate</span>::WorkerOurBatchMessage&gt;,
         ) -&gt; <span class="self">Self</span>::Future {
             <span class="kw">let </span>inner = <span class="self">self</span>.<span class="number">0</span>.clone();
-            <span class="kw">let </span>fut = <span class="kw">async move </span>{ (<span class="kw-2">*</span>inner).synchronize(request).<span class="kw">await </span>};
+            <span class="kw">let </span>fut = <span class="kw">async move </span>{ (<span class="kw-2">*</span>inner).report_our_batch(request).<span class="kw">await </span>};
             Box::pin(fut)
         }
     }
-    <span class="kw">impl</span>&lt;T: PrimaryToWorker&gt; Clone <span class="kw">for </span>SynchronizeSvc&lt;T&gt; {
+    <span class="kw">impl</span>&lt;T: WorkerToPrimary&gt; Clone <span class="kw">for </span>ReportOurBatchSvc&lt;T&gt; {
         <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
             <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0</span>.clone())
         }
     }
     <span class="attr">#[allow(non_camel_case_types)]
     #[derive(Debug)]
-    </span><span class="kw">struct </span>FetchBatchesSvc&lt;T: PrimaryToWorker&gt;(<span class="kw">pub </span>Arc&lt;T&gt;);
+    </span><span class="kw">struct </span>ReportOthersBatchSvc&lt;T: WorkerToPrimary&gt;(<span class="kw">pub </span>Arc&lt;T&gt;);
     <span class="kw">impl</span>&lt;
-        T: PrimaryToWorker,
-    &gt; anemo::codegen::Service&lt;anemo::Request&lt;<span class="kw">crate</span>::FetchBatchesRequest&gt;&gt;
-    <span class="kw">for </span>FetchBatchesSvc&lt;T&gt; {
-        <span class="kw">type </span>Response = anemo::Response&lt;<span class="kw">crate</span>::FetchBatchesResponse&gt;;
-        <span class="kw">type </span>Error = anemo::rpc::Status;
-        <span class="kw">type </span>Future = BoxFuture&lt;<span class="lifetime">&#39;static</span>, <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Response, anemo::rpc::Status&gt;&gt;;
-        <span class="kw">fn </span>poll_ready(
-            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-            cx: <span class="kw-2">&amp;mut </span>core::task::Context&lt;<span class="lifetime">&#39;_</span>&gt;,
-        ) -&gt; core::task::Poll&lt;<span class="prelude-ty">Result</span>&lt;(), <span class="self">Self</span>::Error&gt;&gt; {
-            core::task::Poll::Ready(<span class="prelude-val">Ok</span>(()))
-        }
-        <span class="kw">fn </span>call(
-            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-            request: anemo::Request&lt;<span class="kw">crate</span>::FetchBatchesRequest&gt;,
-        ) -&gt; <span class="self">Self</span>::Future {
-            <span class="kw">let </span>inner = <span class="self">self</span>.<span class="number">0</span>.clone();
-            <span class="kw">let </span>fut = <span class="kw">async move </span>{ (<span class="kw-2">*</span>inner).fetch_batches(request).<span class="kw">await </span>};
-            Box::pin(fut)
-        }
-    }
-    <span class="kw">impl</span>&lt;T: PrimaryToWorker&gt; Clone <span class="kw">for </span>FetchBatchesSvc&lt;T&gt; {
-        <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-            <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0</span>.clone())
-        }
-    }
-    <span class="attr">#[allow(non_camel_case_types)]
-    #[derive(Debug)]
-    </span><span class="kw">struct </span>DeleteBatchesSvc&lt;T: PrimaryToWorker&gt;(<span class="kw">pub </span>Arc&lt;T&gt;);
-    <span class="kw">impl</span>&lt;
-        T: PrimaryToWorker,
-    &gt; anemo::codegen::Service&lt;anemo::Request&lt;<span class="kw">crate</span>::WorkerDeleteBatchesMessage&gt;&gt;
-    <span class="kw">for </span>DeleteBatchesSvc&lt;T&gt; {
+        T: WorkerToPrimary,
+    &gt; anemo::codegen::Service&lt;anemo::Request&lt;<span class="kw">crate</span>::WorkerOthersBatchMessage&gt;&gt;
+    <span class="kw">for </span>ReportOthersBatchSvc&lt;T&gt; {
         <span class="kw">type </span>Response = anemo::Response&lt;()&gt;;
         <span class="kw">type </span>Error = anemo::rpc::Status;
         <span class="kw">type </span>Future = BoxFuture&lt;<span class="lifetime">&#39;static</span>, <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Response, anemo::rpc::Status&gt;&gt;;
@@ -587,21 +440,21 @@
         }
         <span class="kw">fn </span>call(
             <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-            request: anemo::Request&lt;<span class="kw">crate</span>::WorkerDeleteBatchesMessage&gt;,
+            request: anemo::Request&lt;<span class="kw">crate</span>::WorkerOthersBatchMessage&gt;,
         ) -&gt; <span class="self">Self</span>::Future {
             <span class="kw">let </span>inner = <span class="self">self</span>.<span class="number">0</span>.clone();
-            <span class="kw">let </span>fut = <span class="kw">async move </span>{ (<span class="kw-2">*</span>inner).delete_batches(request).<span class="kw">await </span>};
+            <span class="kw">let </span>fut = <span class="kw">async move </span>{ (<span class="kw-2">*</span>inner).report_others_batch(request).<span class="kw">await </span>};
             Box::pin(fut)
         }
     }
-    <span class="kw">impl</span>&lt;T: PrimaryToWorker&gt; Clone <span class="kw">for </span>DeleteBatchesSvc&lt;T&gt; {
+    <span class="kw">impl</span>&lt;T: WorkerToPrimary&gt; Clone <span class="kw">for </span>ReportOthersBatchSvc&lt;T&gt; {
         <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
             <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0</span>.clone())
         }
     }
-    <span class="kw">impl</span>&lt;T&gt; anemo::codegen::Service&lt;anemo::Request&lt;Bytes&gt;&gt; <span class="kw">for </span>PrimaryToWorkerServer&lt;T&gt;
+    <span class="kw">impl</span>&lt;T&gt; anemo::codegen::Service&lt;anemo::Request&lt;Bytes&gt;&gt; <span class="kw">for </span>WorkerToPrimaryServer&lt;T&gt;
     <span class="kw">where
-        </span>T: PrimaryToWorker,
+        </span>T: WorkerToPrimary,
     {
         <span class="kw">type </span>Response = anemo::Response&lt;Bytes&gt;;
         <span class="kw">type </span>Error = std::convert::Infallible;
@@ -615,12 +468,12 @@
         <span class="kw">fn </span>call(<span class="kw-2">&amp;mut </span><span class="self">self</span>, req: anemo::Request&lt;Bytes&gt;) -&gt; <span class="self">Self</span>::Future {
             <span class="kw">let </span>inner = <span class="self">self</span>.inner.clone();
             <span class="kw">match </span>req.route() {
-                <span class="string">&quot;/narwhal.PrimaryToWorker/Synchronize&quot; </span>=&gt; {
+                <span class="string">&quot;/narwhal.WorkerToPrimary/ReportOurBatch&quot; </span>=&gt; {
                     <span class="kw">let </span>inner = <span class="self">self</span>.inner.clone();
-                    <span class="kw">let </span>layer = <span class="self">self</span>.synchronize_layer.clone();
+                    <span class="kw">let </span>layer = <span class="self">self</span>.report_our_batch_layer.clone();
                     <span class="kw">let </span>fut = <span class="kw">async move </span>{
                         <span class="kw">let </span>method = layer
-                            .layer(BoxCloneService::new(SynchronizeSvc(inner)));
+                            .layer(BoxCloneService::new(ReportOurBatchSvc(inner)));
                         <span class="kw">let </span>codec = mysten_network::codec::anemo::BcsSnappyCodec::default();
                         <span class="kw">let </span><span class="kw-2">mut </span>rpc = anemo::rpc::server::Rpc::new(codec);
                         <span class="kw">let </span>res = rpc.unary(method, req).<span class="kw">await</span>;
@@ -628,25 +481,12 @@
                     };
                     Box::pin(fut)
                 }
-                <span class="string">&quot;/narwhal.PrimaryToWorker/FetchBatches&quot; </span>=&gt; {
+                <span class="string">&quot;/narwhal.WorkerToPrimary/ReportOthersBatch&quot; </span>=&gt; {
                     <span class="kw">let </span>inner = <span class="self">self</span>.inner.clone();
-                    <span class="kw">let </span>layer = <span class="self">self</span>.fetch_batches_layer.clone();
+                    <span class="kw">let </span>layer = <span class="self">self</span>.report_others_batch_layer.clone();
                     <span class="kw">let </span>fut = <span class="kw">async move </span>{
                         <span class="kw">let </span>method = layer
-                            .layer(BoxCloneService::new(FetchBatchesSvc(inner)));
-                        <span class="kw">let </span>codec = mysten_network::codec::anemo::BcsSnappyCodec::default();
-                        <span class="kw">let </span><span class="kw-2">mut </span>rpc = anemo::rpc::server::Rpc::new(codec);
-                        <span class="kw">let </span>res = rpc.unary(method, req).<span class="kw">await</span>;
-                        <span class="prelude-val">Ok</span>(res)
-                    };
-                    Box::pin(fut)
-                }
-                <span class="string">&quot;/narwhal.PrimaryToWorker/DeleteBatches&quot; </span>=&gt; {
-                    <span class="kw">let </span>inner = <span class="self">self</span>.inner.clone();
-                    <span class="kw">let </span>layer = <span class="self">self</span>.delete_batches_layer.clone();
-                    <span class="kw">let </span>fut = <span class="kw">async move </span>{
-                        <span class="kw">let </span>method = layer
-                            .layer(BoxCloneService::new(DeleteBatchesSvc(inner)));
+                            .layer(BoxCloneService::new(ReportOthersBatchSvc(inner)));
                         <span class="kw">let </span>codec = mysten_network::codec::anemo::BcsSnappyCodec::default();
                         <span class="kw">let </span><span class="kw-2">mut </span>rpc = anemo::rpc::server::Rpc::new(codec);
                         <span class="kw">let </span>res = rpc.unary(method, req).<span class="kw">await</span>;
@@ -662,22 +502,20 @@
             }
         }
     }
-    <span class="kw">impl</span>&lt;T: PrimaryToWorker&gt; Clone <span class="kw">for </span>PrimaryToWorkerServer&lt;T&gt; {
+    <span class="kw">impl</span>&lt;T: WorkerToPrimary&gt; Clone <span class="kw">for </span>WorkerToPrimaryServer&lt;T&gt; {
         <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
             <span class="kw">let </span>inner = <span class="self">self</span>.inner.clone();
-            <span class="kw">let </span>synchronize_layer = <span class="self">self</span>.synchronize_layer.clone();
-            <span class="kw">let </span>fetch_batches_layer = <span class="self">self</span>.fetch_batches_layer.clone();
-            <span class="kw">let </span>delete_batches_layer = <span class="self">self</span>.delete_batches_layer.clone();
+            <span class="kw">let </span>report_our_batch_layer = <span class="self">self</span>.report_our_batch_layer.clone();
+            <span class="kw">let </span>report_others_batch_layer = <span class="self">self</span>.report_others_batch_layer.clone();
             <span class="self">Self </span>{
                 inner,
-                synchronize_layer,
-                fetch_batches_layer,
-                delete_batches_layer,
+                report_our_batch_layer,
+                report_others_batch_layer,
             }
         }
     }
-    <span class="kw">impl</span>&lt;T: PrimaryToWorker&gt; anemo::rpc::RpcService <span class="kw">for </span>PrimaryToWorkerServer&lt;T&gt; {
-        <span class="kw">const </span>SERVICE_NAME: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;narwhal.PrimaryToWorker&quot;</span>;
+    <span class="kw">impl</span>&lt;T: WorkerToPrimary&gt; anemo::rpc::RpcService <span class="kw">for </span>WorkerToPrimaryServer&lt;T&gt; {
+        <span class="kw">const </span>SERVICE_NAME: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;narwhal.WorkerToPrimary&quot;</span>;
     }
 }
 </code></pre></div></section></main></body></html>
