@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682705490143,
+  "lastUpdate": 1682707170722,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1727,6 +1727,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 382550,
             "range": "± 38343",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jonas-lj@users.noreply.github.com",
+            "name": "Jonas Lindstrøm",
+            "username": "jonas-lj"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16d1b6fa6260f0f7d5a4f367ec0c92e6aa54fec6",
+          "message": "Optimise ecdsa over secp256r1 (#11410)",
+          "timestamp": "2023-04-28T14:29:07-04:00",
+          "tree_id": "cd6f6164899f7a1eba34d3863b3e0c4e96d6df63",
+          "url": "https://github.com/MystenLabs/sui/commit/16d1b6fa6260f0f7d5a4f367ec0c92e6aa54fec6"
+        },
+        "date": 1682707166379,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148366220,
+            "range": "± 4781278",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 372425,
+            "range": "± 33505",
             "unit": "ns/iter"
           }
         ]
