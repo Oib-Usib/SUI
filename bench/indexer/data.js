@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682710989114,
+  "lastUpdate": 1682711052894,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1835,6 +1835,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 315087,
             "range": "± 24990",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ec34d4b84ba3766650391e6181084d1c762f966b",
+          "message": "[bugfix] - do not return balance and object change if local execution failed (#11466)\n\n## Description \r\n\r\ndo not return balance and object change if local execution failed",
+          "timestamp": "2023-04-28T12:34:17-07:00",
+          "tree_id": "2b4c62b2ed9c8f3dace1fc12600226256813a7e4",
+          "url": "https://github.com/MystenLabs/sui/commit/ec34d4b84ba3766650391e6181084d1c762f966b"
+        },
+        "date": 1682711048840,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145622453,
+            "range": "± 5655755",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310623,
+            "range": "± 10918",
             "unit": "ns/iter"
           }
         ]
