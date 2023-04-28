@@ -310,10 +310,96 @@
 <a href="#310" id="310">310</a>
 <a href="#311" id="311">311</a>
 <a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>std::cmp::max;
+</span><span class="kw">use </span>anyhow::anyhow;
+<span class="kw">use </span>std::cmp::max;
 <span class="kw">use </span>std::collections::BTreeMap;
 <span class="kw">use </span>std::sync::Arc;
 
@@ -322,15 +408,17 @@
 <span class="kw">use </span>jsonrpsee::RpcModule;
 <span class="kw">use </span>tracing::{info, instrument};
 
+<span class="kw">use </span>cached::proc_macro::cached;
+<span class="kw">use </span>cached::SizedCache;
 <span class="kw">use </span>mysten_metrics::spawn_monitored_task;
 <span class="kw">use </span>sui_core::authority::AuthorityState;
-<span class="kw">use </span>sui_json_rpc_types::SuiCommittee;
 <span class="kw">use </span>sui_json_rpc_types::{DelegatedStake, Stake, StakeStatus};
+<span class="kw">use </span>sui_json_rpc_types::{SuiCommittee, ValidatorApy, ValidatorApys};
 <span class="kw">use </span>sui_open_rpc::Module;
 <span class="kw">use </span>sui_types::base_types::{MoveObjectType, ObjectID, SuiAddress};
 <span class="kw">use </span>sui_types::committee::EpochId;
 <span class="kw">use </span>sui_types::dynamic_field::get_dynamic_field_from_store;
-<span class="kw">use </span>sui_types::error::{SuiError, UserInputError};
+<span class="kw">use </span>sui_types::error::{SuiError, SuiResult, UserInputError};
 <span class="kw">use </span>sui_types::governance::StakedSui;
 <span class="kw">use </span>sui_types::id::ID;
 <span class="kw">use </span>sui_types::object::ObjectRead;
@@ -338,9 +426,7 @@
 <span class="kw">use </span>sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
 <span class="kw">use </span>sui_types::sui_system_state::PoolTokenExchangeRate;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemStateTrait;
-<span class="kw">use </span>sui_types::sui_system_state::{
-    get_validator_from_table, sui_system_state_summary::get_validator_by_pool_id, SuiSystemState,
-};
+<span class="kw">use </span>sui_types::sui_system_state::{get_validator_from_table, SuiSystemState};
 
 <span class="kw">use </span><span class="kw">crate</span>::api::{GovernanceReadApiServer, JsonRpcMetrics};
 <span class="kw">use </span><span class="kw">crate</span>::error::Error;
@@ -392,7 +478,6 @@
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>stakes: Vec&lt;(StakedSui, bool)&gt; = <span class="macro">vec!</span>[];
-
         <span class="kw">for </span>stake <span class="kw">in </span>stakes_read.into_iter() {
             <span class="kw">match </span>stake {
                 ObjectRead::Exists(<span class="kw">_</span>, o, <span class="kw">_</span>) =&gt; stakes.push((StakedSui::try_from(<span class="kw-2">&amp;</span>o)<span class="question-mark">?</span>, <span class="bool-val">true</span>)),
@@ -407,7 +492,7 @@
                             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UserInputError(UserInputError::ObjectNotFound {
                                 object_id: oref.<span class="number">0</span>,
                                 version: <span class="prelude-val">None</span>,
-                            }))
+                            }));
                         }
                     }
                 }
@@ -415,7 +500,7 @@
                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UserInputError(UserInputError::ObjectNotFound {
                         object_id: id,
                         version: <span class="prelude-val">None</span>,
-                    }))
+                    }));
                 }
             }
         }
@@ -451,33 +536,38 @@
         <span class="kw">let </span>system_state = <span class="self">self</span>.get_system_state()<span class="question-mark">?</span>;
         <span class="kw">let </span>system_state_summary: SuiSystemStateSummary =
             system_state.clone().into_sui_system_state_summary();
+
+        <span class="kw">let </span>rates = exchange_rates(<span class="kw-2">&amp;</span><span class="self">self</span>.state, system_state_summary.epoch)
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.into_iter()
+            .map(|rates| (rates.pool_id, rates))
+            .collect::&lt;BTreeMap&lt;<span class="kw">_</span>, <span class="kw">_</span>&gt;&gt;();
+
         <span class="kw">let </span><span class="kw-2">mut </span>delegated_stakes = <span class="macro">vec!</span>[];
         <span class="kw">for </span>(pool_id, stakes) <span class="kw">in </span>pools {
             <span class="comment">// Rate table and rate can be null when the pool is not active
-            </span><span class="kw">let </span>rate_table = <span class="self">self
-                </span>.get_exchange_rate_table(<span class="kw-2">&amp;</span>system_state_summary, <span class="kw-2">&amp;</span>pool_id)
-                .<span class="kw">await
-                </span>.ok();
-            <span class="kw">let </span>current_rate = <span class="kw">if let </span><span class="prelude-val">Some</span>(rate_table) = rate_table {
-                <span class="self">self</span>.get_exchange_rate(rate_table, system_state_summary.epoch)
-                    .<span class="kw">await
-                    </span>.ok()
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>};
+            </span><span class="kw">let </span>rate_table = rates
+                .get(<span class="kw-2">&amp;</span>pool_id)
+                .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Cannot find rates for staking pool {pool_id}&quot;</span>))<span class="question-mark">?</span>;
+            <span class="kw">let </span>current_rate = rate_table.rates.first().map(|(<span class="kw">_</span>, rate)| rate);
 
             <span class="kw">let </span><span class="kw-2">mut </span>delegations = <span class="macro">vec!</span>[];
             <span class="kw">for </span>(stake, exists) <span class="kw">in </span>stakes {
                 <span class="kw">let </span>status = <span class="kw">if </span>!exists {
                     StakeStatus::Unstaked
                 } <span class="kw">else if </span>system_state_summary.epoch &gt;= stake.activation_epoch() {
-                    <span class="kw">let </span>estimated_reward = <span class="kw">if let </span>(<span class="prelude-val">Some</span>(rate_table), <span class="prelude-val">Some</span>(current_rate)) =
-                        (<span class="kw-2">&amp;</span>rate_table, <span class="kw-2">&amp;</span>current_rate)
-                    {
-                        <span class="kw">let </span>stake_rate = <span class="self">self
-                            </span>.get_exchange_rate(<span class="kw-2">*</span>rate_table, stake.activation_epoch())
-                            .<span class="kw">await
-                            </span>.unwrap_or_default();
+                    <span class="kw">let </span>estimated_reward = <span class="kw">if let </span><span class="prelude-val">Some</span>(current_rate) = current_rate {
+                        <span class="kw">let </span>stake_rate = rate_table
+                            .rates
+                            .iter()
+                            .find_map(|(epoch, rate)| {
+                                <span class="kw">if </span><span class="kw-2">*</span>epoch == stake.activation_epoch() {
+                                    <span class="prelude-val">Some</span>(rate.clone())
+                                } <span class="kw">else </span>{
+                                    <span class="prelude-val">None
+                                </span>}
+                            })
+                            .unwrap_or_default();
                         <span class="kw">let </span>estimated_reward = ((stake_rate.rate() / current_rate.rate()) - <span class="number">1.0</span>)
                             * stake.principal() <span class="kw">as </span>f64;
                         max(<span class="number">0</span>, estimated_reward.round() <span class="kw">as </span>u64)
@@ -497,14 +587,8 @@
                     status,
                 })
             }
-            <span class="kw">let </span>validator = get_validator_by_pool_id(
-                <span class="self">self</span>.state.db().as_ref(),
-                <span class="kw-2">&amp;</span>system_state,
-                <span class="kw-2">&amp;</span>system_state_summary,
-                pool_id,
-            )<span class="question-mark">?</span>;
             delegated_stakes.push(DelegatedStake {
-                validator_address: validator.sui_address,
+                validator_address: rate_table.address,
                 staking_pool: pool_id,
                 stakes: delegations,
             })
@@ -514,49 +598,6 @@
 
     <span class="kw">fn </span>get_system_state(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;SuiSystemState, Error&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.state.database.get_sui_system_state_object()<span class="question-mark">?</span>)
-    }
-
-    <span class="kw">async fn </span>get_exchange_rate_table(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        system_state: <span class="kw-2">&amp;</span>SuiSystemStateSummary,
-        pool_id: <span class="kw-2">&amp;</span>ObjectID,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectID, Error&gt; {
-        <span class="kw">let </span>active_rate = system_state.active_validators.iter().find_map(|v| {
-            <span class="kw">if </span><span class="kw-2">&amp;</span>v.staking_pool_id == pool_id {
-                <span class="prelude-val">Some</span>(v.exchange_rates_id)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        });
-
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(active_rate) = active_rate {
-            <span class="prelude-val">Ok</span>(active_rate)
-        } <span class="kw">else </span>{
-            <span class="comment">// try find from inactive pool
-            </span><span class="kw">let </span>validator = get_validator_from_table(
-                <span class="self">self</span>.state.db().as_ref(),
-                system_state.inactive_pools_id,
-                <span class="kw-2">&amp;</span>ID::new(<span class="kw-2">*</span>pool_id),
-            )<span class="question-mark">?</span>;
-
-            <span class="prelude-val">Ok</span>(validator.exchange_rates_id)
-        }
-    }
-
-    <span class="kw">async fn </span>get_exchange_rate(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        table: ObjectID,
-        epoch: EpochId,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;PoolTokenExchangeRate, Error&gt; {
-        <span class="kw">let </span>exchange_rate: PoolTokenExchangeRate = get_dynamic_field_from_store(
-            <span class="self">self</span>.state.db().as_ref(),
-            table,
-            <span class="kw-2">&amp;</span>epoch,
-        )
-        .map_err(|err| {
-            SuiError::SuiSystemStateReadError(<span class="macro">format!</span>(<span class="string">&quot;Failed to get exchange rate: {:?}&quot;</span>, err))
-        })<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(exchange_rate)
     }
 }
 
@@ -611,6 +652,135 @@
             <span class="prelude-val">Ok</span>(epoch_store.reference_gas_price().into())
         })
     }
+
+    <span class="attr">#[instrument(skip(<span class="self">self</span>))]
+    </span><span class="kw">async fn </span>get_validators_apy(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;ValidatorApys&gt; {
+        <span class="macro">info!</span>(<span class="string">&quot;get_validator_apy&quot;</span>);
+        <span class="kw">let </span>system_state_summary: SuiSystemStateSummary =
+            <span class="self">self</span>.get_latest_sui_system_state().<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="kw">let </span>exchange_rate_table = exchange_rates(<span class="kw-2">&amp;</span><span class="self">self</span>.state, system_state_summary.epoch)
+            .<span class="kw">await
+            </span>.map_err(Error::from)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>apys = <span class="macro">vec!</span>[];
+
+        <span class="kw">for </span>rates <span class="kw">in </span>exchange_rate_table.into_iter().filter(|r| r.active) {
+            <span class="kw">let </span>apy = <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, latest_rate)) = rates.rates.first() {
+                <span class="kw">let </span>(n, rates_n) = <span class="kw">if </span>rates.rates.len() &lt; <span class="number">29 </span>{
+                    (rates.rates.len() <span class="kw">as </span>f64, rates.rates.last())
+                } <span class="kw">else </span>{
+                    (<span class="number">29.0</span>, rates.rates.get(<span class="number">29</span>))
+                };
+                <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, rate_n_days)) = rates_n {
+                    (rate_n_days.rate() / latest_rate.rate()).powf(<span class="number">365.0 </span>/ (n + <span class="number">1.0</span>)) - <span class="number">1.0
+                </span>} <span class="kw">else </span>{
+                    <span class="number">0.0
+                </span>}
+            } <span class="kw">else </span>{
+                <span class="number">0.0
+            </span>};
+            apys.push(ValidatorApy {
+                address: rates.address,
+                apy,
+            });
+        }
+        <span class="prelude-val">Ok</span>(ValidatorApys {
+            apys,
+            epoch: system_state_summary.epoch,
+        })
+    }
+}
+
+<span class="doccomment">/// Cached exchange rates for validators for the given epoch, the cache size is 1, it will be cleared when the epoch changes.
+</span><span class="attr">#[cached(
+    <span class="kw">type </span>= <span class="string">&quot;SizedCache&lt;EpochId, Vec&lt;ValidatorExchangeRates&gt;&gt;&quot;</span>,
+    create = <span class="string">&quot;{ SizedCache::with_size(1) }&quot;</span>,
+    convert = <span class="string">&quot;{ _current_epoch }&quot;</span>,
+    result = <span class="bool-val">true
+</span>)]
+</span><span class="kw">async fn </span>exchange_rates(
+    state: <span class="kw-2">&amp;</span>Arc&lt;AuthorityState&gt;,
+    _current_epoch: EpochId,
+) -&gt; SuiResult&lt;Vec&lt;ValidatorExchangeRates&gt;&gt; {
+    <span class="kw">let </span>system_state = state.database.get_sui_system_state_object()<span class="question-mark">?</span>;
+    <span class="kw">let </span>system_state_summary: SuiSystemStateSummary = system_state.into_sui_system_state_summary();
+
+    <span class="comment">// Get validator rate tables
+    </span><span class="kw">let </span><span class="kw-2">mut </span>tables = <span class="macro">vec!</span>[];
+
+    <span class="kw">for </span>validator <span class="kw">in </span>system_state_summary.active_validators {
+        tables.push((
+            validator.sui_address,
+            validator.staking_pool_id,
+            validator.exchange_rates_id,
+            validator.exchange_rates_size,
+            <span class="bool-val">true</span>,
+        ));
+    }
+
+    <span class="comment">// Get inactive validator rate tables
+    </span><span class="kw">for </span>df <span class="kw">in </span>state.get_dynamic_fields(
+        system_state_summary.inactive_pools_id,
+        <span class="prelude-val">None</span>,
+        system_state_summary.inactive_pools_size <span class="kw">as </span>usize,
+    )<span class="question-mark">? </span>{
+        <span class="kw">let </span>pool_id: ID =
+            bcs::from_bytes(<span class="kw-2">&amp;</span>df.bcs_name).map_err(|e| SuiError::ObjectDeserializationError {
+                error: e.to_string(),
+            })<span class="question-mark">?</span>;
+        <span class="kw">let </span>validator = get_validator_from_table(
+            state.database.as_ref(),
+            system_state_summary.inactive_pools_id,
+            <span class="kw-2">&amp;</span>pool_id,
+        )<span class="question-mark">?</span>;
+        tables.push((
+            validator.sui_address,
+            validator.staking_pool_id,
+            validator.exchange_rates_id,
+            validator.exchange_rates_size,
+            <span class="bool-val">false</span>,
+        ));
+    }
+
+    <span class="kw">let </span><span class="kw-2">mut </span>exchange_rates = <span class="macro">vec!</span>[];
+    <span class="comment">// Get exchange rates for each validator
+    </span><span class="kw">for </span>(address, pool_id, exchange_rates_id, exchange_rates_size, active) <span class="kw">in </span>tables {
+        <span class="kw">let </span><span class="kw-2">mut </span>rates = state
+            .get_dynamic_fields(exchange_rates_id, <span class="prelude-val">None</span>, exchange_rates_size <span class="kw">as </span>usize)<span class="question-mark">?
+            </span>.into_iter()
+            .map(|df| {
+                <span class="kw">let </span>epoch: EpochId = bcs::from_bytes(<span class="kw-2">&amp;</span>df.bcs_name).map_err(|e| {
+                    SuiError::ObjectDeserializationError {
+                        error: e.to_string(),
+                    }
+                })<span class="question-mark">?</span>;
+
+                <span class="kw">let </span>exchange_rate: PoolTokenExchangeRate =
+                    get_dynamic_field_from_store(state.db().as_ref(), exchange_rates_id, <span class="kw-2">&amp;</span>epoch)<span class="question-mark">?</span>;
+
+                <span class="prelude-val">Ok</span>::&lt;<span class="kw">_</span>, SuiError&gt;((epoch, exchange_rate))
+            })
+            .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()<span class="question-mark">?</span>;
+
+        rates.sort_by(|(a, <span class="kw">_</span>), (b, <span class="kw">_</span>)| a.cmp(b).reverse());
+
+        exchange_rates.push(ValidatorExchangeRates {
+            address,
+            pool_id,
+            active,
+            rates,
+        });
+    }
+    <span class="prelude-val">Ok</span>(exchange_rates)
+}
+
+<span class="attr">#[derive(Clone, Debug)]
+</span><span class="kw">pub struct </span>ValidatorExchangeRates {
+    address: SuiAddress,
+    pool_id: ObjectID,
+    active: bool,
+    rates: Vec&lt;(EpochId, PoolTokenExchangeRate)&gt;,
 }
 
 <span class="kw">impl </span>SuiRpcModule <span class="kw">for </span>GovernanceReadApi {

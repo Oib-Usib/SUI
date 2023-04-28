@@ -1210,6 +1210,9 @@
 <a href="#1210" id="1210">1210</a>
 <a href="#1211" id="1211">1211</a>
 <a href="#1212" id="1212">1212</a>
+<a href="#1213" id="1213">1213</a>
+<a href="#1214" id="1214">1214</a>
+<a href="#1215" id="1215">1215</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1485,6 +1488,9 @@
             <span class="prelude-val">Some</span>(Arc::new(IndexStore::new(
                 config.db_path().join(<span class="string">&quot;indexes&quot;</span>),
                 <span class="kw-2">&amp;</span>prometheus_registry,
+                epoch_store
+                    .protocol_config()
+                    .max_move_identifier_len_as_option(),
             )))
         } <span class="kw">else </span>{
             <span class="prelude-val">None

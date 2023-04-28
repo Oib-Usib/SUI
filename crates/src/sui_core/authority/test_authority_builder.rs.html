@@ -201,6 +201,12 @@
 <a href="#201" id="201">201</a>
 <a href="#202" id="202">202</a>
 <a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -365,7 +371,13 @@
         ));
 
         <span class="kw">let </span>checkpoint_store = CheckpointStore::new(<span class="kw-2">&amp;</span>path.join(<span class="string">&quot;checkpoints&quot;</span>));
-        <span class="kw">let </span>index_store = <span class="prelude-val">Some</span>(Arc::new(IndexStore::new(path.join(<span class="string">&quot;indexes&quot;</span>), <span class="kw-2">&amp;</span>registry)));
+        <span class="kw">let </span>index_store = <span class="prelude-val">Some</span>(Arc::new(IndexStore::new(
+            path.join(<span class="string">&quot;indexes&quot;</span>),
+            <span class="kw-2">&amp;</span>registry,
+            epoch_store
+                .protocol_config()
+                .max_move_identifier_len_as_option(),
+        )));
         <span class="kw">let </span>transaction_deny_config = <span class="self">self</span>.transaction_deny_config.unwrap_or_default();
         <span class="kw">let </span>state = AuthorityState::new(
             name,
