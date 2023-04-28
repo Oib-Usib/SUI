@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682714682986,
+  "lastUpdate": 1682715552445,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1943,6 +1943,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 305211,
             "range": "± 9771",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "452f3c3358612acdbac50967d1fba83ec11dfb01",
+          "message": "Filter empty log files during snapshot upload (#11470)\n\n## Description \r\n\r\nRocksDB leaves empty .log files after compaction which fails during\r\nupload to S3 with errors like:\r\n```\r\n Generic S3 error: Error performing put request epoch_0/store/perpetual/000059.log: response error \\\"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<Error><Code>MissingContentLength</Code><Message>You must provide the Content-Length HTTP header.</Message><RequestId>PHNPR5VQNTY0GW4Y</RequestId><HostId>D08UaQcJIVUVKFwpo3MrwLAYYqHWNM1FQxHSZfcNiCwkU0cTN0PPN+x+2ot6g1Q+hQ+cuVIsrTw=</HostId></Error>\\\r\n```\r\nAdding a filter for such files, as they are also unused during restore.\r\nAlso updated the deletion of old checkpoints to directly invoke delete\r\non the directory vs doing it file by file earlier by using object store\r\ndelete functionality.\r\n\r\n## Test Plan \r\n\r\nVerified with a restore.",
+          "timestamp": "2023-04-28T13:49:09-07:00",
+          "tree_id": "e2f55d6d494bc34dd4aecb3d361f80dba01921bd",
+          "url": "https://github.com/MystenLabs/sui/commit/452f3c3358612acdbac50967d1fba83ec11dfb01"
+        },
+        "date": 1682715548311,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141213950,
+            "range": "± 5974533",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 375056,
+            "range": "± 58551",
             "unit": "ns/iter"
           }
         ]
