@@ -61,6 +61,10 @@
 <a href="#61" id="61">61</a>
 <a href="#62" id="62">62</a>
 <a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -71,8 +75,8 @@
 
 <span class="kw">use </span>sui_json_rpc::api::{GovernanceReadApiClient, GovernanceReadApiServer};
 <span class="kw">use </span>sui_json_rpc::SuiRpcModule;
-<span class="kw">use </span>sui_json_rpc_types::DelegatedStake;
 <span class="kw">use </span>sui_json_rpc_types::SuiCommittee;
+<span class="kw">use </span>sui_json_rpc_types::{DelegatedStake, ValidatorApys};
 <span class="kw">use </span>sui_open_rpc::Module;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SuiAddress};
 <span class="kw">use </span>sui_types::sui_serde::BigInt;
@@ -112,6 +116,10 @@
 
     <span class="kw">async fn </span>get_reference_gas_price(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;BigInt&lt;u64&gt;&gt; {
         <span class="self">self</span>.fullnode.get_reference_gas_price().<span class="kw">await
+    </span>}
+
+    <span class="kw">async fn </span>get_validators_apy(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;ValidatorApys&gt; {
+        <span class="self">self</span>.fullnode.get_validators_apy().<span class="kw">await
     </span>}
 }
 
