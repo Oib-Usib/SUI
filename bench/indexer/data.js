@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682648594031,
+  "lastUpdate": 1682671964219,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1583,6 +1583,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 324684,
             "range": "± 20745",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "damirka.ru@gmail.com",
+            "name": "Damir Shamanaev",
+            "username": "damirka"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4d2ef9071d8bda02d624b3892f759e1d297e3007",
+          "message": "[kiosk] Adds delist function to kiosk + security patches (#11378)\n\n## Description \r\n\r\nAdds missing `delist` function to the Kiosk.\r\n\r\n## Test Plan \r\n\r\nIncludes tests for the delist function + type checking.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\n- adds `kiosk::delist` function to remove a listing\r\n- adds `kiosk::has_item_with_type<T>` to check if an item exists and its\r\ntype T\r\n- fixes the issue allowing tx sender to choose arbitrary `T` in some\r\nfunctions",
+          "timestamp": "2023-04-28T08:39:31Z",
+          "tree_id": "db281d5ecc8a9324205971bd001ae9481b918694",
+          "url": "https://github.com/MystenLabs/sui/commit/4d2ef9071d8bda02d624b3892f759e1d297e3007"
+        },
+        "date": 1682671960453,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150422791,
+            "range": "± 5118757",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 579905,
+            "range": "± 51214",
             "unit": "ns/iter"
           }
         ]
