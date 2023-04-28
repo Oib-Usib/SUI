@@ -30,7 +30,7 @@
 ) -&gt; Self</h4></section><details class="toggle method-toggle" open><summary><section id="method.recreate_with_net_addresses" class="method"><a class="srclink rightside" href="../../src/sui_core/authority_aggregator.rs.html#444-502">source</a><h4 class="code-header">pub fn <a href="#method.recreate_with_net_addresses" class="fn">recreate_with_net_addresses</a>(
     &amp;self,
     committee: <a class="struct" href="../../sui_types/committee/struct.CommitteeWithNetworkMetadata.html" title="struct sui_types::committee::CommitteeWithNetworkMetadata">CommitteeWithNetworkMetadata</a>,
-    network_config: &amp;<a class="struct" href="../../mysten_network/config/struct.Config.html" title="struct mysten_network::config::Config">Config</a>,
+    network_config: &amp;Config,
     disallow_missing_intermediate_committees: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>
 ) -&gt; <a class="type" href="../../sui_types/error/type.SuiResult.html" title="type sui_types::error::SuiResult">SuiResult</a>&lt;<a class="struct" href="struct.AuthorityAggregator.html" title="struct sui_core::authority_aggregator::AuthorityAggregator">AuthorityAggregator</a>&lt;<a class="struct" href="../authority_client/struct.NetworkAuthorityClient.html" title="struct sui_core::authority_client::NetworkAuthorityClient">NetworkAuthorityClient</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>This function recreates AuthorityAggregator with the given committee.
 It also updates committee store which impacts other of its references.
