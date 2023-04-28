@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682711059378,
+  "lastUpdate": 1682714682986,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1907,6 +1907,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 328390,
             "range": "± 23221",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aschran@mystenlabs.com",
+            "name": "Andrew Schran",
+            "username": "aschran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9d6fd7126051771231c74ebe70f18c255fafa583",
+          "message": "Refactor checkpoint contents download flow in state sync (#11433)\n\n## Description \r\n\r\n- Adds tx concurrency limit to complement checkpoint count concurrency\r\nlimit.\r\n- Continuously starts new `GetCheckpointContents` requests up to the\r\nlimit instead of doing this in chunked batches.\r\n\r\n## Test Plan \r\n\r\nUnit tests",
+          "timestamp": "2023-04-28T20:36:06Z",
+          "tree_id": "f058386f1e71627fe0c9ba77ccfc6b5dc84b957a",
+          "url": "https://github.com/MystenLabs/sui/commit/9d6fd7126051771231c74ebe70f18c255fafa583"
+        },
+        "date": 1682714675302,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 102226602,
+            "range": "± 3078774",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 305211,
+            "range": "± 9771",
             "unit": "ns/iter"
           }
         ]
