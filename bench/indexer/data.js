@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682720026291,
+  "lastUpdate": 1682720877113,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2051,6 +2051,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308588,
             "range": "± 17346",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "deb8d58f5faa2a745e086c04699d97a47c08f62e",
+          "message": "do not fail the request if objects are pruned for object and balance change (#11476)\n\n## Description \r\n\r\nas titled.\r\n\r\nTested on testnet:\r\n\r\nrequest\r\n```\r\n{\r\n  \"jsonrpc\": \"2.0\",\r\n  \"id\": 1,\r\n  \"method\": \"sui_getTransactionBlock\",\r\n  \"params\": [\"Cgww1sn7XViCPSdDcAPmVcARueWuexJ8af8zD842Ff43\", {\"showBalanceChanges\": true, \"showObjectChanges\":true}]\r\n}\r\n```\r\n\r\nresponse:\r\n```\r\n{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"result\": {\r\n        \"digest\": \"Cgww1sn7XViCPSdDcAPmVcARueWuexJ8af8zD842Ff43\",\r\n        \"timestampMs\": \"1679936400000\",\r\n        \"checkpoint\": \"0\",\r\n        \"errors\": [\r\n            \"Cannot retrieve balance changes: Error checking transaction input objects: ObjectNotFound { object_id: 0x0000000000000000000000000000000000000000000000000000000000000002, version: Some(SequenceNumber(1)) }\",\r\n            \"Cannot retrieve object changes: Error checking transaction input objects: ObjectNotFound { object_id: 0x0000000000000000000000000000000000000000000000000000000000000002, version: Some(SequenceNumber(1)) }\"\r\n        ]\r\n    },\r\n    \"id\": 1\r\n}\r\n```",
+          "timestamp": "2023-04-28T15:18:24-07:00",
+          "tree_id": "9aeb2b1a2f2a2758dbb52d8e4cfafa90f15c1c00",
+          "url": "https://github.com/MystenLabs/sui/commit/deb8d58f5faa2a745e086c04699d97a47c08f62e"
+        },
+        "date": 1682720873200,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141035582,
+            "range": "± 5170530",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311619,
+            "range": "± 20269",
             "unit": "ns/iter"
           }
         ]
