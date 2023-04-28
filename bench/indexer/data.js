@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682720877113,
+  "lastUpdate": 1682722781288,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2087,6 +2087,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311619,
             "range": "± 20269",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "damirka.ru@gmail.com",
+            "name": "Damir Shamanaev",
+            "username": "damirka"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "313c3701bbb07e8aeb5b027b96a68bd6073de662",
+          "message": "[framework] Deprecate CurrencyCreated event (#11480)\n\n## Description \r\n\r\nDeprecates CurrencyCreated event - it's no longer emitted.\r\n\r\n## Test Plan \r\n\r\nTests pass, change is minor.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\n- coin::CurrencyCreated event is no longer emitted, CoinMetadata can be\r\nused instead\r\n\r\n---------\r\n\r\nCo-authored-by: Brandon Williams <brandon@mystenlabs.com>",
+          "timestamp": "2023-04-28T22:49:42Z",
+          "tree_id": "c4d530ae9116ab429c369866d6c498c2cbcd2e6a",
+          "url": "https://github.com/MystenLabs/sui/commit/313c3701bbb07e8aeb5b027b96a68bd6073de662"
+        },
+        "date": 1682722776872,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147089113,
+            "range": "± 5410396",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 333271,
+            "range": "± 35462",
             "unit": "ns/iter"
           }
         ]
