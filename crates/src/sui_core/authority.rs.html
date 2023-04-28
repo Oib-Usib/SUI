@@ -3805,6 +3805,23 @@
 <a href="#3805" id="3805">3805</a>
 <a href="#3806" id="3806">3806</a>
 <a href="#3807" id="3807">3807</a>
+<a href="#3808" id="3808">3808</a>
+<a href="#3809" id="3809">3809</a>
+<a href="#3810" id="3810">3810</a>
+<a href="#3811" id="3811">3811</a>
+<a href="#3812" id="3812">3812</a>
+<a href="#3813" id="3813">3813</a>
+<a href="#3814" id="3814">3814</a>
+<a href="#3815" id="3815">3815</a>
+<a href="#3816" id="3816">3816</a>
+<a href="#3817" id="3817">3817</a>
+<a href="#3818" id="3818">3818</a>
+<a href="#3819" id="3819">3819</a>
+<a href="#3820" id="3820">3820</a>
+<a href="#3821" id="3821">3821</a>
+<a href="#3822" id="3822">3822</a>
+<a href="#3823" id="3823">3823</a>
+<a href="#3824" id="3824">3824</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -6096,10 +6113,27 @@
                 ObjectType::Struct(s) =&gt; <span class="kw-2">&amp;</span>type_ == s,
                 ObjectType::Package =&gt; <span class="bool-val">false</span>,
             })
-            .map(|info| info.object_id);
+            .map(|info| ObjectKey(info.object_id, info.version))
+            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
         <span class="kw">let </span><span class="kw-2">mut </span>move_objects = <span class="macro">vec!</span>[];
-        <span class="kw">for </span>id <span class="kw">in </span>object_ids {
-            move_objects.push(<span class="self">self</span>.get_move_object(<span class="kw-2">&amp;</span>id)<span class="question-mark">?</span>)
+
+        <span class="kw">let </span>objects = <span class="self">self</span>.database.multi_get_object_by_key(<span class="kw-2">&amp;</span>object_ids)<span class="question-mark">?</span>;
+
+        <span class="kw">for </span>(o, id) <span class="kw">in </span>objects.into_iter().zip(object_ids) {
+            <span class="kw">let </span>object = o.ok_or_else(|| {
+                SuiError::from(UserInputError::ObjectNotFound {
+                    object_id: id.<span class="number">0</span>,
+                    version: <span class="prelude-val">Some</span>(id.<span class="number">1</span>),
+                })
+            })<span class="question-mark">?</span>;
+            <span class="kw">let </span>move_object = object.data.try_as_move().ok_or_else(|| {
+                SuiError::from(UserInputError::MovePackageAsObject { object_id: id.<span class="number">0 </span>})
+            })<span class="question-mark">?</span>;
+            move_objects.push(bcs::from_bytes(move_object.contents()).map_err(|e| {
+                SuiError::ObjectDeserializationError {
+                    error: <span class="macro">format!</span>(<span class="string">&quot;{e}&quot;</span>),
+                }
+            })<span class="question-mark">?</span>);
         }
         <span class="prelude-val">Ok</span>(move_objects)
     }

@@ -395,6 +395,14 @@
 <a href="#395" id="395">395</a>
 <a href="#396" id="396">396</a>
 <a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -432,7 +440,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::error::Error;
 <span class="kw">use crate</span>::{with_tracing, ObjectProvider, SuiRpcModule};
 
-<span class="kw">pub struct </span>GovernanceReadApi {
+<span class="attr">#[derive(Clone)]
+</span><span class="kw">pub struct </span>GovernanceReadApi {
     state: Arc&lt;AuthorityState&gt;,
     <span class="kw">pub </span>metrics: Arc&lt;JsonRpcMetrics&gt;,
 }
@@ -509,13 +518,20 @@
     </span>}
 
     <span class="kw">async fn </span>get_stakes(<span class="kw-2">&amp;</span><span class="self">self</span>, owner: SuiAddress) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;DelegatedStake&gt;, Error&gt; {
+        <span class="kw">let </span>timer = <span class="self">self</span>.metrics.get_stake_sui_latency.start_timer();
         <span class="kw">let </span>stakes = <span class="self">self</span>.get_staked_sui(owner).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">if </span>stakes.is_empty() {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[]);
         }
+        drop(timer);
 
-        <span class="self">self</span>.get_delegated_stakes(stakes.iter().map(|s| (s.clone(), <span class="bool-val">true</span>)).collect())
-            .<span class="kw">await
+        <span class="kw">let </span>_timer = <span class="self">self</span>.metrics.get_delegated_sui_latency.start_timer();
+
+        <span class="kw">let </span>self_clone = <span class="self">self</span>.clone();
+        <span class="macro">spawn_monitored_task!</span>(
+            self_clone.get_delegated_stakes(stakes.into_iter().map(|s| (s, <span class="bool-val">true</span>)).collect())
+        )
+        .<span class="kw">await</span><span class="question-mark">?
     </span>}
 
     <span class="kw">async fn </span>get_delegated_stakes(
