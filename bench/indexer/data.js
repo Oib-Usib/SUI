@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682704354905,
+  "lastUpdate": 1682705490143,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1691,6 +1691,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 337082,
             "range": "± 83111",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e8916d0ff4dcb08c6278d216ebc1466ceb87f82f",
+          "message": "Move advance_to_highest_supported_protocol_version to version 9 to track release branch mishap (#11445)",
+          "timestamp": "2023-04-28T11:01:40-07:00",
+          "tree_id": "25b9efd05872ee2b7d6c85c2342979074c2157f8",
+          "url": "https://github.com/MystenLabs/sui/commit/e8916d0ff4dcb08c6278d216ebc1466ceb87f82f"
+        },
+        "date": 1682705486282,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149340843,
+            "range": "± 4643003",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 382550,
+            "range": "± 38343",
             "unit": "ns/iter"
           }
         ]
