@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682707170722,
+  "lastUpdate": 1682710761626,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1763,6 +1763,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 372425,
             "range": "± 33505",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bd7418c65f9775e8cec08848eb3401613ba612b7",
+          "message": "indexer stability: epoch commit fix (#11465)\n\n## Description \r\n\r\n- move epoch commit from tx to obj commit\r\n- move epoch tx count from checkpoint handling to obj\r\n\r\n## Test Plan \r\n\r\nThis has been used to backfill mainnnet data and worked well;\r\nAlso tested locally",
+          "timestamp": "2023-04-28T12:28:58-07:00",
+          "tree_id": "ff19def84b5532995ad2cbbba2cbaabb6aa99dfd",
+          "url": "https://github.com/MystenLabs/sui/commit/bd7418c65f9775e8cec08848eb3401613ba612b7"
+        },
+        "date": 1682710756764,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 156380813,
+            "range": "± 5247166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 478079,
+            "range": "± 43798",
             "unit": "ns/iter"
           }
         ]
