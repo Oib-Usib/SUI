@@ -252,6 +252,7 @@
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
 <a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -264,7 +265,6 @@
 <span class="kw">use </span>jsonrpsee::core::RpcResult;
 <span class="kw">use </span>jsonrpsee::RpcModule;
 
-<span class="kw">use </span><span class="kw">crate</span>::api::JsonRpcMetrics;
 <span class="kw">use </span>mysten_metrics::spawn_monitored_task;
 <span class="kw">use </span>shared_crypto::intent::Intent;
 <span class="kw">use </span>sui_core::authority::AuthorityState;
@@ -285,6 +285,7 @@
 <span class="kw">use </span>sui_types::signature::GenericSignature;
 <span class="kw">use </span>sui_types::sui_serde::BigInt;
 
+<span class="kw">use </span><span class="kw">crate</span>::api::JsonRpcMetrics;
 <span class="kw">use </span><span class="kw">crate</span>::api::WriteApiServer;
 <span class="kw">use </span><span class="kw">crate</span>::error::Error;
 <span class="kw">use </span><span class="kw">crate</span>::read_api::get_transaction_data_and_digest;
@@ -297,6 +298,7 @@
     transaction_orchestrator: Arc&lt;TransactiondOrchestrator&lt;NetworkAuthorityClient&gt;&gt;,
     metrics: Arc&lt;JsonRpcMetrics&gt;,
 }
+
 <span class="kw">impl </span>TransactionExecutionApi {
     <span class="kw">pub fn </span>new(
         state: Arc&lt;AuthorityState&gt;,
@@ -384,7 +386,7 @@
         }
 
         <span class="kw">let </span>object_cache = ObjectProviderCache::new(<span class="self">self</span>.state.clone());
-        <span class="kw">let </span>balance_changes = <span class="kw">if </span>opts.show_balance_changes {
+        <span class="kw">let </span>balance_changes = <span class="kw">if </span>opts.show_balance_changes &amp;&amp; is_executed_locally {
             <span class="prelude-val">Some</span>(
                 get_balance_changes_from_effect(<span class="kw-2">&amp;</span>object_cache, <span class="kw-2">&amp;</span>effects.effects, input_objs, <span class="prelude-val">None</span>)
                     .<span class="kw">await</span><span class="question-mark">?</span>,
@@ -392,7 +394,7 @@
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>};
-        <span class="kw">let </span>object_changes = <span class="kw">if </span>opts.show_object_changes {
+        <span class="kw">let </span>object_changes = <span class="kw">if </span>opts.show_object_changes &amp;&amp; is_executed_locally {
             <span class="prelude-val">Some</span>(
                 get_object_changes(
                     <span class="kw-2">&amp;</span>object_cache,
