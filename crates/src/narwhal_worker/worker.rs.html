@@ -504,6 +504,7 @@
 <a href="#504" id="504">504</a>
 <a href="#505" id="505">505</a>
 <a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -725,6 +726,7 @@
             quic_config.receive_window = <span class="prelude-val">Some</span>(<span class="number">200 </span>&lt;&lt; <span class="number">20</span>);
             quic_config.send_window = <span class="prelude-val">Some</span>(<span class="number">200 </span>&lt;&lt; <span class="number">20</span>);
             quic_config.crypto_buffer_size = <span class="prelude-val">Some</span>(<span class="number">1 </span>&lt;&lt; <span class="number">20</span>);
+            quic_config.max_idle_timeout_ms = <span class="prelude-val">Some</span>(<span class="number">30_000</span>);
             <span class="comment">// Enable keep alives every 5s
             </span>quic_config.keep_alive_interval_ms = <span class="prelude-val">Some</span>(<span class="number">5_000</span>);
             <span class="kw">let </span><span class="kw-2">mut </span>config = anemo::Config::default();
