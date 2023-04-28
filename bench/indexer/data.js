@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682638226619,
+  "lastUpdate": 1682640883872,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1475,6 +1475,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 325544,
             "range": "± 24746",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0aacca3192f9e17016dae4e38171f35e4fa7f215",
+          "message": "Split out ExecutionStatus from messages.rs (#11431)\n\nmessages.rs is growing too much. It's time to split it into smaller\r\nfiles.\r\nThere is no functional change but to move ExecutionStatus related types\r\nto a separate fle.",
+          "timestamp": "2023-04-27T17:00:59-07:00",
+          "tree_id": "b9e9ecb7abc8f29c4c45a568614c9e7826acc4da",
+          "url": "https://github.com/MystenLabs/sui/commit/0aacca3192f9e17016dae4e38171f35e4fa7f215"
+        },
+        "date": 1682640879921,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147584210,
+            "range": "± 4691947",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315898,
+            "range": "± 18493",
             "unit": "ns/iter"
           }
         ]
