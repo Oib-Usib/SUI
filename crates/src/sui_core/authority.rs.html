@@ -3822,6 +3822,31 @@
 <a href="#3822" id="3822">3822</a>
 <a href="#3823" id="3823">3823</a>
 <a href="#3824" id="3824">3824</a>
+<a href="#3825" id="3825">3825</a>
+<a href="#3826" id="3826">3826</a>
+<a href="#3827" id="3827">3827</a>
+<a href="#3828" id="3828">3828</a>
+<a href="#3829" id="3829">3829</a>
+<a href="#3830" id="3830">3830</a>
+<a href="#3831" id="3831">3831</a>
+<a href="#3832" id="3832">3832</a>
+<a href="#3833" id="3833">3833</a>
+<a href="#3834" id="3834">3834</a>
+<a href="#3835" id="3835">3835</a>
+<a href="#3836" id="3836">3836</a>
+<a href="#3837" id="3837">3837</a>
+<a href="#3838" id="3838">3838</a>
+<a href="#3839" id="3839">3839</a>
+<a href="#3840" id="3840">3840</a>
+<a href="#3841" id="3841">3841</a>
+<a href="#3842" id="3842">3842</a>
+<a href="#3843" id="3843">3843</a>
+<a href="#3844" id="3844">3844</a>
+<a href="#3845" id="3845">3845</a>
+<a href="#3846" id="3846">3846</a>
+<a href="#3847" id="3847">3847</a>
+<a href="#3848" id="3848">3848</a>
+<a href="#3849" id="3849">3849</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3850,7 +3875,7 @@
 <span class="kw">use </span>serde::Serialize;
 <span class="kw">use </span>sui_config::transaction_deny_config::TransactionDenyConfig;
 <span class="kw">use </span>sui_types::metrics::LimitsMetrics;
-<span class="kw">use </span>sui_types::TypeTag;
+<span class="kw">use </span>sui_types::{is_system_package, TypeTag};
 <span class="kw">use </span>tap::{TapFallible, TapOptional};
 <span class="kw">use </span>tokio::sync::mpsc::unbounded_channel;
 <span class="kw">use </span>tokio::sync::{oneshot, Semaphore};
@@ -6343,6 +6368,31 @@
                 Base58::encode(digest)
             )),
         }
+    }
+
+    <span class="kw">pub fn </span>find_publish_txn_digest(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        package_id: ObjectID,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, anyhow::Error&gt; {
+        <span class="kw">if </span>is_system_package(package_id) {
+            <span class="kw">return </span><span class="self">self</span>.find_genesis_txn_digest();
+        }
+        <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.get_object_read(<span class="kw-2">&amp;</span>package_id)<span class="question-mark">?
+            </span>.into_object()<span class="question-mark">?
+            </span>.previous_transaction)
+    }
+
+    <span class="kw">pub fn </span>find_genesis_txn_digest(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, anyhow::Error&gt; {
+        <span class="kw">let </span>summary = <span class="self">self
+            </span>.get_verified_checkpoint_by_sequence_number(<span class="number">0</span>)<span class="question-mark">?
+            </span>.into_message();
+        <span class="kw">let </span>content = <span class="self">self</span>.get_checkpoint_contents(summary.content_digest)<span class="question-mark">?</span>;
+        <span class="kw">let </span>genesis_transaction = content.enumerate_transactions(<span class="kw-2">&amp;</span>summary).next();
+        <span class="prelude-val">Ok</span>(genesis_transaction
+            .ok_or(<span class="macro">anyhow!</span>(<span class="string">&quot;No transactions found in checkpoint content&quot;</span>))<span class="question-mark">?
+            </span>.<span class="number">1
+            </span>.transaction)
     }
 
     <span class="kw">pub fn </span>get_verified_checkpoint_by_sequence_number(

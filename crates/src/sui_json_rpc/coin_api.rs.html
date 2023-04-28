@@ -329,6 +329,17 @@
 <a href="#329" id="329">329</a>
 <a href="#330" id="330">330</a>
 <a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -337,6 +348,8 @@
 <span class="kw">use </span>anyhow::anyhow;
 
 <span class="kw">use </span>async_trait::async_trait;
+<span class="kw">use </span>cached::proc_macro::cached;
+<span class="kw">use </span>cached::SizedCache;
 <span class="kw">use </span>jsonrpsee::core::RpcResult;
 <span class="kw">use </span>jsonrpsee::RpcModule;
 <span class="kw">use </span>move_core_types::language_storage::{StructTag, TypeTag};
@@ -423,50 +436,59 @@
         package_id: <span class="kw-2">&amp;</span>ObjectID,
         object_struct_tag: StructTag,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Object, Error&gt; {
-        <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
-        <span class="kw">let </span>package_id = <span class="kw-2">*</span>package_id;
+        <span class="kw">let </span>object_id =
+            find_package_object_id(<span class="self">self</span>.state.clone(), <span class="kw-2">*</span>package_id, object_struct_tag).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.state.get_object_read(<span class="kw-2">&amp;</span>object_id)<span class="question-mark">?</span>.into_object()<span class="question-mark">?</span>)
+    }
+}
 
-        <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-            <span class="kw">let </span>publish_txn_digest = state
-                .get_object_read(<span class="kw-2">&amp;</span>package_id)<span class="question-mark">?
-                </span>.into_object()<span class="question-mark">?
-                </span>.previous_transaction;
+<span class="attr">#[cached(
+    <span class="kw">type </span>= <span class="string">&quot;SizedCache&lt;String, ObjectID&gt;&quot;</span>,
+    create = <span class="string">&quot;{ SizedCache::with_size(10000) }&quot;</span>,
+    convert = <span class="string">r#&quot;{ format!(&quot;{}{}&quot;, package_id, object_struct_tag) }&quot;#</span>,
+    result = <span class="bool-val">true
+</span>)]
+</span><span class="kw">async fn </span>find_package_object_id(
+    state: Arc&lt;AuthorityState&gt;,
+    package_id: ObjectID,
+    object_struct_tag: StructTag,
+) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectID, Error&gt; {
+    <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
+        <span class="kw">let </span>publish_txn_digest = state.find_publish_txn_digest(package_id)<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>(<span class="kw">_</span>, effect) = state
-                .get_executed_transaction_and_effects(publish_txn_digest)
-                .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>(<span class="kw">_</span>, effect) = state
+            .get_executed_transaction_and_effects(publish_txn_digest)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
 
-            <span class="kw">async fn </span>find_object_with_type(
-                state: <span class="kw-2">&amp;</span>Arc&lt;AuthorityState&gt;,
-                created: <span class="kw-2">&amp;</span>[(ObjectRef, Owner)],
-                object_struct_tag: <span class="kw-2">&amp;</span>StructTag,
-                package_id: <span class="kw-2">&amp;</span>ObjectID,
-            ) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectID, anyhow::Error&gt; {
-                <span class="kw">for </span>((id, version, <span class="kw">_</span>), <span class="kw">_</span>) <span class="kw">in </span>created {
-                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(past_object) = state.get_past_object_read(id, <span class="kw-2">*</span>version) {
-                        <span class="kw">if let </span><span class="prelude-val">Ok</span>(object) = past_object.into_object() {
-                            <span class="kw">if </span><span class="macro">matches!</span>(object.type_(), <span class="prelude-val">Some</span>(type_) <span class="kw">if </span>type_.is(object_struct_tag))
-                            {
-                                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="kw-2">*</span>id);
-                            }
+        <span class="kw">async fn </span>find_object_with_type(
+            state: <span class="kw-2">&amp;</span>Arc&lt;AuthorityState&gt;,
+            created: <span class="kw-2">&amp;</span>[(ObjectRef, Owner)],
+            object_struct_tag: <span class="kw-2">&amp;</span>StructTag,
+            package_id: <span class="kw-2">&amp;</span>ObjectID,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectID, anyhow::Error&gt; {
+            <span class="kw">for </span>((id, version, <span class="kw">_</span>), <span class="kw">_</span>) <span class="kw">in </span>created {
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>(past_object) = state.get_past_object_read(id, <span class="kw-2">*</span>version) {
+                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(object) = past_object.into_object() {
+                        <span class="kw">if </span><span class="macro">matches!</span>(object.type_(), <span class="prelude-val">Some</span>(type_) <span class="kw">if </span>type_.is(object_struct_tag)) {
+                            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="kw-2">*</span>id);
                         }
                     }
                 }
-                <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                    <span class="string">&quot;Cannot find object [{}] from [{}] package event.&quot;</span>,
-                    object_struct_tag,
-                    package_id
-                ))
             }
+            <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
+                <span class="string">&quot;Cannot find object [{}] from [{}] package event.&quot;</span>,
+                object_struct_tag,
+                package_id
+            ))
+        }
 
-            <span class="kw">let </span>object_id =
-                find_object_with_type(<span class="kw-2">&amp;</span>state, effect.created(), <span class="kw-2">&amp;</span>object_struct_tag, <span class="kw-2">&amp;</span>package_id)
-                    .<span class="kw">await</span><span class="question-mark">?</span>;
-            <span class="prelude-val">Ok</span>(state.get_object_read(<span class="kw-2">&amp;</span>object_id)<span class="question-mark">?</span>.into_object()<span class="question-mark">?</span>)
-        })
-        .<span class="kw">await</span><span class="question-mark">?
-    </span>}
-}
+        <span class="kw">let </span>object_id =
+            find_object_with_type(<span class="kw-2">&amp;</span>state, effect.created(), <span class="kw-2">&amp;</span>object_struct_tag, <span class="kw-2">&amp;</span>package_id)
+                .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(object_id)
+    })
+    .<span class="kw">await</span><span class="question-mark">?
+</span>}
 
 <span class="kw">impl </span>SuiRpcModule <span class="kw">for </span>CoinReadApi {
     <span class="kw">fn </span>rpc(<span class="self">self</span>) -&gt; RpcModule&lt;<span class="self">Self</span>&gt; {
