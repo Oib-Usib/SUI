@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682715552445,
+  "lastUpdate": 1682716478801,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1979,6 +1979,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 375056,
             "range": "± 58551",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "750655cac733de21d95afee01fc33f35ce85c4ec",
+          "message": "[rpc] - improve get_states performance  (#11334)\n\nuse multi get instead of using get object read in a loop to reduce\r\nget_stakes latency.\r\nalso added extra metrics",
+          "timestamp": "2023-04-28T14:04:49-07:00",
+          "tree_id": "71d7b2cc5f0cfb882f406d043c17742e93d81f49",
+          "url": "https://github.com/MystenLabs/sui/commit/750655cac733de21d95afee01fc33f35ce85c4ec"
+        },
+        "date": 1682716474483,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 142201257,
+            "range": "± 4978235",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 475702,
+            "range": "± 82411",
             "unit": "ns/iter"
           }
         ]
