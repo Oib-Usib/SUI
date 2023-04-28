@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682691350262,
+  "lastUpdate": 1682704354905,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1655,6 +1655,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309017,
             "range": "± 24368",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aschran@mystenlabs.com",
+            "name": "Andrew Schran",
+            "username": "aschran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f7f2c57e99324790c84ebe165017cd1f20cb05b3",
+          "message": "Bump narwhal network's max_idle_timeout. (#11463)",
+          "timestamp": "2023-04-28T17:42:51Z",
+          "tree_id": "799e01975c199d32d5eb77597eeea7c096de917a",
+          "url": "https://github.com/MystenLabs/sui/commit/f7f2c57e99324790c84ebe165017cd1f20cb05b3"
+        },
+        "date": 1682704350915,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145891584,
+            "range": "± 4926197",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 337082,
+            "range": "± 83111",
             "unit": "ns/iter"
           }
         ]
