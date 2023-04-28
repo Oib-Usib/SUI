@@ -504,7 +504,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, IndexerError&gt;;
     <span class="kw">async fn </span>persist_object_changes(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        checkpoint_seq: i64,
+        checkpoint: <span class="kw-2">&amp;</span>Checkpoint,
         tx_object_changes: <span class="kw-2">&amp;</span>[TransactionObjectChanges],
         object_mutation_latency: Histogram,
         object_deletion_latency: Histogram,

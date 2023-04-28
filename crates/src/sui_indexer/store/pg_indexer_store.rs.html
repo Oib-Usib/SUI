@@ -1837,17 +1837,6 @@
 <a href="#1837" id="1837">1837</a>
 <a href="#1838" id="1838">1838</a>
 <a href="#1839" id="1839">1839</a>
-<a href="#1840" id="1840">1840</a>
-<a href="#1841" id="1841">1841</a>
-<a href="#1842" id="1842">1842</a>
-<a href="#1843" id="1843">1843</a>
-<a href="#1844" id="1844">1844</a>
-<a href="#1845" id="1845">1845</a>
-<a href="#1846" id="1846">1846</a>
-<a href="#1847" id="1847">1847</a>
-<a href="#1848" id="1848">1848</a>
-<a href="#1849" id="1849">1849</a>
-<a href="#1850" id="1850">1850</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -3100,17 +3089,6 @@ GROUP BY table_name;
                     .context(<span class="string">&quot;Failed writing recipients to PostgresDB&quot;</span>)<span class="question-mark">?</span>;
             }
 
-            <span class="comment">// update epoch transaction count
-            </span><span class="kw">let </span>sql = <span class="string">&quot;UPDATE epochs e1
-SET epoch_total_transactions = e2.epoch_total_transactions + $1
-FROM epochs e2
-WHERE e1.epoch = e2.epoch
-  AND e1.epoch = $2;&quot;</span>;
-            diesel::sql_query(sql)
-                .bind::&lt;BigInt, <span class="kw">_</span>&gt;(checkpoint.transactions.len() <span class="kw">as </span>i64)
-                .bind::&lt;BigInt, <span class="kw">_</span>&gt;(checkpoint.epoch)
-                .as_query()
-                .execute(conn)<span class="question-mark">?</span>;
             <span class="comment">// Commit indexed checkpoint last, so that if the checkpoint is committed,
             // all related data have been committed as well.
             </span>diesel::insert_into(checkpoints::table)
@@ -3152,18 +3130,6 @@ WHERE e1.epoch = e2.epoch
                     .context(<span class="string">&quot;Failed writing transactions to PostgresDB&quot;</span>)<span class="question-mark">?</span>;
             }
 
-            <span class="comment">// update epoch transaction count
-            </span><span class="kw">let </span>sql = <span class="string">&quot;UPDATE epochs e1
-SET epoch_total_transactions = e2.epoch_total_transactions + $1
-FROM epochs e2
-WHERE e1.epoch = e2.epoch
-  AND e1.epoch = $2;&quot;</span>;
-            diesel::sql_query(sql)
-                .bind::&lt;BigInt, <span class="kw">_</span>&gt;(checkpoint.transactions.len() <span class="kw">as </span>i64)
-                .bind::&lt;BigInt, <span class="kw">_</span>&gt;(checkpoint.epoch)
-                .as_query()
-                .execute(conn)<span class="question-mark">?</span>;
-
             <span class="comment">// Commit indexed checkpoint last, so that if the checkpoint is committed,
             // all related data have been committed as well.
             </span>diesel::insert_into(checkpoints::table)
@@ -3177,12 +3143,24 @@ WHERE e1.epoch = e2.epoch
 
     <span class="kw">async fn </span>persist_object_changes(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        checkpoint_seq: i64,
+        checkpoint: <span class="kw-2">&amp;</span>Checkpoint,
         tx_object_changes: <span class="kw-2">&amp;</span>[TransactionObjectChanges],
         object_mutation_latency: Histogram,
         object_deletion_latency: Histogram,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt; {
         <span class="macro">transactional_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            <span class="comment">// update epoch transaction count
+            </span><span class="kw">let </span>sql = <span class="string">&quot;UPDATE epochs e1
+SET epoch_total_transactions = e2.epoch_total_transactions + $1
+FROM epochs e2
+WHERE e1.epoch = e2.epoch
+  AND e1.epoch = $2;&quot;</span>;
+            diesel::sql_query(sql)
+                .bind::&lt;BigInt, <span class="kw">_</span>&gt;(checkpoint.transactions.len() <span class="kw">as </span>i64)
+                .bind::&lt;BigInt, <span class="kw">_</span>&gt;(checkpoint.epoch)
+                .as_query()
+                .execute(conn)<span class="question-mark">?</span>;
+
             {
                 <span class="kw">let </span>mutated_objects: Vec&lt;Object&gt; = tx_object_changes
                     .iter()
@@ -3223,7 +3201,7 @@ WHERE e1.epoch = e2.epoch
                 )<span class="question-mark">?</span>;
                 <span class="macro">info!</span>(
                 <span class="string">&quot;Object checkpoint {} committed with {} transaction, {} mutated objects and {} deleted objects.&quot;</span>,
-                checkpoint_seq,
+                checkpoint.sequence_number,
                 tx_object_changes.len(),
                 mutation_count,
                 deletion_count
