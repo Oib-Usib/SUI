@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682643496380,
+  "lastUpdate": 1682648594031,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1547,6 +1547,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 327274,
             "range": "± 17995",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7915de5319955de4f87c908a445c5f4076a98190",
+          "message": "[sui-transaction-builder] Remove dependency on sui-adapter (#11163)\n\n## Description\r\n\r\nRemove logic in the transaction builder that relies on the execution\r\nlayer, namely:\r\n\r\n- Type checking move call parameters, which other SDKs do not do, and is\r\ncomplicated by execution versioning.\r\n- Preventing calls to non-entry functions in `Normal` execution mode\r\n(which is not longer a restriction with the introduction of programmable\r\ntransactions).\r\n\r\nThis removes the dependency on `sui-adapter` from `sui-json` and\r\n`sui-sdk`.\r\n\r\n## Test Plan\r\n\r\n```\r\n$ cargo simtest\r\n$ env SUI_SKIP_SIMTESTS=1 cargo nextest run\r\n```\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [x] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n- `unsafe_moveCall` and `unsafe_batchTransaction` now ignore their\r\n`execution_mode` parameter, and always allow calls to non-entry\r\nprogrammable transactions.\r\n- Rust SDK no longer performs type resolution and checks (matching\r\nbehaviour with TypeScript SDK).",
+          "timestamp": "2023-04-27T19:13:27-07:00",
+          "tree_id": "36ba6e75b5d83fc39c7e4380e3a3ec57e02eb160",
+          "url": "https://github.com/MystenLabs/sui/commit/7915de5319955de4f87c908a445c5f4076a98190"
+        },
+        "date": 1682648590452,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146299831,
+            "range": "± 5159403",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 324684,
+            "range": "± 20745",
             "unit": "ns/iter"
           }
         ]
