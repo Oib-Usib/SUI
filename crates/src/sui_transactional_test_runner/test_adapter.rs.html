@@ -1840,7 +1840,7 @@
             .map(|(<span class="kw">_</span>, published_module_bytes)| {
                 (
                     named_addr_opt,
-                    CompiledModule::deserialize(published_module_bytes).unwrap(),
+                    CompiledModule::deserialize_with_defaults(published_module_bytes).unwrap(),
                 )
             })
             .collect();

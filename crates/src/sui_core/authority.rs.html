@@ -3795,6 +3795,16 @@
 <a href="#3795" id="3795">3795</a>
 <a href="#3796" id="3796">3796</a>
 <a href="#3797" id="3797">3797</a>
+<a href="#3798" id="3798">3798</a>
+<a href="#3799" id="3799">3799</a>
+<a href="#3800" id="3800">3800</a>
+<a href="#3801" id="3801">3801</a>
+<a href="#3802" id="3802">3802</a>
+<a href="#3803" id="3803">3803</a>
+<a href="#3804" id="3804">3804</a>
+<a href="#3805" id="3805">3805</a>
+<a href="#3806" id="3806">3806</a>
+<a href="#3807" id="3807">3807</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -6916,6 +6926,7 @@
     </span><span class="kw">pub async fn </span>get_available_system_packages(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         max_binary_format_version: u32,
+        no_extraneous_module_bytes: bool,
     ) -&gt; Vec&lt;ObjectRef&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>results = <span class="macro">vec!</span>[];
 
@@ -6940,6 +6951,7 @@
                 <span class="kw-2">&amp;</span>modules,
                 system_package.dependencies().to_vec(),
                 max_binary_format_version,
+                no_extraneous_module_bytes,
             ).<span class="kw">await else </span>{
                 <span class="kw">return </span><span class="macro">vec!</span>[];
             };
@@ -6966,6 +6978,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         system_packages: Vec&lt;ObjectRef&gt;,
         move_binary_format_version: u32,
+        no_extraneous_module_bytes: bool,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;(SequenceNumber, Vec&lt;Vec&lt;u8&gt;&gt;, Vec&lt;ObjectID&gt;)&gt;&gt; {
         <span class="kw">let </span>ids: Vec&lt;<span class="kw">_</span>&gt; = system_packages.iter().map(|(id, <span class="kw">_</span>, <span class="kw">_</span>)| <span class="kw-2">*</span>id).collect();
         <span class="kw">let </span>objects = <span class="self">self</span>.get_objects(<span class="kw-2">&amp;</span>ids).<span class="kw">await</span>.expect(<span class="string">&quot;read cannot fail&quot;</span>);
@@ -7003,8 +7016,12 @@
             <span class="kw">let </span>modules: Vec&lt;<span class="kw">_</span>&gt; = bytes
                 .iter()
                 .map(|m| {
-                    CompiledModule::deserialize_with_max_version(m, move_binary_format_version)
-                        .unwrap()
+                    CompiledModule::deserialize_with_config(
+                        m,
+                        move_binary_format_version,
+                        no_extraneous_module_bytes,
+                    )
+                    .unwrap()
                 })
                 .collect();
 
@@ -7175,8 +7192,11 @@
 
         <span class="comment">// since system packages are created during the current epoch, they should abide by the
         // rules of the current epoch, including the current epoch&#39;s max Move binary format version
-        </span><span class="kw">let </span><span class="prelude-val">Some</span>(next_epoch_system_package_bytes) = <span class="self">self</span>.get_system_package_bytes(
-            next_epoch_system_packages.clone(), epoch_store.protocol_config().move_binary_format_version()
+        </span><span class="kw">let </span>config = epoch_store.protocol_config();
+        <span class="kw">let </span><span class="prelude-val">Some</span>(next_epoch_system_package_bytes) = <span class="self">self</span>.get_system_package_bytes(
+            next_epoch_system_packages.clone(),
+            config.move_binary_format_version(),
+            config.no_extraneous_module_bytes(),
         ).<span class="kw">await else </span>{
             <span class="macro">error!</span>(
                 <span class="string">&quot;upgraded system packages {:?} are not locally available, cannot create \

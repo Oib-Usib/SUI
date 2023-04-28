@@ -685,7 +685,7 @@
         <span class="kw">for </span>(storage_id, pkg) <span class="kw">in </span>addresses.zip(resp) {
             <span class="kw">let </span>SuiRawMovePackage { module_map, .. } = pkg<span class="question-mark">?</span>;
             <span class="kw">for </span>(name, bytes) <span class="kw">in </span>module_map {
-                <span class="kw">let </span><span class="prelude-val">Ok</span>(module) = CompiledModule::deserialize(<span class="kw-2">&amp;</span>bytes) <span class="kw">else </span>{
+                <span class="kw">let </span><span class="prelude-val">Ok</span>(module) = CompiledModule::deserialize_with_defaults(<span class="kw-2">&amp;</span>bytes) <span class="kw">else </span>{
                     err.push(SourceVerificationError::OnChainDependencyDeserializationError {
                         address: storage_id,
                         module: name.into(),

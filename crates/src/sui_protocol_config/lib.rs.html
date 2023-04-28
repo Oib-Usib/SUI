@@ -1318,6 +1318,15 @@
 <a href="#1318" id="1318">1318</a>
 <a href="#1319" id="1319">1319</a>
 <a href="#1320" id="1320">1320</a>
+<a href="#1321" id="1321">1321</a>
+<a href="#1322" id="1322">1322</a>
+<a href="#1323" id="1323">1323</a>
+<a href="#1324" id="1324">1324</a>
+<a href="#1325" id="1325">1325</a>
+<a href="#1326" id="1326">1326</a>
+<a href="#1327" id="1327">1327</a>
+<a href="#1328" id="1328">1328</a>
+<a href="#1329" id="1329">1329</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1352,6 +1361,7 @@
 // Version 8: Disallow changing abilities and type constraints for type parameters in structs
 //            during upgrades.
 // Version 9: Limit the length of Move idenfitiers to 128.
+//            Disallow extraneous module bytes.
 
 </span><span class="attr">#[derive(Copy, Clone, Debug, Hash, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 </span><span class="kw">pub struct </span>ProtocolVersion(u64);
@@ -1491,6 +1501,9 @@
     <span class="comment">// If true, disallow changing struct type parameters during package upgrades
     </span><span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;is_false&quot;</span>)]
     </span>disallow_change_struct_type_params_on_upgrade: bool,
+    <span class="comment">// If true, checks no extra bytes in a compiled module
+    </span><span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;is_false&quot;</span>)]
+    </span>no_extraneous_module_bytes: bool,
 }
 
 <span class="kw">fn </span>is_false(b: <span class="kw-2">&amp;</span>bool) -&gt; bool {
@@ -2010,6 +2023,10 @@
         <span class="self">self</span>.feature_flags
             .disallow_change_struct_type_params_on_upgrade
     }
+
+    <span class="kw">pub fn </span>no_extraneous_module_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.feature_flags.no_extraneous_module_bytes
+    }
 }
 
 <span class="comment">// Special getters
@@ -2438,6 +2455,7 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>);
                 <span class="comment">// Limits the length of a Move identifier
                 </span>cfg.max_move_identifier_len = <span class="prelude-val">Some</span>(<span class="number">128</span>);
+                cfg.feature_flags.no_extraneous_module_bytes = <span class="bool-val">true</span>;
                 cfg
             }
             <span class="comment">// Use this template when making changes:

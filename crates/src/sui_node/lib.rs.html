@@ -1207,6 +1207,9 @@
 <a href="#1207" id="1207">1207</a>
 <a href="#1208" id="1208">1208</a>
 <a href="#1209" id="1209">1209</a>
+<a href="#1210" id="1210">1210</a>
+<a href="#1211" id="1211">1211</a>
+<a href="#1212" id="1212">1212</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2139,9 +2142,9 @@
                 <span class="comment">// TODO: without this sleep, the consensus message is not delivered reliably.
                 </span>tokio::time::sleep(Duration::from_millis(<span class="number">1</span>)).<span class="kw">await</span>;
 
-                <span class="kw">let </span>max_binary_format_version = cur_epoch_store
-                    .protocol_config()
-                    .move_binary_format_version();
+                <span class="kw">let </span>config = cur_epoch_store.protocol_config();
+                <span class="kw">let </span>max_binary_format_version = config.move_binary_format_version();
+                <span class="kw">let </span>no_extraneous_module_bytes = config.no_extraneous_module_bytes();
                 <span class="kw">let </span>transaction =
                     ConsensusTransaction::new_capability_notification(AuthorityCapabilities::new(
                         <span class="self">self</span>.state.name,
@@ -2149,7 +2152,10 @@
                             .supported_protocol_versions
                             .expect(<span class="string">&quot;Supported versions should be populated&quot;</span>),
                         <span class="self">self</span>.state
-                            .get_available_system_packages(max_binary_format_version)
+                            .get_available_system_packages(
+                                max_binary_format_version,
+                                no_extraneous_module_bytes,
+                            )
                             .<span class="kw">await</span>,
                     ));
                 <span class="macro">info!</span>(<span class="question-mark">?</span>transaction, <span class="string">&quot;submitting capabilities to consensus&quot;</span>);

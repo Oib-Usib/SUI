@@ -828,6 +828,7 @@
 <a href="#828" id="828">828</a>
 <a href="#829" id="829">829</a>
 <a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1004,7 +1005,8 @@
     store: S,
     id: <span class="kw-2">&amp;</span>ModuleId,
 ) -&gt; anyhow::Result&lt;<span class="prelude-ty">Option</span>&lt;CompiledModule&gt;, SuiError&gt; {
-    <span class="prelude-val">Ok</span>(get_module(store, id)<span class="question-mark">?</span>.map(|bytes| CompiledModule::deserialize(<span class="kw-2">&amp;</span>bytes).unwrap()))
+    <span class="prelude-val">Ok</span>(get_module(store, id)<span class="question-mark">?
+        </span>.map(|bytes| CompiledModule::deserialize_with_defaults(<span class="kw-2">&amp;</span>bytes).unwrap()))
 }
 
 <span class="kw">pub trait </span>ParentSync {

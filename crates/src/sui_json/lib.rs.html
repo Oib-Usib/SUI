@@ -1834,7 +1834,7 @@
     allow_arbitrary_function_call: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ResolvedCallArg, SignatureToken)&gt;, anyhow::Error&gt; {
     <span class="comment">// Extract the expected function signature
-    </span><span class="kw">let </span>module = package.deserialize_module(<span class="kw-2">&amp;</span>module_ident, VERSION_MAX)<span class="question-mark">?</span>;
+    </span><span class="kw">let </span>module = package.deserialize_module(<span class="kw-2">&amp;</span>module_ident, VERSION_MAX, <span class="bool-val">true</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span>function_str = function.as_ident_str();
     <span class="kw">let </span>fdef = module
         .function_defs

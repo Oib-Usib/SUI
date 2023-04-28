@@ -1216,6 +1216,7 @@
 <a href="#1216" id="1216">1216</a>
 <a href="#1217" id="1217">1217</a>
 <a href="#1218" id="1218">1218</a>
+<a href="#1219" id="1219">1219</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2234,6 +2235,7 @@
                 </span>normalize_modules(
                     p.serialized_module_map().values(),
                     <span class="comment">/* max_binary_format_version */ </span>VERSION_MAX,
+                    <span class="comment">/* no_extraneous_module_bytes */ </span><span class="bool-val">false</span>,
                 )
                 .map_err(|e| {
                     <span class="macro">error!</span>(<span class="string">&quot;Failed to call get_move_modules_by_package for package: {package:?}&quot;</span>);

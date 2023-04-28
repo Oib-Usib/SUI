@@ -133,7 +133,7 @@
         file.read_to_end(<span class="kw-2">&amp;mut </span>bytes)<span class="question-mark">?</span>;
         <span class="comment">// this deserialized a module to the max version of the bytecode but it&#39;s OK here because
         // it&#39;s not run as part of the deterministic replicated state machine.
-        </span><span class="kw">let </span>module = CompiledModule::deserialize(<span class="kw-2">&amp;</span>bytes)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>module = CompiledModule::deserialize_with_defaults(<span class="kw-2">&amp;</span>bytes)<span class="question-mark">?</span>;
 
         <span class="kw">if </span><span class="self">self</span>.debug {
             <span class="macro">println!</span>(<span class="string">&quot;{module:#?}&quot;</span>);

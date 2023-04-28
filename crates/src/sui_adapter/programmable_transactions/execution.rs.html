@@ -1621,6 +1621,7 @@
 <a href="#1621" id="1621">1621</a>
 <a href="#1622" id="1622">1622</a>
 <a href="#1623" id="1623">1623</a>
+<a href="#1624" id="1624">1624</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2298,7 +2299,7 @@
         ));
     };
 
-    <span class="kw">let </span><span class="prelude-val">Ok</span>(current_normalized) = existing_package.normalize(context.protocol_config.move_binary_format_version()) <span class="kw">else </span>{
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(current_normalized) = existing_package.normalize(context.protocol_config.move_binary_format_version(), context.protocol_config.no_extraneous_module_bytes()) <span class="kw">else </span>{
         <span class="macro">invariant_violation!</span>(<span class="string">&quot;Tried to normalize modules in existing package but failed&quot;</span>)
     };
 
@@ -2430,9 +2431,10 @@
     <span class="kw">let </span>modules = module_bytes
         .iter()
         .map(|b| {
-            CompiledModule::deserialize_with_max_version(
+            CompiledModule::deserialize_with_config(
                 b,
                 context.protocol_config.move_binary_format_version(),
+                context.protocol_config.no_extraneous_module_bytes(),
             )
             .map_err(|e| e.finish(Location::Undefined))
         })

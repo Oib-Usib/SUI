@@ -795,6 +795,12 @@
 <a href="#795" id="795">795</a>
 <a href="#796" id="796">796</a>
 <a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -910,6 +916,8 @@
             },
             enable_invariant_violation_check_in_swap_loc:
                 !protocol_config.disable_invariant_violation_check_in_swap_loc(),
+            check_no_extraneous_bytes_during_deserialization:
+                protocol_config.no_extraneous_module_bytes(),
         },
     )
     .map_err(|<span class="kw">_</span>| SuiError::ExecutionInvariantViolation)
@@ -1548,8 +1556,12 @@
     <span class="kw">let </span>modules_stat = module_bytes
         .iter()
         .map(|b| {
-            CompiledModule::deserialize(b)
-                .map_err(|e| e.finish(move_binary_format::errors::Location::Undefined))
+            CompiledModule::deserialize_with_config(
+                b,
+                protocol_config.move_binary_format_version(),
+                protocol_config.no_extraneous_module_bytes(),
+            )
+            .map_err(|e| e.finish(move_binary_format::errors::Location::Undefined))
         })
         .collect::&lt;move_binary_format::errors::VMResult&lt;Vec&lt;CompiledModule&gt;&gt;&gt;();
     <span class="kw">let </span>modules = <span class="kw">if let </span><span class="prelude-val">Ok</span>(m) = modules_stat {

@@ -1214,7 +1214,7 @@
                 }
             })
         }
-        <span class="kw">let </span>compiled_module = package.deserialize_module(module, VERSION_MAX)<span class="question-mark">?</span>;
+        <span class="kw">let </span>compiled_module = package.deserialize_module(module, VERSION_MAX, <span class="bool-val">true</span>)<span class="question-mark">?</span>;
 
         <span class="comment">// TODO set the Mode from outside?
         </span>resolve_and_type_check::&lt;Mode&gt;(

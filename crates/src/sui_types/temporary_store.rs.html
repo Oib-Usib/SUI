@@ -1616,6 +1616,10 @@
 <a href="#1616" id="1616">1616</a>
 <a href="#1617" id="1617">1617</a>
 <a href="#1618" id="1618">1618</a>
+<a href="#1619" id="1619">1619</a>
+<a href="#1620" id="1620">1620</a>
+<a href="#1621" id="1621">1621</a>
+<a href="#1622" id="1622">1622</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1672,6 +1676,7 @@
     <span class="kw">pub </span>loaded_child_objects: BTreeMap&lt;ObjectID, SequenceNumber&gt;,
     <span class="kw">pub </span>events: TransactionEvents,
     <span class="kw">pub </span>max_binary_format_version: u32,
+    <span class="kw">pub </span>no_extraneous_module_bytes: bool,
 }
 
 <span class="kw">impl </span>InnerTemporaryStore {
@@ -1743,6 +1748,7 @@
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Arc::new(p.deserialize_module(
                     <span class="kw-2">&amp;</span>id.name().into(),
                     <span class="self">self</span>.temp_store.max_binary_format_version,
+                    <span class="self">self</span>.temp_store.no_extraneous_module_bytes,
                 )<span class="question-mark">?</span>)));
             }
         }
@@ -1905,6 +1911,7 @@
             events: TransactionEvents { data: <span class="self">self</span>.events },
             max_binary_format_version: <span class="self">self</span>.protocol_config.move_binary_format_version(),
             loaded_child_objects: <span class="self">self</span>.loaded_child_objects,
+            no_extraneous_module_bytes: <span class="self">self</span>.protocol_config.no_extraneous_module_bytes(),
         }
     }
 
@@ -3205,6 +3212,7 @@
                     .deserialize_module(
                         <span class="kw-2">&amp;</span>module_id.name().to_owned(),
                         <span class="self">self</span>.protocol_config.move_binary_format_version(),
+                        <span class="self">self</span>.protocol_config.no_extraneous_module_bytes(),
                     )<span class="question-mark">?</span>,
             ))
         } <span class="kw">else </span>{

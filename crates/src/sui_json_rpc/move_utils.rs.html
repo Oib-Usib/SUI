@@ -156,6 +156,7 @@
 <a href="#156" id="156">156</a>
 <a href="#157" id="157">157</a>
 <a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -278,6 +279,7 @@
                     </span>normalize_modules(
                         p.serialized_module_map().values(),
                         <span class="comment">/* max_binary_format_version */ </span>VERSION_MAX,
+                        <span class="comment">/* no_extraneous_module_bytes */ </span><span class="bool-val">false</span>,
                     )
                     .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>))
                 }

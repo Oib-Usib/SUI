@@ -1833,6 +1833,7 @@
 <a href="#1833" id="1833">1833</a>
 <a href="#1834" id="1834">1834</a>
 <a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2724,6 +2725,7 @@
             events,
             max_binary_format_version: <span class="kw">_</span>,
             loaded_child_objects: <span class="kw">_</span>,
+            no_extraneous_module_bytes: <span class="kw">_</span>,
         } = inner_temporary_store;
         <span class="macro">trace!</span>(written =<span class="question-mark">? </span>written.values().map(|((obj_id, ver, <span class="kw">_</span>), <span class="kw">_</span>, <span class="kw">_</span>)| (obj_id, ver)).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;(),
                <span class="string">&quot;batch_update_objects: temp store written&quot;</span>);
