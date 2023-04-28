@@ -1189,6 +1189,7 @@
 <a href="#1189" id="1189">1189</a>
 <a href="#1190" id="1190">1190</a>
 <a href="#1191" id="1191">1191</a>
+<a href="#1192" id="1192">1192</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1210,13 +1211,14 @@
 <span class="kw">use </span>move_vm_types::loaded_data::runtime_types::Type;
 <span class="kw">use </span>sui_move_natives::object_runtime::{max_event_error, ObjectRuntime, RuntimeResults};
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
+<span class="kw">use </span>sui_types::execution_status::CommandArgumentError;
 <span class="kw">use </span>sui_types::{
     balance::Balance,
     base_types::{ObjectID, SequenceNumber, SuiAddress, TxContext},
     coin::Coin,
     error::{ExecutionError, ExecutionErrorKind},
     gas::{SuiGasStatus, SuiGasStatusAPI},
-    messages::{Argument, CallArg, CommandArgumentError, ObjectArg},
+    messages::{Argument, CallArg, ObjectArg},
     metrics::LimitsMetrics,
     move_package::MovePackage,
     object::{MoveObject, Object, Owner},
@@ -1960,7 +1962,7 @@
     <span class="doccomment">/// Special case errors for type arguments to Move functions
     </span><span class="kw">pub fn </span>convert_type_argument_error(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: usize, error: VMError) -&gt; ExecutionError {
         <span class="kw">use </span>move_core_types::vm_status::StatusCode;
-        <span class="kw">use </span>sui_types::messages::TypeArgumentError;
+        <span class="kw">use </span>sui_types::execution_status::TypeArgumentError;
         <span class="kw">match </span>error.major_status() {
             StatusCode::NUMBER_OF_TYPE_ARGUMENTS_MISMATCH =&gt; {
                 ExecutionErrorKind::TypeArityMismatch.into()

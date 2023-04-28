@@ -292,6 +292,7 @@
 <a href="#292" id="292">292</a>
 <a href="#293" id="293">293</a>
 <a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -310,8 +311,9 @@
 <span class="kw">use </span>sui_types::coin::Coin;
 <span class="kw">use </span>sui_types::digests::ObjectDigest;
 <span class="kw">use </span>sui_types::error::SuiError;
+<span class="kw">use </span>sui_types::execution_status::ExecutionStatus;
 <span class="kw">use </span>sui_types::gas_coin::GAS;
-<span class="kw">use </span>sui_types::messages::{ExecutionStatus, TransactionEffects};
+<span class="kw">use </span>sui_types::messages::TransactionEffects;
 <span class="kw">use </span>sui_types::messages::{InputObjectKind, TransactionEffectsAPI};
 <span class="kw">use </span>sui_types::object::{Object, Owner};
 <span class="kw">use </span>sui_types::storage::WriteKind;

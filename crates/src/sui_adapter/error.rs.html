@@ -92,8 +92,6 @@
 <a href="#92" id="92">92</a>
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -107,10 +105,8 @@
     vm_status::{StatusCode, StatusType},
 };
 <span class="kw">use </span>move_vm_runtime::move_vm::MoveVM;
-<span class="kw">use </span>sui_types::{
-    error::{ExecutionError, SuiError},
-    messages::{ExecutionFailureStatus, MoveLocation, MoveLocationOpt},
-};
+<span class="kw">use </span>sui_types::error::{ExecutionError, SuiError};
+<span class="kw">use </span>sui_types::execution_status::{ExecutionFailureStatus, MoveLocation, MoveLocationOpt};
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>convert_vm_error&lt;S: MoveResolver&lt;<span class="prelude-val">Err </span>= SuiError&gt;&gt;(
     error: VMError,

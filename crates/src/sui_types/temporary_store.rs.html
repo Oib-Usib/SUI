@@ -1615,6 +1615,7 @@
 <a href="#1615" id="1615">1615</a>
 <a href="#1616" id="1616">1616</a>
 <a href="#1617" id="1617">1617</a>
+<a href="#1618" id="1618">1618</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1632,6 +1633,7 @@
 <span class="kw">use </span>tracing::trace;
 
 <span class="kw">use </span><span class="kw">crate</span>::committee::EpochId;
+<span class="kw">use </span><span class="kw">crate</span>::execution_status::ExecutionStatus;
 <span class="kw">use </span><span class="kw">crate</span>::messages::TransactionEvents;
 <span class="kw">use </span><span class="kw">crate</span>::storage::ObjectStore;
 <span class="kw">use </span><span class="kw">crate</span>::sui_system_state::{
@@ -1645,7 +1647,7 @@
     event::Event,
     fp_bail, gas,
     gas::{GasCostSummary, SuiGasStatus, SuiGasStatusAPI},
-    messages::{ExecutionStatus, InputObjects, TransactionEffects},
+    messages::{InputObjects, TransactionEffects},
     object::Owner,
     object::{Data, Object},
     storage::{

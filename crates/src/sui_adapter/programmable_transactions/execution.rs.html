@@ -1621,8 +1621,6 @@
 <a href="#1621" id="1621">1621</a>
 <a href="#1622" id="1622">1622</a>
 <a href="#1623" id="1623">1623</a>
-<a href="#1624" id="1624">1624</a>
-<a href="#1625" id="1625">1625</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1652,6 +1650,7 @@
 <span class="kw">use </span>serde::{de::DeserializeSeed, Deserialize};
 <span class="kw">use </span>sui_move_natives::object_runtime::ObjectRuntime;
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
+<span class="kw">use </span>sui_types::execution_status::{CommandArgumentError, PackageUpgradeError};
 <span class="kw">use </span>sui_types::{
     base_types::{
         MoveObjectType, ObjectID, SuiAddress, TxContext, TxContextKind, RESOLVED_ASCII_STR,
@@ -1662,10 +1661,7 @@
     event::Event,
     gas::{SuiGasStatus, SuiGasStatusAPI},
     id::{RESOLVED_SUI_ID, UID},
-    messages::{
-        Argument, Command, CommandArgumentError, PackageUpgradeError, ProgrammableMoveCall,
-        ProgrammableTransaction,
-    },
+    messages::{Argument, Command, ProgrammableMoveCall, ProgrammableTransaction},
     metrics::LimitsMetrics,
     move_package::{
         normalize_deserialized_modules, MovePackage, TypeOrigin, UpgradeCap, UpgradePolicy,
@@ -2551,7 +2547,7 @@
     </span>signature: LoadedFunctionInstantiation,
     <span class="doccomment">/// Object or type information for the return values
     </span>return_value_kinds: Vec&lt;ValueKind&gt;,
-    <span class="doccomment">/// Definitio index of the function
+    <span class="doccomment">/// Definition index of the function
     </span>index: FunctionDefinitionIndex,
     <span class="doccomment">/// The length of the function used for setting error information, or 0 if native
     </span>last_instr: CodeOffset,

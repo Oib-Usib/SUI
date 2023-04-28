@@ -788,6 +788,7 @@
 <a href="#788" id="788">788</a>
 <a href="#789" id="789">789</a>
 <a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -816,6 +817,7 @@
 <span class="kw">use </span>sui_types::committee::EpochId;
 <span class="kw">use </span>sui_types::epoch_data::EpochData;
 <span class="kw">use </span>sui_types::error::{ExecutionError, ExecutionErrorKind};
+<span class="kw">use </span>sui_types::execution_status::ExecutionStatus;
 <span class="kw">use </span>sui_types::gas::{GasCostSummary, SuiGasStatusAPI};
 <span class="kw">use </span>sui_types::messages::{
     Argument, Command, ConsensusCommitPrologue, GenesisTransaction, ObjectArg,
@@ -830,7 +832,7 @@
 <span class="kw">use </span>sui_types::{
     base_types::{ObjectRef, SuiAddress, TransactionDigest, TxContext},
     gas::SuiGasStatus,
-    messages::{CallArg, ChangeEpoch, ExecutionStatus, TransactionEffects},
+    messages::{CallArg, ChangeEpoch, TransactionEffects},
     object::Object,
     storage::BackingPackageStore,
     sui_system_state::{ADVANCE_EPOCH_FUNCTION_NAME, SUI_SYSTEM_MODULE_NAME},
