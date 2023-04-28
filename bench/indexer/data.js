@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682710761626,
+  "lastUpdate": 1682710989114,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1799,6 +1799,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 478079,
             "range": "± 43798",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123408603+healthydeve@users.noreply.github.com",
+            "name": "Jian Lu",
+            "username": "healthydeve"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "188d24981fb3771798d84fa8606d8dc56430f3fa",
+          "message": "[node] adding error handling and also piping length from config (#11337)\n\n## Description \r\n\r\nMoved from constant length to new length allowed in protocol verifier\r\n\r\n## Test Plan \r\n\r\nLocally,\r\n\r\nTODO: check on write\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-04-28T15:33:04-04:00",
+          "tree_id": "9a0dacdbb716c5b29ffb0e81eb4698791aec4107",
+          "url": "https://github.com/MystenLabs/sui/commit/188d24981fb3771798d84fa8606d8dc56430f3fa"
+        },
+        "date": 1682710984936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147913326,
+            "range": "± 4927591",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315087,
+            "range": "± 24990",
             "unit": "ns/iter"
           }
         ]
