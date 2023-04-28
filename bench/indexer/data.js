@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682711052894,
+  "lastUpdate": 1682711059378,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -1871,6 +1871,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310623,
             "range": "± 10918",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5f6d393d6060cff92e9aa67d8ed3f094a6eb196",
+          "message": "add get validators apy endpoint (#11293)\n\n## Description \r\n\r\nAdded a new endpoint `suix_getValidatorsApy` to get the list of APY for\r\nall active validators.\r\nthe APY is calculated using the current staking pool and 30 days staking\r\npool exchange rate\r\n\r\nthis PR also added cache for validator exchange rate, which will be\r\nrepopulated when epoch change, `get_states` method will be using this\r\ncache instead of resolving the rate from move tables to improve the read\r\nperformance.\r\n\r\n## Test Plan \r\n\r\nTested manually on testnet\r\n```\r\n{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"result\": {\r\n        \"apys\": [\r\n            {\r\n                \"address\": \"0x44b1b319e23495995fc837dafd28fc6af8b645edddff0fc1467f1ad631362c23\",\r\n                \"apy\": 0.03927171044129407\r\n            },\r\n            {\r\n                \"address\": \"0x3d618b03660f4e8b4ec99c52af08a814f5248154937782d22b5a8f2e44ba15fc\",\r\n                \"apy\": 0.03927182250212513\r\n            },\r\n            {\r\n                \"address\": \"0x24e8511a01aa7ab06eb8ce61d6c002ac5b8b7e0fde809554ca3662fb184ce257\",\r\n                \"apy\": 0.03927171891132608\r\n            },\r\n            {\r\n                \"address\": \"0x4ce8d9d329879f3b361c9515f48acc0f91b283a7305f6c9c789b0c8d1ebf43f2\",\r\n                \"apy\": 0.039271936185637735\r\n            },\r\n            {\r\n                \"address\": \"0x4c05f4f76ed81d210e9a29ac0756c7a3129e4b9ecacbbb9fc1579505947630cf\",\r\n                \"apy\": 0.039272011483796776\r\n            },\r\n            {\r\n                \"address\": \"0x6881875df60daf5528d66a62b66dc5710bf06b220fa9266ffdfeeb9cd8d6ed94\",\r\n                \"apy\": 0.039271851914000955\r\n            },\r\n            {\r\n                \"address\": \"0xab4fb3eeaa7b0ab4f91eedab33adf140c6750e60ca5e44b3df82491937d7bab4\",\r\n                \"apy\": 0.039271687290090895\r\n            },\r\n            {\r\n                \"address\": \"0x2079cb58f32c868deb0f4f20f509b7f034c7bea84c964cb1316f77fc987445b8\",\r\n                \"apy\": 0.03927190475122777\r\n            },\r\n            {\r\n                \"address\": \"0xaaec0462f9286f2aa9db25143eaa428cc6527b1ef669772b40b011983837de77\",\r\n                \"apy\": 0.03927179016703497\r\n            },\r\n            {\r\n                \"address\": \"0xf941ae3cbe5645dccc15da8346b533f7f91f202089a5521653c062b2ff10b304\",\r\n                \"apy\": 0.03927192198581797\r\n            },\r\n            {\r\n                \"address\": \"0x2622b55585033f26b0a86b378de1a6284c2dda531e52ef30ea87a8df81f4630a\",\r\n                \"apy\": 0.03927168099244316\r\n            },\r\n            {\r\n                \"address\": \"0x43ff72d09170ab4712d7bf26f0475d7f94f60f7076d5da9ebcfe7dde87faf2a7\",\r\n                \"apy\": 0.039271755979213285\r\n            },\r\n            {\r\n                \"address\": \"0x9062fc51d91056246dc31f2b818a4ddb113a044ec22c8dd0674616bbe56f7192\",\r\n                \"apy\": 0.039271682672775476\r\n            },\r\n...\r\n```",
+          "timestamp": "2023-04-28T12:33:56-07:00",
+          "tree_id": "415cfb91e80a65356aed00f8e59c527700d21191",
+          "url": "https://github.com/MystenLabs/sui/commit/e5f6d393d6060cff92e9aa67d8ed3f094a6eb196"
+        },
+        "date": 1682711055218,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150986019,
+            "range": "± 4523398",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 328390,
+            "range": "± 23221",
             "unit": "ns/iter"
           }
         ]
