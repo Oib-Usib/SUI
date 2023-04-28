@@ -1355,13 +1355,13 @@
 // Version 6: Change to how bytes are charged in the gas meter, increase buffer stake to 0.5f
 // Version 7: Disallow adding new abilities to types during package upgrades,
 //            disable_invariant_violation_check_in_swap_loc,
-//            advance_to_highest_supported_protocol_version,
 //            disable init functions becoming entry,
 //            hash module bytes individually before computing package digest.
 // Version 8: Disallow changing abilities and type constraints for type parameters in structs
 //            during upgrades.
 // Version 9: Limit the length of Move idenfitiers to 128.
-//            Disallow extraneous module bytes.
+//            Disallow extraneous module bytes,
+//            advance_to_highest_supported_protocol_version,
 
 </span><span class="attr">#[derive(Copy, Clone, Debug, Hash, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 </span><span class="kw">pub struct </span>ProtocolVersion(u64);
@@ -2439,8 +2439,6 @@
                 cfg.feature_flags.disallow_adding_abilities_on_upgrade = <span class="bool-val">true</span>;
                 cfg.feature_flags
                     .disable_invariant_violation_check_in_swap_loc = <span class="bool-val">true</span>;
-                cfg.feature_flags
-                    .advance_to_highest_supported_protocol_version = <span class="bool-val">true</span>;
                 cfg.feature_flags.ban_entry_init = <span class="bool-val">true</span>;
                 cfg.feature_flags.package_digest_hash_module = <span class="bool-val">true</span>;
                 cfg
@@ -2456,6 +2454,8 @@
                 <span class="comment">// Limits the length of a Move identifier
                 </span>cfg.max_move_identifier_len = <span class="prelude-val">Some</span>(<span class="number">128</span>);
                 cfg.feature_flags.no_extraneous_module_bytes = <span class="bool-val">true</span>;
+                cfg.feature_flags
+                    .advance_to_highest_supported_protocol_version = <span class="bool-val">true</span>;
                 cfg
             }
             <span class="comment">// Use this template when making changes:
