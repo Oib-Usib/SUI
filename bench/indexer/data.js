@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682716478801,
+  "lastUpdate": 1682720026291,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2015,6 +2015,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 475702,
             "range": "± 82411",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "108701016+joyqvq@users.noreply.github.com",
+            "name": "Joy Wang",
+            "username": "joyqvq"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f8b5ad9aaecc3c4b30a060ec5e00bdad9ba75a93",
+          "message": "doc: Add page for signatures and crypto agility (#11347)\n\n## Description \r\n\r\nadd more docs. i find the signature requirement is hard to find (the\r\noffline signing page is more of a practical and concrete example) so i\r\ncreated a new page for sui-signatures. it fits well to discuss crypto\r\nagility as well.\r\n\r\n## Test Plan \r\n\r\nn/a\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-04-28T15:02:38-07:00",
+          "tree_id": "9293432ce6a413a26f4296f95970c286d16610f3",
+          "url": "https://github.com/MystenLabs/sui/commit/f8b5ad9aaecc3c4b30a060ec5e00bdad9ba75a93"
+        },
+        "date": 1682720020454,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 102278689,
+            "range": "± 5733882",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308588,
+            "range": "± 17346",
             "unit": "ns/iter"
           }
         ]
