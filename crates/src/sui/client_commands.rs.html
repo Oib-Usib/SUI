@@ -1710,8 +1710,6 @@
 <a href="#1710" id="1710">1710</a>
 <a href="#1711" id="1711">1711</a>
 <a href="#1712" id="1712">1712</a>
-<a href="#1713" id="1713">1713</a>
-<a href="#1714" id="1714">1714</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2061,7 +2059,6 @@
     <span class="doccomment">/// Pay SUI coins to recipients following following specified amounts, with input coins.
     /// Length of recipients must be the same as that of amounts.
     /// The input coins also include the coin for gas payment, so no extra gas coin is required.
-    </span><span class="attr">#[clap(name = <span class="string">&quot;pay_sui&quot;</span>)]
     </span>PaySui {
         <span class="doccomment">/// The input coins to be used for pay recipients, including the gas coin.
         </span><span class="attr">#[clap(long, multiple_occurrences = <span class="bool-val">false</span>, multiple_values = <span class="bool-val">true</span>)]
@@ -2086,7 +2083,6 @@
 
     <span class="doccomment">/// Pay all residual SUI coins to the recipient with input coins, after deducting the gas cost.
     /// The input coins also include the coin for gas payment, so no extra gas coin is required.
-    </span><span class="attr">#[clap(name = <span class="string">&quot;pay_all_sui&quot;</span>)]
     </span>PayAllSui {
         <span class="doccomment">/// The input coins to be used for pay recipients, including the gas coin.
         </span><span class="attr">#[clap(long, multiple_occurrences = <span class="bool-val">false</span>, multiple_values = <span class="bool-val">true</span>)]
