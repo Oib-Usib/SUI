@@ -769,6 +769,7 @@
 <a href="#769" id="769">769</a>
 <a href="#770" id="770">770</a>
 <a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -802,9 +803,10 @@
 <span class="kw">use </span>sui_types::messages::TEST_ONLY_GAS_UNIT_FOR_SPLIT_COIN;
 <span class="kw">use </span>sui_types::messages::TEST_ONLY_GAS_UNIT_FOR_TRANSFER;
 
+<span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI, TransactionEvents};
 <span class="kw">use </span>sui_types::messages::{
     CallArg, ObjectArg, ObjectInfoRequest, ObjectInfoResponse, Transaction, TransactionData,
-    TransactionEffects, TransactionEffectsAPI, TransactionEvents, VerifiedTransaction,
+    VerifiedTransaction,
 };
 <span class="kw">use </span>sui_types::messages::{ExecuteTransactionRequestType, HandleCertificateResponseV2};
 <span class="kw">use </span>sui_types::move_package::UpgradePolicy;

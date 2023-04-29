@@ -624,11 +624,11 @@ finalized transactions locally, when possible.
 <span class="kw">use </span>std::time::Duration;
 <span class="kw">use </span>sui_storage::write_path_pending_tx_log::WritePathPendingTransactionLog;
 <span class="kw">use </span>sui_types::base_types::TransactionDigest;
+<span class="kw">use </span>sui_types::effects::{TransactionEffectsAPI, VerifiedCertifiedTransactionEffects};
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 <span class="kw">use </span>sui_types::messages::{
     ExecuteTransactionRequest, ExecuteTransactionRequestType, ExecuteTransactionResponse,
-    FinalizedEffects, TransactionEffectsAPI, VerifiedCertifiedTransactionEffects,
-    VerifiedExecutableTransaction,
+    FinalizedEffects, VerifiedExecutableTransaction,
 };
 <span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>sui_types::quorum_driver_types::{

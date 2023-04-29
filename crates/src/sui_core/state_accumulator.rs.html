@@ -399,6 +399,7 @@
 <a href="#399" id="399">399</a>
 <a href="#400" id="400">400</a>
 <a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -420,8 +421,9 @@
 
 <span class="kw">use </span>fastcrypto::hash::MultisetHash;
 <span class="kw">use </span>sui_types::accumulator::Accumulator;
+<span class="kw">use </span>sui_types::effects::TransactionEffects;
+<span class="kw">use </span>sui_types::effects::TransactionEffectsAPI;
 <span class="kw">use </span>sui_types::error::SuiResult;
-<span class="kw">use </span>sui_types::messages::{TransactionEffects, TransactionEffectsAPI};
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointSequenceNumber, ECMHLiveObjectSetDigest};
 <span class="kw">use </span>typed_store::rocks::TypedStoreError;
 

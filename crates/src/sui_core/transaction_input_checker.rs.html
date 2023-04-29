@@ -414,13 +414,22 @@
 <a href="#414" id="414">414</a>
 <a href="#415" id="415">415</a>
 <a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span><span class="kw">crate</span>::authority::authority_per_epoch_store::AuthorityPerEpochStore;
 <span class="kw">use </span><span class="kw">crate</span>::authority::AuthorityStore;
 <span class="kw">use </span><span class="kw">crate</span>::transaction_signing_filter;
+<span class="kw">use </span>move_bytecode_verifier::meter::BoundMeter;
 <span class="kw">use </span>std::collections::{BTreeMap, HashSet};
+<span class="kw">use </span>sui_adapter::adapter::default_verifier_config;
 <span class="kw">use </span>sui_adapter::adapter::run_metered_move_bytecode_verifier;
 <span class="kw">use </span>sui_config::transaction_deny_config::TransactionDenyConfig;
 <span class="kw">use </span>sui_macros::checked_arithmetic;
@@ -819,10 +828,15 @@
 ) -&gt; UserInputResult&lt;()&gt; {
     <span class="comment">// Only meter non-system TXes
     </span><span class="kw">if </span>!transaction.is_system_tx() {
+        <span class="comment">// We use a custom config with metering enabled
+        </span><span class="kw">let </span>metered_verifier_config =
+            default_verifier_config(protocol_config, <span class="bool-val">true </span><span class="comment">/* enable metering */</span>);
+        <span class="comment">// Use the same meter for all packages
+        </span><span class="kw">let </span><span class="kw-2">mut </span>meter = BoundMeter::new(<span class="kw-2">&amp;</span>metered_verifier_config);
         <span class="kw">if let </span>TransactionKind::ProgrammableTransaction(pt) = transaction.kind() {
             pt.non_system_packages_to_be_published()
-                .try_for_each(|q| run_metered_move_bytecode_verifier(q, protocol_config))
-                .map_err(|e| UserInputError::PackageVerificationTimedout { err: e.to_string() })<span class="question-mark">?</span>;
+            .try_for_each(|q| run_metered_move_bytecode_verifier(q, protocol_config, <span class="kw-2">&amp;</span>metered_verifier_config, <span class="kw-2">&amp;mut </span>meter))
+            .map_err(|e| UserInputError::PackageVerificationTimedout { err: e.to_string() })<span class="question-mark">?</span>;
         }
     }
 

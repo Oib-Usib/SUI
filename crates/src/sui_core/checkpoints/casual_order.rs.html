@@ -270,12 +270,15 @@
 <a href="#270" id="270">270</a>
 <a href="#271" id="271">271</a>
 <a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::collections::{BTreeMap, BTreeSet, HashMap};
 <span class="kw">use </span>sui_types::base_types::TransactionDigest;
-<span class="kw">use </span>sui_types::messages::{TransactionEffects, TransactionEffectsAPI};
+<span class="kw">use </span>sui_types::effects::TransactionEffects;
+<span class="kw">use </span>sui_types::effects::TransactionEffectsAPI;
 <span class="kw">use </span>sui_types::storage::ObjectKey;
 <span class="kw">use </span>tracing::trace;
 
@@ -468,6 +471,7 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>sui_types::base_types::ObjectDigest;
     <span class="kw">use </span>sui_types::base_types::{ObjectID, SequenceNumber};
+    <span class="kw">use </span>sui_types::effects::TransactionEffects;
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>test_casual_order() {

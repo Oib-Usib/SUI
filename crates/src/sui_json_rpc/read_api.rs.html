@@ -1229,8 +1229,6 @@
 <a href="#1229" id="1229">1229</a>
 <a href="#1230" id="1230">1230</a>
 <a href="#1231" id="1231">1231</a>
-<a href="#1232" id="1232">1232</a>
-<a href="#1233" id="1233">1233</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1268,12 +1266,10 @@
 <span class="kw">use </span>sui_types::crypto::default_hash;
 <span class="kw">use </span>sui_types::digests::TransactionEventsDigest;
 <span class="kw">use </span>sui_types::display::DisplayVersionUpdatedEvent;
+<span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI, TransactionEvents};
 <span class="kw">use </span>sui_types::error::{SuiObjectResponseError, UserInputError};
 <span class="kw">use </span>sui_types::messages::TransactionDataAPI;
-<span class="kw">use </span>sui_types::messages::{
-    TransactionData, TransactionEffects, TransactionEffectsAPI, TransactionEvents,
-    VerifiedTransaction,
-};
+<span class="kw">use </span>sui_types::messages::{TransactionData, VerifiedTransaction};
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointSequenceNumber, CheckpointTimestamp};
 <span class="kw">use </span>sui_types::move_package::normalize_modules;
 <span class="kw">use </span>sui_types::object::{Data, Object, ObjectRead, PastObjectRead};

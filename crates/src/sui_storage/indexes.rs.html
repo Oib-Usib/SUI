@@ -1718,8 +1718,8 @@
 <span class="kw">use </span>sui_types::base_types::{ObjectInfo, ObjectRef};
 <span class="kw">use </span>sui_types::digests::TransactionEventsDigest;
 <span class="kw">use </span>sui_types::dynamic_field::{<span class="self">self</span>, DynamicFieldInfo};
+<span class="kw">use </span>sui_types::effects::TransactionEvents;
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult, UserInputError};
-<span class="kw">use </span>sui_types::messages::TransactionEvents;
 <span class="kw">use </span>sui_types::object::Owner;
 <span class="kw">use </span>sui_types::parse_sui_struct_tag;
 <span class="kw">use </span>sui_types::temporary_store::TxCoins;
@@ -2007,7 +2007,7 @@
         </span><span class="kw">let </span>(input_coins, written_coins) = tx_coins.unwrap();
         <span class="comment">// 1. Delete old owner if the object is deleted or transferred to a new owner,
         // by looking at `object_index_changes.deleted_owners`.
-        // Objects in `deleted_owners` must be owned by `Owner::Address` befoer the tx,
+        // Objects in `deleted_owners` must be owned by `Owner::Address` before the tx,
         // hence must appear in the tx inputs.
         // They also mut be coin type (see `AuthorityState::commit_certificate`).
         </span><span class="kw">let </span>coin_delete_keys = object_index_changes
@@ -2044,7 +2044,7 @@
         // For a object to appear in `new_owners`, it must be owned by `Owner::Address` after the tx.
         // It also must not be deleted, hence appear in written_coins (see `AuthorityState::commit_certificate`)
         // It also must be a coin type (see `AuthorityState::commit_certificate`).
-        // Here the coin could be transfered to a new address, to simply have the metadata changed (digest, balance etc)
+        // Here the coin could be transferred to a new address, to simply have the metadata changed (digest, balance etc)
         // due to a successful or failed transaction.
         </span><span class="kw">let </span>coin_add_keys = object_index_changes
         .new_owners
@@ -3235,8 +3235,8 @@
     <span class="kw">use </span>std::env::temp_dir;
     <span class="kw">use </span>sui_types::base_types::{ObjectInfo, ObjectType, SuiAddress};
     <span class="kw">use </span>sui_types::digests::TransactionDigest;
+    <span class="kw">use </span>sui_types::effects::TransactionEvents;
     <span class="kw">use </span>sui_types::gas_coin::GAS;
-    <span class="kw">use </span>sui_types::messages::TransactionEvents;
     <span class="kw">use </span>sui_types::object;
     <span class="kw">use </span>sui_types::object::Owner;
     <span class="kw">use </span>sui_types::storage::WriteKind;

@@ -3882,6 +3882,11 @@
 <a href="#3882" id="3882">3882</a>
 <a href="#3883" id="3883">3883</a>
 <a href="#3884" id="3884">3884</a>
+<a href="#3885" id="3885">3885</a>
+<a href="#3886" id="3886">3886</a>
+<a href="#3887" id="3887">3887</a>
+<a href="#3888" id="3888">3888</a>
+<a href="#3889" id="3889">3889</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -4018,6 +4023,11 @@
 <span class="attr">#[cfg(feature = <span class="string">&quot;test-utils&quot;</span>)]
 </span><span class="kw">pub mod </span>authority_test_utils;
 <span class="kw">use </span>once_cell::sync::OnceCell;
+<span class="kw">use </span>sui_types::effects::{
+    SignedTransactionEffects, TransactionEffects, TransactionEffectsAPI, TransactionEvents,
+    VerifiedCertifiedTransactionEffects, VerifiedSignedTransactionEffects,
+};
+
 <span class="kw">pub mod </span>authority_per_epoch_store;
 <span class="kw">pub mod </span>authority_per_epoch_store_pruner;
 

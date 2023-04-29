@@ -1651,7 +1651,6 @@
 <a href="#1651" id="1651">1651</a>
 <a href="#1652" id="1652">1652</a>
 <a href="#1653" id="1653">1653</a>
-<a href="#1654" id="1654">1654</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1685,13 +1684,11 @@
 <span class="kw">use </span>sui_types::base_types::{EpochId, TransactionDigest};
 <span class="kw">use </span>sui_types::crypto::{AuthoritySignInfo, AuthorityStrongQuorumSignInfo};
 <span class="kw">use </span>sui_types::digests::{CheckpointContentsDigest, CheckpointDigest};
+<span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI};
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 <span class="kw">use </span>sui_types::gas::GasCostSummary;
 <span class="kw">use </span>sui_types::message_envelope::Message;
-<span class="kw">use </span>sui_types::messages::{
-    ConsensusTransactionKey, TransactionDataAPI, TransactionEffects, TransactionEffectsAPI,
-    TransactionKind,
-};
+<span class="kw">use </span>sui_types::messages::{ConsensusTransactionKey, TransactionDataAPI, TransactionKind};
 <span class="kw">use </span>sui_types::messages_checkpoint::SignedCheckpointSummary;
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CertifiedCheckpointSummary, CheckpointContents, CheckpointSequenceNumber,
@@ -3040,6 +3037,7 @@
     <span class="kw">use </span>std::ops::Deref;
     <span class="kw">use </span>sui_types::base_types::{ObjectID, SequenceNumber, TransactionEffectsDigest};
     <span class="kw">use </span>sui_types::crypto::Signature;
+    <span class="kw">use </span>sui_types::effects::TransactionEffects;
     <span class="kw">use </span>sui_types::messages::{GenesisObject, VerifiedTransaction};
     <span class="kw">use </span>sui_types::messages_checkpoint::SignedCheckpointSummary;
     <span class="kw">use </span>sui_types::move_package::MovePackage;

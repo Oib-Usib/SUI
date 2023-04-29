@@ -1208,6 +1208,8 @@
 <span class="kw">pub use </span><span class="kw">crate</span>::digests::{ObjectDigest, TransactionDigest, TransactionEffectsDigest};
 <span class="kw">use </span><span class="kw">crate</span>::dynamic_field::DynamicFieldInfo;
 <span class="kw">use </span><span class="kw">crate</span>::dynamic_field::DynamicFieldType;
+<span class="kw">use </span><span class="kw">crate</span>::effects::TransactionEffects;
+<span class="kw">use </span><span class="kw">crate</span>::effects::TransactionEffectsAPI;
 <span class="kw">use </span><span class="kw">crate</span>::epoch_data::EpochData;
 <span class="kw">use </span><span class="kw">crate</span>::error::ExecutionErrorKind;
 <span class="kw">use </span><span class="kw">crate</span>::error::SuiError;
@@ -1218,8 +1220,6 @@
 <span class="kw">use </span><span class="kw">crate</span>::governance::STAKED_SUI_STRUCT_NAME;
 <span class="kw">use </span><span class="kw">crate</span>::governance::STAKING_POOL_MODULE_NAME;
 <span class="kw">use </span><span class="kw">crate</span>::messages::Transaction;
-<span class="kw">use </span><span class="kw">crate</span>::messages::TransactionEffects;
-<span class="kw">use </span><span class="kw">crate</span>::messages::TransactionEffectsAPI;
 <span class="kw">use </span><span class="kw">crate</span>::messages::VerifiedTransaction;
 <span class="kw">use </span><span class="kw">crate</span>::messages_checkpoint::CheckpointTimestamp;
 <span class="kw">use </span><span class="kw">crate</span>::multisig::MultiSigPublicKey;

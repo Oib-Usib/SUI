@@ -1878,6 +1878,7 @@
 <a href="#1878" id="1878">1878</a>
 <a href="#1879" id="1879">1879</a>
 <a href="#1880" id="1880">1880</a>
+<a href="#1881" id="1881">1881</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1925,6 +1926,7 @@
 <span class="kw">use super</span>::{authority_store_tables::AuthorityPerpetualTables, <span class="kw-2">*</span>};
 <span class="kw">use </span>mysten_common::sync::notify_read::NotifyRead;
 <span class="kw">use </span>sui_storage::package_object_cache::PackageObjectCache;
+<span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEvents};
 <span class="kw">use </span>sui_types::gas_coin::TOTAL_SUPPLY_MIST;
 <span class="kw">use </span>typed_store::rocks::util::is_ref_count_value;
 

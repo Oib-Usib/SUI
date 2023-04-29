@@ -28,13 +28,20 @@
 <a href="#28" id="28">28</a>
 <a href="#29" id="29">29</a>
 <a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
+<a href="#38" id="38">38</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="doccomment">//! This module contains the public APIs supported by the bytecode verifier.
 
 </span><span class="kw">use </span>move_binary_format::file_format::CompiledModule;
-<span class="kw">use </span>move_bytecode_verifier::{meter::BoundMeter, VerifierConfig};
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>sui_types::{error::ExecutionError, move_package::FnInfoMap};
 
@@ -42,20 +49,29 @@
     entry_points_verifier, global_storage_access_verifier, id_leak_verifier,
     one_time_witness_verifier, private_generics, struct_with_key_verifier,
 };
+<span class="kw">use </span>move_bytecode_verifier::meter::DummyMeter;
+<span class="kw">use </span>move_bytecode_verifier::meter::Meter;
 
 <span class="doccomment">/// Helper for a &quot;canonical&quot; verification of a module.
-</span><span class="kw">pub fn </span>verify_module(
+</span><span class="kw">pub fn </span>sui_verify_module_metered(
     config: <span class="kw-2">&amp;</span>ProtocolConfig,
-    verifier_config: <span class="kw-2">&amp;</span>VerifierConfig,
     module: <span class="kw-2">&amp;</span>CompiledModule,
     fn_info_map: <span class="kw-2">&amp;</span>FnInfoMap,
+    meter: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>Meter,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExecutionError&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>meter = BoundMeter::new(verifier_config);
     struct_with_key_verifier::verify_module(module)<span class="question-mark">?</span>;
     global_storage_access_verifier::verify_module(module)<span class="question-mark">?</span>;
-    id_leak_verifier::verify_module(module, <span class="kw-2">&amp;mut </span>meter)<span class="question-mark">?</span>;
+    id_leak_verifier::verify_module(module, meter)<span class="question-mark">?</span>;
     private_generics::verify_module(module)<span class="question-mark">?</span>;
     entry_points_verifier::verify_module(config, module, fn_info_map)<span class="question-mark">?</span>;
     one_time_witness_verifier::verify_module(module, fn_info_map)
+}
+
+<span class="kw">pub fn </span>sui_verify_module_unmetered(
+    config: <span class="kw-2">&amp;</span>ProtocolConfig,
+    module: <span class="kw-2">&amp;</span>CompiledModule,
+    fn_info_map: <span class="kw-2">&amp;</span>FnInfoMap,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExecutionError&gt; {
+    sui_verify_module_metered(config, module, fn_info_map, <span class="kw-2">&amp;mut </span>DummyMeter)
 }
 </code></pre></div></section></main></body></html>

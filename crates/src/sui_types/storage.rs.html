@@ -827,8 +827,6 @@
 <a href="#827" id="827">827</a>
 <a href="#828" id="828">828</a>
 <a href="#829" id="829">829</a>
-<a href="#830" id="830">830</a>
-<a href="#831" id="831">831</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -837,12 +835,10 @@
 <span class="kw">use </span><span class="kw">crate</span>::digests::{
     CheckpointContentsDigest, CheckpointDigest, TransactionEffectsDigest, TransactionEventsDigest,
 };
+<span class="kw">use </span><span class="kw">crate</span>::effects::{TransactionEffects, TransactionEvents};
 <span class="kw">use </span><span class="kw">crate</span>::error::SuiError;
 <span class="kw">use </span><span class="kw">crate</span>::message_envelope::Message;
-<span class="kw">use </span><span class="kw">crate</span>::messages::{
-    SenderSignedData, TransactionDataAPI, TransactionEffects, TransactionEvents,
-    VerifiedTransaction,
-};
+<span class="kw">use </span><span class="kw">crate</span>::messages::{SenderSignedData, TransactionDataAPI, VerifiedTransaction};
 <span class="kw">use </span><span class="kw">crate</span>::messages_checkpoint::{
     CheckpointContents, CheckpointSequenceNumber, FullCheckpointContents, VerifiedCheckpoint,
     VerifiedCheckpointContents,
@@ -1450,7 +1446,7 @@
             <span class="kw">return </span><span class="prelude-val">Ok</span>(contents);
         }
 
-        <span class="comment">// Otherwise gather it from the indivdual components.
+        <span class="comment">// Otherwise gather it from the individual components.
         </span>inner
             .get_checkpoint_contents(digest)
             .map(|contents| {

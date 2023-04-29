@@ -698,11 +698,6 @@
 <a href="#698" id="698">698</a>
 <a href="#699" id="699">699</a>
 <a href="#700" id="700">700</a>
-<a href="#701" id="701">701</a>
-<a href="#702" id="702">702</a>
-<a href="#703" id="703">703</a>
-<a href="#704" id="704">704</a>
-<a href="#705" id="705">705</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -899,20 +894,15 @@
     };
     <span class="kw">let </span>compiled_modules = package.root_modules_map();
     <span class="kw">if </span>run_bytecode_verifier {
-        <span class="kw">let </span>verifier_config = sui_adapter::adapter::default_verifier_config(
-            <span class="kw-2">&amp;</span>ProtocolConfig::get_for_version(ProtocolVersion::MAX),
-            <span class="bool-val">false</span>, <span class="comment">/* disable metering */
-        </span>);
         <span class="kw">for </span>m <span class="kw">in </span>compiled_modules.iter_modules() {
-            move_bytecode_verifier::verify_module(m).map_err(|err| {
+            move_bytecode_verifier::verify_module_unmetered(m).map_err(|err| {
                 SuiError::ModuleVerificationFailure {
                     error: err.to_string(),
                 }
             })<span class="question-mark">?</span>;
             <span class="comment">// TODO make this configurable
-            </span>sui_bytecode_verifier::verify_module(
+            </span>sui_bytecode_verifier::sui_verify_module_unmetered(
                 <span class="kw-2">&amp;</span>ProtocolConfig::get_for_version(ProtocolVersion::MAX),
-                <span class="kw-2">&amp;</span>verifier_config,
                 m,
                 <span class="kw-2">&amp;</span>fn_info,
             )<span class="question-mark">?</span>;

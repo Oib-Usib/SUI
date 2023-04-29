@@ -1637,8 +1637,8 @@
 <span class="kw">use </span>tracing::trace;
 
 <span class="kw">use </span><span class="kw">crate</span>::committee::EpochId;
+<span class="kw">use </span><span class="kw">crate</span>::effects::{TransactionEffects, TransactionEvents};
 <span class="kw">use </span><span class="kw">crate</span>::execution_status::ExecutionStatus;
-<span class="kw">use </span><span class="kw">crate</span>::messages::TransactionEvents;
 <span class="kw">use </span><span class="kw">crate</span>::storage::ObjectStore;
 <span class="kw">use </span><span class="kw">crate</span>::sui_system_state::{
     get_sui_system_state, get_sui_system_state_wrapper, AdvanceEpochParams, SuiSystemState,
@@ -1651,7 +1651,7 @@
     event::Event,
     fp_bail, gas,
     gas::{GasCostSummary, SuiGasStatus, SuiGasStatusAPI},
-    messages::{InputObjects, TransactionEffects},
+    messages::InputObjects,
     object::Owner,
     object::{Data, Object},
     storage::{

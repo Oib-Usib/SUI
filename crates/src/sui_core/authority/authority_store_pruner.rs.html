@@ -699,6 +699,8 @@
 <a href="#699" id="699">699</a>
 <a href="#700" id="700">700</a>
 <a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -715,7 +717,8 @@
 <span class="kw">use </span>sui_config::node::AuthorityStorePruningConfig;
 <span class="kw">use </span>sui_storage::mutex_table::RwLockTable;
 <span class="kw">use </span>sui_types::base_types::SequenceNumber;
-<span class="kw">use </span>sui_types::messages::{TransactionEffects, TransactionEffectsAPI};
+<span class="kw">use </span>sui_types::effects::TransactionEffects;
+<span class="kw">use </span>sui_types::effects::TransactionEffectsAPI;
 <span class="kw">use </span>sui_types::messages_checkpoint::CheckpointSequenceNumber;
 <span class="kw">use </span>sui_types::{
     base_types::{ObjectID, VersionNumber},
@@ -1025,7 +1028,8 @@
     <span class="kw">use </span>prometheus::Registry;
     <span class="kw">use </span>sui_storage::mutex_table::RwLockTable;
     <span class="kw">use </span>sui_types::base_types::{ObjectDigest, VersionNumber};
-    <span class="kw">use </span>sui_types::messages::{TransactionEffects, TransactionEffectsAPI};
+    <span class="kw">use </span>sui_types::effects::TransactionEffects;
+    <span class="kw">use </span>sui_types::effects::TransactionEffectsAPI;
     <span class="kw">use </span>sui_types::{
         base_types::{ObjectID, SequenceNumber},
         object::Object,

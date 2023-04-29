@@ -604,6 +604,7 @@
 <a href="#604" id="604">604</a>
 <a href="#605" id="605">605</a>
 <a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -618,6 +619,7 @@
     api::{Validator, ValidatorServer},
     tonic,
 };
+<span class="kw">use </span>sui_types::effects::{TransactionEffectsAPI, TransactionEvents};
 <span class="kw">use </span>sui_types::multiaddr::Multiaddr;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>sui_types::{error::<span class="kw-2">*</span>, messages::<span class="kw-2">*</span>};
@@ -924,7 +926,7 @@
             Arc::clone(<span class="kw-2">&amp;</span>consensus_adapter),
             transaction.data(),
         )<span class="question-mark">?</span>;
-        <span class="kw">let </span>_handel_tx_metrics_guard = metrics.handle_transaction_latency.start_timer();
+        <span class="kw">let </span>_handle_tx_metrics_guard = metrics.handle_transaction_latency.start_timer();
 
         <span class="kw">let </span>tx_verif_metrics_guard = metrics.tx_verification_latency.start_timer();
         <span class="kw">let </span>transaction = epoch_store

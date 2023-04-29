@@ -1700,14 +1700,14 @@
     EpochId, ObjectID, ObjectRef, SequenceNumber, SuiAddress, TransactionDigest,
 };
 <span class="kw">use </span>sui_types::digests::{ObjectDigest, TransactionEventsDigest};
+<span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI, TransactionEvents};
 <span class="kw">use </span>sui_types::error::{ExecutionError, SuiError};
 <span class="kw">use </span>sui_types::execution_status::ExecutionStatus;
 <span class="kw">use </span>sui_types::gas::GasCostSummary;
 <span class="kw">use </span>sui_types::messages::{
     Argument, CallArg, Command, ExecuteTransactionRequestType, GenesisObject, InputObjectKind,
     ObjectArg, ProgrammableMoveCall, ProgrammableTransaction, SenderSignedData, TransactionData,
-    TransactionDataAPI, TransactionEffects, TransactionEffectsAPI, TransactionEvents,
-    TransactionKind, VersionedProtocolMessage,
+    TransactionDataAPI, TransactionKind, VersionedProtocolMessage,
 };
 <span class="kw">use </span>sui_types::messages_checkpoint::CheckpointSequenceNumber;
 <span class="kw">use </span>sui_types::object::Owner;

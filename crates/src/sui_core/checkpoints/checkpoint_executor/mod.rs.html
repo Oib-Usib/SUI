@@ -989,6 +989,7 @@
 <a href="#989" id="989">989</a>
 <a href="#990" id="990">990</a>
 <a href="#991" id="991">991</a>
+<a href="#992" id="992">992</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1021,11 +1022,12 @@
 <span class="kw">use </span>prometheus::Registry;
 <span class="kw">use </span>sui_config::node::CheckpointExecutorConfig;
 <span class="kw">use </span>sui_macros::{fail_point, fail_point_async};
+<span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI};
 <span class="kw">use </span>sui_types::message_envelope::Message;
 <span class="kw">use </span>sui_types::messages::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::{
     base_types::{ExecutionDigests, TransactionDigest, TransactionEffectsDigest},
-    messages::{TransactionEffects, TransactionEffectsAPI, VerifiedTransaction},
+    messages::VerifiedTransaction,
     messages_checkpoint::{CheckpointSequenceNumber, VerifiedCheckpoint},
 };
 <span class="kw">use </span>sui_types::{error::SuiResult, messages::TransactionDataAPI};

@@ -684,10 +684,10 @@
     default_hash, AggregateAuthoritySignature, AuthoritySignInfo, AuthorityStrongQuorumSignInfo,
 };
 <span class="kw">use </span><span class="kw">crate</span>::digests::Digest;
+<span class="kw">use </span><span class="kw">crate</span>::effects::TransactionEffectsAPI;
 <span class="kw">use </span><span class="kw">crate</span>::error::SuiResult;
 <span class="kw">use </span><span class="kw">crate</span>::gas::GasCostSummary;
 <span class="kw">use </span><span class="kw">crate</span>::message_envelope::{Envelope, Message, TrustedEnvelope, VerifiedEnvelope};
-<span class="kw">use </span><span class="kw">crate</span>::messages::TransactionEffectsAPI;
 <span class="kw">use </span><span class="kw">crate</span>::signature::GenericSignature;
 <span class="kw">use </span><span class="kw">crate</span>::storage::ReadStore;
 <span class="kw">use </span><span class="kw">crate</span>::sui_serde::AsProtocolVersion;

@@ -334,13 +334,13 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span><span class="kw">crate</span>::sui_serde::BigInt;
+</span><span class="kw">use </span><span class="kw">crate</span>::effects::{TransactionEffects, TransactionEffectsAPI};
+<span class="kw">use </span><span class="kw">crate</span>::sui_serde::BigInt;
 <span class="kw">use </span><span class="kw">crate</span>::sui_serde::Readable;
 <span class="kw">use crate</span>::{
     error::{ExecutionError, UserInputError, UserInputResult},
     gas_model::gas_v1::{<span class="self">self</span>, SuiCostTable <span class="kw">as </span>SuiCostTableV1, SuiGasStatus <span class="kw">as </span>SuiGasStatusV1},
     gas_model::gas_v2::{<span class="self">self</span>, SuiCostTable <span class="kw">as </span>SuiCostTableV2, SuiGasStatus <span class="kw">as </span>SuiGasStatusV2},
-    messages::{TransactionEffects, TransactionEffectsAPI},
     object::Object,
 };
 <span class="kw">use </span>enum_dispatch::enum_dispatch;
