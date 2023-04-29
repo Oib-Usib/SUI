@@ -233,7 +233,17 @@ fn timestamps_table_default_config() -> DBOptions {
     default_db_options().optimize_for_point_lookup(64)
 }
 fn owner_index_table_default_config() -> DBOptions {
-    default_db_options()
+    DBOptions {
+        options: default_db_options()
+            .optimize_for_write_throughput()
+            .optimize_for_read(
+                read_size_from_env(ENV_VAR_COIN_INDEX_BLOCK_CACHE_SIZE_MB).unwrap_or(5 * 1024),
+            )
+            .options,
+        rw_options: ReadWriteOptions {
+            ignore_range_deletions: true,
+        },
+    }
 }
 fn dynamic_field_index_table_default_config() -> DBOptions {
     default_db_options()
