@@ -3887,6 +3887,14 @@
 <a href="#3887" id="3887">3887</a>
 <a href="#3888" id="3888">3888</a>
 <a href="#3889" id="3889">3889</a>
+<a href="#3890" id="3890">3890</a>
+<a href="#3891" id="3891">3891</a>
+<a href="#3892" id="3892">3892</a>
+<a href="#3893" id="3893">3893</a>
+<a href="#3894" id="3894">3894</a>
+<a href="#3895" id="3895">3895</a>
+<a href="#3896" id="3896">3896</a>
+<a href="#3897" id="3897">3897</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3926,9 +3934,11 @@
     Committee <span class="kw">as </span>ConsensusCommittee, WorkerCache <span class="kw">as </span>ConsensusWorkerCache,
     WorkerId <span class="kw">as </span>ConsensusWorkerId,
 };
+<span class="kw">use </span>once_cell::sync::OnceCell;
 <span class="kw">use </span>shared_crypto::intent::{Intent, IntentScope};
 <span class="kw">use </span>sui_adapter::execution_engine;
 <span class="kw">use </span>sui_adapter::{adapter, execution_mode};
+<span class="kw">use </span>sui_config::certificate_deny_config::CertificateDenyConfig;
 <span class="kw">use </span>sui_config::genesis::Genesis;
 <span class="kw">use </span>sui_config::node::{
     AuthorityStorePruningConfig, DBCheckpointConfig, ExpensiveSafetyCheckConfig,
@@ -3951,6 +3961,10 @@
 };
 <span class="kw">use </span>sui_types::digests::TransactionEventsDigest;
 <span class="kw">use </span>sui_types::dynamic_field::{DynamicFieldInfo, DynamicFieldName, DynamicFieldType, Field};
+<span class="kw">use </span>sui_types::effects::{
+    SignedTransactionEffects, TransactionEffects, TransactionEffectsAPI, TransactionEvents,
+    VerifiedCertifiedTransactionEffects, VerifiedSignedTransactionEffects,
+};
 <span class="kw">use </span>sui_types::error::{ExecutionError, UserInputError};
 <span class="kw">use </span>sui_types::event::{Event, EventID};
 <span class="kw">use </span>sui_types::gas::{GasCostSummary, SuiGasStatus};
@@ -4022,11 +4036,6 @@
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;test-utils&quot;</span>)]
 </span><span class="kw">pub mod </span>authority_test_utils;
-<span class="kw">use </span>once_cell::sync::OnceCell;
-<span class="kw">use </span>sui_types::effects::{
-    SignedTransactionEffects, TransactionEffects, TransactionEffectsAPI, TransactionEvents,
-    VerifiedCertifiedTransactionEffects, VerifiedSignedTransactionEffects,
-};
 
 <span class="kw">pub mod </span>authority_per_epoch_store;
 <span class="kw">pub mod </span>authority_per_epoch_store_pruner;
@@ -4403,6 +4412,8 @@
     </span>expensive_safety_check_config: ExpensiveSafetyCheckConfig,
 
     transaction_deny_config: TransactionDenyConfig,
+
+    certificate_deny_config: CertificateDenyConfig,
 }
 
 <span class="doccomment">/// The authority state encapsulates all state, drives execution, and ensures safety.
@@ -4952,6 +4963,7 @@
                 // cyclic dependency w/ sui-adapter
                 </span><span class="self">self</span>.expensive_safety_check_config
                     .enable_deep_per_tx_sui_conservation_check(),
+                <span class="self">self</span>.certificate_deny_config.certificate_deny_set(),
             );
 
         <span class="prelude-val">Ok</span>((inner_temp_store, effects, execution_error_opt.err()))
@@ -5057,7 +5069,8 @@
                 epoch_store.protocol_config(),
                 <span class="self">self</span>.metrics.limits_metrics.clone(),
                 <span class="bool-val">false</span>, <span class="comment">// enable_expensive_checks
-            </span>);
+                </span><span class="self">self</span>.certificate_deny_config.certificate_deny_set(),
+            );
         <span class="kw">let </span>tx_digest = <span class="kw-2">*</span>effects.transaction_digest();
 
         <span class="kw">let </span>module_cache =
@@ -5173,7 +5186,8 @@
                 protocol_config,
                 <span class="self">self</span>.metrics.limits_metrics.clone(),
                 <span class="bool-val">false</span>, <span class="comment">// enable_expensive_checks
-            </span>);
+                </span><span class="self">self</span>.certificate_deny_config.certificate_deny_set(),
+            );
 
         <span class="kw">let </span>module_cache =
             TemporaryModuleResolver::new(<span class="kw-2">&amp;</span>inner_temp_store, epoch_store.module_cache().clone());
@@ -5645,6 +5659,7 @@
         db_checkpoint_config: <span class="kw-2">&amp;</span>DBCheckpointConfig,
         expensive_safety_check_config: ExpensiveSafetyCheckConfig,
         transaction_deny_config: TransactionDenyConfig,
+        certificate_deny_config: CertificateDenyConfig,
         indirect_objects_threshold: usize,
     ) -&gt; Arc&lt;<span class="self">Self</span>&gt; {
         <span class="self">Self</span>::check_protocol_version(supported_protocol_versions, epoch_store.protocol_version());
@@ -5687,6 +5702,7 @@
             db_checkpoint_config: db_checkpoint_config.clone(),
             expensive_safety_check_config,
             transaction_deny_config,
+            certificate_deny_config,
         });
 
         <span class="comment">// Start a task to execute ready certificates.

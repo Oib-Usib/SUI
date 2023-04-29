@@ -790,16 +790,62 @@
 <a href="#790" id="790">790</a>
 <a href="#791" id="791">791</a>
 <a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>std::{collections::BTreeSet, sync::Arc};
-
-<span class="kw">use </span><span class="kw">crate</span>::execution_mode::{<span class="self">self</span>, ExecutionMode};
+</span><span class="kw">use </span><span class="kw">crate</span>::execution_mode::{<span class="self">self</span>, ExecutionMode};
 <span class="kw">use </span>move_binary_format::access::ModuleAccess;
 <span class="kw">use </span>move_binary_format::CompiledModule;
 <span class="kw">use </span>move_bytecode_utils::module_cache::GetModule;
 <span class="kw">use </span>move_vm_runtime::move_vm::MoveVM;
+<span class="kw">use </span>once_cell::sync::Lazy;
+<span class="kw">use </span>std::{
+    collections::{BTreeSet, HashSet},
+    sync::Arc,
+};
 <span class="kw">use </span>sui_types::balance::{
     BALANCE_CREATE_REWARDS_FUNCTION_NAME, BALANCE_DESTROY_REBATES_FUNCTION_NAME,
     BALANCE_MODULE_NAME,
@@ -845,6 +891,36 @@
     SUI_FRAMEWORK_OBJECT_ID, SUI_SYSTEM_OBJECT_ID, SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
 };
 
+<span class="doccomment">/// If a transaction digest shows up in this list, when executing such transaction,
+/// we will always return `ExecutionError::CertificateDenied` without executing it (but still do
+/// gas smashing). Because this list is not gated by protocol version, there are a few important
+/// criteria for adding a digest to this list:
+/// 1. The certificate must be causing all validators to either panic or hang forever deterministically.
+/// 2. If we ever ship a fix to make it no longer panic or hang when executing such transaction,
+/// we must make sure the transaction is already in this list. Otherwise nodes running the newer version
+/// without these transactions in the list will generate forked result.
+/// Below is a scenario of when we need to use this list:
+/// 1. We detect that a specific transaction is causing all validators to either panic or hang forever deterministically.
+/// 2. We push a CertificateDenyConfig to deny such transaction to all validators asap.
+/// 3. To make sure that all fullnodes are able to sync to the latest version, we need to add the transaction digest
+/// to this list as well asap, and ship this binary to all fullnodes, so that they can sync past this transaction.
+/// 4. We then can start fixing the issue, and ship the fix to all nodes.
+/// 5. Unfortunately, we can&#39;t remove the transaction digest from this list, because if we do so, any future
+/// node that sync from genesis will fork on this transaction. We may be able to remove it once
+/// we have stable snapshots and the binary has a minimum supported protocol version past the epoch.
+</span><span class="kw">pub fn </span>get_denied_certificates() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>HashSet&lt;TransactionDigest&gt; {
+    <span class="kw">static </span>DENIED_CERTIFICATES: Lazy&lt;HashSet&lt;TransactionDigest&gt;&gt; = Lazy::new(|| HashSet::from([]));
+    Lazy::force(<span class="kw-2">&amp;</span>DENIED_CERTIFICATES)
+}
+
+<span class="kw">fn </span>is_certificate_denied(
+    transaction_digest: <span class="kw-2">&amp;</span>TransactionDigest,
+    certificate_deny_set: <span class="kw-2">&amp;</span>HashSet&lt;TransactionDigest&gt;,
+) -&gt; bool {
+    certificate_deny_set.contains(transaction_digest)
+        || get_denied_certificates().contains(transaction_digest)
+}
+
 <span class="macro">checked_arithmetic! </span>{
 
 <span class="attr">#[instrument(name = <span class="string">&quot;tx_execute_to_effects&quot;</span>, level = <span class="string">&quot;debug&quot;</span>, skip_all)]
@@ -864,7 +940,8 @@
     epoch_data: <span class="kw-2">&amp;</span>EpochData,
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     metrics: Arc&lt;LimitsMetrics&gt;,
-    enable_expensive_checks: bool
+    enable_expensive_checks: bool,
+    certificate_deny_set: <span class="kw-2">&amp;</span>HashSet&lt;TransactionDigest&gt;,
 ) -&gt; (
     InnerTemporaryStore,
     TransactionEffects,
@@ -885,7 +962,8 @@
         epoch_data.epoch_start_timestamp(),
         protocol_config,
         metrics,
-        enable_expensive_checks
+        enable_expensive_checks,
+        certificate_deny_set,
     )
 }
 
@@ -907,7 +985,8 @@
     epoch_timestamp_ms: u64,
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     metrics: Arc&lt;LimitsMetrics&gt;,
-    enable_expensive_checks: bool
+    enable_expensive_checks: bool,
+    certificate_deny_set: <span class="kw-2">&amp;</span>HashSet&lt;TransactionDigest&gt;,
 ) -&gt; (
     InnerTemporaryStore,
     TransactionEffects,
@@ -917,6 +996,7 @@
 
     <span class="kw">let </span>is_epoch_change = <span class="macro">matches!</span>(transaction_kind, TransactionKind::ChangeEpoch(<span class="kw">_</span>));
 
+    <span class="kw">let </span>deny_cert = is_certificate_denied(<span class="kw-2">&amp;</span>transaction_digest, certificate_deny_set);
     <span class="kw">let </span>(gas_cost_summary, execution_result) = execute_transaction::&lt;Mode, <span class="kw">_</span>&gt;(
         <span class="kw-2">&amp;mut </span>temporary_store,
         transaction_kind,
@@ -926,7 +1006,8 @@
         gas_status,
         protocol_config,
         metrics,
-        enable_expensive_checks
+        enable_expensive_checks,
+        deny_cert,
     );
 
     <span class="kw">let </span>status = <span class="kw">if let </span><span class="prelude-val">Err</span>(error) = <span class="kw-2">&amp;</span>execution_result {
@@ -1034,7 +1115,8 @@
     <span class="kw-2">mut </span>gas_status: SuiGasStatus,
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     metrics: Arc&lt;LimitsMetrics&gt;,
-    enable_expensive_checks: bool
+    enable_expensive_checks: bool,
+    deny_cert: bool,
 ) -&gt; (
     GasCostSummary,
     <span class="prelude-ty">Result</span>&lt;Mode::ExecutionResults, ExecutionError&gt;,
@@ -1058,16 +1140,20 @@
     // we must still ensure an effect is committed and all objects versions incremented
     </span><span class="kw">let </span>result = charge_gas_for_object_read(temporary_store, <span class="kw-2">&amp;mut </span>gas_status);
     <span class="kw">let </span><span class="kw-2">mut </span>result = result.and_then(|()| {
-        <span class="kw">let </span><span class="kw-2">mut </span>execution_result = execution_loop::&lt;Mode, <span class="kw">_</span>&gt;(
-            temporary_store,
-            transaction_kind,
-            gas_object_ref.<span class="number">0</span>,
-            tx_ctx,
-            move_vm,
-            <span class="kw-2">&amp;mut </span>gas_status,
-            protocol_config,
-            metrics.clone(),
-        );
+        <span class="kw">let </span><span class="kw-2">mut </span>execution_result = <span class="kw">if </span>deny_cert {
+            <span class="prelude-val">Err</span>(ExecutionError::new(ExecutionErrorKind::CertificateDenied, <span class="prelude-val">None</span>))
+        } <span class="kw">else </span>{
+            execution_loop::&lt;Mode, <span class="kw">_</span>&gt;(
+                temporary_store,
+                transaction_kind,
+                gas_object_ref.<span class="number">0</span>,
+                tx_ctx,
+                move_vm,
+                <span class="kw-2">&amp;mut </span>gas_status,
+                protocol_config,
+                metrics.clone(),
+            )
+        };
 
         <span class="kw">let </span>effects_estimated_size = temporary_store.estimate_effects_size_upperbound();
 

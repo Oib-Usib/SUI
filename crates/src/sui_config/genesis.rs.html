@@ -1970,6 +1970,7 @@
 <a href="#1970" id="1970">1970</a>
 <a href="#1971" id="1971">1971</a>
 <a href="#1972" id="1972">1972</a>
+<a href="#1973" id="1973">1973</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1984,7 +1985,7 @@
 <span class="kw">use </span>serde::{Deserialize, Deserializer, Serialize, Serializer};
 <span class="kw">use </span>serde_with::serde_as;
 <span class="kw">use </span>shared_crypto::intent::{Intent, IntentMessage, IntentScope};
-<span class="kw">use </span>std::collections::BTreeMap;
+<span class="kw">use </span>std::collections::{BTreeMap, HashSet};
 <span class="kw">use </span>std::convert::TryInto;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::{fs, path::Path};
@@ -3365,7 +3366,8 @@
                 protocol_config,
                 metrics,
                 <span class="bool-val">false</span>, <span class="comment">// enable_expensive_checks
-            </span>);
+                </span><span class="kw-2">&amp;</span>HashSet::new(),
+            );
         <span class="macro">assert!</span>(inner_temp_store.objects.is_empty());
         <span class="macro">assert!</span>(inner_temp_store.mutable_inputs.is_empty());
         <span class="macro">assert!</span>(inner_temp_store.deleted.is_empty());
@@ -3454,7 +3456,6 @@
     </span><span class="attr">#[cfg(debug_assertions)]
     </span>{
         <span class="kw">use </span>move_core_types::account_address::AccountAddress;
-        <span class="kw">use </span>std::collections::HashSet;
         <span class="kw">let </span>to_be_published_addresses: HashSet&lt;<span class="kw">_</span>&gt; = modules
             .iter()
             .map(|module| <span class="kw-2">*</span>module.self_id().address())
@@ -3937,7 +3938,8 @@
                 <span class="kw-2">&amp;</span>protocol_config,
                 metrics,
                 <span class="bool-val">false</span>, <span class="comment">// enable_expensive_checks
-            </span>);
+                </span><span class="kw-2">&amp;</span>HashSet::new(),
+            );
 
         <span class="macro">assert_eq!</span>(effects, genesis.effects);
     }

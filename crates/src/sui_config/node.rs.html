@@ -817,10 +817,15 @@
 <a href="#817" id="817">817</a>
 <a href="#818" id="818">818</a>
 <a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span><span class="kw">crate</span>::genesis;
+</span><span class="kw">use </span><span class="kw">crate</span>::certificate_deny_config::CertificateDenyConfig;
+<span class="kw">use </span><span class="kw">crate</span>::genesis;
 <span class="kw">use </span><span class="kw">crate</span>::p2p::P2pConfig;
 <span class="kw">use </span><span class="kw">crate</span>::transaction_deny_config::TransactionDenyConfig;
 <span class="kw">use </span><span class="kw">crate</span>::Config;
@@ -935,6 +940,9 @@
 
     <span class="attr">#[serde(default)]
     </span><span class="kw">pub </span>transaction_deny_config: TransactionDenyConfig,
+
+    <span class="attr">#[serde(default)]
+    </span><span class="kw">pub </span>certificate_deny_config: CertificateDenyConfig,
 }
 
 <span class="kw">fn </span>default_authority_store_pruning_config() -&gt; AuthorityStorePruningConfig {

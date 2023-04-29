@@ -207,6 +207,15 @@
 <a href="#207" id="207">207</a>
 <a href="#208" id="208">208</a>
 <a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -222,6 +231,7 @@
 <span class="kw">use </span>prometheus::Registry;
 <span class="kw">use </span>std::path::PathBuf;
 <span class="kw">use </span>std::sync::Arc;
+<span class="kw">use </span>sui_config::certificate_deny_config::CertificateDenyConfig;
 <span class="kw">use </span>sui_config::genesis::Genesis;
 <span class="kw">use </span>sui_config::node::{
     AuthorityStorePruningConfig, DBCheckpointConfig, ExpensiveSafetyCheckConfig,
@@ -241,6 +251,7 @@
     store_base_path: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
     store: <span class="prelude-ty">Option</span>&lt;Arc&lt;AuthorityStore&gt;&gt;,
     transaction_deny_config: <span class="prelude-ty">Option</span>&lt;TransactionDenyConfig&gt;,
+    certificate_deny_config: <span class="prelude-ty">Option</span>&lt;CertificateDenyConfig&gt;,
     protocol_config: <span class="prelude-ty">Option</span>&lt;ProtocolConfig&gt;,
     reference_gas_price: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     node_keypair: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>AuthorityKeyPair&gt;,
@@ -264,6 +275,11 @@
 
     <span class="kw">pub fn </span>with_transaction_deny_config(<span class="kw-2">mut </span><span class="self">self</span>, config: TransactionDenyConfig) -&gt; <span class="self">Self </span>{
         <span class="macro">assert!</span>(<span class="self">self</span>.transaction_deny_config.replace(config).is_none());
+        <span class="self">self
+    </span>}
+
+    <span class="kw">pub fn </span>with_certificate_deny_config(<span class="kw-2">mut </span><span class="self">self</span>, config: CertificateDenyConfig) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert!</span>(<span class="self">self</span>.certificate_deny_config.replace(config).is_none());
         <span class="self">self
     </span>}
 
@@ -379,6 +395,7 @@
                 .max_move_identifier_len_as_option(),
         )));
         <span class="kw">let </span>transaction_deny_config = <span class="self">self</span>.transaction_deny_config.unwrap_or_default();
+        <span class="kw">let </span>certificate_deny_config = <span class="self">self</span>.certificate_deny_config.unwrap_or_default();
         <span class="kw">let </span>state = AuthorityState::new(
             name,
             secret,
@@ -394,6 +411,7 @@
             <span class="kw-2">&amp;</span>DBCheckpointConfig::default(),
             ExpensiveSafetyCheckConfig::new_enable_all(),
             transaction_deny_config,
+            certificate_deny_config,
             usize::MAX,
         )
         .<span class="kw">await</span>;

@@ -1213,6 +1213,7 @@
 <a href="#1213" id="1213">1213</a>
 <a href="#1214" id="1214">1214</a>
 <a href="#1215" id="1215">1215</a>
+<a href="#1216" id="1216">1216</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1559,6 +1560,7 @@
             <span class="kw-2">&amp;</span>db_checkpoint_config,
             config.expensive_safety_check_config.clone(),
             config.transaction_deny_config.clone(),
+            config.certificate_deny_config.clone(),
             config.indirect_objects_threshold,
         )
         .<span class="kw">await</span>;
