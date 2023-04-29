@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682728886446,
+  "lastUpdate": 1682731834731,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2231,6 +2231,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 346541,
             "range": "± 22176",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8440912aa60c6965ba07266a81ea756a8ad3e635",
+          "message": "Fix race in db checkpoints (#11490)\n\n## Description \r\n\r\nAs title says, we can otherwise run into this race which throws an\r\nerror:\r\n\r\nT0 -> Take perpetual snapshot\r\nT1 -> Insert effects\r\nT2 -> Insert checkpoints\r\nT3 -> Take checkpoints snapshot\r\n\r\nLonger term plan is to prune extra effects and checkpoints which are not\r\na part of the current epoch from the snapshot.\r\n \r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-04-29T01:20:02Z",
+          "tree_id": "ada6cf7bda8e9bf235791c05508d1eecc0fadb1c",
+          "url": "https://github.com/MystenLabs/sui/commit/8440912aa60c6965ba07266a81ea756a8ad3e635"
+        },
+        "date": 1682731830155,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 108284974,
+            "range": "± 13167948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 348016,
+            "range": "± 25794",
             "unit": "ns/iter"
           }
         ]
