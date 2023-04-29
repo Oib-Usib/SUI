@@ -903,6 +903,7 @@
 <a href="#903" id="903">903</a>
 <a href="#904" id="904">904</a>
 <a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>anyhow::bail;
@@ -935,7 +936,6 @@
 };
 <span class="kw">use </span>sui_network::{DEFAULT_CONNECT_TIMEOUT_SEC, DEFAULT_REQUEST_TIMEOUT_SEC};
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
-<span class="kw">use </span>sui_types::messages::Argument;
 <span class="kw">use </span>sui_types::messages::CallArg;
 <span class="kw">use </span>sui_types::messages::ObjectArg;
 <span class="kw">use </span>sui_types::messages::TransactionEvents;
@@ -950,8 +950,8 @@
     },
     message_envelope::Envelope,
     messages::{
-        CertifiedTransaction, CertifiedTransactionEffects, HandleCertificateResponse,
-        QuorumDriverResponse, Transaction, TransactionEffectsAPI, TransactionStatus,
+        CertifiedTransaction, CertifiedTransactionEffects, HandleCertificateResponse, Transaction,
+        TransactionEffectsAPI, TransactionStatus,
     },
     object::Object,
 };
@@ -962,6 +962,7 @@
     sui_system_state::SuiSystemStateTrait,
 };
 <span class="kw">use </span>sui_types::{error::SuiError, gas::GasCostSummary};
+<span class="kw">use </span>sui_types::{messages::Argument, messages::QuorumDriverResponse};
 <span class="kw">use </span>tokio::{
     task::JoinSet,
     time::{sleep, timeout},
@@ -1275,6 +1276,7 @@
                     <span class="kw">let </span>QuorumDriverResponse {
                         effects_cert,
                         events,
+                        ..
                     } = resp;
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(ExecutionEffects::CertifiedTransactionEffects(
                         effects_cert.into(),

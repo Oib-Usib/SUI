@@ -51,6 +51,7 @@
 <a href="#51" id="51">51</a>
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
+<a href="#54" id="54">54</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -61,7 +62,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::committee::StakeUnit;
 <span class="kw">use </span><span class="kw">crate</span>::crypto::ConciseAuthorityPublicKeyBytes;
 <span class="kw">use </span><span class="kw">crate</span>::error::SuiError;
-<span class="kw">use </span><span class="kw">crate</span>::messages::{QuorumDriverResponse, VerifiedTransaction};
+<span class="kw">pub use </span><span class="kw">crate</span>::messages::QuorumDriverResponse;
+<span class="kw">use </span><span class="kw">crate</span>::messages::VerifiedTransaction;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>strum::AsRefStr;
 <span class="kw">use </span>thiserror::Error;

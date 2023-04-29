@@ -586,6 +586,24 @@
 <a href="#586" id="586">586</a>
 <a href="#587" id="587">587</a>
 <a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -943,7 +961,7 @@
         request: tonic::Request&lt;CertifiedTransaction&gt;,
         metrics: Arc&lt;ValidatorServiceMetrics&gt;,
         wait_for_effects: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;HandleCertificateResponse&gt;, tonic::Status&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;HandleCertificateResponseV2&gt;, tonic::Status&gt; {
         <span class="kw">let </span>epoch_store = state.load_epoch_store_one_call_per_task();
 
         <span class="kw">let </span>certificate = request.into_inner();
@@ -973,9 +991,12 @@
                 TransactionEvents::default()
             };
 
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(HandleCertificateResponse {
+            <span class="kw">let </span>fastpath_input_objects = state.load_fastpath_input_objects(<span class="kw-2">&amp;</span>signed_effects)<span class="question-mark">?</span>;
+
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(HandleCertificateResponseV2 {
                 signed_effects: signed_effects.into_inner(),
                 events,
+                fastpath_input_objects,
             }));
         }
 
@@ -1052,14 +1073,16 @@
         </span><span class="kw">let </span>effects = state
             .execute_certificate(<span class="kw-2">&amp;</span>certificate, <span class="kw-2">&amp;</span>epoch_store)
             .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>fastpath_input_objects = state.load_fastpath_input_objects(<span class="kw-2">&amp;</span>effects)<span class="question-mark">?</span>;
         <span class="kw">let </span>events = <span class="kw">if let </span><span class="prelude-val">Some</span>(event_digest) = effects.events_digest() {
             state.get_transaction_events(event_digest)<span class="question-mark">?
         </span>} <span class="kw">else </span>{
             TransactionEvents::default()
         };
-        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(HandleCertificateResponse {
+        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(HandleCertificateResponseV2 {
             signed_effects: effects.into_inner(),
             events,
+            fastpath_input_objects,
         }))
     }
 }
@@ -1104,13 +1127,17 @@
         </span>})
         .<span class="kw">await
         </span>.unwrap()
-        .map(|executed| tonic::Response::new(SubmitCertificateResponse { executed }))
+        .map(|executed| {
+            tonic::Response::new(SubmitCertificateResponse {
+                executed: executed.map(|e| e.into()),
+            })
+        })
     }
 
-    <span class="kw">async fn </span>handle_certificate(
+    <span class="kw">async fn </span>handle_certificate_v2(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         request: tonic::Request&lt;CertifiedTransaction&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;tonic::Response&lt;HandleCertificateResponse&gt;, tonic::Status&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;tonic::Response&lt;HandleCertificateResponseV2&gt;, tonic::Status&gt; {
         <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
         <span class="kw">let </span>consensus_adapter = <span class="self">self</span>.consensus_adapter.clone();
 
@@ -1130,6 +1157,15 @@
                 v.expect(<span class="string">&quot;handle_certificate should not return none with wait_for_effects=true&quot;</span>),
             )
         })
+    }
+
+    <span class="kw">async fn </span>handle_certificate(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        request: tonic::Request&lt;CertifiedTransaction&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;tonic::Response&lt;HandleCertificateResponse&gt;, tonic::Status&gt; {
+        <span class="self">self</span>.handle_certificate_v2(request)
+            .<span class="kw">await
+            </span>.map(|v| tonic::Response::new(v.into_inner().into()))
     }
 
     <span class="kw">async fn </span>object_info(
