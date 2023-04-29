@@ -478,6 +478,24 @@
 <a href="#478" id="478">478</a>
 <a href="#479" id="479">479</a>
 <a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -504,6 +522,7 @@
     DynamicFieldPage, EventFilter, EventPage, ObjectsPage, Page, SuiMoveValue,
     SuiObjectDataOptions, SuiObjectResponse, SuiObjectResponseQuery, SuiParsedMoveObject,
     SuiTransactionBlockResponse, SuiTransactionBlockResponseQuery, TransactionBlocksPage,
+    TransactionFilter,
 };
 <span class="kw">use </span>sui_open_rpc::Module;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SuiAddress, STD_UTF8_MODULE_NAME, STD_UTF8_STRUCT_NAME};
@@ -705,7 +724,24 @@
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">fn </span>subscribe_event(<span class="kw-2">&amp;</span><span class="self">self</span>, sink: SubscriptionSink, filter: EventFilter) -&gt; SubscriptionResult {
-        spawn_subscription(sink, <span class="self">self</span>.state.event_handler.subscribe(filter));
+        spawn_subscription(
+            sink,
+            <span class="self">self</span>.state.subscription_handler.subscribe_events(filter),
+        );
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">fn </span>subscribe_transaction(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        sink: SubscriptionSink,
+        filter: TransactionFilter,
+    ) -&gt; SubscriptionResult {
+        spawn_subscription(
+            sink,
+            <span class="self">self</span>.state
+                .subscription_handler
+                .subscribe_transactions(filter),
+        );
         <span class="prelude-val">Ok</span>(())
     }
 

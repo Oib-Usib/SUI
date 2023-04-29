@@ -3881,6 +3881,7 @@
 <a href="#3881" id="3881">3881</a>
 <a href="#3882" id="3882">3882</a>
 <a href="#3883" id="3883">3883</a>
+<a href="#3884" id="3884">3884</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3907,9 +3908,6 @@
 };
 <span class="kw">use </span>serde::de::DeserializeOwned;
 <span class="kw">use </span>serde::Serialize;
-<span class="kw">use </span>sui_config::transaction_deny_config::TransactionDenyConfig;
-<span class="kw">use </span>sui_types::metrics::LimitsMetrics;
-<span class="kw">use </span>sui_types::{is_system_package, TypeTag};
 <span class="kw">use </span>tap::{TapFallible, TapOptional};
 <span class="kw">use </span>tokio::sync::mpsc::unbounded_channel;
 <span class="kw">use </span>tokio::sync::oneshot;
@@ -3930,10 +3928,12 @@
 <span class="kw">use </span>sui_config::node::{
     AuthorityStorePruningConfig, DBCheckpointConfig, ExpensiveSafetyCheckConfig,
 };
+<span class="kw">use </span>sui_config::transaction_deny_config::TransactionDenyConfig;
 <span class="kw">use </span>sui_framework::{BuiltInFramework, SystemPackage};
 <span class="kw">use </span>sui_json_rpc_types::{
     Checkpoint, DevInspectResults, DryRunTransactionBlockResponse, EventFilter, SuiEvent,
-    SuiMoveValue, SuiObjectDataFilter, SuiTransactionBlockData, SuiTransactionBlockEvents,
+    SuiMoveValue, SuiObjectDataFilter, SuiTransactionBlockData, SuiTransactionBlockEffects,
+    SuiTransactionBlockEvents, TransactionFilter,
 };
 <span class="kw">use </span>sui_macros::{fail_point, fail_point_async};
 <span class="kw">use </span>sui_protocol_config::{ProtocolConfig, SupportedProtocolVersions};
@@ -3955,8 +3955,8 @@
     CheckpointSequenceNumber, CheckpointSummary, CheckpointTimestamp, VerifiedCheckpoint,
 };
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointRequest, CheckpointResponse};
+<span class="kw">use </span>sui_types::metrics::LimitsMetrics;
 <span class="kw">use </span>sui_types::object::{MoveObject, Owner, PastObjectRead, OBJECT_START_VERSION};
-<span class="kw">use </span>sui_types::query::TransactionFilter;
 <span class="kw">use </span>sui_types::storage::{ObjectKey, ObjectStore, WriteKind};
 <span class="kw">use </span>sui_types::sui_system_state::epoch_start_sui_system_state::EpochStartSystemStateTrait;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
@@ -3975,6 +3975,7 @@
     object::{Object, ObjectFormatOptions, ObjectRead},
     SUI_SYSTEM_ADDRESS,
 };
+<span class="kw">use </span>sui_types::{is_system_package, TypeTag};
 <span class="kw">use </span>typed_store::Map;
 
 <span class="kw">use </span><span class="kw">crate</span>::authority::authority_per_epoch_store::{AuthorityPerEpochStore, CertTxGuard};
@@ -3986,7 +3987,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::checkpoints::checkpoint_executor::CheckpointExecutor;
 <span class="kw">use </span><span class="kw">crate</span>::checkpoints::CheckpointStore;
 <span class="kw">use </span><span class="kw">crate</span>::epoch::committee_store::CommitteeStore;
-<span class="kw">use </span><span class="kw">crate</span>::event_handler::EventHandler;
+<span class="kw">use </span><span class="kw">crate</span>::event_handler::SubscriptionHandler;
 <span class="kw">use </span><span class="kw">crate</span>::execution_driver::execution_process;
 <span class="kw">use </span><span class="kw">crate</span>::module_cache_metrics::ResolverMetrics;
 <span class="kw">use </span><span class="kw">crate</span>::stake_aggregator::StakeAggregator;
@@ -4369,7 +4370,7 @@
 
     <span class="kw">pub </span>indexes: <span class="prelude-ty">Option</span>&lt;Arc&lt;IndexStore&gt;&gt;,
 
-    <span class="kw">pub </span>event_handler: Arc&lt;EventHandler&gt;,
+    <span class="kw">pub </span>subscription_handler: Arc&lt;SubscriptionHandler&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) checkpoint_store: Arc&lt;CheckpointStore&gt;,
 
     committee_store: Arc&lt;CommitteeStore&gt;,
@@ -5339,7 +5340,7 @@
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
     ) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;DynamicFieldInfo&gt;&gt; {
         <span class="comment">// Skip if not a move object
-        </span><span class="kw">let </span><span class="prelude-val">Some</span>(move_object) =  o.data.try_as_move().cloned() <span class="kw">else </span>{
+        </span><span class="kw">let </span><span class="prelude-val">Some</span>(move_object) = o.data.try_as_move().cloned() <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
         };
         <span class="comment">// We only index dynamic field objects
@@ -5435,12 +5436,13 @@
                 .<span class="kw">await
                 </span>.tap_ok(|<span class="kw">_</span>| <span class="self">self</span>.metrics.post_processing_total_tx_indexed.inc())
                 .tap_err(|e| <span class="macro">error!</span>(<span class="question-mark">?</span>tx_digest, <span class="string">&quot;Post processing - Couldn&#39;t index tx: {e}&quot;</span>));
-
+            <span class="kw">let </span>effects: SuiTransactionBlockEffects = effects.clone().try_into()<span class="question-mark">?</span>;
             <span class="comment">// Emit events
             </span><span class="kw">if </span>res.is_ok() {
-                <span class="self">self</span>.event_handler
-                    .process_events(
-                        <span class="kw-2">&amp;</span>effects.clone().try_into()<span class="question-mark">?</span>,
+                <span class="self">self</span>.subscription_handler
+                    .process_tx(
+                        certificate.data().transaction_data(),
+                        <span class="kw-2">&amp;</span>effects,
                         <span class="kw-2">&amp;</span>SuiTransactionBlockEvents::try_from(
                             events.clone(),
                             <span class="kw-2">*</span>tx_digest,
@@ -5664,7 +5666,7 @@
             epoch_store: ArcSwap::new(epoch_store.clone()),
             database: store,
             indexes,
-            event_handler: Arc::new(EventHandler::default()),
+            subscription_handler: Arc::new(SubscriptionHandler::default()),
             checkpoint_store,
             committee_store,
             transaction_manager,

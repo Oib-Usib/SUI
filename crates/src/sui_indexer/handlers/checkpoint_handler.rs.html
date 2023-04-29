@@ -1161,6 +1161,8 @@
 <a href="#1161" id="1161">1161</a>
 <a href="#1162" id="1162">1162</a>
 <a href="#1163" id="1163">1163</a>
+<a href="#1164" id="1164">1164</a>
+<a href="#1165" id="1165">1165</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1180,7 +1182,7 @@
 <span class="kw">use </span>tracing::{error, info, warn};
 
 <span class="kw">use </span>mysten_metrics::spawn_monitored_task;
-<span class="kw">use </span>sui_core::event_handler::EventHandler;
+<span class="kw">use </span>sui_core::event_handler::SubscriptionHandler;
 <span class="kw">use </span>sui_json_rpc::api::{GovernanceReadApiClient, ReadApiClient};
 <span class="kw">use </span>sui_json_rpc_types::{
     OwnedObjectRef, SuiGetPastObjectRequest, SuiObjectData, SuiObjectDataOptions, SuiRawData,
@@ -1189,6 +1191,7 @@
 <span class="kw">use </span>sui_sdk::error::Error;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SequenceNumber};
 <span class="kw">use </span>sui_types::committee::EpochId;
+<span class="kw">use </span>sui_types::messages::SenderSignedData;
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointCommitment, CheckpointSequenceNumber};
 <span class="kw">use </span>sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
 <span class="kw">use </span>sui_types::SUI_SYSTEM_ADDRESS;
@@ -1219,7 +1222,7 @@
 </span><span class="kw">pub struct </span>CheckpointHandler&lt;S&gt; {
     state: S,
     http_client: HttpClient,
-    event_handler: Arc&lt;EventHandler&gt;,
+    event_handler: Arc&lt;SubscriptionHandler&gt;,
     metrics: IndexerMetrics,
     config: IndexerConfig,
     checkpoint_sender: Arc&lt;Mutex&lt;Sender&lt;TemporaryCheckpointStore&gt;&gt;&gt;,
@@ -1238,7 +1241,7 @@
     <span class="kw">pub fn </span>new(
         state: S,
         http_client: HttpClient,
-        event_handler: Arc&lt;EventHandler&gt;,
+        event_handler: Arc&lt;SubscriptionHandler&gt;,
         metrics: IndexerMetrics,
         config: <span class="kw-2">&amp;</span>IndexerConfig,
     ) -&gt; <span class="self">Self </span>{
@@ -1560,8 +1563,9 @@
             </span><span class="kw">for </span>checkpoint <span class="kw">in </span><span class="kw-2">&amp;</span>downloaded_checkpoints {
                 <span class="kw">let </span>ws_guard = <span class="self">self</span>.metrics.subscription_process_latency.start_timer();
                 <span class="kw">for </span>tx <span class="kw">in </span><span class="kw-2">&amp;</span>checkpoint.transactions {
+                    <span class="kw">let </span>data: SenderSignedData = bcs::from_bytes(<span class="kw-2">&amp;</span>tx.raw_transaction)<span class="question-mark">?</span>;
                     <span class="self">self</span>.event_handler
-                        .process_events(<span class="kw-2">&amp;</span>tx.effects, <span class="kw-2">&amp;</span>tx.events)
+                        .process_tx(data.transaction_data(), <span class="kw-2">&amp;</span>tx.effects, <span class="kw-2">&amp;</span>tx.events)
                         .<span class="kw">await</span><span class="question-mark">?</span>;
                 }
                 ws_guard.stop_and_record();

@@ -85,6 +85,7 @@
 <a href="#85" id="85">85</a>
 <a href="#86" id="86">86</a>
 <a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -107,14 +108,15 @@
 
 <span class="doccomment">/// The Streamer splits a mpsc channel into multiple mpsc channels using the subscriber&#39;s `Filter&lt;T&gt;` object.
 /// Data will be sent to the subscribers in parallel and the subscription will be dropped if it received a send error.
-</span><span class="kw">pub struct </span>Streamer&lt;T, F: Filter&lt;T&gt;&gt; {
+</span><span class="kw">pub struct </span>Streamer&lt;T, S, F: Filter&lt;T&gt;&gt; {
     streamer_queue: Sender&lt;T&gt;,
-    subscribers: Subscribers&lt;T, F&gt;,
+    subscribers: Subscribers&lt;S, F&gt;,
 }
 
-<span class="kw">impl</span>&lt;T, F&gt; Streamer&lt;T, F&gt;
+<span class="kw">impl</span>&lt;T, S, F&gt; Streamer&lt;T, S, F&gt;
 <span class="kw">where
-    </span>T: Clone + Debug + Send + Sync + <span class="lifetime">&#39;static</span>,
+    </span>S: From&lt;T&gt; + Clone + Debug + Send + Sync + <span class="lifetime">&#39;static</span>,
+    T: Clone + Send + Sync + <span class="lifetime">&#39;static</span>,
     F: Filter&lt;T&gt; + Clone + Send + Sync + <span class="lifetime">&#39;static </span>+ Clone,
 {
     <span class="kw">pub fn </span>spawn(buffer: usize) -&gt; <span class="self">Self </span>{
@@ -133,7 +135,7 @@
         streamer
     }
 
-    <span class="kw">async fn </span>send_to_all_subscribers(subscribers: Subscribers&lt;T, F&gt;, data: T) {
+    <span class="kw">async fn </span>send_to_all_subscribers(subscribers: Subscribers&lt;S, F&gt;, data: T) {
         <span class="kw">for </span>(id, (subscriber, filter)) <span class="kw">in </span>subscribers.read().clone() {
             <span class="kw">if </span>!(filter.matches(<span class="kw-2">&amp;</span>data)) {
                 <span class="kw">continue</span>;
@@ -141,7 +143,7 @@
             <span class="kw">let </span>data = data.clone();
             <span class="kw">let </span>subscribers = subscribers.clone();
             <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-                <span class="kw">match </span>subscriber.send(data).<span class="kw">await </span>{
+                <span class="kw">match </span>subscriber.send(data.into()).<span class="kw">await </span>{
                     <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
                         <span class="macro">debug!</span>(<span class="string">&quot;Sending Move event to subscriber [{id}].&quot;</span>)
                     }
@@ -155,8 +157,8 @@
     }
 
     <span class="doccomment">/// Subscribe to the data stream filtered by the filter object.
-    </span><span class="kw">pub fn </span>subscribe(<span class="kw-2">&amp;</span><span class="self">self</span>, filter: F) -&gt; <span class="kw">impl </span>Stream&lt;Item = T&gt; {
-        <span class="kw">let </span>(tx, rx) = mpsc::channel::&lt;T&gt;(EVENT_DISPATCH_BUFFER_SIZE);
+    </span><span class="kw">pub fn </span>subscribe(<span class="kw-2">&amp;</span><span class="self">self</span>, filter: F) -&gt; <span class="kw">impl </span>Stream&lt;Item = S&gt; {
+        <span class="kw">let </span>(tx, rx) = mpsc::channel::&lt;S&gt;(EVENT_DISPATCH_BUFFER_SIZE);
         <span class="self">self</span>.subscribers
             .write()
             .insert(ObjectID::random().to_string(), (tx, filter));

@@ -112,15 +112,23 @@
 <a href="#112" id="112">112</a>
 <a href="#113" id="113">113</a>
 <a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>jsonrpsee::core::RpcResult;
 <span class="kw">use </span>jsonrpsee_proc_macros::rpc;
 
+<span class="kw">use </span>sui_json_rpc_types::SuiTransactionBlockEffects;
 <span class="kw">use </span>sui_json_rpc_types::{
     DynamicFieldPage, EventFilter, EventPage, ObjectsPage, Page, SuiEvent, SuiObjectResponse,
     SuiObjectResponseQuery, SuiTransactionBlockResponseQuery, TransactionBlocksPage,
+    TransactionFilter,
 };
 <span class="kw">use </span>sui_open_rpc_macros::open_rpc;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SuiAddress};
@@ -184,6 +192,10 @@
         <span class="doccomment">/// the filter criteria of the event stream, see the [Sui docs](https://docs.sui.io/build/pubsub#event-filters) for detailed examples.
         </span>filter: EventFilter,
     );
+
+    <span class="doccomment">/// Subscribe to a stream of Sui transaction effects
+    </span><span class="attr">#[subscription(name = <span class="string">&quot;subscribeTransaction&quot;</span>, item = SuiTransactionBlockEffects)]
+    </span><span class="kw">fn </span>subscribe_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, filter: TransactionFilter);
 
     <span class="doccomment">/// Return the list of dynamic field objects owned by an object.
     </span><span class="attr">#[method(name = <span class="string">&quot;getDynamicFields&quot;</span>)]

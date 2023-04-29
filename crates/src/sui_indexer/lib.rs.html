@@ -525,7 +525,7 @@
 <span class="kw">use </span>handlers::checkpoint_handler::CheckpointHandler;
 <span class="kw">use </span>mysten_metrics::{spawn_monitored_task, RegistryService};
 <span class="kw">use </span>store::IndexerStore;
-<span class="kw">use </span>sui_core::event_handler::EventHandler;
+<span class="kw">use </span>sui_core::event_handler::SubscriptionHandler;
 <span class="kw">use </span>sui_json_rpc::{JsonRpcServerBuilder, ServerHandle, CLIENT_SDK_TYPE_HEADER};
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
 
@@ -678,7 +678,7 @@
             <span class="string">&quot;Sui indexer of version {:?} started...&quot;</span>,
             <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>)
         );
-        <span class="kw">let </span>event_handler = Arc::new(EventHandler::default());
+        <span class="kw">let </span>event_handler = Arc::new(SubscriptionHandler::default());
 
         <span class="kw">if </span>config.rpc_server_worker &amp;&amp; config.fullnode_sync_worker {
             <span class="macro">info!</span>(<span class="string">&quot;Starting indexer with both fullnode sync and RPC server&quot;</span>);
@@ -889,7 +889,7 @@
 <span class="kw">pub async fn </span>build_json_rpc_server&lt;S: IndexerStore + Sync + Send + <span class="lifetime">&#39;static </span>+ Clone&gt;(
     prometheus_registry: <span class="kw-2">&amp;</span>Registry,
     state: S,
-    event_handler: Arc&lt;EventHandler&gt;,
+    event_handler: Arc&lt;SubscriptionHandler&gt;,
     config: <span class="kw-2">&amp;</span>IndexerConfig,
     custom_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;ServerHandle, IndexerError&gt; {

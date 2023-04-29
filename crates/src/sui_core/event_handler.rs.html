@@ -55,17 +55,43 @@
 <a href="#55" id="55">55</a>
 <a href="#56" id="56">56</a>
 <a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>tokio_stream::Stream;
 <span class="kw">use </span>tracing::{error, instrument, trace};
 
-<span class="kw">use </span>sui_json_rpc_types::{EventFilter, SuiTransactionBlockEffects, SuiTransactionBlockEvents};
+<span class="kw">use </span><span class="kw">crate</span>::streamer::Streamer;
+<span class="kw">use </span>sui_json_rpc_types::{
+    EffectsWithInput, EventFilter, SuiTransactionBlockEffects, SuiTransactionBlockEvents,
+    TransactionFilter,
+};
 <span class="kw">use </span>sui_json_rpc_types::{SuiEvent, SuiTransactionBlockEffectsAPI};
 <span class="kw">use </span>sui_types::error::SuiResult;
-
-<span class="kw">use </span><span class="kw">crate</span>::streamer::Streamer;
+<span class="kw">use </span>sui_types::messages::TransactionData;
 
 <span class="attr">#[cfg(test)]
 #[path = <span class="string">&quot;unit_tests/event_handler_tests.rs&quot;</span>]
@@ -73,23 +99,25 @@
 
 <span class="kw">pub const </span>EVENT_DISPATCH_BUFFER_SIZE: usize = <span class="number">1000</span>;
 
-<span class="kw">pub struct </span>EventHandler {
-    event_streamer: Streamer&lt;SuiEvent, EventFilter&gt;,
+<span class="kw">pub struct </span>SubscriptionHandler {
+    event_streamer: Streamer&lt;SuiEvent, SuiEvent, EventFilter&gt;,
+    transaction_streamer: Streamer&lt;EffectsWithInput, SuiTransactionBlockEffects, TransactionFilter&gt;,
 }
 
-<span class="kw">impl </span>Default <span class="kw">for </span>EventHandler {
+<span class="kw">impl </span>Default <span class="kw">for </span>SubscriptionHandler {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>streamer = Streamer::spawn(EVENT_DISPATCH_BUFFER_SIZE);
         <span class="self">Self </span>{
-            event_streamer: streamer,
+            event_streamer: Streamer::spawn(EVENT_DISPATCH_BUFFER_SIZE),
+            transaction_streamer: Streamer::spawn(EVENT_DISPATCH_BUFFER_SIZE),
         }
     }
 }
 
-<span class="kw">impl </span>EventHandler {
-    <span class="attr">#[instrument(level = <span class="string">&quot;debug&quot;</span>, skip_all, fields(tx_digest=<span class="question-mark">?</span>effects.transaction_digest()), err)]
-    </span><span class="kw">pub async fn </span>process_events(
+<span class="kw">impl </span>SubscriptionHandler {
+    <span class="attr">#[instrument(level = <span class="string">&quot;debug&quot;</span>, skip_all, fields(tx_digest = <span class="question-mark">? </span>effects.transaction_digest()), err)]
+    </span><span class="kw">pub async fn </span>process_tx(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
+        input: <span class="kw-2">&amp;</span>TransactionData,
         effects: <span class="kw-2">&amp;</span>SuiTransactionBlockEffects,
         events: <span class="kw-2">&amp;</span>SuiTransactionBlockEvents,
     ) -&gt; SuiResult {
@@ -98,6 +126,17 @@
             tx_digest =<span class="question-mark">? </span>effects.transaction_digest(),
             <span class="string">&quot;Finished writing events to event store&quot;
         </span>);
+
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self
+            </span>.transaction_streamer
+            .send(EffectsWithInput {
+                input: input.clone(),
+                effects: effects.clone(),
+            })
+            .<span class="kw">await
+        </span>{
+            <span class="macro">error!</span>(error =<span class="question-mark">? </span>e, <span class="string">&quot;Failed to send transaction to dispatch&quot;</span>);
+        }
 
         <span class="comment">// serially dispatch event processing to honor events&#39; orders.
         </span><span class="kw">for </span>event <span class="kw">in </span>events.data.clone() {
@@ -108,8 +147,15 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub fn </span>subscribe(<span class="kw-2">&amp;</span><span class="self">self</span>, filter: EventFilter) -&gt; <span class="kw">impl </span>Stream&lt;Item = SuiEvent&gt; {
+    <span class="kw">pub fn </span>subscribe_events(<span class="kw-2">&amp;</span><span class="self">self</span>, filter: EventFilter) -&gt; <span class="kw">impl </span>Stream&lt;Item = SuiEvent&gt; {
         <span class="self">self</span>.event_streamer.subscribe(filter)
+    }
+
+    <span class="kw">pub fn </span>subscribe_transactions(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        filter: TransactionFilter,
+    ) -&gt; <span class="kw">impl </span>Stream&lt;Item = SuiTransactionBlockEffects&gt; {
+        <span class="self">self</span>.transaction_streamer.subscribe(filter)
     }
 }
 </code></pre></div></section></main></body></html>
