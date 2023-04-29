@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682780771701,
+  "lastUpdate": 1682794262166,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2339,6 +2339,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308757,
             "range": "± 75583",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d05b26c372f90b42776554e3046e3f7431cc3582",
+          "message": "Add certificate deny config (#11462)\n\nAdd ability for validators to immediately execute a cert to execution\r\nerror without actually executing it, based on either a config or a\r\nhardcoded list.",
+          "timestamp": "2023-04-29T18:37:58Z",
+          "tree_id": "0f93e0cf5c9c137c100d053156b1263aebbb5bdb",
+          "url": "https://github.com/MystenLabs/sui/commit/d05b26c372f90b42776554e3046e3f7431cc3582"
+        },
+        "date": 1682794257600,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 157839269,
+            "range": "± 5029797",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 325724,
+            "range": "± 64050",
             "unit": "ns/iter"
           }
         ]
