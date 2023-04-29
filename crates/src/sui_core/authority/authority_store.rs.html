@@ -1834,6 +1834,50 @@
 <a href="#1834" id="1834">1834</a>
 <a href="#1835" id="1835">1835</a>
 <a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
+<a href="#1838" id="1838">1838</a>
+<a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
+<a href="#1847" id="1847">1847</a>
+<a href="#1848" id="1848">1848</a>
+<a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
+<a href="#1851" id="1851">1851</a>
+<a href="#1852" id="1852">1852</a>
+<a href="#1853" id="1853">1853</a>
+<a href="#1854" id="1854">1854</a>
+<a href="#1855" id="1855">1855</a>
+<a href="#1856" id="1856">1856</a>
+<a href="#1857" id="1857">1857</a>
+<a href="#1858" id="1858">1858</a>
+<a href="#1859" id="1859">1859</a>
+<a href="#1860" id="1860">1860</a>
+<a href="#1861" id="1861">1861</a>
+<a href="#1862" id="1862">1862</a>
+<a href="#1863" id="1863">1863</a>
+<a href="#1864" id="1864">1864</a>
+<a href="#1865" id="1865">1865</a>
+<a href="#1866" id="1866">1866</a>
+<a href="#1867" id="1867">1867</a>
+<a href="#1868" id="1868">1868</a>
+<a href="#1869" id="1869">1869</a>
+<a href="#1870" id="1870">1870</a>
+<a href="#1871" id="1871">1871</a>
+<a href="#1872" id="1872">1872</a>
+<a href="#1873" id="1873">1873</a>
+<a href="#1874" id="1874">1874</a>
+<a href="#1875" id="1875">1875</a>
+<a href="#1876" id="1876">1876</a>
+<a href="#1877" id="1877">1877</a>
+<a href="#1878" id="1878">1878</a>
+<a href="#1879" id="1879">1879</a>
+<a href="#1880" id="1880">1880</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2534,17 +2578,17 @@
 
     </span><span class="doccomment">/// Insert a genesis object.
     /// TODO: delete this method entirely (still used by authority_tests.rs)
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>insert_genesis_object(<span class="kw-2">&amp;</span><span class="self">self</span>, object: Object) -&gt; SuiResult {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>insert_genesis_object(<span class="kw-2">&amp;</span><span class="self">self</span>, object: Object) -&gt; SuiResult {
         <span class="comment">// We only side load objects with a genesis parent transaction.
         </span><span class="macro">debug_assert!</span>(object.previous_transaction == TransactionDigest::genesis());
         <span class="kw">let </span>object_ref = object.compute_object_reference();
-        <span class="self">self</span>.insert_object_direct(object_ref, <span class="kw-2">&amp;</span>object).<span class="kw">await
-    </span>}
+        <span class="self">self</span>.insert_object_direct(object_ref, <span class="kw-2">&amp;</span>object)
+    }
 
     <span class="doccomment">/// Insert an object directly into the store, and also update relevant tables
     /// NOTE: does not handle transaction lock.
     /// This is used to insert genesis objects
-    </span><span class="kw">async fn </span>insert_object_direct(<span class="kw-2">&amp;</span><span class="self">self</span>, object_ref: ObjectRef, object: <span class="kw-2">&amp;</span>Object) -&gt; SuiResult {
+    </span><span class="kw">fn </span>insert_object_direct(<span class="kw-2">&amp;</span><span class="self">self</span>, object_ref: ObjectRef, object: <span class="kw-2">&amp;</span>Object) -&gt; SuiResult {
         <span class="kw">let </span><span class="kw-2">mut </span>write_batch = <span class="self">self</span>.perpetual_tables.objects.batch();
 
         <span class="comment">// Insert object
@@ -2571,6 +2615,40 @@
 
         write_batch.write()<span class="question-mark">?</span>;
 
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Insert objects directly into the object table, but do not touch other tables.
+    /// This is used in fullnode to insert objects from validators certificate handling response
+    /// in fast path execution.
+    /// This is best-efforts. If the object needs to be stored as an indirect object then we
+    /// do not insert this object at all.
+    ///
+    /// Caveat: if an Object is regularly inserted as an indirect object in the stiore, but the threshold
+    /// changes in the fullnode which causes it to be considered as non-indirect, and only inserted
+    /// to the object store, this would cause the reference counting to be incorrect.
+    ///
+    /// TODO: handle this in a more resilient way.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fullnode_fast_path_insert_objects_to_object_store_maybe(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        objects: <span class="kw-2">&amp;</span>Vec&lt;Object&gt;,
+    ) -&gt; SuiResult {
+        <span class="kw">let </span><span class="kw-2">mut </span>write_batch = <span class="self">self</span>.perpetual_tables.objects.batch();
+
+        <span class="kw">for </span>obj <span class="kw">in </span>objects {
+            <span class="kw">let </span>StoreObjectPair(store_object, indirect_object) =
+                get_store_object_pair(obj.clone(), <span class="self">self</span>.indirect_objects_threshold);
+            <span class="comment">// Do not insert to store if the object needs to stored as indirect object too.
+            </span><span class="kw">if </span>indirect_object.is_some() {
+                <span class="kw">continue</span>;
+            }
+            write_batch.insert_batch(
+                <span class="kw-2">&amp;</span><span class="self">self</span>.perpetual_tables.objects,
+                std::iter::once((ObjectKey(obj.id(), obj.version()), store_object)),
+            )<span class="question-mark">?</span>;
+        }
+
+        write_batch.write()<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -3659,6 +3737,16 @@
 <span class="doccomment">/// A potential input to a transaction.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 </span><span class="kw">pub struct </span>InputKey(<span class="kw">pub </span>ObjectID, <span class="kw">pub </span><span class="prelude-ty">Option</span>&lt;SequenceNumber&gt;);
+
+<span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>Object&gt; <span class="kw">for </span>InputKey {
+    <span class="kw">fn </span>from(obj: <span class="kw-2">&amp;</span>Object) -&gt; <span class="self">Self </span>{
+        <span class="kw">if </span>obj.is_package() {
+            InputKey(obj.id(), <span class="prelude-val">None</span>)
+        } <span class="kw">else </span>{
+            InputKey(obj.id(), <span class="prelude-val">Some</span>(obj.version()))
+        }
+    }
+}
 
 <span class="doccomment">/// How a transaction should lock a given input object.
 </span><span class="attr">#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd)]

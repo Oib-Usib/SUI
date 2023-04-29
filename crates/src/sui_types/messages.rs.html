@@ -3116,6 +3116,33 @@
 <a href="#3116" id="3116">3116</a>
 <a href="#3117" id="3117">3117</a>
 <a href="#3118" id="3118">3118</a>
+<a href="#3119" id="3119">3119</a>
+<a href="#3120" id="3120">3120</a>
+<a href="#3121" id="3121">3121</a>
+<a href="#3122" id="3122">3122</a>
+<a href="#3123" id="3123">3123</a>
+<a href="#3124" id="3124">3124</a>
+<a href="#3125" id="3125">3125</a>
+<a href="#3126" id="3126">3126</a>
+<a href="#3127" id="3127">3127</a>
+<a href="#3128" id="3128">3128</a>
+<a href="#3129" id="3129">3129</a>
+<a href="#3130" id="3130">3130</a>
+<a href="#3131" id="3131">3131</a>
+<a href="#3132" id="3132">3132</a>
+<a href="#3133" id="3133">3133</a>
+<a href="#3134" id="3134">3134</a>
+<a href="#3135" id="3135">3135</a>
+<a href="#3136" id="3136">3136</a>
+<a href="#3137" id="3137">3137</a>
+<a href="#3138" id="3138">3138</a>
+<a href="#3139" id="3139">3139</a>
+<a href="#3140" id="3140">3140</a>
+<a href="#3141" id="3141">3141</a>
+<a href="#3142" id="3142">3142</a>
+<a href="#3143" id="3143">3143</a>
+<a href="#3144" id="3144">3144</a>
+<a href="#3145" id="3145">3145</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -5285,6 +5312,32 @@
     <span class="kw">pub </span>events: TransactionEvents,
 }
 
+<span class="kw">impl </span>From&lt;HandleCertificateResponseV2&gt; <span class="kw">for </span>HandleCertificateResponse {
+    <span class="kw">fn </span>from(v2: HandleCertificateResponseV2) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            signed_effects: v2.signed_effects,
+            events: v2.events,
+        }
+    }
+}
+
+<span class="attr">#[derive(Clone, Debug, Serialize, Deserialize)]
+</span><span class="kw">pub struct </span>HandleCertificateResponseV2 {
+    <span class="kw">pub </span>signed_effects: SignedTransactionEffects,
+    <span class="kw">pub </span>events: TransactionEvents,
+    <span class="doccomment">/// The validator may return some of the input objects that were used by this transaction, in
+    /// order to facilitate lower latency local execution for the full node client that requested
+    /// the transaction execution.
+    ///
+    /// Typically this list contains only the version (if any) of the Clock object that was used by the
+    /// transaction - without returning it here, the client has no choice but to wait for
+    /// checkpoint sync to provide the input clock.
+    ///
+    /// The validator may return other objects via thist list in the future. However, this
+    /// is only intended for small objects.
+    </span><span class="kw">pub </span>fastpath_input_objects: Vec&lt;Object&gt;,
+}
+
 <span class="attr">#[derive(Clone, Debug, Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>SubmitCertificateResponse {
     <span class="doccomment">/// If transaction is already executed, return same result as handle_certificate
@@ -6227,6 +6280,7 @@
 </span><span class="kw">pub struct </span>QuorumDriverResponse {
     <span class="kw">pub </span>effects_cert: VerifiedCertifiedTransactionEffects,
     <span class="kw">pub </span>events: TransactionEvents,
+    <span class="kw">pub </span>objects: Vec&lt;Object&gt;,
 }
 
 <span class="attr">#[derive(Serialize, Deserialize, Clone, Debug)]
