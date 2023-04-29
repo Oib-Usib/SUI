@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682731834731,
+  "lastUpdate": 1682744308918,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2267,6 +2267,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 348016,
             "range": "± 25794",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "09b2081498366df936abae26eea4b2d5cafb2788",
+          "message": "Split out effects from messages.rs (#11479)\n\nmessages.rs is growing too much. Split out TransactionEffects and\r\nrelated structures.\r\nThere are a few more that I would want to split out latter.\r\n\r\n---------\r\n\r\nCo-authored-by: ade <ade@mystenlabs.com>",
+          "timestamp": "2023-04-29T04:50:26Z",
+          "tree_id": "2670c1bc6e3402c8e1900dd90518d69e92772317",
+          "url": "https://github.com/MystenLabs/sui/commit/09b2081498366df936abae26eea4b2d5cafb2788"
+        },
+        "date": 1682744304520,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105453049,
+            "range": "± 4582723",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308793,
+            "range": "± 7911",
             "unit": "ns/iter"
           }
         ]
