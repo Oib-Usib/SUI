@@ -1746,35 +1746,6 @@
 <a href="#1746" id="1746">1746</a>
 <a href="#1747" id="1747">1747</a>
 <a href="#1748" id="1748">1748</a>
-<a href="#1749" id="1749">1749</a>
-<a href="#1750" id="1750">1750</a>
-<a href="#1751" id="1751">1751</a>
-<a href="#1752" id="1752">1752</a>
-<a href="#1753" id="1753">1753</a>
-<a href="#1754" id="1754">1754</a>
-<a href="#1755" id="1755">1755</a>
-<a href="#1756" id="1756">1756</a>
-<a href="#1757" id="1757">1757</a>
-<a href="#1758" id="1758">1758</a>
-<a href="#1759" id="1759">1759</a>
-<a href="#1760" id="1760">1760</a>
-<a href="#1761" id="1761">1761</a>
-<a href="#1762" id="1762">1762</a>
-<a href="#1763" id="1763">1763</a>
-<a href="#1764" id="1764">1764</a>
-<a href="#1765" id="1765">1765</a>
-<a href="#1766" id="1766">1766</a>
-<a href="#1767" id="1767">1767</a>
-<a href="#1768" id="1768">1768</a>
-<a href="#1769" id="1769">1769</a>
-<a href="#1770" id="1770">1770</a>
-<a href="#1771" id="1771">1771</a>
-<a href="#1772" id="1772">1772</a>
-<a href="#1773" id="1773">1773</a>
-<a href="#1774" id="1774">1774</a>
-<a href="#1775" id="1775">1775</a>
-<a href="#1776" id="1776">1776</a>
-<a href="#1777" id="1777">1777</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1816,7 +1787,7 @@
     register_int_counter_vec_with_registry, register_int_counter_with_registry,
     register_int_gauge_with_registry, IntCounter, IntCounterVec, IntGauge, Registry,
 };
-<span class="kw">use </span>std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+<span class="kw">use </span>std::collections::{BTreeMap, BTreeSet, HashMap};
 <span class="kw">use </span>std::string::ToString;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::time::Duration;
@@ -2099,7 +2070,6 @@
     non_retryable_stake: StakeUnit,
     non_retryable_errors: Vec&lt;(SuiError, Vec&lt;AuthorityName&gt;, StakeUnit)&gt;,
     retryable_errors: Vec&lt;(SuiError, Vec&lt;AuthorityName&gt;, StakeUnit)&gt;,
-    object_map: HashMap&lt;TransactionEffectsDigest, HashSet&lt;Object&gt;&gt;,
     <span class="comment">// As long as none of the exit criteria are met we consider the state retryable
     // 1) &gt;= 2f+1 signatures
     // 2) &gt;= f+1 non-retryable errors
@@ -3195,16 +3165,11 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         certificate: CertifiedTransaction,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;
-        (
-            VerifiedCertifiedTransactionEffects,
-            TransactionEvents,
-            Vec&lt;Object&gt;,
-        ),
+        (VerifiedCertifiedTransactionEffects, TransactionEvents),
         AggregatorProcessCertificateError,
     &gt; {
         <span class="kw">let </span>state = ProcessCertificateState {
             effects_map: MultiStakeAggregator::new(Arc::new(<span class="self">self</span>.committee.clone())),
-            object_map: HashMap::new(),
             non_retryable_stake: <span class="number">0</span>,
             non_retryable_errors: <span class="macro">vec!</span>[],
             retryable_errors: <span class="macro">vec!</span>[],
@@ -3240,7 +3205,7 @@
                 Box::pin(<span class="kw">async move </span>{
                     <span class="kw">let </span>_guard = GaugeGuard::acquire(<span class="kw-2">&amp;</span><span class="self">self</span>.metrics.inflight_certificate_requests);
                     client
-                        .handle_certificate_v2(cert_ref.clone())
+                        .handle_certificate(cert_ref.clone())
                         .instrument(
                             <span class="macro">tracing::trace_span!</span>(<span class="string">&quot;handle_certificate&quot;</span>, authority =<span class="question-mark">? </span>name.concise()),
                         )
@@ -3339,30 +3304,22 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
         state: <span class="kw-2">&amp;mut </span>ProcessCertificateState,
-        response: SuiResult&lt;HandleCertificateResponseV2&gt;,
+        response: SuiResult&lt;HandleCertificateResponse&gt;,
         name: AuthorityName,
-    ) -&gt; SuiResult&lt;
-        <span class="prelude-ty">Option</span>&lt;(
-            VerifiedCertifiedTransactionEffects,
-            TransactionEvents,
-            Vec&lt;Object&gt;,
-        )&gt;,
-    &gt; {
+    ) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;(VerifiedCertifiedTransactionEffects, TransactionEvents)&gt;&gt; {
         <span class="kw">match </span>response {
-            <span class="prelude-val">Ok</span>(HandleCertificateResponseV2 {
+            <span class="prelude-val">Ok</span>(HandleCertificateResponse {
                 signed_effects,
                 events,
-                fastpath_input_objects,
             }) =&gt; {
                 <span class="macro">debug!</span>(
                     <span class="question-mark">?</span>tx_digest,
                     name = <span class="question-mark">?</span>name.concise(),
                     <span class="string">&quot;Validator handled certificate successfully&quot;</span>,
                 );
-                <span class="kw">let </span>effects_digest = <span class="kw-2">*</span>signed_effects.digest();
                 <span class="comment">// Note: here we aggregate votes by the hash of the effects structure
-                </span><span class="kw">let </span>result = <span class="kw">match </span>state.effects_map.insert(
-                    (signed_effects.epoch(), effects_digest),
+                </span><span class="kw">match </span>state.effects_map.insert(
+                    (signed_effects.epoch(), <span class="kw-2">*</span>signed_effects.digest()),
                     signed_effects.clone(),
                 ) {
                     InsertResult::NotEnoughVotes {
@@ -3389,25 +3346,10 @@
                         );
                         ct.verify(<span class="kw-2">&amp;</span><span class="self">self</span>.committee).map(|ct| {
                             <span class="macro">debug!</span>(<span class="question-mark">?</span>tx_digest, <span class="string">&quot;Got quorum for validators handle_certificate.&quot;</span>);
-                            <span class="kw">let </span>fastpath_input_objects =
-                                state.object_map.remove(<span class="kw-2">&amp;</span>effects_digest).unwrap_or_default();
-                            <span class="prelude-val">Some</span>((ct, events, fastpath_input_objects.into_iter().collect()))
+                            <span class="prelude-val">Some</span>((ct, events))
                         })
                     }
-                };
-                <span class="kw">if </span>result.is_ok() {
-                    <span class="comment">// We verified the objects&#39; relevance and content&#39;s integrity in `safe_client.rs`
-                    // based on the effects. Only responses with legit objects will reach here.
-                    // Therefore, as long as we have quorum on effects, we have quorum on objects.
-                    // One thing to note is objects may be missing in some responses e.g. validators are on
-                    // different code versions, but this is fine as long as their content is correct.
-                    </span>state
-                        .object_map
-                        .entry(effects_digest)
-                        .or_default()
-                        .extend(fastpath_input_objects.into_iter());
                 }
-                result
             }
             <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
         }

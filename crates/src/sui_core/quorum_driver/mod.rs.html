@@ -840,6 +840,12 @@
 <a href="#840" id="840">840</a>
 <a href="#841" id="841">841</a>
 <a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -856,7 +862,7 @@
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, ObjectRef, TransactionDigest};
 <span class="kw">use </span>sui_types::committee::{Committee, EpochId, StakeUnit};
 <span class="kw">use </span>sui_types::quorum_driver_types::{
-    QuorumDriverEffectsQueueResult, QuorumDriverError, QuorumDriverResponse, QuorumDriverResult,
+    QuorumDriverEffectsQueueResult, QuorumDriverError, QuorumDriverResult,
 };
 <span class="kw">use </span>tap::TapFallible;
 <span class="kw">use </span>tokio::time::{sleep_until, Instant};
@@ -875,7 +881,9 @@
 <span class="kw">use </span>mysten_metrics::{spawn_monitored_task, GaugeGuard};
 <span class="kw">use </span>std::fmt::Write;
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
-<span class="kw">use </span>sui_types::messages::{PlainTransactionInfoResponse, VerifiedCertificate, VerifiedTransaction};
+<span class="kw">use </span>sui_types::messages::{
+    PlainTransactionInfoResponse, QuorumDriverResponse, VerifiedCertificate, VerifiedTransaction,
+};
 
 <span class="kw">use </span><span class="self">self</span>::reconfig_observer::ReconfigObserver;
 
@@ -1245,7 +1253,7 @@
         <span class="kw">let </span>auth_agg = <span class="self">self</span>.validators.load();
         <span class="kw">let </span>_cert_guard = GaugeGuard::acquire(<span class="kw-2">&amp;</span>auth_agg.metrics.inflight_certificates);
         <span class="kw">let </span>tx_digest = <span class="kw-2">*</span>certificate.digest();
-        <span class="kw">let </span>(effects, events, objects) = auth_agg
+        <span class="kw">let </span>(effects, events) = auth_agg
             .process_certificate(certificate.clone().into_inner())
             .instrument(<span class="macro">tracing::debug_span!</span>(<span class="string">&quot;aggregator_process_cert&quot;</span>, <span class="question-mark">?</span>tx_digest))
             .<span class="kw">await
@@ -1273,7 +1281,6 @@
         <span class="kw">let </span>response = QuorumDriverResponse {
             effects_cert: effects,
             events,
-            objects,
         };
 
         <span class="prelude-val">Ok</span>(response)
@@ -1535,7 +1542,6 @@
                     <span class="kw">let </span>response = QuorumDriverResponse {
                         effects_cert,
                         events,
-                        objects: <span class="macro">vec!</span>[],
                     };
                     quorum_driver.notify(<span class="kw-2">&amp;</span>transaction, <span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(response), old_retry_times + <span class="number">1</span>);
                     <span class="kw">return</span>;
@@ -1556,9 +1562,15 @@
         };
 
         <span class="kw">let </span>response = <span class="kw">match </span>quorum_driver.process_certificate(tx_cert.clone()).<span class="kw">await </span>{
-            <span class="prelude-val">Ok</span>(response) =&gt; {
+            <span class="prelude-val">Ok</span>(QuorumDriverResponse {
+                effects_cert,
+                events,
+            }) =&gt; {
                 <span class="macro">debug!</span>(<span class="question-mark">?</span>tx_digest, <span class="string">&quot;Certificate processing succeeded&quot;</span>);
-                response
+                QuorumDriverResponse {
+                    effects_cert,
+                    events,
+                }
             }
             <span class="comment">// Note: non retryable failure when processing a cert
             // should be very rare.

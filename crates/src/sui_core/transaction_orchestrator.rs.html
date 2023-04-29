@@ -581,22 +581,6 @@
 <a href="#581" id="581">581</a>
 <a href="#582" id="582">582</a>
 <a href="#583" id="583">583</a>
-<a href="#584" id="584">584</a>
-<a href="#585" id="585">585</a>
-<a href="#586" id="586">586</a>
-<a href="#587" id="587">587</a>
-<a href="#588" id="588">588</a>
-<a href="#589" id="589">589</a>
-<a href="#590" id="590">590</a>
-<a href="#591" id="591">591</a>
-<a href="#592" id="592">592</a>
-<a href="#593" id="593">593</a>
-<a href="#594" id="594">594</a>
-<a href="#595" id="595">595</a>
-<a href="#596" id="596">596</a>
-<a href="#597" id="597">597</a>
-<a href="#598" id="598">598</a>
-<a href="#599" id="599">599</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -627,12 +611,11 @@ finalized transactions locally, when possible.
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 <span class="kw">use </span>sui_types::messages::{
     ExecuteTransactionRequest, ExecuteTransactionRequestType, ExecuteTransactionResponse,
-    FinalizedEffects, TransactionEffectsAPI, VerifiedCertifiedTransactionEffects,
-    VerifiedExecutableTransaction,
+    FinalizedEffects, QuorumDriverResponse, TransactionEffectsAPI,
+    VerifiedCertifiedTransactionEffects, VerifiedExecutableTransaction,
 };
-<span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>sui_types::quorum_driver_types::{
-    QuorumDriverEffectsQueueResult, QuorumDriverError, QuorumDriverResponse, QuorumDriverResult,
+    QuorumDriverEffectsQueueResult, QuorumDriverError, QuorumDriverResult,
 };
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>tokio::sync::broadcast::error::RecvError;
@@ -804,11 +787,7 @@ finalized transactions locally, when possible.
             <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
             <span class="prelude-val">Ok</span>(response) =&gt; {
                 good_response_metrics.inc();
-                <span class="kw">let </span>QuorumDriverResponse {
-                    effects_cert,
-                    objects,
-                    ..
-                } = response;
+                <span class="kw">let </span>QuorumDriverResponse { effects_cert, .. } = response;
                 <span class="kw">if </span>!wait_for_local_execution {
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(ExecuteTransactionResponse::EffectsCert(Box::new((
                         FinalizedEffects::new_from_effects_cert(effects_cert.into()),
@@ -825,7 +804,6 @@ finalized transactions locally, when possible.
                     <span class="kw-2">&amp;</span><span class="self">self</span>.validator_state,
                     <span class="kw-2">&amp;</span>executable_tx,
                     <span class="kw-2">&amp;</span>effects_cert,
-                    <span class="kw-2">&amp;</span>objects,
                     <span class="kw-2">&amp;</span><span class="self">self</span>.metrics,
                 )
                 .<span class="kw">await
@@ -870,7 +848,6 @@ finalized transactions locally, when possible.
         validator_state: <span class="kw-2">&amp;</span>Arc&lt;AuthorityState&gt;,
         transaction: <span class="kw-2">&amp;</span>VerifiedExecutableTransaction,
         effects_cert: <span class="kw-2">&amp;</span>VerifiedCertifiedTransactionEffects,
-        objects: <span class="kw-2">&amp;</span>Vec&lt;Object&gt;,
         metrics: <span class="kw-2">&amp;</span>TransactionOrchestratorMetrics,
     ) -&gt; SuiResult {
         <span class="kw">let </span>epoch_store = validator_state.load_epoch_store_one_call_per_task();
@@ -903,7 +880,6 @@ finalized transactions locally, when possible.
             validator_state.fullnode_execute_certificate_with_effects(
                 transaction,
                 effects_cert,
-                objects,
                 <span class="kw-2">&amp;</span>epoch_store,
             ),
         )
@@ -944,14 +920,7 @@ finalized transactions locally, when possible.
     ) {
         <span class="kw">loop </span>{
             <span class="kw">match </span>effects_receiver.recv().<span class="kw">await </span>{
-                <span class="prelude-val">Ok</span>(<span class="prelude-val">Ok</span>((
-                    transaction,
-                    QuorumDriverResponse {
-                        effects_cert,
-                        objects,
-                        ..
-                    },
-                ))) =&gt; {
+                <span class="prelude-val">Ok</span>(<span class="prelude-val">Ok</span>((transaction, QuorumDriverResponse { effects_cert, .. }))) =&gt; {
                     <span class="kw">let </span>executable_tx = VerifiedExecutableTransaction::new_from_quorum_execution(
                         transaction,
                         effects_cert.executed_epoch(),
@@ -967,7 +936,6 @@ finalized transactions locally, when possible.
                         <span class="kw-2">&amp;</span>validator_state,
                         <span class="kw-2">&amp;</span>executable_tx,
                         <span class="kw-2">&amp;</span>effects_cert,
-                        <span class="kw-2">&amp;</span>objects,
                         <span class="kw-2">&amp;</span>metrics,
                     )
                     .<span class="kw">await</span>;
