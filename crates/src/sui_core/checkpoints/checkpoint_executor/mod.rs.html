@@ -990,6 +990,11 @@
 <a href="#990" id="990">990</a>
 <a href="#991" id="991">991</a>
 <a href="#992" id="992">992</a>
+<a href="#993" id="993">993</a>
+<a href="#994" id="994">994</a>
+<a href="#995" id="995">995</a>
+<a href="#996" id="996">996</a>
+<a href="#997" id="997">997</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1414,17 +1419,22 @@
                 effects_digests
                     .get(tx.digest())
                     .expect(<span class="string">&quot;Transaction digest not found in effects_digests&quot;</span>)
-            });
+            })
+            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
 
         <span class="kw">let </span>digest_to_effects: HashMap&lt;TransactionDigest, TransactionEffects&gt; = <span class="self">self
             </span>.authority_store
             .perpetual_tables
             .effects
-            .multi_get(shared_effects_digests)<span class="question-mark">?
+            .multi_get(shared_effects_digests.clone())<span class="question-mark">?
             </span>.into_iter()
-            .map(|fx| {
+            .zip(shared_effects_digests)
+            .map(|(fx, fx_digest)| {
                 <span class="kw">if </span>fx.is_none() {
-                    <span class="macro">panic!</span>(<span class="string">&quot;Transaction effects do not exist in effects table&quot;</span>);
+                    <span class="macro">panic!</span>(
+                        <span class="string">&quot;Transaction effects for effects digest {:?} do not exist in effects table&quot;</span>,
+                        fx_digest
+                    );
                 }
                 <span class="kw">let </span>fx = fx.unwrap();
                 (<span class="kw-2">*</span>fx.transaction_digest(), fx)

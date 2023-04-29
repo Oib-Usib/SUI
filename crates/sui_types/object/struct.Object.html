@@ -35,7 +35,7 @@ a known system package.</p>
     new_package_id: <a class="struct" href="../base_types/struct.ObjectID.html" title="struct sui_types::base_types::ObjectID">ObjectID</a>,
     modules: &amp;[CompiledModule],
     previous_transaction: <a class="struct" href="../digests/struct.TransactionDigest.html" title="struct sui_types::digests::TransactionDigest">TransactionDigest</a>,
-    protocol_config: &amp;ProtocolConfig,
+    protocol_config: &amp;<a class="struct" href="../../sui_protocol_config/struct.ProtocolConfig.html" title="struct sui_protocol_config::ProtocolConfig">ProtocolConfig</a>,
     dependencies: impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/collect/trait.IntoIterator.html" title="trait core::iter::traits::collect::IntoIterator">IntoIterator</a>&lt;Item = &amp;'p <a class="struct" href="../move_package/struct.MovePackage.html" title="struct sui_types::move_package::MovePackage">MovePackage</a>&gt;
 ) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../error/struct.ExecutionError.html" title="struct sui_types::error::ExecutionError">ExecutionError</a>&gt;</h4></section><section id="method.new_package_for_testing" class="method"><a class="srclink rightside" href="../../src/sui_types/object.rs.html#647-659">source</a><h4 class="code-header">pub fn <a href="#method.new_package_for_testing" class="fn">new_package_for_testing</a>(
     modules: &amp;[CompiledModule],
