@@ -698,6 +698,14 @@
 <a href="#698" id="698">698</a>
 <a href="#699" id="699">699</a>
 <a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -716,6 +724,7 @@
     messages::{TransactionDataAPI, VerifiedCertificate, VerifiedExecutableTransaction},
 };
 <span class="kw">use </span>sui_types::{base_types::TransactionDigest, error::SuiResult};
+<span class="kw">use </span>tokio::sync::mpsc::UnboundedSender;
 <span class="kw">use </span>tracing::{error, trace, warn};
 
 <span class="kw">use </span><span class="kw">crate</span>::authority::{
@@ -723,7 +732,6 @@
     authority_store::{InputKey, LockMode},
 };
 <span class="kw">use </span><span class="kw">crate</span>::authority::{AuthorityMetrics, AuthorityStore};
-<span class="kw">use </span><span class="kw">crate</span>::execution_driver::ExecutionDispatcher;
 
 <span class="attr">#[cfg(test)]
 #[path = <span class="string">&quot;unit_tests/transaction_manager_tests.rs&quot;</span>]
@@ -741,7 +749,10 @@
 /// storage, committed objects and certificates are notified back to TransactionManager.
 </span><span class="kw">pub struct </span>TransactionManager {
     authority_store: Arc&lt;AuthorityStore&gt;,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) execution_dispatcher: Arc&lt;ExecutionDispatcher&gt;,
+    tx_ready_certificates: UnboundedSender&lt;(
+        VerifiedExecutableTransaction,
+        <span class="prelude-ty">Option</span>&lt;TransactionEffectsDigest&gt;,
+    )&gt;,
     metrics: Arc&lt;AuthorityMetrics&gt;,
     inner: RwLock&lt;Inner&gt;,
 }
@@ -907,14 +918,17 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(
         authority_store: Arc&lt;AuthorityStore&gt;,
         epoch_store: <span class="kw-2">&amp;</span>AuthorityPerEpochStore,
-        execution_dispatcher: Arc&lt;ExecutionDispatcher&gt;,
+        tx_ready_certificates: UnboundedSender&lt;(
+            VerifiedExecutableTransaction,
+            <span class="prelude-ty">Option</span>&lt;TransactionEffectsDigest&gt;,
+        )&gt;,
         metrics: Arc&lt;AuthorityMetrics&gt;,
     ) -&gt; TransactionManager {
         <span class="kw">let </span>transaction_manager = TransactionManager {
             authority_store,
             metrics,
             inner: RwLock::new(Inner::new(epoch_store.epoch())),
-            execution_dispatcher,
+            tx_ready_certificates,
         };
         transaction_manager
             .enqueue(epoch_store.all_pending_execution().unwrap(), epoch_store)
@@ -1308,9 +1322,11 @@
             .executing_certificates
             .insert(<span class="kw-2">*</span>cert.digest(), pending_certificate.acquired_locks)
             .is_none());
-        <span class="self">self</span>.execution_dispatcher
-            .dispatch_certificate(cert, expected_effects_digest);
+        <span class="kw">let _ </span>= <span class="self">self
+            </span>.tx_ready_certificates
+            .send((cert, expected_effects_digest));
         <span class="self">self</span>.metrics.transaction_manager_num_ready.inc();
+        <span class="self">self</span>.metrics.execution_driver_dispatch_queue.inc();
     }
 
     <span class="doccomment">/// Gets the missing input object keys for the given transaction.
