@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682832723452,
+  "lastUpdate": 1682833585190,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2519,6 +2519,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 315413,
             "range": "± 13120",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2596ff65c97d611ff2d4c87f6688291744b3305e",
+          "message": "Fix checkpoint builder tx sequence wait logging (#11514)\n\nLogging and scope around the actual wait",
+          "timestamp": "2023-04-30T05:38:19Z",
+          "tree_id": "37fd734a4742635fc10f018b5b4af0aaba7c85de",
+          "url": "https://github.com/MystenLabs/sui/commit/2596ff65c97d611ff2d4c87f6688291744b3305e"
+        },
+        "date": 1682833579720,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105920489,
+            "range": "± 10523779",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 332219,
+            "range": "± 32971",
             "unit": "ns/iter"
           }
         ]
