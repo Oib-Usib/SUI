@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682833585190,
+  "lastUpdate": 1682881653046,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2555,6 +2555,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 332219,
             "range": "± 32971",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "250221a6defc2fee77dc745b2f7b32a39693208d",
+          "message": "Enable expensive checks by default in default network config (#11326)\n\nToday expensive checks are already enabled by default in tests. But not\r\nif say, we are running a release version of sui swarm locally.\r\nThis change enables it by default whenever we use network config builder\r\n(which is either tests or local tools)",
+          "timestamp": "2023-04-30T11:54:44-07:00",
+          "tree_id": "6c86af6f1003ceb7ee0ce99585e1de5a4ef9aa40",
+          "url": "https://github.com/MystenLabs/sui/commit/250221a6defc2fee77dc745b2f7b32a39693208d"
+        },
+        "date": 1682881647280,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146888850,
+            "range": "± 6246845",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312564,
+            "range": "± 17664",
             "unit": "ns/iter"
           }
         ]
