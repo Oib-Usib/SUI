@@ -1214,6 +1214,9 @@
 <a href="#1214" id="1214">1214</a>
 <a href="#1215" id="1215">1215</a>
 <a href="#1216" id="1216">1216</a>
+<a href="#1217" id="1217">1217</a>
+<a href="#1218" id="1218">1218</a>
+<a href="#1219" id="1219">1219</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1256,6 +1259,7 @@
 <span class="kw">use </span>narwhal_network::metrics::MetricsMakeCallbackHandler;
 <span class="kw">use </span>narwhal_network::metrics::{NetworkConnectionMetrics, NetworkMetrics};
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
+<span class="kw">use </span>sui_config::node_config_metrics::NodeConfigMetrics;
 <span class="kw">use </span>sui_config::{ConsensusConfig, NodeConfig};
 <span class="kw">use </span>sui_core::authority::authority_per_epoch_store::AuthorityPerEpochStore;
 <span class="kw">use </span>sui_core::authority::epoch_start_configuration::EpochStartConfigTrait;
@@ -1393,6 +1397,8 @@
         node_once_cell: Arc&lt;AsyncOnceCell&lt;Arc&lt;SuiNode&gt;&gt;&gt;,
         custom_rpc_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        NodeConfigMetrics::new(<span class="kw-2">&amp;</span>registry_service.default_registry()).record_metrics(config);
+
         <span class="kw">let </span><span class="kw-2">mut </span>config = config.clone();
         <span class="kw">if </span>config.supported_protocol_versions.is_none() {
             <span class="macro">info!</span>(

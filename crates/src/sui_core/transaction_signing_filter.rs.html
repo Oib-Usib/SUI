@@ -241,7 +241,7 @@
 }
 
 <span class="kw">fn </span>check_signers(filter_config: <span class="kw-2">&amp;</span>TransactionDenyConfig, tx_data: <span class="kw-2">&amp;</span>TransactionData) -&gt; SuiResult {
-    <span class="kw">let </span>deny_map = filter_config.get_address_deny_map();
+    <span class="kw">let </span>deny_map = filter_config.get_address_deny_set();
     <span class="kw">if </span>deny_map.is_empty() {
         <span class="kw">return </span><span class="prelude-val">Ok</span>(());
     }
@@ -261,7 +261,7 @@
     filter_config: <span class="kw-2">&amp;</span>TransactionDenyConfig,
     input_objects: <span class="kw-2">&amp;</span>[InputObjectKind],
 ) -&gt; SuiResult {
-    <span class="kw">let </span>deny_map = filter_config.get_object_deny_map();
+    <span class="kw">let </span>deny_map = filter_config.get_object_deny_set();
     <span class="kw">let </span>shared_object_disabled = filter_config.shared_object_disabled();
     <span class="kw">if </span>deny_map.is_empty() &amp;&amp; !shared_object_disabled {
         <span class="comment">// No need to iterate through the input objects if no relevant policy is set.
@@ -286,7 +286,7 @@
     tx_data: <span class="kw-2">&amp;</span>TransactionData,
     package_store: <span class="kw-2">&amp;</span><span class="kw">impl </span>BackingPackageStore,
 ) -&gt; SuiResult {
-    <span class="kw">let </span>deny_map = filter_config.get_package_deny_map();
+    <span class="kw">let </span>deny_map = filter_config.get_package_deny_set();
     <span class="kw">if </span>deny_map.is_empty() {
         <span class="kw">return </span><span class="prelude-val">Ok</span>(());
     }

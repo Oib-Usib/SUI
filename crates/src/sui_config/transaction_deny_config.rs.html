@@ -197,30 +197,30 @@
 
     <span class="doccomment">/// In-memory maps for faster lookup of various lists.
     </span><span class="attr">#[serde(skip)]
-    </span>object_deny_map: OnceCell&lt;HashSet&lt;ObjectID&gt;&gt;,
+    </span>object_deny_set: OnceCell&lt;HashSet&lt;ObjectID&gt;&gt;,
 
     <span class="attr">#[serde(skip)]
-    </span>package_deny_map: OnceCell&lt;HashSet&lt;ObjectID&gt;&gt;,
+    </span>package_deny_set: OnceCell&lt;HashSet&lt;ObjectID&gt;&gt;,
 
     <span class="attr">#[serde(skip)]
-    </span>sender_deny_map: OnceCell&lt;HashSet&lt;SuiAddress&gt;&gt;,
+    </span>address_deny_set: OnceCell&lt;HashSet&lt;SuiAddress&gt;&gt;,
     <span class="comment">// TODO: We could consider add a deny list for types that we want to disable public transfer.
     // TODO: We could also consider disable more types of commands, such as transfer, split and etc.
 </span>}
 
 <span class="kw">impl </span>TransactionDenyConfig {
-    <span class="kw">pub fn </span>get_object_deny_map(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;ObjectID&gt; {
-        <span class="self">self</span>.object_deny_map
+    <span class="kw">pub fn </span>get_object_deny_set(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;ObjectID&gt; {
+        <span class="self">self</span>.object_deny_set
             .get_or_init(|| <span class="self">self</span>.object_deny_list.iter().cloned().collect())
     }
 
-    <span class="kw">pub fn </span>get_package_deny_map(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;ObjectID&gt; {
-        <span class="self">self</span>.package_deny_map
+    <span class="kw">pub fn </span>get_package_deny_set(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;ObjectID&gt; {
+        <span class="self">self</span>.package_deny_set
             .get_or_init(|| <span class="self">self</span>.package_deny_list.iter().cloned().collect())
     }
 
-    <span class="kw">pub fn </span>get_address_deny_map(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;SuiAddress&gt; {
-        <span class="self">self</span>.sender_deny_map
+    <span class="kw">pub fn </span>get_address_deny_set(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;SuiAddress&gt; {
+        <span class="self">self</span>.address_deny_set
             .get_or_init(|| <span class="self">self</span>.address_deny_list.iter().cloned().collect())
     }
 
