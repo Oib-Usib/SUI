@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682815346201,
+  "lastUpdate": 1682820019562,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2447,6 +2447,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 260269,
             "range": "± 29352",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ad12b7436507ddf4e607a165494a31b6b2ef63c",
+          "message": "debug log for notify_read_effects (#11512)",
+          "timestamp": "2023-04-30T01:50:25Z",
+          "tree_id": "54f42bdc4e926ffe6963471353e1ae7d76224b2d",
+          "url": "https://github.com/MystenLabs/sui/commit/7ad12b7436507ddf4e607a165494a31b6b2ef63c"
+        },
+        "date": 1682820014757,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144534202,
+            "range": "± 5157786",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 313014,
+            "range": "± 15436",
             "unit": "ns/iter"
           }
         ]
