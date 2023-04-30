@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682820019562,
+  "lastUpdate": 1682832723452,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2483,6 +2483,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 313014,
             "range": "± 15436",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4300278a2e1dadd846b4c393a670591048dc351b",
+          "message": "[CI] reserve additional disk as swap space (#11516)\n\n## Description \r\n\r\nIncrease swap space to accommodate high memory usage during linking.\r\nOther strategies are removing debug info from build artifacts, or\r\nreducing build and test parallelism which are less ideal.\r\n\r\nIt is mentioned that github large runners have\r\n[2040GB](https://docs.github.com/en/actions/using-github-hosted-runners/using-larger-runners)\r\nof disk space but reserving 512GB of swap failed.\r\n\r\n## Test Plan \r\n\r\nBuild passing at\r\nhttps://github.com/MystenLabs/sui/actions/runs/4842516246/jobs/8629516910#step:7:1719\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-04-29T22:21:19-07:00",
+          "tree_id": "17808014a49ef872fe96e50ae7fc07de03fd6f2c",
+          "url": "https://github.com/MystenLabs/sui/commit/4300278a2e1dadd846b4c393a670591048dc351b"
+        },
+        "date": 1682832718248,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141333621,
+            "range": "± 5156004",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315413,
+            "range": "± 13120",
             "unit": "ns/iter"
           }
         ]
