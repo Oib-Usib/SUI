@@ -237,7 +237,7 @@ fn owner_index_table_default_config() -> DBOptions {
         options: default_db_options()
             .optimize_for_write_throughput()
             .optimize_for_read(
-                read_size_from_env(ENV_VAR_COIN_INDEX_BLOCK_CACHE_SIZE_MB).unwrap_or(5 * 1024),
+                read_size_from_env(ENV_VAR_COIN_INDEX_BLOCK_CACHE_SIZE_MB).unwrap_or(10 * 1024),
             )
             .options,
         rw_options: ReadWriteOptions {
