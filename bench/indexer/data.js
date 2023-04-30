@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682794981168,
+  "lastUpdate": 1682815346201,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2411,6 +2411,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 306951,
             "range": "± 22804",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3191244b2b4c3e2440e706d19b1fe79e95aaa0cf",
+          "message": "Add node config metrics (#11495)\n\nReport a few metrics based on the NodeConfig, just to give more insights\r\ninto what goes into the node config.",
+          "timestamp": "2023-04-29T17:31:07-07:00",
+          "tree_id": "f56514f29663017c8e0d3b6bf941d8302b6f110e",
+          "url": "https://github.com/MystenLabs/sui/commit/3191244b2b4c3e2440e706d19b1fe79e95aaa0cf"
+        },
+        "date": 1682815341458,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106143464,
+            "range": "± 5038588",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 260269,
+            "range": "± 29352",
             "unit": "ns/iter"
           }
         ]
