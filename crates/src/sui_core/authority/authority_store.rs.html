@@ -1879,6 +1879,10 @@
 <a href="#1879" id="1879">1879</a>
 <a href="#1880" id="1880">1880</a>
 <a href="#1881" id="1881">1881</a>
+<a href="#1882" id="1882">1882</a>
+<a href="#1883" id="1883">1883</a>
+<a href="#1884" id="1884">1884</a>
+<a href="#1885" id="1885">1885</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2031,6 +2035,7 @@
     ) -&gt; SuiResult&lt;Arc&lt;<span class="self">Self</span>&gt;&gt; {
         <span class="kw">let </span>perpetual_tables = Arc::new(AuthorityPerpetualTables::open(path, db_options.clone()));
         <span class="kw">let </span>epoch_start_configuration = <span class="kw">if </span>perpetual_tables.database_is_empty()<span class="question-mark">? </span>{
+            <span class="macro">info!</span>(<span class="string">&quot;Creating new epoch start config from genesis&quot;</span>);
             <span class="kw">let </span>epoch_start_configuration = EpochStartConfiguration::new(
                 genesis.sui_system_object().into_epoch_start_state(),
                 <span class="kw-2">*</span>genesis.checkpoint().digest(),
@@ -2040,15 +2045,18 @@
                 .<span class="kw">await</span><span class="question-mark">?</span>;
             epoch_start_configuration
         } <span class="kw">else </span>{
+            <span class="macro">info!</span>(<span class="string">&quot;Loading epoch start config from DB&quot;</span>);
             perpetual_tables
                 .epoch_start_configuration
                 .get(<span class="kw-2">&amp;</span>())<span class="question-mark">?
                 </span>.expect(<span class="string">&quot;Epoch start configuration must be set in non-empty DB&quot;</span>)
         };
         <span class="kw">let </span>cur_epoch = perpetual_tables.get_recovery_epoch_at_restart()<span class="question-mark">?</span>;
+        <span class="macro">info!</span>(<span class="string">&quot;Epoch start config: {:?}&quot;</span>, epoch_start_configuration);
+        <span class="macro">info!</span>(<span class="string">&quot;Cur epoch: {:?}&quot;</span>, cur_epoch);
         <span class="kw">let </span>committee = committee_store
             .get_committee(<span class="kw-2">&amp;</span>cur_epoch)<span class="question-mark">?
-            </span>.expect(<span class="string">&quot;Committee of the current epoch must exist&quot;</span>);
+            </span>.unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Committee of the current epoch ({}) must exist&quot;</span>, cur_epoch));
         <span class="kw">let </span>this = <span class="self">Self</span>::open_inner(
             genesis,
             perpetual_tables,
