@@ -905,7 +905,7 @@
     }
 }
 
-<span class="kw">pub struct </span>QuorumDriver&lt;A&gt; {
+<span class="kw">pub struct </span>QuorumDriver&lt;A: Clone&gt; {
     validators: ArcSwap&lt;AuthorityAggregator&lt;A&gt;&gt;,
     task_sender: Sender&lt;QuorumDriverTask&gt;,
     effects_subscribe_sender: tokio::sync::broadcast::Sender&lt;QuorumDriverEffectsQueueResult&gt;,
@@ -914,7 +914,7 @@
     max_retry_times: u8,
 }
 
-<span class="kw">impl</span>&lt;A&gt; QuorumDriver&lt;A&gt; {
+<span class="kw">impl</span>&lt;A: Clone&gt; QuorumDriver&lt;A&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(
         validators: ArcSwap&lt;AuthorityAggregator&lt;A&gt;&gt;,
         task_sender: Sender&lt;QuorumDriverTask&gt;,
@@ -937,7 +937,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.validators
     }
 
-    <span class="kw">pub fn </span>clone_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Committee {
+    <span class="kw">pub fn </span>clone_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;Committee&gt; {
         <span class="self">self</span>.validators.load().committee.clone()
     }
 
@@ -1368,7 +1368,7 @@
     }
 }
 
-<span class="kw">pub struct </span>QuorumDriverHandler&lt;A&gt; {
+<span class="kw">pub struct </span>QuorumDriverHandler&lt;A: Clone&gt; {
     quorum_driver: Arc&lt;QuorumDriver&lt;A&gt;&gt;,
     effects_subscriber: tokio::sync::broadcast::Receiver&lt;QuorumDriverEffectsQueueResult&gt;,
     quorum_driver_metrics: Arc&lt;QuorumDriverMetrics&gt;,
@@ -1625,7 +1625,7 @@
     }
 }
 
-<span class="kw">pub struct </span>QuorumDriverHandlerBuilder&lt;A&gt; {
+<span class="kw">pub struct </span>QuorumDriverHandlerBuilder&lt;A: Clone&gt; {
     validators: Arc&lt;AuthorityAggregator&lt;A&gt;&gt;,
     metrics: Arc&lt;QuorumDriverMetrics&gt;,
     notifier: <span class="prelude-ty">Option</span>&lt;Arc&lt;NotifyRead&lt;TransactionDigest, QuorumDriverResult&gt;&gt;&gt;,

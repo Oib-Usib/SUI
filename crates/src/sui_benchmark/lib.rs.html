@@ -1130,7 +1130,7 @@
     /// signature. It should only be used for benchmarks.
     </span><span class="kw">async fn </span>execute_bench_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, tx: Transaction) -&gt; anyhow::Result&lt;ExecutionEffects&gt;;
 
-    <span class="kw">fn </span>clone_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Committee;
+    <span class="kw">fn </span>clone_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;Committee&gt;;
 
     <span class="kw">fn </span>get_current_epoch(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EpochId;
 
@@ -1493,7 +1493,7 @@
         <span class="prelude-val">Ok</span>(effects)
     }
 
-    <span class="kw">fn </span>clone_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Committee {
+    <span class="kw">fn </span>clone_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;Committee&gt; {
         <span class="self">self</span>.qd.clone_committee()
     }
 
@@ -1525,7 +1525,7 @@
 
 <span class="kw">pub struct </span>FullNodeProxy {
     sui_client: SuiClient,
-    committee: Committee,
+    committee: Arc&lt;Committee&gt;,
 }
 
 <span class="kw">impl </span>FullNodeProxy {
@@ -1546,7 +1546,7 @@
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             sui_client,
-            committee,
+            committee: Arc::new(committee),
         })
     }
 }
@@ -1659,7 +1659,7 @@
         <span class="self">self</span>.execute_transaction_block(tx).<span class="kw">await
     </span>}
 
-    <span class="kw">fn </span>clone_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Committee {
+    <span class="kw">fn </span>clone_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;Committee&gt; {
         <span class="self">self</span>.committee.clone()
     }
 

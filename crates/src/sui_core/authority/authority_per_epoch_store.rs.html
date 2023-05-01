@@ -2041,8 +2041,6 @@
 <a href="#2041" id="2041">2041</a>
 <a href="#2042" id="2042">2042</a>
 <a href="#2043" id="2043">2043</a>
-<a href="#2044" id="2044">2044</a>
-<a href="#2045" id="2045">2045</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2310,8 +2308,6 @@
     /// Non-empty list of transactions here might result in empty list when we are forming checkpoint.
     /// Because we don&#39;t want to create checkpoints with empty content(see CheckpointBuilder::write_checkpoint),
     /// the sequence number of checkpoint does not match height here.
-    ///
-    /// The boolean value indicates whether this is the last checkpoint of the epoch.
     </span><span class="attr">#[default_options_override_fn = <span class="string">&quot;pending_checkpoints_table_default_config&quot;</span>]
     </span>pending_checkpoints: DBMap&lt;CheckpointCommitHeight, PendingCheckpoint&gt;,
 

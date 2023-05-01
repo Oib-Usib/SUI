@@ -577,6 +577,9 @@
 <a href="#577" id="577">577</a>
 <a href="#578" id="578">578</a>
 <a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -730,14 +733,17 @@
 <span class="doccomment">/// See `SafeClientMetrics::new` for description of each metrics.
 /// The metrics are per validator client.
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>SafeClient&lt;C&gt; {
+</span><span class="kw">pub struct </span>SafeClient&lt;C&gt;
+<span class="kw">where
+    </span>C: Clone,
+{
     authority_client: C,
     committee_store: Arc&lt;CommitteeStore&gt;,
     address: AuthorityPublicKeyBytes,
     metrics: SafeClientMetrics,
 }
 
-<span class="kw">impl</span>&lt;C&gt; SafeClient&lt;C&gt; {
+<span class="kw">impl</span>&lt;C: Clone&gt; SafeClient&lt;C&gt; {
     <span class="kw">pub fn </span>new(
         authority_client: C,
         committee_store: Arc&lt;CommitteeStore&gt;,
@@ -753,7 +759,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;C&gt; SafeClient&lt;C&gt; {
+<span class="kw">impl</span>&lt;C: Clone&gt; SafeClient&lt;C&gt; {
     <span class="kw">pub fn </span>authority_client(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>C {
         <span class="kw-2">&amp;</span><span class="self">self</span>.authority_client
     }

@@ -649,7 +649,7 @@ finalized transactions locally, when possible.
 
 <span class="kw">const </span>WAIT_FOR_FINALITY_TIMEOUT: Duration = Duration::from_secs(<span class="number">30</span>);
 
-<span class="kw">pub struct </span>TransactiondOrchestrator&lt;A&gt; {
+<span class="kw">pub struct </span>TransactiondOrchestrator&lt;A: Clone&gt; {
     quorum_driver_handler: Arc&lt;QuorumDriverHandler&lt;A&gt;&gt;,
     validator_state: Arc&lt;AuthorityState&gt;,
     _local_executor_handle: JoinHandle&lt;()&gt;,

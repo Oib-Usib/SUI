@@ -124,7 +124,7 @@
     <span class="kw">pub </span>fullnode_client: SuiClient,
     committee_store: Arc&lt;CommitteeStore&gt;,
     safe_client_metrics_base: SafeClientMetricsBase,
-    auth_agg_metrics: AuthAggMetrics,
+    auth_agg_metrics: Arc&lt;AuthAggMetrics&gt;,
 }
 
 <span class="kw">impl </span>FullNodeReconfigObserver {
@@ -132,7 +132,7 @@
         fullnode_rpc_url: <span class="kw-2">&amp;</span>str,
         committee_store: Arc&lt;CommitteeStore&gt;,
         safe_client_metrics_base: SafeClientMetricsBase,
-        auth_agg_metrics: AuthAggMetrics,
+        auth_agg_metrics: Arc&lt;AuthAggMetrics&gt;,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             fullnode_client: SuiClientBuilder::default()
