@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682975081397,
+  "lastUpdate": 1682976756321,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2987,6 +2987,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 254217,
             "range": "± 21194",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "44773a5ac5b7f5f19a276b218e04792f9332bef0",
+          "message": "[ConsensusAdapter] monitor observed latency and submission interval separately (#11584)\n\n## Description \r\n\r\nIt seems currently observed latency is < 5s most of the time, so their\r\nactual values are not exposed via metrics. Re-using the\r\n`sequencing_estimated_latency` metric to expose the observed latency, so\r\nwe can tune the threshold for resubmission better.\r\n\r\n## Test Plan \r\n\r\nCI.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-01T14:24:01-07:00",
+          "tree_id": "86263c94198d5a2832bc67274cc08d381b4e34b7",
+          "url": "https://github.com/MystenLabs/sui/commit/44773a5ac5b7f5f19a276b218e04792f9332bef0"
+        },
+        "date": 1682976746761,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 102508953,
+            "range": "± 6279413",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 305898,
+            "range": "± 41457",
             "unit": "ns/iter"
           }
         ]
