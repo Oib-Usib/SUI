@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682918983851,
+  "lastUpdate": 1682931703960,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2699,6 +2699,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 350087,
             "range": "± 19712",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "387e72c805c1d8dbd0e337de6fefc881a2b16869",
+          "message": "best efforts post quorum cert broadcasting (#11548)\n\n## Description \r\n\r\nWe use best efforts to send tx certs to validators post quorum, with the\r\nhope that this could reduce the chance of slow validators miss their\r\nslot to submit to consensus.\r\n\r\nmeat is https://github.com/MystenLabs/sui/pull/11548/files#r1181387700\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-01T08:50:59Z",
+          "tree_id": "09b6c9621471b184344b21e20c9a60b3d193a4b6",
+          "url": "https://github.com/MystenLabs/sui/commit/387e72c805c1d8dbd0e337de6fefc881a2b16869"
+        },
+        "date": 1682931698699,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 152260231,
+            "range": "± 5735247",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308215,
+            "range": "± 87778",
             "unit": "ns/iter"
           }
         ]
