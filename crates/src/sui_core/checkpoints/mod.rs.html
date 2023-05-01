@@ -1658,13 +1658,13 @@
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">mod </span>casual_order;
+</span><span class="kw">mod </span>causal_order;
 <span class="kw">pub mod </span>checkpoint_executor;
 <span class="kw">mod </span>checkpoint_output;
 <span class="kw">mod </span>metrics;
 
 <span class="kw">use </span><span class="kw">crate</span>::authority::{AuthorityState, EffectsNotifyRead};
-<span class="kw">use </span><span class="kw">crate</span>::checkpoints::casual_order::CasualOrder;
+<span class="kw">use </span><span class="kw">crate</span>::checkpoints::causal_order::CausalOrder;
 <span class="kw">use </span><span class="kw">crate</span>::checkpoints::checkpoint_output::{CertifiedCheckpointOutput, CheckpointOutput};
 <span class="kw">pub use </span><span class="kw">crate</span>::checkpoints::checkpoint_output::{
     LogCheckpointOutput, SendCheckpointToStateSync, SubmitCheckpointToConsensus,
@@ -2247,8 +2247,8 @@
         <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;CheckpointBuilder&quot;</span>);
         <span class="kw">let </span>unsorted = <span class="self">self</span>.complete_checkpoint_effects(roots)<span class="question-mark">?</span>;
         <span class="kw">let </span>sorted = {
-            <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;CheckpointBuilder::casual_sort&quot;</span>);
-            CasualOrder::casual_sort(unsorted)
+            <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;CheckpointBuilder::causal_sort&quot;</span>);
+            CausalOrder::causal_sort(unsorted)
         };
         <span class="kw">let </span>new_checkpoint = <span class="self">self</span>.create_checkpoints(sorted, pending.details).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="self">self</span>.write_checkpoints(height, new_checkpoint).<span class="kw">await</span><span class="question-mark">?</span>;
