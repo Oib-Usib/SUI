@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682881653046,
+  "lastUpdate": 1682913608618,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2591,6 +2591,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312564,
             "range": "± 17664",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "akihidis@gmail.com",
+            "name": "Anastasios Kichidis",
+            "username": "akichidis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a5a0fa8a8f7680e3bbe7468eb0a08570aa13abe2",
+          "message": "[refactor] validator to submit with configurable position and delay step (#11517)\n\n## Description \r\n\r\nProviding the ability to configure the maximum position\r\n(`max_submit_position`) of a validator to submit to consensus. Provided\r\na max position `N`, we guarantee that a validator even if is elected to\r\nsubmit to position `M` , where `M > N`, it will submit on position `N`.\r\n\r\nSimilar, if the `submit_delay_step_millis` property is set, then we\r\nensure that on the consensus adapter the delay step will get overwritten\r\nwith this constant value instead of using the latency observer logic.\r\n\r\n## Test Plan \r\n\r\nAdded unit tests.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-04-30T20:47:08-07:00",
+          "tree_id": "f9e484607727774c5a11bc8d2b58ea677cc449e2",
+          "url": "https://github.com/MystenLabs/sui/commit/a5a0fa8a8f7680e3bbe7468eb0a08570aa13abe2"
+        },
+        "date": 1682913603519,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 143413485,
+            "range": "± 4616116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309736,
+            "range": "± 16243",
             "unit": "ns/iter"
           }
         ]
