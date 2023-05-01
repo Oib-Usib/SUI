@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682938161771,
+  "lastUpdate": 1682950947078,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2771,6 +2771,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 319866,
             "range": "± 18478",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a3559766a161fee531b414384b5e88e5be26b37d",
+          "message": "Improve logging when loading epoch start config (#11524)",
+          "timestamp": "2023-05-01T07:09:15-07:00",
+          "tree_id": "d9b7a42689c968f830f4b027ecf3053d900ea93b",
+          "url": "https://github.com/MystenLabs/sui/commit/a3559766a161fee531b414384b5e88e5be26b37d"
+        },
+        "date": 1682950941999,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 142638731,
+            "range": "± 5126475",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 317386,
+            "range": "± 22392",
             "unit": "ns/iter"
           }
         ]
