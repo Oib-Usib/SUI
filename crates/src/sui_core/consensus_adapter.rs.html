@@ -1475,8 +1475,8 @@
             <span class="self">self</span>.submission_position(committee, tx_digest);
 
         <span class="kw">const </span>MAX_LATENCY: Duration = Duration::from_secs(<span class="number">5 </span>* <span class="number">60</span>);
-        <span class="kw">const </span>DEFAULT_LATENCY: Duration = Duration::from_secs(<span class="number">5</span>);
-        <span class="kw">let </span>latency = <span class="self">self</span>.latency_observer.latency().unwrap_or(DEFAULT_LATENCY);
+        <span class="kw">const </span>DEFAULT_LATENCY: Duration = Duration::from_secs(<span class="number">3</span>); <span class="comment">// &gt; p50 consensus latency with global deployment
+        </span><span class="kw">let </span>latency = <span class="self">self</span>.latency_observer.latency().unwrap_or(DEFAULT_LATENCY);
         <span class="kw">let </span>latency = std::cmp::max(latency, DEFAULT_LATENCY);
         <span class="kw">let </span>latency = std::cmp::min(latency, MAX_LATENCY);
 
@@ -1484,7 +1484,7 @@
             position = std::cmp::min(position, max_submit_position);
         }
 
-        <span class="kw">let </span>delay_step = <span class="self">self</span>.submit_delay_step_override.unwrap_or(latency * <span class="number">3 </span>/ <span class="number">2</span>);
+        <span class="kw">let </span>delay_step = <span class="self">self</span>.submit_delay_step_override.unwrap_or(latency * <span class="number">2</span>);
 
         <span class="self">self</span>.metrics
             .sequencing_estimated_latency
@@ -2141,8 +2141,8 @@
 
         <span class="macro">assert_eq!</span>(position, <span class="number">7</span>);
 
-        <span class="comment">// delay_step * position * 3/2 = 5 * 7 * 3/2 = 52.5
-        </span><span class="macro">assert_eq!</span>(delay_step, Duration::from_millis(<span class="number">52500</span>));
+        <span class="comment">// delay_step * position = 3 * 2 * 7 = 42
+        </span><span class="macro">assert_eq!</span>(delay_step, Duration::from_secs(<span class="number">42</span>));
         <span class="macro">assert!</span>(!low_scoring_authority);
     }
 
