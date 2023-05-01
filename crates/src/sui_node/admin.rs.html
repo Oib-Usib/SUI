@@ -185,6 +185,19 @@
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -220,12 +233,17 @@
 // View current all capabilities from all authorities that have been received by this node:
 //
 //   $ curl &#39;http://127.0.0.1:1337/capabilities&#39;
+//
+// View the node config (private keys will be masked):
+//
+//   $ curl &#39;http://127.0.0.1:1337/node-config&#39;
 
 </span><span class="kw">const </span>LOGGING_ROUTE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/logging&quot;</span>;
 <span class="kw">const </span>SET_BUFFER_STAKE_ROUTE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/set-override-buffer-stake&quot;</span>;
 <span class="kw">const </span>CLEAR_BUFFER_STAKE_ROUTE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/clear-override-buffer-stake&quot;</span>;
 <span class="kw">const </span>FORCE_CLOSE_EPOCH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/force-close-epoch&quot;</span>;
 <span class="kw">const </span>CAPABILITIES: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/capabilities&quot;</span>;
+<span class="kw">const </span>NODE_CONFIG: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/node-config&quot;</span>;
 
 <span class="kw">struct </span>AppState {
     node: Arc&lt;SuiNode&gt;,
@@ -243,6 +261,7 @@
     <span class="kw">let </span>app = Router::new()
         .route(LOGGING_ROUTE, get(get_filter))
         .route(CAPABILITIES, get(capabilities))
+        .route(NODE_CONFIG, get(node_config))
         .route(LOGGING_ROUTE, post(set_filter))
         .route(
             SET_BUFFER_STAKE_ROUTE,
@@ -298,6 +317,13 @@
     }
 
     (StatusCode::OK, output)
+}
+
+<span class="kw">async fn </span>node_config(State(state): State&lt;Arc&lt;AppState&gt;&gt;) -&gt; (StatusCode, String) {
+    <span class="kw">let </span>node_config = <span class="kw-2">&amp;</span>state.node.config;
+
+    <span class="comment">// Note private keys will be masked
+    </span>(StatusCode::OK, <span class="macro">format!</span>(<span class="string">&quot;{:#?}\n&quot;</span>, node_config))
 }
 
 <span class="attr">#[derive(Deserialize)]
