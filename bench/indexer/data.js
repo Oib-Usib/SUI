@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682931703960,
+  "lastUpdate": 1682938161771,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2735,6 +2735,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308215,
             "range": "± 87778",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "damirka.ru@gmail.com",
+            "name": "Damir Shamanaev",
+            "username": "damirka"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b78962fc6d2e9f09ae3e0a5d06ec940ef9230b0",
+          "message": "[deepbook] Deepbook snapshots patch (#11562)\n\n## Description \r\n\r\nReplaces #11550, adds snapshots.\r\n\r\n## Test Plan \r\n\r\n-\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\n---------\r\nCo-authored-by: wiggins-dev <zlnju@outlook.com>",
+          "timestamp": "2023-05-01T10:36:53Z",
+          "tree_id": "d3b010aca59cd9f5d46ffd291983f4da7a27c311",
+          "url": "https://github.com/MystenLabs/sui/commit/6b78962fc6d2e9f09ae3e0a5d06ec940ef9230b0"
+        },
+        "date": 1682938156181,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144483479,
+            "range": "± 4439987",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 319866,
+            "range": "± 18478",
             "unit": "ns/iter"
           }
         ]
