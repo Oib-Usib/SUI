@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682913608618,
+  "lastUpdate": 1682915962188,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2627,6 +2627,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309736,
             "range": "± 16243",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "distinct": true,
+          "id": "cdd4607a546c00aa937302ec06819d28be36cb45",
+          "message": "Bump baptiste0928/cargo-install from 1 to 2\n\nBumps [baptiste0928/cargo-install](https://github.com/baptiste0928/cargo-install) from 1 to 2.\n- [Release notes](https://github.com/baptiste0928/cargo-install/releases)\n- [Changelog](https://github.com/baptiste0928/cargo-install/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/baptiste0928/cargo-install/compare/v1...48c92f3d491efa23daace9891498a14c5aaa1afd)\n\n---\nupdated-dependencies:\n- dependency-name: baptiste0928/cargo-install\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2023-04-30T21:29:51-07:00",
+          "tree_id": "269fe768e5160f6a3e2b4ced71ccc5c1bc8f7f7a",
+          "url": "https://github.com/MystenLabs/sui/commit/cdd4607a546c00aa937302ec06819d28be36cb45"
+        },
+        "date": 1682915956820,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146946774,
+            "range": "± 4477017",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 359732,
+            "range": "± 80716",
             "unit": "ns/iter"
           }
         ]
