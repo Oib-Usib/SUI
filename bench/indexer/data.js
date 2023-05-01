@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682961835833,
+  "lastUpdate": 1682972180668,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2915,6 +2915,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 320809,
             "range": "± 31079",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d7f7e68ad144cf480f6af6200b9f0ce30dd062d2",
+          "message": "[sui-system] add constant for max gas price a validator can set (#11577)\n\n## Description \r\n\r\nRight now the reference gas price can be set to whatever the validators\r\nwant. If it's higher than the `max_gas_price` than no transaction will\r\ngo through. This PR adds asserts to make sure the gas price set by\r\nvalidators is not greater than the max gas price.\r\n\r\n## Test Plan \r\n\r\nAdded a test.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-01T13:06:24-07:00",
+          "tree_id": "c7008aa31e95718f91005383e155687ad97348cd",
+          "url": "https://github.com/MystenLabs/sui/commit/d7f7e68ad144cf480f6af6200b9f0ce30dd062d2"
+        },
+        "date": 1682972175366,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149804030,
+            "range": "± 4997397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 497469,
+            "range": "± 32491",
             "unit": "ns/iter"
           }
         ]
