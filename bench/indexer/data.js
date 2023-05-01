@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682972180668,
+  "lastUpdate": 1682975081397,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -2951,6 +2951,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 497469,
             "range": "± 32491",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrey@mystenlabs.com",
+            "name": "Andrey Chursin",
+            "username": "andll"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f9e72894e27ce13834bcdf717092ab64392e683f",
+          "message": "[checkpoints] typo: rename casual->causal (#11595)",
+          "timestamp": "2023-05-01T20:56:42Z",
+          "tree_id": "97583ff138be472108e6d0ddf9ca90b47faf24b4",
+          "url": "https://github.com/MystenLabs/sui/commit/f9e72894e27ce13834bcdf717092ab64392e683f"
+        },
+        "date": 1682975075591,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 98773051,
+            "range": "± 7715162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 254217,
+            "range": "± 21194",
             "unit": "ns/iter"
           }
         ]
