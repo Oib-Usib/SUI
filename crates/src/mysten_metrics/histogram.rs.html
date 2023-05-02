@@ -414,6 +414,10 @@
 <a href="#414" id="414">414</a>
 <a href="#415" id="415">415</a>
 <a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -593,6 +597,10 @@
 <span class="kw">impl </span>Histogram {
     <span class="kw">pub fn </span>new_in_registry(name: <span class="kw-2">&amp;</span>str, desc: <span class="kw-2">&amp;</span>str, registry: <span class="kw-2">&amp;</span>Registry) -&gt; <span class="self">Self </span>{
         HistogramVec::new_in_registry(name, desc, <span class="kw-2">&amp;</span>[], registry).with_label_values(<span class="kw-2">&amp;</span>[])
+    }
+
+    <span class="kw">pub fn </span>observe(<span class="kw-2">&amp;</span><span class="self">self</span>, v: Point) {
+        <span class="self">self</span>.report(v)
     }
 
     <span class="kw">pub fn </span>report(<span class="kw-2">&amp;</span><span class="self">self</span>, v: Point) {

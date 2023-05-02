@@ -101,10 +101,18 @@
 <a href="#101" id="101">101</a>
 <a href="#102" id="102">102</a>
 <a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>prometheus::{
+</span><span class="kw">use </span>mysten_metrics::histogram::Histogram;
+<span class="kw">use </span>prometheus::{
     register_int_counter_vec_with_registry, register_int_counter_with_registry,
     register_int_gauge_vec_with_registry, register_int_gauge_with_registry, IntCounter,
     IntCounterVec, IntGauge, IntGaugeVec, Registry,
@@ -123,6 +131,7 @@
     <span class="kw">pub </span>last_received_checkpoint_signatures: IntGaugeVec,
     <span class="kw">pub </span>last_sent_checkpoint_signature: IntGauge,
     <span class="kw">pub </span>highest_accumulated_epoch: IntGauge,
+    <span class="kw">pub </span>checkpoint_creation_latency_ms: Histogram,
 }
 
 <span class="kw">impl </span>CheckpointMetrics {
@@ -196,6 +205,11 @@
                 registry
             )
             .unwrap(),
+            checkpoint_creation_latency_ms: Histogram::new_in_registry(
+                <span class="string">&quot;checkpoint_creation_latency_ms&quot;</span>,
+                <span class="string">&quot;Latency from consensus commit timstamp to local checkpoint creation in milliseconds&quot;</span>,
+                registry,
+            ),
         };
         Arc::new(this)
     }

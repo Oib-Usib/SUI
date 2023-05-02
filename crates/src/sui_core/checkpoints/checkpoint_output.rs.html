@@ -170,6 +170,13 @@
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -239,6 +246,13 @@
     ) -&gt; SuiResult {
         <span class="kw">let </span>checkpoint_seq = summary.sequence_number;
         <span class="kw">let </span>checkpoint_timestamp = summary.timestamp_ms;
+        <span class="self">self</span>.metrics.checkpoint_creation_latency_ms.observe(
+            summary
+                .timestamp()
+                .elapsed()
+                .unwrap_or_default()
+                .as_millis() <span class="kw">as </span>u64,
+        );
         <span class="macro">debug!</span>(
             <span class="string">&quot;Sending checkpoint signature at sequence {checkpoint_seq} to consensus, timestamp {checkpoint_timestamp}.
             {}ms left till end of epoch at timestamp {}&quot;</span>,

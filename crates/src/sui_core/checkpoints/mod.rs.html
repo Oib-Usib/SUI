@@ -1656,6 +1656,8 @@
 <a href="#1656" id="1656">1656</a>
 <a href="#1657" id="1657">1657</a>
 <a href="#1658" id="1658">1658</a>
+<a href="#1659" id="1659">1659</a>
+<a href="#1660" id="1660">1660</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2608,6 +2610,8 @@
             <span class="kw">let </span><span class="kw-2">mut </span>pending = HashSet::new();
             <span class="kw">for </span>effect <span class="kw">in </span>roots {
                 <span class="kw">let </span>digest = effect.transaction_digest();
+                <span class="comment">// Unnecessary to read effects of a depndency if the effect is already processed.
+                </span>seen.insert(<span class="kw-2">*</span>digest);
                 <span class="kw">if </span><span class="self">self
                     </span>.epoch_store
                     .builder_included_transaction_in_checkpoint(digest)<span class="question-mark">?
