@@ -1327,6 +1327,8 @@
 <a href="#1327" id="1327">1327</a>
 <a href="#1328" id="1328">1328</a>
 <a href="#1329" id="1329">1329</a>
+<a href="#1330" id="1330">1330</a>
+<a href="#1331" id="1331">1331</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1339,7 +1341,7 @@
 
 <span class="doccomment">/// The minimum and maximum protocol versions supported by this build.
 </span><span class="kw">const </span>MIN_PROTOCOL_VERSION: u64 = <span class="number">1</span>;
-<span class="kw">const </span>MAX_PROTOCOL_VERSION: u64 = <span class="number">9</span>;
+<span class="kw">const </span>MAX_PROTOCOL_VERSION: u64 = <span class="number">10</span>;
 
 <span class="comment">// Record history of protocol version allocations here:
 //
@@ -1362,6 +1364,7 @@
 // Version 9: Limit the length of Move idenfitiers to 128.
 //            Disallow extraneous module bytes,
 //            advance_to_highest_supported_protocol_version,
+// Version 10:
 
 </span><span class="attr">#[derive(Copy, Clone, Debug, Hash, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 </span><span class="kw">pub struct </span>ProtocolVersion(u64);
@@ -2458,6 +2461,7 @@
                     .advance_to_highest_supported_protocol_version = <span class="bool-val">true</span>;
                 cfg
             }
+            <span class="number">10 </span>=&gt; <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>),
             <span class="comment">// Use this template when making changes:
             //
             //     // modify an existing constant.
