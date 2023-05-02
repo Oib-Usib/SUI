@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683002605634,
+  "lastUpdate": 1683043649974,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3311,6 +3311,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308458,
             "range": "± 16225",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kostas@mystenlabs.com",
+            "name": "Konstantinos Chalkias",
+            "username": "kchalkias"
+          },
+          "committer": {
+            "email": "chalkiaskostas@gmail.com",
+            "name": "Kostas Chalkias",
+            "username": "kchalkias"
+          },
+          "distinct": true,
+          "id": "10759481d1e3dbb22cc6c51342e76bcebd5c3e94",
+          "message": "prefer using individual return statements",
+          "timestamp": "2023-05-02T08:57:06-07:00",
+          "tree_id": "efc83adfdc99f771bc8ef8d19516d4c4e7e9cc8b",
+          "url": "https://github.com/MystenLabs/sui/commit/10759481d1e3dbb22cc6c51342e76bcebd5c3e94"
+        },
+        "date": 1683043643901,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144054496,
+            "range": "± 4165901",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315683,
+            "range": "± 31644",
             "unit": "ns/iter"
           }
         ]
