@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683048484486,
+  "lastUpdate": 1683051406094,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3419,6 +3419,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310811,
             "range": "± 17543",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d7ac39e54534ea687efe8e3a4806ed2a26d123f1",
+          "message": "[Checkpoint] add latency metric and read less effects for creation (#11599)\n\n## Description \r\n\r\nAdd a metric to track the latency from Narwhal certificate to finishing\r\ncheckpoint creation.\r\nAlso, try to avoid reading duplicated effects when the effects are\r\nalready roots previously.\r\n\r\n## Test Plan \r\n\r\nCI.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-02T18:05:54Z",
+          "tree_id": "53e7630f9bca4e8e4b8fcbecd6e7f3ef7457d8a1",
+          "url": "https://github.com/MystenLabs/sui/commit/d7ac39e54534ea687efe8e3a4806ed2a26d123f1"
+        },
+        "date": 1683051400391,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 142646689,
+            "range": "± 4812579",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 318046,
+            "range": "± 23771",
             "unit": "ns/iter"
           }
         ]
