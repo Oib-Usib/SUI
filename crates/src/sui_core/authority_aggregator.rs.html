@@ -1867,6 +1867,10 @@
 <a href="#1867" id="1867">1867</a>
 <a href="#1868" id="1868">1868</a>
 <a href="#1869" id="1869">1869</a>
+<a href="#1870" id="1870">1870</a>
+<a href="#1871" id="1871">1871</a>
+<a href="#1872" id="1872">1872</a>
+<a href="#1873" id="1873">1873</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1918,6 +1922,10 @@
 <span class="kw">use </span>sui_types::effects::{
     CertifiedTransactionEffects, SignedTransactionEffects, TransactionEffects, TransactionEvents,
     VerifiedCertifiedTransactionEffects,
+};
+<span class="kw">use </span>sui_types::messages_grpc::{
+    HandleCertificateResponseV2, ObjectInfoRequest, PlainTransactionInfoResponse,
+    TransactionInfoRequest,
 };
 <span class="kw">use </span>tap::TapFallible;
 <span class="kw">use </span>tokio::time::{sleep, timeout};

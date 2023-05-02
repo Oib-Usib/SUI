@@ -596,7 +596,6 @@
 <a href="#596" id="596">596</a>
 <a href="#597" id="597">597</a>
 <a href="#598" id="598">598</a>
-<a href="#599" id="599">599</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -626,13 +625,12 @@ finalized transactions locally, when possible.
 <span class="kw">use </span>sui_types::base_types::TransactionDigest;
 <span class="kw">use </span>sui_types::effects::{TransactionEffectsAPI, VerifiedCertifiedTransactionEffects};
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
-<span class="kw">use </span>sui_types::messages::{
-    ExecuteTransactionRequest, ExecuteTransactionRequestType, ExecuteTransactionResponse,
-    FinalizedEffects, VerifiedExecutableTransaction,
-};
+<span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>sui_types::quorum_driver_types::{
-    QuorumDriverEffectsQueueResult, QuorumDriverError, QuorumDriverResponse, QuorumDriverResult,
+    ExecuteTransactionRequest, ExecuteTransactionRequestType, ExecuteTransactionResponse,
+    FinalizedEffects, QuorumDriverEffectsQueueResult, QuorumDriverError, QuorumDriverResponse,
+    QuorumDriverResult,
 };
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>tokio::sync::broadcast::error::RecvError;

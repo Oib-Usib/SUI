@@ -737,7 +737,7 @@
         .execute_transaction_block(
             tx,
             SuiTransactionBlockResponseOptions::full_content(),
-            <span class="prelude-val">Some</span>(sui_types::messages::ExecuteTransactionRequestType::WaitForLocalExecution),
+            <span class="prelude-val">Some</span>(sui_types::quorum_driver_types::ExecuteTransactionRequestType::WaitForLocalExecution),
         )
         .<span class="kw">await
         </span>.unwrap();

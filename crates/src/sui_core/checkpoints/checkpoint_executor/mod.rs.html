@@ -1028,8 +1028,8 @@
 <span class="kw">use </span>sui_config::node::CheckpointExecutorConfig;
 <span class="kw">use </span>sui_macros::{fail_point, fail_point_async};
 <span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI};
+<span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::message_envelope::Message;
-<span class="kw">use </span>sui_types::messages::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::{
     base_types::{ExecutionDigests, TransactionDigest, TransactionEffectsDigest},
     messages::VerifiedTransaction,

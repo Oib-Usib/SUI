@@ -258,6 +258,8 @@
 <a href="#258" id="258">258</a>
 <a href="#259" id="259">259</a>
 <a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="attr">#![warn(
@@ -290,7 +292,6 @@
 <span class="kw">pub mod </span>accumulator;
 <span class="kw">pub mod </span>balance;
 <span class="kw">pub mod </span>base_types;
-<span class="kw">pub mod </span>certificate_proof;
 <span class="kw">pub mod </span>clock;
 <span class="kw">pub mod </span>coin;
 <span class="kw">pub mod </span>collection_types;
@@ -301,6 +302,7 @@
 <span class="kw">pub mod </span>dynamic_field;
 <span class="kw">pub mod </span>effects;
 <span class="kw">pub mod </span>event;
+<span class="kw">pub mod </span>executable_transaction;
 <span class="kw">pub mod </span>execution_status;
 <span class="kw">pub mod </span>gas;
 <span class="kw">pub mod </span>gas_coin;
@@ -311,6 +313,8 @@
 <span class="kw">pub mod </span>message_envelope;
 <span class="kw">pub mod </span>messages;
 <span class="kw">pub mod </span>messages_checkpoint;
+<span class="kw">pub mod </span>messages_consensus;
+<span class="kw">pub mod </span>messages_grpc;
 <span class="kw">pub mod </span>metrics;
 <span class="kw">pub mod </span>move_package;
 <span class="kw">pub mod </span>multisig;

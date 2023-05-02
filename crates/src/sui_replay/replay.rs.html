@@ -1771,10 +1771,10 @@
 <span class="kw">use </span>sui_types::digests::TransactionDigest;
 <span class="kw">use </span>sui_types::error::ExecutionError;
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
+<span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::gas::SuiGasStatus;
 <span class="kw">use </span>sui_types::messages::CertifiedTransaction;
 <span class="kw">use </span>sui_types::messages::Transaction;
-<span class="kw">use </span>sui_types::messages::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::messages::VerifiedTransaction;
 <span class="kw">use </span>sui_types::messages::{InputObjectKind, InputObjects, TransactionKind};
 <span class="kw">use </span>sui_types::messages::{SenderSignedData, TransactionDataAPI};
@@ -2374,7 +2374,7 @@
     }
 
     <span class="doccomment">/// Must be called after `init_for_execution`
-    /// This excutes from `sui_core::authority::AuthorityState::try_execute_immediately`
+    /// This executes from `sui_core::authority::AuthorityState::try_execute_immediately`
     </span><span class="kw">pub async fn </span>certificate_execute(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
@@ -3439,15 +3439,15 @@
     <span class="kw">let </span>registry = Registry::new();
     <span class="kw">let </span>cache_metrics = Arc::new(ResolverMetrics::new(<span class="kw-2">&amp;</span>registry));
     <span class="kw">let </span>signature_verifier_metrics = SignatureVerifierMetrics::new(<span class="kw-2">&amp;</span>registry);
-    <span class="kw">let </span><span class="kw-2">mut </span>committe = authority_state.committee_store().get_latest_committee();
+    <span class="kw">let </span><span class="kw-2">mut </span>committee = authority_state.committee_store().get_latest_committee();
 
     <span class="comment">// Overwrite the epoch so it matches this TXs
-    </span>committe.epoch = tx_info.executed_epoch;
+    </span>committee.epoch = tx_info.executed_epoch;
 
-    <span class="kw">let </span>name = committe.names().next().unwrap();
+    <span class="kw">let </span>name = committee.names().next().unwrap();
     AuthorityPerEpochStore::new(
         <span class="kw-2">*</span>name,
-        Arc::new(committe.clone()),
+        Arc::new(committee.clone()),
         <span class="kw-2">&amp;</span>path,
         <span class="prelude-val">None</span>,
         EpochMetrics::new(<span class="kw-2">&amp;</span>registry),

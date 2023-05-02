@@ -880,6 +880,7 @@
 <a href="#880" id="880">880</a>
 <a href="#881" id="881">881</a>
 <a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -908,7 +909,8 @@
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
 <span class="kw">use </span>sui_types::base_types::{ObjectID, ObjectRef, SuiAddress};
 <span class="kw">use </span>sui_types::crypto::{get_key_pair, AccountKeyPair, EncodeDecodeBase64, Signature, SuiKeyPair};
-<span class="kw">use </span>sui_types::messages::{ExecuteTransactionRequestType, Transaction, TransactionData};
+<span class="kw">use </span>sui_types::messages::{Transaction, TransactionData};
+<span class="kw">use </span>sui_types::quorum_driver_types::ExecuteTransactionRequestType;
 
 <span class="kw">use </span><span class="kw">crate</span>::payload::checkpoint_utils::get_latest_checkpoint_stats;
 <span class="kw">use </span><span class="kw">crate</span>::payload::validation::chunk_entities;

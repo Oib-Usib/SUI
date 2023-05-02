@@ -1219,6 +1219,7 @@
 <a href="#1219" id="1219">1219</a>
 <a href="#1220" id="1220">1220</a>
 <a href="#1221" id="1221">1221</a>
+<a href="#1222" id="1222">1222</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1312,7 +1313,7 @@
 <span class="kw">use </span>sui_types::committee::Committee;
 <span class="kw">use </span>sui_types::crypto::KeypairTraits;
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
-<span class="kw">use </span>sui_types::messages::{AuthorityCapabilities, ConsensusTransaction};
+<span class="kw">use </span>sui_types::messages_consensus::{AuthorityCapabilities, ConsensusTransaction};
 <span class="kw">use </span>sui_types::quorum_driver_types::QuorumDriverEffectsQueueResult;
 <span class="kw">use </span>sui_types::sui_system_state::epoch_start_sui_system_state::EpochStartSystemState;
 <span class="kw">use </span>sui_types::sui_system_state::epoch_start_sui_system_state::EpochStartSystemStateTrait;
@@ -1576,12 +1577,13 @@
         </span><span class="kw">if </span>epoch_store.epoch() == <span class="number">0 </span>{
             <span class="kw">let </span>txn = <span class="kw-2">&amp;</span>genesis.transaction();
             <span class="kw">let </span>span = <span class="macro">error_span!</span>(<span class="string">&quot;genesis_txn&quot;</span>, tx_digest = <span class="question-mark">?</span>txn.digest());
-            <span class="kw">let </span>transaction = sui_types::messages::VerifiedExecutableTransaction::new_unchecked(
-                sui_types::messages::ExecutableTransaction::new_from_data_and_sig(
-                    genesis.transaction().data().clone(),
-                    sui_types::certificate_proof::CertificateProof::Checkpoint(<span class="number">0</span>, <span class="number">0</span>),
-                ),
-            );
+            <span class="kw">let </span>transaction =
+                sui_types::executable_transaction::VerifiedExecutableTransaction::new_unchecked(
+                    sui_types::executable_transaction::ExecutableTransaction::new_from_data_and_sig(
+                        genesis.transaction().data().clone(),
+                        sui_types::executable_transaction::CertificateProof::Checkpoint(<span class="number">0</span>, <span class="number">0</span>),
+                    ),
+                );
             state
                 .try_execute_immediately(<span class="kw-2">&amp;</span>transaction, <span class="prelude-val">None</span>, <span class="kw-2">&amp;</span>epoch_store)
                 .instrument(span)

@@ -868,9 +868,9 @@
 <span class="kw">use </span>sui_types::execution_status::ExecutionStatus;
 <span class="kw">use </span>sui_types::gas::{GasCostSummary, SuiGasStatusAPI};
 <span class="kw">use </span>sui_types::messages::{
-    Argument, Command, ConsensusCommitPrologue, GenesisTransaction, ObjectArg,
-    ProgrammableTransaction, TransactionKind,
+    Argument, Command, GenesisTransaction, ObjectArg, ProgrammableTransaction, TransactionKind,
 };
+<span class="kw">use </span>sui_types::messages_consensus::ConsensusCommitPrologue;
 <span class="kw">use </span>sui_types::storage::{ChildObjectResolver, ObjectStore, ParentSync, WriteKind};
 <span class="attr">#[cfg(msim)]
 </span><span class="kw">use </span>sui_types::sui_system_state::advance_epoch_result_injection::maybe_modify_result;

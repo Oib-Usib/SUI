@@ -766,7 +766,6 @@
 <a href="#766" id="766">766</a>
 <a href="#767" id="767">767</a>
 <a href="#768" id="768">768</a>
-<a href="#769" id="769">769</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -774,7 +773,6 @@
 </span><span class="kw">use crate</span>::{
     base_types::<span class="kw-2">*</span>,
     committee::{Committee, EpochId, StakeUnit},
-    messages::CommandIndex,
     object::Owner,
 };
 
@@ -805,7 +803,7 @@
     };
 }
 <span class="kw">use </span><span class="kw">crate</span>::digests::TransactionEventsDigest;
-<span class="kw">use </span><span class="kw">crate</span>::execution_status::ExecutionFailureStatus;
+<span class="kw">use </span><span class="kw">crate</span>::execution_status::{CommandIndex, ExecutionFailureStatus};
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>fp_ensure;
 
 <span class="attr">#[macro_export]

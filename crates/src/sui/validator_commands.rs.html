@@ -1559,7 +1559,7 @@
             SuiTransactionBlockResponseOptions::new()
                 .with_input()
                 .with_effects(),
-            <span class="prelude-val">Some</span>(sui_types::messages::ExecuteTransactionRequestType::WaitForLocalExecution),
+            <span class="prelude-val">Some</span>(sui_types::quorum_driver_types::ExecuteTransactionRequestType::WaitForLocalExecution),
         )
         .<span class="kw">await
         </span>.map_err(|err| <span class="macro">anyhow::anyhow!</span>(err.to_string()))

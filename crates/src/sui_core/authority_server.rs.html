@@ -607,6 +607,12 @@
 <a href="#607" id="607">607</a>
 <a href="#608" id="608">608</a>
 <a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -622,6 +628,12 @@
     tonic,
 };
 <span class="kw">use </span>sui_types::effects::{TransactionEffectsAPI, TransactionEvents};
+<span class="kw">use </span>sui_types::messages_consensus::ConsensusTransaction;
+<span class="kw">use </span>sui_types::messages_grpc::{
+    HandleCertificateResponse, HandleCertificateResponseV2, HandleTransactionResponse,
+    ObjectInfoRequest, ObjectInfoResponse, SubmitCertificateResponse, SystemStateRequest,
+    TransactionInfoRequest, TransactionInfoResponse,
+};
 <span class="kw">use </span>sui_types::multiaddr::Multiaddr;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>sui_types::{error::<span class="kw-2">*</span>, messages::<span class="kw-2">*</span>};

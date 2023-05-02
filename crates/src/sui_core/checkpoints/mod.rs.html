@@ -1655,6 +1655,7 @@
 <a href="#1655" id="1655">1655</a>
 <a href="#1656" id="1656">1656</a>
 <a href="#1657" id="1657">1657</a>
+<a href="#1658" id="1658">1658</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1692,13 +1693,14 @@
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 <span class="kw">use </span>sui_types::gas::GasCostSummary;
 <span class="kw">use </span>sui_types::message_envelope::Message;
-<span class="kw">use </span>sui_types::messages::{ConsensusTransactionKey, TransactionDataAPI, TransactionKind};
+<span class="kw">use </span>sui_types::messages::{TransactionDataAPI, TransactionKind};
 <span class="kw">use </span>sui_types::messages_checkpoint::SignedCheckpointSummary;
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CertifiedCheckpointSummary, CheckpointContents, CheckpointSequenceNumber,
     CheckpointSignatureMessage, CheckpointSummary, CheckpointTimestamp, EndOfEpochData,
     FullCheckpointContents, TrustedCheckpoint, VerifiedCheckpoint, VerifiedCheckpointContents,
 };
+<span class="kw">use </span>sui_types::messages_consensus::ConsensusTransactionKey;
 <span class="kw">use </span>sui_types::signature::GenericSignature;
 <span class="kw">use </span>sui_types::sui_system_state::{SuiSystemState, SuiSystemStateTrait};
 <span class="kw">use </span>tokio::{

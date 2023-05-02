@@ -1094,8 +1094,6 @@
 <a href="#1094" id="1094">1094</a>
 <a href="#1095" id="1095">1095</a>
 <a href="#1096" id="1096">1096</a>
-<a href="#1097" id="1097">1097</a>
-<a href="#1098" id="1098">1098</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1126,10 +1124,7 @@
 <span class="kw">use </span>std::time::Instant;
 <span class="kw">use </span>sui_types::base_types::TransactionDigest;
 <span class="kw">use </span>sui_types::committee::Committee;
-<span class="kw">use </span>sui_types::{
-    error::{SuiError, SuiResult},
-    messages::ConsensusTransaction,
-};
+<span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 
 <span class="kw">use </span>tap::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>tokio::sync::{Semaphore, SemaphorePermit};
@@ -1142,7 +1137,8 @@
 <span class="kw">use </span>sui_simulator::anemo::PeerId;
 <span class="kw">use </span>sui_simulator::narwhal_network::connectivity::ConnectionStatus;
 <span class="kw">use </span>sui_types::base_types::AuthorityName;
-<span class="kw">use </span>sui_types::messages::ConsensusTransactionKind;
+<span class="kw">use </span>sui_types::messages_consensus::ConsensusTransaction;
+<span class="kw">use </span>sui_types::messages_consensus::ConsensusTransactionKind;
 <span class="kw">use </span>tokio::time::Duration;
 <span class="kw">use </span>tracing::{debug, info, warn};
 

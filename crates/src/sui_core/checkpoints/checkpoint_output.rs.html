@@ -182,11 +182,11 @@
 <span class="kw">use </span>sui_types::base_types::AuthorityName;
 <span class="kw">use </span>sui_types::error::SuiResult;
 <span class="kw">use </span>sui_types::message_envelope::Message;
-<span class="kw">use </span>sui_types::messages::ConsensusTransaction;
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CertifiedCheckpointSummary, CheckpointContents, CheckpointSignatureMessage, CheckpointSummary,
     SignedCheckpointSummary, VerifiedCheckpoint,
 };
+<span class="kw">use </span>sui_types::messages_consensus::ConsensusTransaction;
 <span class="kw">use </span>tracing::{debug, info, trace};
 
 <span class="kw">use </span><span class="kw">super</span>::CheckpointMetrics;
@@ -240,7 +240,7 @@
         <span class="kw">let </span>checkpoint_seq = summary.sequence_number;
         <span class="kw">let </span>checkpoint_timestamp = summary.timestamp_ms;
         <span class="macro">debug!</span>(
-            <span class="string">&quot;Sending checkpoint signature at sequence {checkpoint_seq} to consensus, timestamp {checkpoint_timestamp}. 
+            <span class="string">&quot;Sending checkpoint signature at sequence {checkpoint_seq} to consensus, timestamp {checkpoint_timestamp}.
             {}ms left till end of epoch at timestamp {}&quot;</span>,
             <span class="self">self</span>.next_reconfiguration_timestamp_ms.saturating_sub(checkpoint_timestamp), <span class="self">self</span>.next_reconfiguration_timestamp_ms
         );

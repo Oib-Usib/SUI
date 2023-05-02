@@ -840,6 +840,7 @@
 <a href="#840" id="840">840</a>
 <a href="#841" id="841">841</a>
 <a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -875,7 +876,8 @@
 <span class="kw">use </span>mysten_metrics::{spawn_monitored_task, GaugeGuard};
 <span class="kw">use </span>std::fmt::Write;
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
-<span class="kw">use </span>sui_types::messages::{PlainTransactionInfoResponse, VerifiedCertificate, VerifiedTransaction};
+<span class="kw">use </span>sui_types::messages::{VerifiedCertificate, VerifiedTransaction};
+<span class="kw">use </span>sui_types::messages_grpc::PlainTransactionInfoResponse;
 
 <span class="kw">use </span><span class="self">self</span>::reconfig_observer::ReconfigObserver;
 
@@ -1131,7 +1133,7 @@
                     // the original transaction + retryable stake. Will continue to retry the original transaction.
                     </span><span class="macro">debug!</span>(
                         <span class="question-mark">?</span>errors,
-                        <span class="string">&quot;Observed Tx {tx_digest:} is still in retryable state. Conflicting Txes: {conflicting_tx_digests:?}&quot;</span>, 
+                        <span class="string">&quot;Observed Tx {tx_digest:} is still in retryable state. Conflicting Txes: {conflicting_tx_digests:?}&quot;</span>,
                     );
                     <span class="prelude-val">Err</span>(<span class="prelude-val">None</span>)
                 }
@@ -1204,7 +1206,7 @@
             <span class="prelude-val">Err</span>(err) =&gt; {
                 <span class="macro">debug!</span>(
                     <span class="question-mark">?</span>tx_digest,
-                    <span class="string">&quot;Encountered error while attemptting conflicting transaction: {:?}&quot;</span>, err
+                    <span class="string">&quot;Encountered error while attempting conflicting transaction: {:?}&quot;</span>, err
                 );
                 <span class="kw">let </span>err = <span class="prelude-val">Err</span>(<span class="prelude-val">Some</span>(QuorumDriverError::ObjectsDoubleUsed {
                     conflicting_txes: conflicting_tx_digests,

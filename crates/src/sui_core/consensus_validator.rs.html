@@ -218,6 +218,7 @@
 <a href="#218" id="218">218</a>
 <a href="#219" id="219">219</a>
 <a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -231,7 +232,7 @@
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>narwhal_types::BatchAPI;
 <span class="kw">use </span>narwhal_worker::TransactionValidator;
-<span class="kw">use </span>sui_types::messages::{ConsensusTransaction, ConsensusTransactionKind};
+<span class="kw">use </span>sui_types::messages_consensus::{ConsensusTransaction, ConsensusTransactionKind};
 <span class="kw">use </span>tap::TapFallible;
 <span class="kw">use </span>tokio::runtime::Handle;
 <span class="kw">use </span>tracing::{info, warn};
@@ -369,11 +370,12 @@
     };
     <span class="kw">use </span>narwhal_types::Batch;
     <span class="kw">use </span>narwhal_worker::TransactionValidator;
-    <span class="kw">use </span>sui_types::{messages::ConsensusTransaction, signature::GenericSignature};
+    <span class="kw">use </span>sui_types::signature::GenericSignature;
 
     <span class="kw">use </span><span class="kw">crate</span>::authority::test_authority_builder::TestAuthorityBuilder;
     <span class="kw">use </span>sui_macros::sim_test;
     <span class="kw">use </span>sui_types::crypto::Ed25519SuiSignature;
+    <span class="kw">use </span>sui_types::messages_consensus::ConsensusTransaction;
     <span class="kw">use </span>sui_types::object::Object;
 
     <span class="attr">#[sim_test]

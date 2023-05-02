@@ -570,6 +570,10 @@
 <a href="#570" id="570">570</a>
 <a href="#571" id="571">571</a>
 <a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -586,10 +590,14 @@
 <span class="kw">use </span>sui_network::default_mysten_network_config;
 <span class="kw">use </span>sui_types::multiaddr::Multiaddr;
 <span class="kw">use </span>sui_types::object::ObjectFormatOptions;
-<span class="kw">use </span>sui_types::{base_types::<span class="kw-2">*</span>, messages::<span class="kw-2">*</span>, object::Owner};
+<span class="kw">use </span>sui_types::{base_types::<span class="kw-2">*</span>, object::Owner};
 <span class="kw">use </span>tokio::time::Instant;
 
 <span class="kw">use </span>anyhow::anyhow;
+<span class="kw">use </span>sui_types::messages_grpc::{
+    ObjectInfoRequest, ObjectInfoRequestKind, ObjectInfoResponse, TransactionInfoRequest,
+    TransactionStatus,
+};
 
 <span class="kw">pub mod </span>commands;
 <span class="kw">pub mod </span>db_tool;

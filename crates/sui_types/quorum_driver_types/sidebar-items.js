@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["QuorumDriverError"],"type":["GroupedErrors","QuorumDriverEffectsQueueResult","QuorumDriverResult"]};
+window.SIDEBAR_ITEMS = {"enum":["EffectsFinalityInfo","ExecuteTransactionRequestType","ExecuteTransactionResponse","QuorumDriverError","TransactionType"],"struct":["ExecuteTransactionRequest","FinalizedEffects","QuorumDriverRequest","QuorumDriverResponse"],"type":["GroupedErrors","IsTransactionExecutedLocally","QuorumDriverEffectsQueueResult","QuorumDriverResult"]};

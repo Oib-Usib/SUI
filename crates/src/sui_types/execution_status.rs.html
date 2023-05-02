@@ -328,11 +328,11 @@
 <a href="#328" id="328">328</a>
 <a href="#329" id="329">329</a>
 <a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span><span class="kw">crate</span>::messages::CommandIndex;
-<span class="kw">use </span><span class="kw">crate</span>::ObjectID;
+</span><span class="kw">use </span><span class="kw">crate</span>::ObjectID;
 <span class="kw">use </span>move_binary_format::file_format::{CodeOffset, TypeParameterIndex};
 <span class="kw">use </span>move_core_types::language_storage::ModuleId;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
@@ -658,4 +658,6 @@
         }
     }
 }
+
+<span class="kw">pub type </span>CommandIndex = usize;
 </code></pre></div></section></main></body></html>

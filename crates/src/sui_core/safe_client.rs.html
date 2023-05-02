@@ -580,6 +580,11 @@
 <a href="#580" id="580">580</a>
 <a href="#581" id="581">581</a>
 <a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -599,6 +604,11 @@
 <span class="kw">use </span>sui_types::effects::{SignedTransactionEffects, TransactionEffectsAPI};
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CertifiedCheckpointSummary, CheckpointRequest, CheckpointResponse, CheckpointSequenceNumber,
+};
+<span class="kw">use </span>sui_types::messages_grpc::{
+    HandleCertificateResponse, HandleCertificateResponseV2, ObjectInfoRequest, ObjectInfoResponse,
+    PlainTransactionInfoResponse, SystemStateRequest, TransactionInfoRequest, TransactionStatus,
+    VerifiedObjectInfoResponse,
 };
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>sui_types::{base_types::<span class="kw-2">*</span>, committee::<span class="kw-2">*</span>, fp_ensure};

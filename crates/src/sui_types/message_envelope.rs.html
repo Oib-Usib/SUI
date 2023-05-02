@@ -456,13 +456,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span><span class="kw">crate</span>::base_types::AuthorityName;
-<span class="kw">use </span><span class="kw">crate</span>::certificate_proof::CertificateProof;
 <span class="kw">use </span><span class="kw">crate</span>::committee::{Committee, EpochId};
 <span class="kw">use </span><span class="kw">crate</span>::crypto::{
     AuthorityQuorumSignInfo, AuthoritySignInfo, AuthoritySignInfoTrait, AuthoritySignature,
     AuthorityStrongQuorumSignInfo, EmptySignInfo, Signer,
 };
 <span class="kw">use </span><span class="kw">crate</span>::error::SuiResult;
+<span class="kw">use </span><span class="kw">crate</span>::executable_transaction::CertificateProof;
 <span class="kw">use </span><span class="kw">crate</span>::messages::VersionedProtocolMessage;
 <span class="kw">use </span><span class="kw">crate</span>::messages_checkpoint::CheckpointSequenceNumber;
 <span class="kw">use </span>once_cell::sync::OnceCell;

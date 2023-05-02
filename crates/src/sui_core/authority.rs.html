@@ -3895,6 +3895,12 @@
 <a href="#3895" id="3895">3895</a>
 <a href="#3896" id="3896">3896</a>
 <a href="#3897" id="3897">3897</a>
+<a href="#3898" id="3898">3898</a>
+<a href="#3899" id="3899">3899</a>
+<a href="#3900" id="3900">3900</a>
+<a href="#3901" id="3901">3901</a>
+<a href="#3902" id="3902">3902</a>
+<a href="#3903" id="3903">3903</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3967,6 +3973,7 @@
 };
 <span class="kw">use </span>sui_types::error::{ExecutionError, UserInputError};
 <span class="kw">use </span>sui_types::event::{Event, EventID};
+<span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::gas::{GasCostSummary, SuiGasStatus};
 <span class="kw">use </span>sui_types::message_envelope::Message;
 <span class="kw">use </span>sui_types::messages_checkpoint::{
@@ -3974,6 +3981,11 @@
     CheckpointSequenceNumber, CheckpointSummary, CheckpointTimestamp, VerifiedCheckpoint,
 };
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointRequest, CheckpointResponse};
+<span class="kw">use </span>sui_types::messages_consensus::AuthorityCapabilities;
+<span class="kw">use </span>sui_types::messages_grpc::{
+    HandleTransactionResponse, ObjectInfoRequest, ObjectInfoRequestKind, ObjectInfoResponse,
+    TransactionInfoRequest, TransactionInfoResponse, TransactionStatus,
+};
 <span class="kw">use </span>sui_types::metrics::LimitsMetrics;
 <span class="kw">use </span>sui_types::object::{MoveObject, Owner, PastObjectRead, OBJECT_START_VERSION};
 <span class="kw">use </span>sui_types::storage::{ObjectKey, ObjectStore, WriteKind};

@@ -115,6 +115,7 @@
 <a href="#115" id="115">115</a>
 <a href="#116" id="116">116</a>
 <a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -124,7 +125,8 @@
 };
 
 <span class="kw">use </span>mysten_metrics::{monitored_scope, spawn_monitored_task};
-<span class="kw">use </span>sui_types::{digests::TransactionEffectsDigest, messages::VerifiedExecutableTransaction};
+<span class="kw">use </span>sui_types::digests::TransactionEffectsDigest;
+<span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>tokio::{
     sync::{mpsc::UnboundedReceiver, oneshot, Semaphore},
     time::sleep,

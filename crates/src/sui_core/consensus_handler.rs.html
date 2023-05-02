@@ -656,6 +656,7 @@
 <a href="#656" id="656">656</a>
 <a href="#657" id="657">657</a>
 <a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -686,12 +687,13 @@
 <span class="kw">use </span>std::num::NonZeroUsize;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, EpochId, TransactionDigest};
-<span class="kw">use </span>sui_types::messages::{
-    ConsensusTransaction, ConsensusTransactionKey, ConsensusTransactionKind,
-    VerifiedExecutableTransaction, VerifiedTransaction,
-};
+<span class="kw">use </span>sui_types::messages::VerifiedTransaction;
 <span class="kw">use </span>sui_types::storage::ParentSync;
 
+<span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
+<span class="kw">use </span>sui_types::messages_consensus::{
+    ConsensusTransaction, ConsensusTransactionKey, ConsensusTransactionKind,
+};
 <span class="kw">use </span>tracing::{debug, error, info, instrument};
 
 <span class="kw">pub struct </span>ConsensusHandler&lt;T&gt; {
@@ -1189,7 +1191,7 @@
     <span class="kw">use </span>narwhal_types::Certificate;
     <span class="kw">use </span>sui_protocol_config::SupportedProtocolVersions;
     <span class="kw">use </span>sui_types::base_types::AuthorityName;
-    <span class="kw">use </span>sui_types::messages::{
+    <span class="kw">use </span>sui_types::messages_consensus::{
         AuthorityCapabilities, ConsensusTransaction, ConsensusTransactionKind,
     };
 

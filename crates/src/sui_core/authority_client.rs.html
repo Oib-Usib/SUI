@@ -228,6 +228,11 @@
 <a href="#228" id="228">228</a>
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -246,6 +251,11 @@
 <span class="kw">use </span>sui_types::{error::SuiError, messages::<span class="kw-2">*</span>};
 
 <span class="kw">use </span>sui_network::tonic::transport::Channel;
+<span class="kw">use </span>sui_types::messages_grpc::{
+    HandleCertificateResponse, HandleCertificateResponseV2, HandleTransactionResponse,
+    ObjectInfoRequest, ObjectInfoResponse, SystemStateRequest, TransactionInfoRequest,
+    TransactionInfoResponse,
+};
 
 <span class="attr">#[async_trait]
 </span><span class="kw">pub trait </span>AuthorityAPI {

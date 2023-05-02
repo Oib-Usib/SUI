@@ -706,6 +706,7 @@
 <a href="#706" id="706">706</a>
 <a href="#707" id="707">707</a>
 <a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -717,11 +718,12 @@
 
 <span class="kw">use </span>mysten_metrics::monitored_scope;
 <span class="kw">use </span>parking_lot::RwLock;
+<span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::{
     base_types::ObjectID,
     committee::EpochId,
     digests::TransactionEffectsDigest,
-    messages::{TransactionDataAPI, VerifiedCertificate, VerifiedExecutableTransaction},
+    messages::{TransactionDataAPI, VerifiedCertificate},
 };
 <span class="kw">use </span>sui_types::{base_types::TransactionDigest, error::SuiResult};
 <span class="kw">use </span>tokio::sync::mpsc::UnboundedSender;

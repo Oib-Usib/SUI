@@ -358,7 +358,6 @@
 <a href="#358" id="358">358</a>
 <a href="#359" id="359">359</a>
 <a href="#360" id="360">360</a>
-<a href="#361" id="361">361</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -374,19 +373,18 @@
 <span class="kw">use </span>mysten_metrics::spawn_monitored_task;
 <span class="kw">use </span>sui_config::genesis::Genesis;
 <span class="kw">use </span>sui_types::effects::{TransactionEffectsAPI, TransactionEvents};
+<span class="kw">use </span>sui_types::error::SuiResult;
+<span class="kw">use </span>sui_types::messages_grpc::{
+    HandleCertificateResponse, HandleCertificateResponseV2, HandleTransactionResponse,
+    ObjectInfoRequest, ObjectInfoResponse, SystemStateRequest, TransactionInfoRequest,
+    TransactionInfoResponse,
+};
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>sui_types::{
     crypto::AuthorityKeyPair,
     error::SuiError,
-    messages::{
-        CertifiedTransaction, HandleTransactionResponse, ObjectInfoRequest, ObjectInfoResponse,
-        SystemStateRequest, Transaction, TransactionInfoRequest, TransactionInfoResponse,
-    },
+    messages::{CertifiedTransaction, Transaction},
     messages_checkpoint::{CheckpointRequest, CheckpointResponse},
-};
-<span class="kw">use </span>sui_types::{
-    error::SuiResult,
-    messages::{HandleCertificateResponse, HandleCertificateResponseV2},
 };
 
 <span class="attr">#[derive(Clone, Copy, Default)]
