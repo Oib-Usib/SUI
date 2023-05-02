@@ -904,7 +904,7 @@
 <span class="kw">fn </span>transactions_table_default_config() -&gt; DBOptions {
     default_db_options()
         .optimize_for_write_throughput()
-        .optimize_for_large_values_no_scan()
+        .optimize_for_large_values_no_scan(<span class="number">4 </span>&lt;&lt; <span class="number">10</span>)
         .optimize_for_point_lookup(
             read_size_from_env(ENV_VAR_TRANSACTIONS_BLOCK_CACHE_SIZE).unwrap_or(<span class="number">512</span>),
         )
@@ -913,7 +913,7 @@
 <span class="kw">fn </span>effects_table_default_config() -&gt; DBOptions {
     default_db_options()
         .optimize_for_write_throughput()
-        .optimize_for_large_values_no_scan()
+        .optimize_for_large_values_no_scan(<span class="number">4 </span>&lt;&lt; <span class="number">10</span>)
         .optimize_for_point_lookup(
             read_size_from_env(ENV_VAR_EFFECTS_BLOCK_CACHE_SIZE).unwrap_or(<span class="number">1024</span>),
         )
@@ -922,7 +922,7 @@
 <span class="kw">fn </span>events_table_default_config() -&gt; DBOptions {
     default_db_options()
         .optimize_for_write_throughput()
-        .optimize_for_large_values_no_scan()
+        .optimize_for_large_values_no_scan(<span class="number">4 </span>&lt;&lt; <span class="number">10</span>)
         .optimize_for_read(read_size_from_env(ENV_VAR_EVENTS_BLOCK_CACHE_SIZE).unwrap_or(<span class="number">1024</span>))
 }
 

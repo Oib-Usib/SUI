@@ -233,14 +233,14 @@
                 <span class="self">Self</span>::HEADERS_CF,
                 default_db_options()
                     .optimize_for_write_throughput()
-                    .optimize_for_large_values_no_scan()
+                    .optimize_for_large_values_no_scan(<span class="number">1 </span>&lt;&lt; <span class="number">10</span>)
                     .options,
             ),
             (
                 <span class="self">Self</span>::CERTIFICATES_CF,
                 default_db_options()
                     .optimize_for_write_throughput()
-                    .optimize_for_large_values_no_scan()
+                    .optimize_for_large_values_no_scan(<span class="number">1 </span>&lt;&lt; <span class="number">10</span>)
                     .options,
             ),
             (<span class="self">Self</span>::CERTIFICATE_DIGEST_BY_ROUND_CF, cf_options.clone()),
@@ -250,7 +250,7 @@
                 <span class="self">Self</span>::BATCHES_CF,
                 default_db_options()
                     .optimize_for_write_throughput()
-                    .optimize_for_large_values_no_scan()
+                    .optimize_for_large_values_no_scan(<span class="number">1 </span>&lt;&lt; <span class="number">10</span>)
                     .options,
             ),
             (<span class="self">Self</span>::LAST_COMMITTED_CF, cf_options.clone()),

@@ -2397,6 +2397,10 @@
 <a href="#2397" id="2397">2397</a>
 <a href="#2398" id="2398">2398</a>
 <a href="#2399" id="2399">2399</a>
+<a href="#2400" id="2400">2400</a>
+<a href="#2401" id="2401">2401</a>
+<a href="#2402" id="2402">2402</a>
+<a href="#2403" id="2403">2403</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">pub mod </span>errors;
@@ -4381,8 +4385,7 @@
 
     <span class="comment">// Optimize write and lookup perf for tables which are rarely scanned, and have large values.
     // https://rocksdb.org/blog/2021/05/26/integrated-blob-db.html
-    // REQUIRED: table must set optimize_for_write_throughput() earlier.
-    </span><span class="kw">pub fn </span>optimize_for_large_values_no_scan(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; DBOptions {
+    </span><span class="kw">pub fn </span>optimize_for_large_values_no_scan(<span class="kw-2">mut </span><span class="self">self</span>, min_blob_size: u64) -&gt; DBOptions {
         <span class="kw">if </span>env::var(ENV_VAR_DISABLE_BLOB_STORAGE).is_ok() {
             <span class="macro">info!</span>(<span class="string">&quot;Large value blob storage optimization is disabled via env var.&quot;</span>);
             <span class="kw">return </span><span class="self">self</span>;
@@ -4394,12 +4397,17 @@
             .set_blob_compression_type(rocksdb::DBCompressionType::Lz4);
         <span class="self">self</span>.options.set_enable_blob_gc(<span class="bool-val">true</span>);
         <span class="comment">// Since each blob can have non-trivial size overhead, and compression does not work across blobs,
-        // set a min blob size to so small transactions and effects are kept in sst files.
-        </span><span class="self">self</span>.options.set_min_blob_size(<span class="number">4 </span>* <span class="number">1024</span>); <span class="comment">// 4KiB
+        // set a min blob size in bytes to so small transactions and effects are kept in sst files.
+        </span><span class="self">self</span>.options.set_min_blob_size(min_blob_size);
 
-        // Since large blobs are not in sst files, reduce the target file size and base level
+        <span class="comment">// Increase write buffer size to 256MiB.
+        </span><span class="kw">let </span>write_buffer_size = read_size_from_env(ENV_VAR_MAX_WRITE_BUFFER_SIZE_MB)
+            .unwrap_or(DEFAULT_MAX_WRITE_BUFFER_SIZE_MB)
+            * <span class="number">1024
+            </span>* <span class="number">1024</span>;
+        <span class="self">self</span>.options.set_write_buffer_size(write_buffer_size);
+        <span class="comment">// Since large blobs are not in sst files, reduce the target file size and base level
         // target size.
-        // Keep sst file size at 64MiB.
         </span><span class="kw">let </span>target_file_size_base = <span class="number">64 </span>&lt;&lt; <span class="number">20</span>;
         <span class="self">self</span>.options
             .set_target_file_size_base(target_file_size_base);
