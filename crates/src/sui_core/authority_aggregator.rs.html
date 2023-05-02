@@ -1871,6 +1871,7 @@
 <a href="#1871" id="1871">1871</a>
 <a href="#1872" id="1872">1872</a>
 <a href="#1873" id="1873">1873</a>
+<a href="#1874" id="1874">1874</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -2274,21 +2275,10 @@
         <span class="kw">let </span>safe_client_metrics_base = SafeClientMetricsBase::new(registry);
         <span class="self">Self </span>{
             committee: Arc::new(committee),
-            authority_clients: Arc::new(
-                authority_clients
-                    .into_iter()
-                    .map(|(name, api)| {
-                        (
-                            name,
-                            Arc::new(SafeClient::new(
-                                api,
-                                committee_store.clone(),
-                                name,
-                                SafeClientMetrics::new(<span class="kw-2">&amp;</span>safe_client_metrics_base, name),
-                            )),
-                        )
-                    })
-                    .collect(),
+            authority_clients: create_safe_clients(
+                authority_clients,
+                <span class="kw-2">&amp;</span>committee_store,
+                <span class="kw-2">&amp;</span>safe_client_metrics_base,
             ),
             metrics: Arc::new(AuthAggMetrics::new(registry)),
             safe_client_metrics_base,
@@ -2306,21 +2296,10 @@
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             committee: Arc::new(committee),
-            authority_clients: Arc::new(
-                authority_clients
-                    .into_iter()
-                    .map(|(name, api)| {
-                        (
-                            name,
-                            Arc::new(SafeClient::new(
-                                api,
-                                committee_store.clone(),
-                                name,
-                                SafeClientMetrics::new(<span class="kw-2">&amp;</span>safe_client_metrics_base, name),
-                            )),
-                        )
-                    })
-                    .collect(),
+            authority_clients: create_safe_clients(
+                authority_clients,
+                <span class="kw-2">&amp;</span>committee_store,
+                <span class="kw-2">&amp;</span>safe_client_metrics_base,
             ),
             metrics: auth_agg_metrics,
             safe_client_metrics_base,
@@ -2421,6 +2400,29 @@
             .map(|(k, v)| (k, (<span class="kw-2">*</span>v).clone()))
             .collect()
     }
+}
+
+<span class="kw">fn </span>create_safe_clients&lt;A: Clone&gt;(
+    authority_clients: BTreeMap&lt;AuthorityName, A&gt;,
+    committee_store: <span class="kw-2">&amp;</span>Arc&lt;CommitteeStore&gt;,
+    safe_client_metrics_base: <span class="kw-2">&amp;</span>SafeClientMetricsBase,
+) -&gt; Arc&lt;BTreeMap&lt;AuthorityName, Arc&lt;SafeClient&lt;A&gt;&gt;&gt;&gt; {
+    Arc::new(
+        authority_clients
+            .into_iter()
+            .map(|(name, api)| {
+                (
+                    name,
+                    Arc::new(SafeClient::new(
+                        api,
+                        committee_store.clone(),
+                        name,
+                        SafeClientMetrics::new(safe_client_metrics_base, name),
+                    )),
+                )
+            })
+            .collect(),
+    )
 }
 
 <span class="kw">impl </span>AuthorityAggregator&lt;NetworkAuthorityClient&gt; {
