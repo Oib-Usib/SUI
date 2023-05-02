@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682987831964,
+  "lastUpdate": 1682992651436,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3167,6 +3167,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 306550,
             "range": "± 29889",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca973e1e32582c0d8a0eb597c6a8dbdc458986f0",
+          "message": "[framework] Expose transaction digest to Move (#11606)\n\n## Description\r\n\r\nAs in title\r\n\r\n## Test Plan\r\n\r\n```\r\n$ cargo simtest\r\n$ env SUI_SKIP_SIMTEST=1 cargo nextest run\r\n```\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nExpose Transaction Digest to move via `tx_context::digest`",
+          "timestamp": "2023-05-01T18:43:47-07:00",
+          "tree_id": "317a4ac7f96c97abe711ff55892b829bff633670",
+          "url": "https://github.com/MystenLabs/sui/commit/ca973e1e32582c0d8a0eb597c6a8dbdc458986f0"
+        },
+        "date": 1682992645963,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145504676,
+            "range": "± 5367540",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 355981,
+            "range": "± 63164",
             "unit": "ns/iter"
           }
         ]
