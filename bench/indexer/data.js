@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683000309289,
+  "lastUpdate": 1683002605634,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3275,6 +3275,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 316924,
             "range": "± 14571",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8cf7c05c095cfedf993321cfe1dff86edb9c4075",
+          "message": "Split more types out of messages.rs (#11556)\n\nThis PR moves around the following types:\r\n1. Move all quorum driver related types out of messages.rs to\r\nquorum_driver_types.rs\r\n2. Move all grpc request and response types to a new file\r\nmessages_grpc.rs\r\n3. Move all consensus messages to a new file messages_consensus.rs\r\n4. Merge ExecutableTransaction and CertificateProof to the same file\r\n\r\nAfter this PR, messages.rs only contains transaction related types.\r\n\r\nNo functional changes. Pure refactoring moving types around.",
+          "timestamp": "2023-05-01T21:32:21-07:00",
+          "tree_id": "7d9e0ea2a57a2cb12b489f89d6e2fcb1e8dfbef6",
+          "url": "https://github.com/MystenLabs/sui/commit/8cf7c05c095cfedf993321cfe1dff86edb9c4075"
+        },
+        "date": 1683002598453,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109278613,
+            "range": "± 4931339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308458,
+            "range": "± 16225",
             "unit": "ns/iter"
           }
         ]
