@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682996998722,
+  "lastUpdate": 1683000309289,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3239,6 +3239,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 396949,
             "range": "± 57823",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f26163beb8f9188764605717b37688e4bd9a9d53",
+          "message": "Replay from authority state (#11591)\n\n## Description \r\n\r\n* Previously the entrypoint for replays was in the execution engine at\r\n`sui_adapter::execution_engine::execute_transaction_to_effects_impl`\r\n\r\n* This PR allows replaying from a much earlier point in transaction\r\nexecution `sui_core::authority::AuthorityState::try_execute_immediately`\r\nwhich examines the cert, etc\r\n\r\nThis will allow for more coverage during replays.\r\nOne can specify if the replay tool should use authority with the\r\n`--authority` flag\r\n\r\n```\r\n./target/debug/sui-tool replay --authority  --rpc   https://fullnode.testnet.sui.io:443  tx -t 8SB4pnHhJmUtEq1QvmN6efed9RZ78D8V3mCoMNkxRCwP \r\n2023-05-01T19:43:14.378355Z  INFO sui_replay: Executing tx: 8SB4pnHhJmUtEq1QvmN6efed9RZ78D8V3mCoMNkxRCwP\r\n2023-05-01T19:43:27.543915Z  WARN sui_replay::replay: Object 0x0000000000000000000000000000000000000000000000000000000000000002 at version 0x2 does not exist on RPC server. This might be due to pruning. Historical replays might not work\r\n2023-05-01T19:43:33.068368Z  INFO sui_config::genesis_config: Creating accounts and token allocations...\r\n2023-05-01T19:43:33.802197Z  INFO sui_core::authority::authority_store: Starting SUI conservation check. This may take a while..\r\n2023-05-01T19:43:33.858056Z  INFO sui_core::authority::authority_store: Scanned 37 live objects, took 55.819584ms\r\n2023-05-01T19:43:33.858371Z  INFO sui_core::authority::authority_store: Total SUI amount in the network: 10000000000000000000, storage fund balance: 0, total storage rebate: 0 at beginning of epoch 0\r\n2023-05-01T19:43:33.859483Z  INFO sui_protocol_config: restoring override fn\r\n2023-05-01T19:43:34.302349Z  INFO sui_core::authority::authority_per_epoch_store: in_memory_checkpoint_roots = true\r\n2023-05-01T19:43:34.582598Z  INFO sui_core::authority: current protocol version is now ProtocolVersion(9)\r\n2023-05-01T19:43:34.582630Z  INFO sui_core::authority: supported versions are: SupportedProtocolVersions { min: ProtocolVersion(1), max: ProtocolVersion(9) }\r\n2023-05-01T19:43:34.583724Z  INFO sui_core::execution_driver: Starting pending certificates execution process.\r\n2023-05-01T19:43:35.073419Z  INFO sui_core::authority::authority_per_epoch_store: in_memory_checkpoint_roots = true\r\n2023-05-01T19:43:35.399887Z  WARN sui_core::transaction_manager: Ignoring committed certificate from wrong epoch. Expected=0 Actual=774 CertificateDigest=TransactionDigest(8SB4pnHhJmUtEq1QvmN6efed9RZ78D8V3mCoMNkxRCwP)\r\n2023-05-01T19:43:35.429747Z  INFO typed_store::rocks: Returning the cf metric logging task for DBMap: transaction_cert_signatures\r\n2023-05-01T19:43:35.429740Z  INFO typed_store::rocks: Returning the cf metric logging task for DBMap: effects_signatures\r\n```\r\n\r\n## Test Plan \r\n\r\nUsual random sampling.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-02T03:55:31Z",
+          "tree_id": "38bc0c44ae835f31814bb94ded50609c6d47d881",
+          "url": "https://github.com/MystenLabs/sui/commit/f26163beb8f9188764605717b37688e4bd9a9d53"
+        },
+        "date": 1683000302346,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147030644,
+            "range": "± 4650293",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 316924,
+            "range": "± 14571",
             "unit": "ns/iter"
           }
         ]
