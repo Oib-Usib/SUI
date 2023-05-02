@@ -111,8 +111,8 @@
     <span class="kw">pub </span>listen_address: SocketAddr,
     <span class="kw">pub </span>remote_write: RemoteWriteConfig,
     <span class="kw">pub </span>json_rpc: PeerValidationConfig,
-    <span class="kw">pub </span>metrics_address: SocketAddr,
-    <span class="kw">pub </span>histogram_address: SocketAddr,
+    <span class="kw">pub </span>metrics_address: String,
+    <span class="kw">pub </span>histogram_address: String,
 }
 
 <span class="attr">#[serde_as]

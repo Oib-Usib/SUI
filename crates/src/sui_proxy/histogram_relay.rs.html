@@ -255,6 +255,7 @@
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>anyhow::{bail, <span class="prelude-ty">Result</span>};
@@ -263,10 +264,10 @@
 <span class="kw">use </span>prometheus::proto::{Metric, MetricFamily};
 <span class="kw">use </span>prometheus::{register_counter_vec, register_histogram_vec};
 <span class="kw">use </span>prometheus::{CounterVec, HistogramVec};
+<span class="kw">use </span>std::net::TcpListener;
 <span class="kw">use </span>std::time::{SystemTime, UNIX_EPOCH};
 <span class="kw">use </span>std::{
     collections::VecDeque,
-    net::SocketAddr,
     sync::{Arc, Mutex},
 };
 <span class="kw">use </span>tower::ServiceBuilder;
@@ -302,7 +303,7 @@
 <span class="comment">// Creates a new http server that has as a sole purpose to expose
 // and endpoint that prometheus agent can use to poll for the metrics.
 // A RegistryService is returned that can be used to get access in prometheus Registries.
-</span><span class="kw">pub fn </span>start_prometheus_server(addr: SocketAddr) -&gt; HistogramRelay {
+</span><span class="kw">pub fn </span>start_prometheus_server(addr: TcpListener) -&gt; HistogramRelay {
     <span class="kw">let </span>relay = HistogramRelay::new();
     <span class="kw">let </span>app = Router::new()
         .route(METRICS_ROUTE, get(metrics))
@@ -318,7 +319,8 @@
         );
 
     tokio::spawn(<span class="kw">async move </span>{
-        axum::Server::bind(<span class="kw-2">&amp;</span>addr)
+        axum::Server::from_tcp(addr)
+            .unwrap()
             .serve(app.into_make_service())
             .<span class="kw">await
             </span>.unwrap();
