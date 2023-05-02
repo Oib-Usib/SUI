@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683054507761,
+  "lastUpdate": 1683055048335,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3491,6 +3491,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 338832,
             "range": "± 79844",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f19f40e3a1881364ebb97def58f948249bb5057",
+          "message": "[rocksdb] specify blob size threshold per column family (#11428)\n\n## Description \r\n\r\nAllow specifying different blob size threshold per column family. Column\r\nfamilies in per-epoch databases have less worry about size overhead and\r\ncan use a lower blob size threshold.\r\n\r\nAlso increase the write buffer size inside the\r\n`optimize_for_large_values_no_scan()` function as well, so the function\r\ndoes not require calling `optimize_for_write_throughput()` before.\r\n\r\n(not urgent)\r\n\r\n## Test Plan \r\n\r\nCI. Deployed to private testnet.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-02T12:07:16-07:00",
+          "tree_id": "d063504070add84ef5b82ff28b31fb98a0cabbad",
+          "url": "https://github.com/MystenLabs/sui/commit/3f19f40e3a1881364ebb97def58f948249bb5057"
+        },
+        "date": 1683055042733,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 139906169,
+            "range": "± 5643357",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311118,
+            "range": "± 15592",
             "unit": "ns/iter"
           }
         ]
