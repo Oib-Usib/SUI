@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683051406094,
+  "lastUpdate": 1683054507761,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3455,6 +3455,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 318046,
             "range": "± 23771",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d8535a24d3e4b5926a67496a266afd7a421c799e",
+          "message": "[move-cli] Update framework branch in sui move new template (#11614)\n\n## Description\r\n\r\nDifferentiate the branch that node operators build their software off of\r\n(e.g. `mainnet`) from the branch that Move package developers depend on\r\nthe framework at (e.g. `framework/mainnet`).\r\n\r\nThis is to account for the fact that when a protocol version/binary\r\nupgrade includes a framework change, there is a period of time between\r\nwhen the tracking branch for node operators (e.g. `mainnet`) is updated\r\nand when the network performs the protocol upgrade where an attempt to\r\npublish a package that depends on a system package will fail because of\r\ndependency source validation.\r\n\r\nThis PR also introduces some other minor changes to the new package\r\ntemplate:\r\n\r\n- Remove an extraneous space in the `addresses` output.\r\n- Don't include the address for `sui` because it will be inherited from\r\nthe `Sui` dependency automatically.\r\n\r\n## Test Plan\r\n\r\nTest output from `sui move new`\r\n\r\n```\r\ncrates/sui$ cargo run -- --path /tmp/example example\r\ncrates/sui$ cat /tmp/example/Move.toml\r\n[package]\r\nname = \"example\"\r\nversion = \"0.0.1\"\r\n\r\n[dependencies]\r\nSui = { git = \"https://github.com/MystenLabs/sui.git\", subdir = \"crates/sui-framework/packages/sui-framework\", rev = \"framework/testnet\" }\r\n\r\n[addresses]\r\nexample = \"0x0\"\r\n```\r\n\r\nTest script that checks compatibility against localnet:\r\n\r\n```\r\ncrates/sui$ cargo build\r\nsui$ export SUI=$(git rev-parse --show-toplevel)/target/debug/sui\r\nsui$ $SUI genesis -f && $SUI start\r\n\r\n     # In a new terminal session\r\nsui$ export SUI=$(git rev-parse --show-toplevel)/target/debug/sui\r\nsui$ $SUI client switch --env localnet\r\nsui$ ./scripts/check-framework-compat.sh\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nThe revision that the framework used by `$NETWORK` is found it is now\r\n`framework/$NETWORK` and not just `$NETWORK`.",
+          "timestamp": "2023-05-02T11:55:03-07:00",
+          "tree_id": "cc3b2c8a40c1f4c7280f8f129d2ea82841fcc2ad",
+          "url": "https://github.com/MystenLabs/sui/commit/d8535a24d3e4b5926a67496a266afd7a421c799e"
+        },
+        "date": 1683054502196,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 142704632,
+            "range": "± 4975766",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 338832,
+            "range": "± 79844",
             "unit": "ns/iter"
           }
         ]
