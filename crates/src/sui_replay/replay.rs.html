@@ -2792,7 +2792,7 @@
     <span class="prelude-val">Err</span>(LocalExecError::UnexpectedEventFormat { event: ev })
 }
 
-<span class="doccomment">/// Utility ti diff effects in a human readable format
+<span class="doccomment">/// Utility to diff effects in a human readable format
 </span><span class="kw">fn </span>diff_effects(
     eff1: <span class="kw-2">&amp;</span>SuiTransactionBlockEffectsV1,
     eff2: <span class="kw-2">&amp;</span>SuiTransactionBlockEffectsV1,
@@ -2812,6 +2812,6 @@
         res.push(<span class="macro">format!</span>(<span class="string">&quot;{}{}&quot;</span>, sign, change));
     }
 
-    res.join(<span class="string">&quot;\n&quot;</span>)
+    res.join(<span class="string">&quot;&quot;</span>)
 }
 </code></pre></div></section></main></body></html>
