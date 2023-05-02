@@ -249,6 +249,13 @@
 <a href="#249" id="249">249</a>
 <a href="#250" id="250">250</a>
 <a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -257,19 +264,21 @@
 <span class="kw">use </span>move_core_types::account_address::AccountAddress;
 <span class="kw">use </span>move_core_types::language_storage::{ModuleId, StructTag};
 <span class="kw">use </span>std::fmt::Debug;
-<span class="kw">use </span>sui_json_rpc_types::{SuiEvent, SuiTransactionBlockEffectsV1};
+<span class="kw">use </span>sui_json_rpc_types::SuiEvent;
+<span class="kw">use </span>sui_json_rpc_types::SuiTransactionBlockEffects;
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>sui_sdk::error::Error <span class="kw">as </span>SuiRpcError;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, ObjectRef, SequenceNumber, SuiAddress, VersionNumber};
 <span class="kw">use </span>sui_types::digests::{ObjectDigest, TransactionDigest};
 <span class="kw">use </span>sui_types::error::{SuiError, SuiObjectResponseError, SuiResult, UserInputError};
-<span class="kw">use </span>sui_types::messages::{InputObjectKind, TransactionKind};
+<span class="kw">use </span>sui_types::messages::{InputObjectKind, SenderSignedData, TransactionKind};
 <span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>thiserror::Error;
 <span class="kw">use </span>tokio::time::Duration;
+<span class="kw">use </span>tracing::error;
 
 <span class="comment">// These are very testnet specific
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>GENESIX_TX_DIGEST: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Cgww1sn7XViCPSdDcAPmVcARueWuexJ8af8zD842Ff43&quot;</span>;
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>TESTNET_GENESIX_TX_DIGEST: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Cgww1sn7XViCPSdDcAPmVcARueWuexJ8af8zD842Ff43&quot;</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>SAFE_MODE_TX_1_DIGEST: <span class="kw-2">&amp;</span>str = <span class="string">&quot;AGBCaUGj4iGpGYyQvto9Bke1EwouY8LGMoTzzuPMx4nd&quot;</span>;
 
 <span class="comment">// TODO: make these configurable
@@ -281,9 +290,12 @@
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>EPOCH_CHANGE_STRUCT_TAG: <span class="kw-2">&amp;</span>str =
     <span class="string">&quot;0x3::sui_system_state_inner::SystemEpochInfoEvent&quot;</span>;
 
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>ONE_DAY_MS: u64 = <span class="number">24 </span>* <span class="number">60 </span>* <span class="number">60 </span>* <span class="number">1000</span>;
+
 <span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>TxInfo {
+</span><span class="kw">pub struct </span>OnChainTransactionInfo {
     <span class="kw">pub </span>tx_digest: TransactionDigest,
+    <span class="kw">pub </span>sender_signed_data: SenderSignedData,
     <span class="kw">pub </span>sender: SuiAddress,
     <span class="kw">pub </span>input_objects: Vec&lt;InputObjectKind&gt;,
     <span class="kw">pub </span>kind: TransactionKind,
@@ -294,8 +306,10 @@
     <span class="kw">pub </span>gas_price: u64,
     <span class="kw">pub </span>executed_epoch: u64,
     <span class="kw">pub </span>dependencies: Vec&lt;TransactionDigest&gt;,
-    <span class="kw">pub </span>effects: SuiTransactionBlockEffectsV1,
+    <span class="kw">pub </span>effects: SuiTransactionBlockEffects,
     <span class="kw">pub </span>protocol_config: ProtocolConfig,
+    <span class="kw">pub </span>epoch_start_timestamp: u64,
+    <span class="kw">pub </span>reference_gas_price: u64,
 }
 
 <span class="attr">#[allow(clippy::large_enum_variant)]
@@ -360,8 +374,8 @@
     </span>EffectsForked {
         digest: TransactionDigest,
         diff: String,
-        on_chain: Box&lt;SuiTransactionBlockEffectsV1&gt;,
-        local: Box&lt;SuiTransactionBlockEffectsV1&gt;,
+        on_chain: Box&lt;SuiTransactionBlockEffects&gt;,
+        local: Box&lt;SuiTransactionBlockEffects&gt;,
     },
 
     <span class="attr">#[error(<span class="string">&quot;Genesis replay not supported digest {:#?}&quot;</span>, digest)]

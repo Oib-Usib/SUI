@@ -236,6 +236,11 @@
 <a href="#236" id="236">236</a>
 <a href="#237" id="237">237</a>
 <a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -294,6 +299,7 @@
 </span><span class="kw">pub async fn </span>execute_replay_command(
     rpc_url: String,
     safety_checks: bool,
+    use_authority: bool,
     cmd: ReplayToolCommand,
 ) -&gt; anyhow::Result&lt;(u64, u64)&gt; {
     <span class="kw">let </span>safety = <span class="kw">if </span>safety_checks {
@@ -308,16 +314,19 @@
         } =&gt; {
             <span class="kw">let </span>tx_digest = TransactionDigest::from_str(<span class="kw-2">&amp;</span>tx_digest)<span class="question-mark">?</span>;
             <span class="macro">info!</span>(<span class="string">&quot;Executing tx: {}&quot;</span>, tx_digest);
-            <span class="kw">let </span>effects = LocalExec::new_from_fn_url(<span class="kw-2">&amp;</span>rpc_url)
+            <span class="kw">let </span>sandbox_state = LocalExec::new_from_fn_url(<span class="kw-2">&amp;</span>rpc_url)
                 .<span class="kw">await</span><span class="question-mark">?
                 </span>.init_for_execution()
                 .<span class="kw">await</span><span class="question-mark">?
-                </span>.execute(<span class="kw-2">&amp;</span>tx_digest, safety)
+                </span>.execute_transaction(<span class="kw-2">&amp;</span>tx_digest, safety, use_authority)
                 .<span class="kw">await</span><span class="question-mark">?</span>;
 
+            <span class="kw">let </span>effects = sandbox_state.local_exec_effects.clone();
             <span class="kw">if </span>show_effects {
                 <span class="macro">println!</span>(<span class="string">&quot;{:#?}&quot;</span>, effects)
             }
+
+            sandbox_state.check_effects()<span class="question-mark">?</span>;
 
             <span class="macro">info!</span>(<span class="string">&quot;Execution finished successfully. Local and on-chain effects match.&quot;</span>);
             (<span class="number">1u64</span>, <span class="number">1u64</span>)
@@ -395,7 +404,7 @@
                         .init_for_execution()
                         .<span class="kw">await
                         </span>.unwrap()
-                        .execute_all_in_checkpoints(<span class="kw-2">&amp;</span>checkpoints, <span class="kw-2">&amp;</span>safety, terminate_early)
+                        .execute_all_in_checkpoints(<span class="kw-2">&amp;</span>checkpoints, <span class="kw-2">&amp;</span>safety, terminate_early, use_authority)
                         .<span class="kw">await
                         </span>.unwrap();
                     <span class="kw">let </span>time = time.elapsed();
@@ -449,6 +458,7 @@
             <span class="kw">let </span>status = execute_replay_command(
                 rpc_url,
                 safety_checks,
+                use_authority,
                 ReplayToolCommand::ReplayCheckpoints {
                     start,
                     end,

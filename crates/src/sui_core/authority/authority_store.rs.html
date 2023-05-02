@@ -1883,6 +1883,19 @@
 <a href="#1883" id="1883">1883</a>
 <a href="#1884" id="1884">1884</a>
 <a href="#1885" id="1885">1885</a>
+<a href="#1886" id="1886">1886</a>
+<a href="#1887" id="1887">1887</a>
+<a href="#1888" id="1888">1888</a>
+<a href="#1889" id="1889">1889</a>
+<a href="#1890" id="1890">1890</a>
+<a href="#1891" id="1891">1891</a>
+<a href="#1892" id="1892">1892</a>
+<a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2625,6 +2638,19 @@
 
         write_batch.write()<span class="question-mark">?</span>;
 
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// NOTE: this function is only to be used for fuzzing and testing. Never use in prod
+    </span><span class="attr">#[cfg(not(release))]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>insert_raw_object_unchecked_for_testing(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        objects: <span class="kw-2">&amp;</span>[Object],
+    ) -&gt; SuiResult {
+        <span class="comment">// Sideload directly
+        </span><span class="kw">for </span>o <span class="kw">in </span>objects {
+            <span class="self">self</span>.insert_object_direct(o.compute_object_reference(), o)<span class="question-mark">?</span>;
+        }
         <span class="prelude-val">Ok</span>(())
     }
 

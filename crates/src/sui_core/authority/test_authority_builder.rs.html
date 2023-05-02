@@ -216,6 +216,32 @@
 <a href="#216" id="216">216</a>
 <a href="#217" id="217">217</a>
 <a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -243,7 +269,9 @@
 <span class="kw">use </span>sui_storage::IndexStore;
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, ObjectID};
 <span class="kw">use </span>sui_types::crypto::AuthorityKeyPair;
+<span class="kw">use </span>sui_types::error::SuiResult;
 <span class="kw">use </span>sui_types::messages::{VerifiedExecutableTransaction, VerifiedTransaction};
+<span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemStateTrait;
 
 <span class="attr">#[derive(Default)]
@@ -256,6 +284,7 @@
     reference_gas_price: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     node_keypair: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>AuthorityKeyPair&gt;,
     genesis: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Genesis&gt;,
+    starting_objects: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Object]&gt;,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; TestAuthorityBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -265,6 +294,11 @@
 
     <span class="kw">pub fn </span>with_store_base_path(<span class="kw-2">mut </span><span class="self">self</span>, path: PathBuf) -&gt; <span class="self">Self </span>{
         <span class="macro">assert!</span>(<span class="self">self</span>.store_base_path.replace(path).is_none());
+        <span class="self">self
+    </span>}
+
+    <span class="kw">pub fn </span>with_starting_objects(<span class="kw-2">mut </span><span class="self">self</span>, objects: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Object]) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert!</span>(<span class="self">self</span>.starting_objects.replace(objects).is_none());
         <span class="self">self
     </span>}
 
@@ -321,6 +355,16 @@
             config.validator_configs()[<span class="number">0</span>].protocol_key_pair(),
         )
     }
+
+    <span class="kw">pub async fn </span>side_load_objects(
+        authority_state: Arc&lt;AuthorityState&gt;,
+        objects: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Object],
+    ) -&gt; SuiResult {
+        authority_state
+            .database
+            .insert_raw_object_unchecked_for_testing(objects)
+            .<span class="kw">await
+    </span>}
 
     <span class="kw">pub async fn </span>build(<span class="self">self</span>) -&gt; Arc&lt;AuthorityState&gt; {
         <span class="kw">let </span>local_network_config = sui_config::builder::ConfigBuilder::new_with_temp_dir()
@@ -431,6 +475,14 @@
             )
             .<span class="kw">await
             </span>.unwrap();
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(starting_objects) = <span class="self">self</span>.starting_objects {
+            state
+                .database
+                .insert_raw_object_unchecked_for_testing(starting_objects)
+                .<span class="kw">await
+                </span>.unwrap();
+        };
         state
     }
 }

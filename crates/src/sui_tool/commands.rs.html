@@ -324,6 +324,9 @@
 <a href="#324" id="324">324</a>
 <a href="#325" id="325">325</a>
 <a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -478,6 +481,8 @@
         </span>rpc_url: String,
         <span class="attr">#[clap(long = <span class="string">&quot;safety-checks&quot;</span>)]
         </span>safety_checks: bool,
+        <span class="attr">#[clap(long = <span class="string">&quot;authority&quot;</span>)]
+        </span>use_authority: bool,
         <span class="attr">#[clap(subcommand)]
         </span>cmd: ReplayToolCommand,
     },
@@ -643,8 +648,9 @@
                 rpc_url,
                 safety_checks,
                 cmd,
+                use_authority,
             } =&gt; {
-                execute_replay_command(rpc_url, safety_checks, cmd).<span class="kw">await</span><span class="question-mark">?</span>;
+                execute_replay_command(rpc_url, safety_checks, use_authority, cmd).<span class="kw">await</span><span class="question-mark">?</span>;
             }
         };
         <span class="prelude-val">Ok</span>(())
