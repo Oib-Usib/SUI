@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683043649974,
+  "lastUpdate": 1683047477872,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3347,6 +3347,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 315683,
             "range": "± 31644",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "damirka.ru@gmail.com",
+            "name": "Damir Shamanaev",
+            "username": "damirka"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "63c1966168b07797cdd954c52ce3fa9553a2b090",
+          "message": "[framework] Adds vec_set::keys() method (#11623)",
+          "timestamp": "2023-05-02T19:58:56+03:00",
+          "tree_id": "0ce06d62f638ad9c66c35e80151401bdae02465c",
+          "url": "https://github.com/MystenLabs/sui/commit/63c1966168b07797cdd954c52ce3fa9553a2b090"
+        },
+        "date": 1683047471192,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 152760838,
+            "range": "± 37589456",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 522318,
+            "range": "± 229166",
             "unit": "ns/iter"
           }
         ]
