@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682987301687,
+  "lastUpdate": 1682987526475,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3095,6 +3095,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 302362,
             "range": "± 25844",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2f6abf97636794aece8adcadba68af9c2f59add4",
+          "message": "[rpc doc] - fix get_events example bug (#11608)\n\n## Description \r\n\r\n* fix get_events example bug\r\n* added examples for multi_get_objects, multi_get_transaction and\r\nget_validators_apy\r\n\r\nthe following methods example are missing, will be adding them in a few\r\nsubsequence PRs\r\n```\r\nsui_devInspectTransactionBlock\r\nsui_dryRunTransactionBlock\r\nsui_getLoadedChildObjects\r\nsui_getMoveFunctionArgTypes\r\nsui_getNormalizedMoveFunction\r\nsui_getNormalizedMoveModule\r\nsui_getNormalizedMoveModulesByPackage\r\nsui_getNormalizedMoveStruct\r\nsui_tryMultiGetPastObjects\r\nsuix_getDynamicFieldObject\r\nsuix_getDynamicFields\r\nsuix_getLatestSuiSystemState\r\nsuix_getOwnedObjects\r\nsuix_getStakes\r\nsuix_getStakesByIds\r\nsuix_queryEvents\r\nsuix_resolveNameServiceAddress\r\nsuix_resolveNameServiceNames\r\nsuix_subscribeEvent\r\nsuix_subscribeTransaction\r\nunsafe_batchTransaction\r\nunsafe_mergeCoins\r\nunsafe_moveCall\r\nunsafe_pay\r\nunsafe_payAllSui\r\nunsafe_paySui\r\nunsafe_publish\r\nunsafe_requestAddStake\r\nunsafe_requestWithdrawStake\r\nunsafe_splitCoin\r\nunsafe_splitCoinEqual\r\nunsafe_transferObject\r\nunsafe_transferSui\r\n```",
+          "timestamp": "2023-05-01T17:21:54-07:00",
+          "tree_id": "c2febd5c2032a91788a0f2cf5a1eb1dde9c3b9b1",
+          "url": "https://github.com/MystenLabs/sui/commit/2f6abf97636794aece8adcadba68af9c2f59add4"
+        },
+        "date": 1682987521181,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 155518768,
+            "range": "± 7161590",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 474530,
+            "range": "± 39377",
             "unit": "ns/iter"
           }
         ]
