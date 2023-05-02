@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682980836053,
+  "lastUpdate": 1682987301687,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3059,6 +3059,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 453003,
             "range": "± 83990",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ec53be069aa10b669526b9d311f4b865f9653466",
+          "message": "[sui-replay] Remove extra newline in diff output (#11607)\n\n## Description\r\n\r\nRemove the extra newline being added after each line in the diff output.\r\n\r\n## Test Plan\r\n\r\nOutput from this command (which forks due to lack of historical objects)\r\nis no longer output on every other line:\r\n\r\n```\r\ncrates/sui-tool$ cargo run replay            \\\r\n  --rpc https://fullnode.testnet.sui.io:443  \\\r\n  tx -t Fr9hm2fYGAz7tTxTVUrbDPR1esH9NUzijoQA2DhHKj9q\r\n```\r\n\r\nOutputs:\r\n\r\n```\r\nOn-chain vs local diff\r\nEffectsForked: Effects for digest Fr9hm2fYGAz7tTxTVUrbDPR1esH9NUzijoQA2DhHKj9q forked with diff\r\n   SuiTransactionBlockEffectsV1 {\r\n       status: Success,\r\n       executed_epoch: 767,\r\n       gas_used: GasCostSummary {\r\n           computation_cost: 1000000,\r\n           storage_cost: 4218000,\r\n...[snip]...\r\n```\r\n\r\nAnd not:\r\n\r\n```\r\nOn-chain vs local diff\r\nEffectsForked: Effects for digest Fr9hm2fYGAz7tTxTVUrbDPR1esH9NUzijoQA2DhHKj9q forked with diff\r\n   SuiTransactionBlockEffectsV1 {\r\n\r\n       status: Success,\r\n\r\n       executed_epoch: 767,\r\n\r\n       gas_used: GasCostSummary {\r\n\r\n           computation_cost: 1000000,\r\n\r\n           storage_cost: 4218000,\r\n\r\n...[snip]...\r\n```",
+          "timestamp": "2023-05-01T17:20:11-07:00",
+          "tree_id": "fa7c000de8c911c024b5b911b8b29a41c209cc54",
+          "url": "https://github.com/MystenLabs/sui/commit/ec53be069aa10b669526b9d311f4b865f9653466"
+        },
+        "date": 1682987295540,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 104293093,
+            "range": "± 4736828",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 302362,
+            "range": "± 25844",
             "unit": "ns/iter"
           }
         ]
