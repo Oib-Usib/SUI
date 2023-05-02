@@ -833,6 +833,22 @@
 <a href="#833" id="833">833</a>
 <a href="#834" id="834">834</a>
 <a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -992,7 +1008,12 @@
     TransactionEffects,
     <span class="prelude-ty">Result</span>&lt;Mode::ExecutionResults, ExecutionError&gt;,
 ) {
-    <span class="kw">let </span><span class="kw-2">mut </span>tx_ctx = TxContext::new_from_components(<span class="kw-2">&amp;</span>transaction_signer, <span class="kw-2">&amp;</span>transaction_digest, epoch_id, epoch_timestamp_ms);
+    <span class="kw">let </span><span class="kw-2">mut </span>tx_ctx = TxContext::new_from_components(
+        <span class="kw-2">&amp;</span>transaction_signer,
+        <span class="kw-2">&amp;</span>transaction_digest,
+        epoch_id,
+        epoch_timestamp_ms,
+    );
 
     <span class="kw">let </span>is_epoch_change = <span class="macro">matches!</span>(transaction_kind, TransactionKind::ChangeEpoch(<span class="kw">_</span>));
 
@@ -1014,8 +1035,7 @@
         <span class="comment">// Elaborate errors in logs if they are unexpected or their status is terse.
         </span><span class="kw">use </span>ExecutionErrorKind <span class="kw">as </span>K;
         <span class="kw">match </span>error.kind() {
-            K::InvariantViolation |
-            K::VMInvariantViolation =&gt; {
+            K::InvariantViolation | K::VMInvariantViolation =&gt; {
                 <span class="attr">#[skip_checked_arithmetic]
                 </span><span class="macro">tracing::error!</span>(
                     kind = <span class="question-mark">?</span>error.kind(),
@@ -1023,10 +1043,9 @@
                     <span class="string">&quot;INVARIANT VIOLATION! Source: {:?}&quot;</span>,
                     error.source(),
                 );
-            },
+            }
 
-            K::SuiMoveVerificationError |
-            K::VMVerificationOrDeserializationError =&gt; {
+            K::SuiMoveVerificationError | K::VMVerificationOrDeserializationError =&gt; {
                 <span class="attr">#[skip_checked_arithmetic]
                 </span><span class="macro">tracing::debug!</span>(
                     kind = <span class="question-mark">?</span>error.kind(),
@@ -1036,8 +1055,7 @@
                 );
             }
 
-            K::PublishUpgradeMissingDependency |
-            K::PublishUpgradeDependencyDowngrade =&gt; {
+            K::PublishUpgradeMissingDependency | K::PublishUpgradeDependencyDowngrade =&gt; {
                 <span class="attr">#[skip_checked_arithmetic]
                 </span><span class="macro">tracing::debug!</span>(
                     kind = <span class="question-mark">?</span>error.kind(),
@@ -1141,7 +1159,10 @@
     </span><span class="kw">let </span>result = charge_gas_for_object_read(temporary_store, <span class="kw-2">&amp;mut </span>gas_status);
     <span class="kw">let </span><span class="kw-2">mut </span>result = result.and_then(|()| {
         <span class="kw">let </span><span class="kw-2">mut </span>execution_result = <span class="kw">if </span>deny_cert {
-            <span class="prelude-val">Err</span>(ExecutionError::new(ExecutionErrorKind::CertificateDenied, <span class="prelude-val">None</span>))
+            <span class="prelude-val">Err</span>(ExecutionError::new(
+                ExecutionErrorKind::CertificateDenied,
+                <span class="prelude-val">None</span>,
+            ))
         } <span class="kw">else </span>{
             execution_loop::&lt;Mode, <span class="kw">_</span>&gt;(
                 temporary_store,
@@ -1186,11 +1207,11 @@
             }
         };
         <span class="kw">if </span>execution_result.is_ok() {
-
             <span class="comment">// This limit is only present in Version 3 and up, so use this to gate it
-            </span><span class="kw">if let </span>(<span class="prelude-val">Some</span>(normal_lim), <span class="prelude-val">Some</span>(system_lim)) =
-                (protocol_config.max_size_written_objects_as_option(), protocol_config
-            .max_size_written_objects_system_tx_as_option()) {
+            </span><span class="kw">if let </span>(<span class="prelude-val">Some</span>(normal_lim), <span class="prelude-val">Some</span>(system_lim)) = (
+                protocol_config.max_size_written_objects_as_option(),
+                protocol_config.max_size_written_objects_system_tx_as_option(),
+            ) {
                 <span class="kw">let </span>written_objects_size = temporary_store.written_objects_size();
 
                 <span class="kw">match </span><span class="macro">check_limit_by_meter!</span>(
@@ -1218,9 +1239,7 @@
                         ))
                     }
                 };
-
             }
-
         }
 
         execution_result
@@ -1248,7 +1267,8 @@
         </span>temporary_store.conserve_unmetered_storage_rebate(gas_status.unmetered_storage_rebate());
         <span class="kw">if </span>!is_genesis_tx &amp;&amp; !Mode::allow_arbitrary_values() {
             <span class="comment">// ensure that this transaction did not create or destroy SUI, try to recover if the check fails
-            </span><span class="kw">let </span>conservation_result = temporary_store.check_sui_conserved(advance_epoch_gas_summary, enable_expensive_checks);
+            </span><span class="kw">let </span>conservation_result = temporary_store
+                .check_sui_conserved(advance_epoch_gas_summary, enable_expensive_checks);
             <span class="kw">if let </span><span class="prelude-val">Err</span>(conservation_err) = conservation_result {
                 <span class="comment">// conservation violated. try to avoid panic by dumping all writes, charging for gas, re-checking
                 // conservation, and surfacing an aborted transaction with an invariant violation if all of that works
@@ -1256,16 +1276,23 @@
                 temporary_store.reset(gas, <span class="kw-2">&amp;mut </span>gas_status);
                 temporary_store.charge_gas(gas_object_id, <span class="kw-2">&amp;mut </span>gas_status, <span class="kw-2">&amp;mut </span>result, gas);
                 <span class="comment">// check conservation once more more
-                </span><span class="kw">if let </span><span class="prelude-val">Err</span>(recovery_err) = temporary_store.check_sui_conserved(advance_epoch_gas_summary, enable_expensive_checks) {
+                </span><span class="kw">if let </span><span class="prelude-val">Err</span>(recovery_err) = temporary_store
+                    .check_sui_conserved(advance_epoch_gas_summary, enable_expensive_checks)
+                {
                     <span class="comment">// if we still fail, it&#39;s a problem with gas
                     // charging that happens even in the &quot;aborted&quot; case--no other option but panic.
                     // we will create or destroy SUI otherwise
-                    </span><span class="macro">panic!</span>(<span class="string">&quot;SUI conservation fail in tx block {}: {}\nGas status is {}\nTx was &quot;</span>, tx_ctx.digest(), recovery_err, gas_status.summary())
+                    </span><span class="macro">panic!</span>(
+                        <span class="string">&quot;SUI conservation fail in tx block {}: {}\nGas status is {}\nTx was &quot;</span>,
+                        tx_ctx.digest(),
+                        recovery_err,
+                        gas_status.summary()
+                    )
                 }
-              }
+            }
         } <span class="comment">// else, we&#39;re in the genesis transaction which mints the SUI supply, and hence does not satisfy SUI conservation, or
-        // we&#39;re in the non-production dev inspect mode which allows us to violate conservation
-        // === end SUI conservation checks ===
+          // we&#39;re in the non-production dev inspect mode which allows us to violate conservation
+          // === end SUI conservation checks ===
         </span>(cost_summary, result)
     } <span class="kw">else </span>{
         <span class="comment">// legacy code before gas v2, leave it alone
@@ -1332,7 +1359,8 @@
                 gas_status,
                 protocol_config,
                 metrics,
-            ).expect(<span class="string">&quot;ConsensusCommitPrologue cannot fail&quot;</span>);
+            )
+            .expect(<span class="string">&quot;ConsensusCommitPrologue cannot fail&quot;</span>);
             <span class="prelude-val">Ok</span>(Mode::empty_results())
         }
         TransactionKind::ProgrammableTransaction(pt) =&gt; {
@@ -1419,10 +1447,7 @@
 
     arguments.append(<span class="kw-2">&amp;mut </span>call_arg_arguments.unwrap());
 
-    <span class="macro">info!</span>(
-        <span class="string">&quot;Call arguments to advance_epoch transaction: {:?}&quot;</span>,
-        params
-    );
+    <span class="macro">info!</span>(<span class="string">&quot;Call arguments to advance_epoch transaction: {:?}&quot;</span>, params);
 
     <span class="kw">let </span>storage_rebates = builder.programmable_move_call(
         SUI_SYSTEM_OBJECT_ID,
@@ -1485,10 +1510,7 @@
 
     arguments.append(<span class="kw-2">&amp;mut </span>call_arg_arguments.unwrap());
 
-    <span class="macro">info!</span>(
-        <span class="string">&quot;Call arguments to advance_epoch transaction: {:?}&quot;</span>,
-        params
-    );
+    <span class="macro">info!</span>(<span class="string">&quot;Call arguments to advance_epoch transaction: {:?}&quot;</span>, params);
 
     builder.programmable_move_call(
         SUI_SYSTEM_OBJECT_ID,
@@ -1570,7 +1592,14 @@
         <span class="kw">let </span>max_format_version = protocol_config.move_binary_format_version();
         <span class="kw">let </span>deserialized_modules: Vec&lt;<span class="kw">_</span>&gt; = modules
             .iter()
-            .map(|m| CompiledModule::deserialize_with_config(m, max_format_version, protocol_config.no_extraneous_module_bytes()).unwrap())
+            .map(|m| {
+                CompiledModule::deserialize_with_config(
+                    m,
+                    max_format_version,
+                    protocol_config.no_extraneous_module_bytes(),
+                )
+                .unwrap()
+            })
             .collect();
 
         <span class="kw">if </span>version == OBJECT_START_VERSION {
@@ -1596,7 +1625,10 @@
             .expect(<span class="string">&quot;System Package Publish must succeed&quot;</span>);
         } <span class="kw">else </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>new_package = Object::new_system_package(
-                <span class="kw-2">&amp;</span>deserialized_modules, version, dependencies, tx_ctx.digest(),
+                <span class="kw-2">&amp;</span>deserialized_modules,
+                version,
+                dependencies,
+                tx_ctx.digest(),
             );
 
             <span class="macro">info!</span>(

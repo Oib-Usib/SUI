@@ -451,13 +451,13 @@
     <span class="doccomment">/// Reset the linkage, but save the context that existed before, if there was one.
     </span><span class="kw">pub fn </span>steal_linkage(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;SavedLinkage&gt; {
         <span class="kw">if let </span>LinkageInfo::Universal = <span class="kw-2">&amp;</span><span class="self">self</span>.linkage_info {
-            <span class="kw">return </span><span class="prelude-val">None</span>;
-        }
-
-        <span class="kw">match </span>std::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.linkage_info, LinkageInfo::Unset) {
-            LinkageInfo::Set(linkage) =&gt; <span class="prelude-val">Some</span>(SavedLinkage(linkage)),
-            LinkageInfo::Unset =&gt; <span class="prelude-val">None</span>,
-            LinkageInfo::Universal =&gt; <span class="macro">unreachable!</span>(),
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="kw">match </span>std::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.linkage_info, LinkageInfo::Unset) {
+                LinkageInfo::Set(linkage) =&gt; <span class="prelude-val">Some</span>(SavedLinkage(linkage)),
+                LinkageInfo::Unset =&gt; <span class="prelude-val">None</span>,
+                LinkageInfo::Universal =&gt; <span class="macro">unreachable!</span>(),
+            }
         }
     }
 
