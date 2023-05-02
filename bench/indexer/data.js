@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682987526475,
+  "lastUpdate": 1682987831964,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3131,6 +3131,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 474530,
             "range": "± 39377",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f397e2bcd4faf7bb58f72f4b8e07e21b1cbe042",
+          "message": "Protocol upgrade compatibility test mainnet (#11581)",
+          "timestamp": "2023-05-02T00:28:56Z",
+          "tree_id": "aae6cc945399b96a2b75dc460c86c3f5c8182630",
+          "url": "https://github.com/MystenLabs/sui/commit/4f397e2bcd4faf7bb58f72f4b8e07e21b1cbe042"
+        },
+        "date": 1682987826542,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106154541,
+            "range": "± 8779027",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 306550,
+            "range": "± 29889",
             "unit": "ns/iter"
           }
         ]
