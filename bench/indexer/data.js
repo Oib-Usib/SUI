@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1682992651436,
+  "lastUpdate": 1682996998722,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3203,6 +3203,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 355981,
             "range": "± 63164",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123987499+suiwombat@users.noreply.github.com",
+            "name": "Joe Hrbek",
+            "username": "suiwombat"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "78d738540cf96c537b6d6104d0230c7f2aedb4d9",
+          "message": "[sui-proxy/ remove remote_host label] (#11603)\n\nSummary:\r\n\r\n* this causes undesirable behavior with some of our queries when we add\r\nmultiple proxy backends.\r\n* we don't need this data so, lets remove it. It should fall out of\r\nscope from the tsdb in time, without issue.\r\n\r\nTest Plan:\r\n\r\ncargo build\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-01T21:58:12-05:00",
+          "tree_id": "84e24bf65807f02b5e0f7d496c525436077b88e0",
+          "url": "https://github.com/MystenLabs/sui/commit/78d738540cf96c537b6d6104d0230c7f2aedb4d9"
+        },
+        "date": 1682996993252,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 152078923,
+            "range": "± 5107922",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 396949,
+            "range": "± 57823",
             "unit": "ns/iter"
           }
         ]
