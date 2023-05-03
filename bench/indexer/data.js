@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683137267732,
+  "lastUpdate": 1683140201027,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3671,6 +3671,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308594,
             "range": "± 16290",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dad2a431bfa2cf19d9e967d3067b5f7b54040005",
+          "message": "Take db snapshot after epoch start config is added to db (#11700)\n\n## Description \r\n\r\nBefore this PR, we would snapshot before epoch start config is added for\r\nthe next epoch. Which would mean a restored snapshot would start in the\r\ncurrent epoch and then reconfigure (and run accumulator again which\r\nbreaks with aggressive snapshot because we also aggressively prune the\r\nsnapshots).\r\n\r\n## Test Plan \r\n\r\nUpdated integration test to use aggressive pruning.",
+          "timestamp": "2023-05-03T11:46:29-07:00",
+          "tree_id": "15a10846ebc812678571cf2d905db3e2f5951f9c",
+          "url": "https://github.com/MystenLabs/sui/commit/dad2a431bfa2cf19d9e967d3067b5f7b54040005"
+        },
+        "date": 1683140194864,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145516813,
+            "range": "± 4443002",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310598,
+            "range": "± 21734",
             "unit": "ns/iter"
           }
         ]
