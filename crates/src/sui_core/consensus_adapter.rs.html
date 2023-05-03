@@ -1094,6 +1094,50 @@
 <a href="#1094" id="1094">1094</a>
 <a href="#1095" id="1095">1095</a>
 <a href="#1096" id="1096">1096</a>
+<a href="#1097" id="1097">1097</a>
+<a href="#1098" id="1098">1098</a>
+<a href="#1099" id="1099">1099</a>
+<a href="#1100" id="1100">1100</a>
+<a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
+<a href="#1106" id="1106">1106</a>
+<a href="#1107" id="1107">1107</a>
+<a href="#1108" id="1108">1108</a>
+<a href="#1109" id="1109">1109</a>
+<a href="#1110" id="1110">1110</a>
+<a href="#1111" id="1111">1111</a>
+<a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
+<a href="#1122" id="1122">1122</a>
+<a href="#1123" id="1123">1123</a>
+<a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1108,11 +1152,15 @@
 <span class="kw">use </span>narwhal_types::{TransactionProto, TransactionsClient};
 <span class="kw">use </span>narwhal_worker::LocalNarwhalClient;
 <span class="kw">use </span>parking_lot::{Mutex, RwLockReadGuard};
-<span class="kw">use </span>prometheus::register_int_counter_with_registry;
-<span class="kw">use </span>prometheus::register_int_gauge_with_registry;
+<span class="kw">use </span>prometheus::Histogram;
+<span class="kw">use </span>prometheus::HistogramVec;
 <span class="kw">use </span>prometheus::IntCounter;
 <span class="kw">use </span>prometheus::IntGauge;
 <span class="kw">use </span>prometheus::Registry;
+<span class="kw">use </span>prometheus::{
+    register_histogram_vec_with_registry, register_histogram_with_registry,
+    register_int_counter_with_registry, register_int_gauge_with_registry,
+};
 <span class="kw">use </span>rand::rngs::StdRng;
 <span class="kw">use </span>rand::SeedableRng;
 <span class="kw">use </span>std::collections::{HashMap, VecDeque};
@@ -1146,6 +1194,13 @@
 #[path = <span class="string">&quot;unit_tests/consensus_tests.rs&quot;</span>]
 </span><span class="kw">pub mod </span>consensus_tests;
 
+<span class="kw">const </span>SEQUENCING_CERTIFICATE_LATENCY_SEC_BUCKETS: <span class="kw-2">&amp;</span>[f64] = <span class="kw-2">&amp;</span>[
+    <span class="number">0.1</span>, <span class="number">0.25</span>, <span class="number">0.5</span>, <span class="number">0.75</span>, <span class="number">1.</span>, <span class="number">1.25</span>, <span class="number">1.5</span>, <span class="number">1.75</span>, <span class="number">2.</span>, <span class="number">2.25</span>, <span class="number">2.5</span>, <span class="number">2.75</span>, <span class="number">3.</span>, <span class="number">4.</span>, <span class="number">5.</span>, <span class="number">6.</span>, <span class="number">7.</span>, <span class="number">10.</span>, <span class="number">15.</span>,
+    <span class="number">20.</span>, <span class="number">25.</span>, <span class="number">30.</span>, <span class="number">60.</span>,
+];
+
+<span class="kw">const </span>SEQUENCING_CERTIFICATE_POSITION_BUCKETS: <span class="kw-2">&amp;</span>[f64] = <span class="kw-2">&amp;</span>[<span class="number">0.</span>, <span class="number">1.</span>, <span class="number">2.</span>, <span class="number">3.</span>, <span class="number">5.</span>, <span class="number">10.</span>];
+
 <span class="kw">pub struct </span>ConsensusAdapterMetrics {
     <span class="comment">// Certificate sequencing metrics
     </span><span class="kw">pub </span>sequencing_certificate_attempt: IntCounter,
@@ -1153,8 +1208,10 @@
     <span class="kw">pub </span>sequencing_certificate_failures: IntCounter,
     <span class="kw">pub </span>sequencing_certificate_inflight: IntGauge,
     <span class="kw">pub </span>sequencing_acknowledge_latency: mysten_metrics::histogram::HistogramVec,
-    <span class="kw">pub </span>sequencing_certificate_latency: mysten_metrics::histogram::HistogramVec,
-    <span class="kw">pub </span>sequencing_certificate_authority_position: mysten_metrics::histogram::Histogram,
+    <span class="kw">pub </span>sequencing_certificate_latency: HistogramVec,
+    <span class="kw">pub </span>sequencing_certificate_authority_position: Histogram,
+    <span class="kw">pub </span>sequencing_certificate_positions_moved: Histogram,
+    <span class="kw">pub </span>sequencing_certificate_preceding_disconnected: Histogram,
     <span class="kw">pub </span>sequencing_in_flight_semaphore_wait: IntGauge,
     <span class="kw">pub </span>sequencing_in_flight_submissions: IntGauge,
     <span class="kw">pub </span>sequencing_estimated_latency: IntGauge,
@@ -1194,17 +1251,31 @@
                 <span class="kw-2">&amp;</span>[<span class="string">&quot;retry&quot;</span>],
                 registry,
             ),
-            sequencing_certificate_latency: mysten_metrics::histogram::HistogramVec::new_in_registry(
+            sequencing_certificate_latency: <span class="macro">register_histogram_vec_with_registry!</span>(
                 <span class="string">&quot;sequencing_certificate_latency&quot;</span>,
                 <span class="string">&quot;The latency for sequencing a certificate.&quot;</span>,
-                <span class="kw-2">&amp;</span>[<span class="string">&quot;position&quot;</span>, <span class="string">&quot;mapped_to_low_scoring&quot;</span>, <span class="string">&quot;first_submitter&quot;</span>],
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;position&quot;</span>],
+                SEQUENCING_CERTIFICATE_LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
-            ),
-            sequencing_certificate_authority_position: mysten_metrics::histogram::Histogram::new_in_registry(
+            ).unwrap(),
+            sequencing_certificate_authority_position: <span class="macro">register_histogram_with_registry!</span>(
                 <span class="string">&quot;sequencing_certificate_authority_position&quot;</span>,
                 <span class="string">&quot;The position of the authority when submitted a certificate to consensus.&quot;</span>,
+                SEQUENCING_CERTIFICATE_POSITION_BUCKETS.to_vec(),
                 registry,
-            ),
+            ).unwrap(),
+            sequencing_certificate_positions_moved: <span class="macro">register_histogram_with_registry!</span>(
+                <span class="string">&quot;sequencing_certificate_positions_moved&quot;</span>,
+                <span class="string">&quot;The number of authorities ahead of ourselves that were filtered out when submitting a certificate to consensus.&quot;</span>,
+                SEQUENCING_CERTIFICATE_POSITION_BUCKETS.to_vec(),
+                registry,
+            ).unwrap(),
+            sequencing_certificate_preceding_disconnected: <span class="macro">register_histogram_with_registry!</span>(
+                <span class="string">&quot;sequencing_certificate_preceding_disconnected&quot;</span>,
+                <span class="string">&quot;The number of authorities that were hashed to an earlier position that were filtered out due to being disconnected when submitting to consensus.&quot;</span>,
+                SEQUENCING_CERTIFICATE_POSITION_BUCKETS.to_vec(),
+                registry,
+            ).unwrap(),
             sequencing_in_flight_semaphore_wait: <span class="macro">register_int_gauge_with_registry!</span>(
                 <span class="string">&quot;sequencing_in_flight_semaphore_wait&quot;</span>,
                 <span class="string">&quot;How many requests are blocked on submit_permit.&quot;</span>,
@@ -1465,18 +1536,19 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         committee: <span class="kw-2">&amp;</span>Committee,
         transaction: <span class="kw-2">&amp;</span>ConsensusTransaction,
-    ) -&gt; (<span class="kw">impl </span>Future&lt;Output = ()&gt;, usize, bool, AuthorityName) {
-        <span class="kw">let </span>(duration, position, mapped_to_low_scoring, first_submitter) = <span class="kw">match </span><span class="kw-2">&amp;</span>transaction.kind {
+    ) -&gt; (<span class="kw">impl </span>Future&lt;Output = ()&gt;, usize, usize, usize) {
+        <span class="kw">let </span>(duration, position, positions_moved, preceding_disconnected) = <span class="kw">match </span><span class="kw-2">&amp;</span>transaction.kind
+        {
             ConsensusTransactionKind::UserTransaction(certificate) =&gt; {
                 <span class="self">self</span>.await_submit_delay_user_transaction(committee, certificate.digest())
             }
-            <span class="kw">_ </span>=&gt; (Duration::ZERO, <span class="number">0</span>, <span class="bool-val">false</span>, AuthorityName::default()),
+            <span class="kw">_ </span>=&gt; (Duration::ZERO, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),
         };
         (
             tokio::time::sleep(duration),
             position,
-            mapped_to_low_scoring,
-            first_submitter,
+            positions_moved,
+            preceding_disconnected,
         )
     }
 
@@ -1484,8 +1556,8 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         committee: <span class="kw-2">&amp;</span>Committee,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; (Duration, usize, bool, AuthorityName) {
-        <span class="kw">let </span>(<span class="kw-2">mut </span>position, mapped_to_low_scoring, first_submitter) =
+    ) -&gt; (Duration, usize, usize, usize) {
+        <span class="kw">let </span>(<span class="kw-2">mut </span>position, positions_moved, preceding_disconected) =
             <span class="self">self</span>.submission_position(committee, tx_digest);
 
         <span class="kw">const </span>MAX_LATENCY: Duration = Duration::from_secs(<span class="number">5 </span>* <span class="number">60</span>);
@@ -1510,8 +1582,8 @@
         (
             delay_step * position <span class="kw">as </span>u32,
             position,
-            mapped_to_low_scoring,
-            first_submitter,
+            positions_moved,
+            preceding_disconected,
         )
     }
 
@@ -1526,7 +1598,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         committee: <span class="kw-2">&amp;</span>Committee,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; (usize, bool, AuthorityName) {
+    ) -&gt; (usize, usize, usize) {
         <span class="kw">let </span>positions = order_validators_for_submission(committee, tx_digest);
 
         <span class="self">self</span>.check_submission_wrt_connectivity_and_scores(positions)
@@ -1555,36 +1627,47 @@
     </span><span class="kw">fn </span>check_submission_wrt_connectivity_and_scores(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         positions: Vec&lt;AuthorityName&gt;,
-    ) -&gt; (usize, bool, AuthorityName) {
+    ) -&gt; (usize, usize, usize) {
         <span class="kw">let </span>low_scoring_authorities = <span class="self">self</span>.low_scoring_authorities.load().load_full();
-        <span class="kw">let </span>first_submitter = <span class="kw-2">*</span>positions.first().unwrap_or(<span class="kw-2">&amp;</span>AuthorityName::default());
         <span class="kw">if </span>low_scoring_authorities.get(<span class="kw-2">&amp;</span><span class="self">self</span>.authority).is_some() {
-            <span class="kw">return </span>(positions.len(), <span class="bool-val">true</span>, first_submitter);
+            <span class="kw">return </span>(positions.len(), <span class="number">0</span>, <span class="number">0</span>);
         }
         <span class="kw">let </span>initial_position = get_position_in_list(<span class="self">self</span>.authority, positions.clone());
+        <span class="kw">let </span><span class="kw-2">mut </span>preceding_disconnected = <span class="number">0</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>before_our_position = <span class="bool-val">true</span>;
 
         <span class="kw">let </span>filtered_positions: Vec&lt;<span class="kw">_</span>&gt; = positions
             .into_iter()
             .filter(|authority| {
-                <span class="self">self</span>.authority == <span class="kw-2">*</span>authority <span class="comment">// Don&#39;t filter yourself out!
-                    </span>||
-                (
-                    <span class="self">self </span><span class="comment">// Filter out any nodes that appear disconnected
-                        </span>.connection_monitor_status
-                        .check_connection(<span class="kw-2">&amp;</span><span class="self">self</span>.authority, authority)
-                        .unwrap_or(ConnectionStatus::Disconnected)
-                        == ConnectionStatus::Connected
-                    &amp;&amp; <span class="comment">// Filter out low scoring nodes
-                    </span>low_scoring_authorities.get(authority).is_none()
-                )
+                <span class="kw">let </span>keep = <span class="self">self</span>.authority == <span class="kw-2">*</span>authority; <span class="comment">// don&#39;t filter ourself out
+                </span><span class="kw">if </span>keep {
+                    before_our_position = <span class="bool-val">false</span>;
+                }
+
+                <span class="comment">// filter out any nodes that appear disconnected
+                </span><span class="kw">let </span>connected = <span class="self">self
+                    </span>.connection_monitor_status
+                    .check_connection(<span class="kw-2">&amp;</span><span class="self">self</span>.authority, authority)
+                    .unwrap_or(ConnectionStatus::Disconnected)
+                    == ConnectionStatus::Connected;
+                <span class="kw">if </span>!connected &amp;&amp; before_our_position {
+                    preceding_disconnected += <span class="number">1</span>; <span class="comment">// used for metrics
+                </span>}
+
+                <span class="comment">// Filter out low scoring nodes
+                </span><span class="kw">let </span>high_scoring = low_scoring_authorities.get(authority).is_none();
+
+                keep || (connected &amp;&amp; high_scoring)
             })
             .collect();
 
-        <span class="kw">let </span>first_submitter = <span class="kw-2">*</span>filtered_positions
-            .first()
-            .unwrap_or(<span class="kw-2">&amp;</span>AuthorityName::default());
         <span class="kw">let </span>position = get_position_in_list(<span class="self">self</span>.authority, filtered_positions);
-        (position, position &lt; initial_position, first_submitter)
+
+        (
+            position,
+            initial_position - position,
+            preceding_disconnected,
+        )
     }
 
     <span class="doccomment">/// This method blocks until transaction is persisted in local database
@@ -1670,7 +1753,7 @@
             .consensus_message_processed_notify(transaction_key)
             .boxed();
 
-        <span class="kw">let </span>(await_submit, position, mapped_to_low_scoring, first_submitter) =
+        <span class="kw">let </span>(await_submit, position, positions_moved, preceding_disconnected) =
             <span class="self">self</span>.await_submit_delay(epoch_store.committee(), <span class="kw-2">&amp;</span>transaction);
         <span class="kw">let </span><span class="kw-2">mut </span>guard = InflightDropGuard::acquire(<span class="kw-2">&amp;</span><span class="self">self</span>);
 
@@ -1709,8 +1792,8 @@
             <span class="comment">// populate the position only when this authority submits the transaction
             // to consensus
             </span>guard.position = <span class="prelude-val">Some</span>(position);
-            guard.mapped_to_low_scoring = mapped_to_low_scoring;
-            guard.first_submitter = <span class="prelude-val">Some</span>(first_submitter);
+            guard.positions_moved = <span class="prelude-val">Some</span>(positions_moved);
+            guard.preceding_disconnected = <span class="prelude-val">Some</span>(preceding_disconnected);
 
             <span class="kw">let </span>_permit: SemaphorePermit = <span class="self">self
                 </span>.submit_semaphore
@@ -1935,8 +2018,8 @@
     adapter: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ConsensusAdapter,
     start: Instant,
     position: <span class="prelude-ty">Option</span>&lt;usize&gt;,
-    mapped_to_low_scoring: bool,
-    first_submitter: <span class="prelude-ty">Option</span>&lt;AuthorityName&gt;,
+    positions_moved: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+    preceding_disconnected: <span class="prelude-ty">Option</span>&lt;usize&gt;,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; InflightDropGuard&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -1953,8 +2036,8 @@
             adapter,
             start: Instant::now(),
             position: <span class="prelude-val">None</span>,
-            mapped_to_low_scoring: <span class="bool-val">false</span>,
-            first_submitter: <span class="prelude-val">None</span>,
+            positions_moved: <span class="prelude-val">None</span>,
+            preceding_disconnected: <span class="prelude-val">None</span>,
         }
     }
 }
@@ -1975,10 +2058,24 @@
             <span class="self">self</span>.adapter
                 .metrics
                 .sequencing_certificate_authority_position
-                .report(position <span class="kw">as </span>u64);
+                .observe(position <span class="kw">as </span>f64);
             position.to_string()
         } <span class="kw">else </span>{
             <span class="string">&quot;not_submitted&quot;</span>.to_string()
+        };
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(positions_moved) = <span class="self">self</span>.positions_moved {
+            <span class="self">self</span>.adapter
+                .metrics
+                .sequencing_certificate_positions_moved
+                .observe(positions_moved <span class="kw">as </span>f64);
+        };
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(preceding_disconnected) = <span class="self">self</span>.preceding_disconnected {
+            <span class="self">self</span>.adapter
+                .metrics
+                .sequencing_certificate_preceding_disconnected
+                .observe(preceding_disconnected <span class="kw">as </span>f64);
         };
 
         <span class="kw">let </span>latency = <span class="self">self</span>.start.elapsed();
@@ -1988,17 +2085,8 @@
         <span class="self">self</span>.adapter
             .metrics
             .sequencing_certificate_latency
-            .with_label_values(<span class="kw-2">&amp;</span>[
-                <span class="kw-2">&amp;</span>position,
-                <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="self">self</span>.mapped_to_low_scoring),
-                <span class="kw-2">&amp;</span><span class="self">self
-                    </span>.first_submitter
-                    .as_ref()
-                    .unwrap_or(<span class="kw-2">&amp;</span>AuthorityName::default())
-                    .concise()
-                    .to_string(),
-            ])
-            .report(latency.as_millis() <span class="kw">as </span>u64);
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>position])
+            .observe(latency.as_secs_f64());
     }
 }
 
@@ -2127,18 +2215,18 @@
         </span><span class="kw">let </span>tx_digest = TransactionDigest::generate(<span class="kw-2">&amp;mut </span>rng);
 
         <span class="comment">// Ensure that the original position is higher
-        </span><span class="kw">let </span>(position, low_scoring_authority, _first_submitter) =
+        </span><span class="kw">let </span>(position, positions_moved, <span class="kw">_</span>) =
             consensus_adapter.submission_position(<span class="kw-2">&amp;</span>committee, <span class="kw-2">&amp;</span>tx_digest);
         <span class="macro">assert_eq!</span>(position, <span class="number">7</span>);
-        <span class="macro">assert!</span>(!low_scoring_authority);
+        <span class="macro">assert!</span>(!positions_moved &gt; <span class="number">0</span>);
 
         <span class="comment">// Make sure that position is set to max value 0
-        </span><span class="kw">let </span>(delay_step, position, low_scoring_authority, <span class="kw">_</span>) =
+        </span><span class="kw">let </span>(delay_step, position, positions_moved, <span class="kw">_</span>) =
             consensus_adapter.await_submit_delay_user_transaction(<span class="kw-2">&amp;</span>committee, <span class="kw-2">&amp;</span>tx_digest);
 
         <span class="macro">assert_eq!</span>(position, <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(delay_step, Duration::from_secs(<span class="number">2</span>));
-        <span class="macro">assert!</span>(!low_scoring_authority);
+        <span class="macro">assert!</span>(!positions_moved &gt; <span class="number">0</span>);
 
         <span class="comment">// Without submit position and delay step
         </span><span class="kw">let </span>consensus_adapter = ConsensusAdapter::new(
@@ -2154,14 +2242,14 @@
             ConsensusAdapterMetrics::new_test(),
         );
 
-        <span class="kw">let </span>(delay_step, position, low_scoring_authority, _first_submitter) =
+        <span class="kw">let </span>(delay_step, position, positions_moved, <span class="kw">_</span>) =
             consensus_adapter.await_submit_delay_user_transaction(<span class="kw-2">&amp;</span>committee, <span class="kw-2">&amp;</span>tx_digest);
 
         <span class="macro">assert_eq!</span>(position, <span class="number">7</span>);
 
         <span class="comment">// delay_step * position = 3 * 2 * 7 = 42
         </span><span class="macro">assert_eq!</span>(delay_step, Duration::from_secs(<span class="number">42</span>));
-        <span class="macro">assert!</span>(!low_scoring_authority);
+        <span class="macro">assert!</span>(!positions_moved &gt; <span class="number">0</span>);
     }
 
     <span class="attr">#[test]
