@@ -116,6 +116,8 @@
 <a href="#116" id="116">116</a>
 <a href="#117" id="117">117</a>
 <a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -161,6 +163,8 @@
 
     <span class="comment">// Loop whenever there is a signal that a new transactions is ready to process.
     </span><span class="kw">loop </span>{
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;ExecutionDriver::loop&quot;</span>);
+
         <span class="kw">let </span>certificate;
         <span class="kw">let </span>expected_effects_digest;
         <span class="macro">tokio::select! </span>{
@@ -204,7 +208,7 @@
 
         <span class="comment">// Certificate execution can take significant time, so run it in a separate task.
         </span><span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-            <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;ExecutionDriver&quot;</span>);
+            <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;ExecutionDriver::task&quot;</span>);
             <span class="kw">let </span>_guard = permit;
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="bool-val">true</span>) = authority.is_tx_already_executed(<span class="kw-2">&amp;</span>digest) {
                 <span class="kw">return</span>;

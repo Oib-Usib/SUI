@@ -3901,6 +3901,11 @@
 <a href="#3901" id="3901">3901</a>
 <a href="#3902" id="3902">3902</a>
 <a href="#3903" id="3903">3903</a>
+<a href="#3904" id="3904">3904</a>
+<a href="#3905" id="3905">3905</a>
+<a href="#3906" id="3906">3906</a>
+<a href="#3907" id="3907">3907</a>
+<a href="#3908" id="3908">3908</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3935,7 +3940,7 @@
 
 <span class="kw">pub use </span>authority_notify_read::EffectsNotifyRead;
 <span class="kw">pub use </span>authority_store::{AuthorityStore, ResolverWrapper, UpdateType};
-<span class="kw">use </span>mysten_metrics::spawn_monitored_task;
+<span class="kw">use </span>mysten_metrics::{monitored_scope, spawn_monitored_task};
 <span class="kw">use </span>narwhal_config::{
     Committee <span class="kw">as </span>ConsensusCommittee, WorkerCache <span class="kw">as </span>ConsensusWorkerCache,
     WorkerId <span class="kw">as </span>ConsensusWorkerId,
@@ -4685,6 +4690,7 @@
         expected_effects_digest: <span class="prelude-ty">Option</span>&lt;TransactionEffectsDigest&gt;,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
     ) -&gt; SuiResult&lt;(TransactionEffects, <span class="prelude-ty">Option</span>&lt;ExecutionError&gt;)&gt; {
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Execution::try_execute_immediately&quot;</span>);
         <span class="kw">let </span>_metrics_guard = <span class="self">self</span>.metrics.internal_execution_latency.start_timer();
         <span class="kw">let </span>tx_digest = <span class="kw-2">*</span>certificate.digest();
         <span class="macro">debug!</span>(<span class="string">&quot;execute_certificate_internal&quot;</span>);
@@ -4833,6 +4839,9 @@
         _execution_guard: ExecutionLockReadGuard&lt;<span class="lifetime">&#39;_</span>&gt;,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
     ) -&gt; SuiResult {
+        <span class="kw">let </span>_scope: <span class="prelude-ty">Option</span>&lt;mysten_metrics::MonitoredScopeGuard&gt; =
+            monitored_scope(<span class="string">&quot;Execution::commit_cert_and_notify&quot;</span>);
+
         <span class="kw">let </span>input_object_count = inner_temporary_store.objects.len();
         <span class="kw">let </span>shared_object_count = effects.shared_objects().len();
         <span class="kw">let </span>digest = <span class="kw-2">*</span>certificate.digest();
@@ -4934,6 +4943,7 @@
         TransactionEffects,
         <span class="prelude-ty">Option</span>&lt;ExecutionError&gt;,
     )&gt; {
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Execution::prepare_certificate&quot;</span>);
         <span class="kw">let </span>_metrics_guard = <span class="self">self</span>.metrics.prepare_certificate_latency.start_timer();
 
         <span class="comment">// check_certificate_input also checks shared object locks when loading the shared objects.
