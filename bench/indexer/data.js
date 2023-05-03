@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683071066168,
+  "lastUpdate": 1683137267732,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3635,6 +3635,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 257981,
             "range": "± 15523",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "108701016+joyqvq@users.noreply.github.com",
+            "name": "Joy Wang",
+            "username": "joyqvq"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b12ae273ea82e75005217e2133d0025a1e0b0ab2",
+          "message": "keytool: show phrase in command output (#11699)\n\n## Description \r\n\r\nshow output in keytool command to match `sui client new-address`\r\n\r\n## Test Plan \r\n\r\ntarget/debug/sui keytool generate ed25519\r\n\r\nCreated new keypair for address wrote to file path\r\n\"0x26526b4396bb01cf6762c3f9d756bb19692e1b30dbd8779579848a5eaf92e9d5.key\"\r\nwith scheme ED25519:\r\n[0x26526b4396bb01cf6762c3f9d756bb19692e1b30dbd8779579848a5eaf92e9d5]\r\nSecret Recovery Phrase : [visa enact radio buzz dial helmet enlist speak\r\nweapon census million leaf]\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-03T13:56:41-04:00",
+          "tree_id": "9a55e61b9152f3979eb4a5c41eacd69c14e16086",
+          "url": "https://github.com/MystenLabs/sui/commit/b12ae273ea82e75005217e2133d0025a1e0b0ab2"
+        },
+        "date": 1683137262222,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 139971898,
+            "range": "± 5387608",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308594,
+            "range": "± 16290",
             "unit": "ns/iter"
           }
         ]
