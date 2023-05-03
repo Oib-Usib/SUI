@@ -226,6 +226,15 @@
 <a href="#226" id="226">226</a>
 <a href="#227" id="227">227</a>
 <a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -242,6 +251,7 @@
     native_extensions::NativeContextExtensions,
     native_functions::NativeFunctionTable,
 };
+<span class="kw">use </span>sui_types::metrics::BytecodeVerifierMetrics;
 <span class="kw">use </span>tracing::instrument;
 
 <span class="kw">use </span>sui_move_natives::{object_runtime::ObjectRuntime, NativesCostTable};
@@ -397,6 +407,7 @@
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     metered_verifier_config: <span class="kw-2">&amp;</span>VerifierConfig,
     meter: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>Meter,
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt; {
     <span class="kw">let </span>modules_stat = module_bytes
         .iter()
@@ -421,6 +432,7 @@
         protocol_config,
         metered_verifier_config,
         meter,
+        metrics,
     )
 }
 
@@ -429,6 +441,7 @@
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     verifier_config: <span class="kw-2">&amp;</span>VerifierConfig,
     meter: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>Meter,
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt; {
     <span class="comment">// run the Move verifier
     </span><span class="kw">for </span>module <span class="kw">in </span>modules.iter() {
@@ -442,13 +455,18 @@
             ]
             .contains(<span class="kw-2">&amp;</span>e.major_status())
             {
+                metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[BytecodeVerifierMetrics::MOVE_VERIFIER_TAG, BytecodeVerifierMetrics::TIMEOUT_TAG]).inc();
                 <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::ModuleVerificationFailure {
                     error: <span class="string">&quot;Verification timedout&quot;</span>.to_string(),
                 });
             };
         } <span class="kw">else </span>{
-            sui_verify_module_metered(protocol_config, module, <span class="kw-2">&amp;</span>BTreeMap::new(), meter)<span class="question-mark">?
+            sui_verify_module_metered(protocol_config, module, <span class="kw-2">&amp;</span>BTreeMap::new(), meter).map_err(|err|{
+                metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[ BytecodeVerifierMetrics::SUI_VERIFIER_TAG, BytecodeVerifierMetrics::TIMEOUT_TAG]).inc();
+                err
+            })<span class="question-mark">?
         </span>}
+        metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[BytecodeVerifierMetrics::OVERALL_TAG, BytecodeVerifierMetrics::SUCCESS_TAG]).inc();
     }
     <span class="prelude-val">Ok</span>(())
 }

@@ -3906,6 +3906,13 @@
 <a href="#3906" id="3906">3906</a>
 <a href="#3907" id="3907">3907</a>
 <a href="#3908" id="3908">3908</a>
+<a href="#3909" id="3909">3909</a>
+<a href="#3910" id="3910">3910</a>
+<a href="#3911" id="3911">3911</a>
+<a href="#3912" id="3912">3912</a>
+<a href="#3913" id="3913">3913</a>
+<a href="#3914" id="3914">3914</a>
+<a href="#3915" id="3915">3915</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3991,7 +3998,7 @@
     HandleTransactionResponse, ObjectInfoRequest, ObjectInfoRequestKind, ObjectInfoResponse,
     TransactionInfoRequest, TransactionInfoResponse, TransactionStatus,
 };
-<span class="kw">use </span>sui_types::metrics::LimitsMetrics;
+<span class="kw">use </span>sui_types::metrics::{BytecodeVerifierMetrics, LimitsMetrics};
 <span class="kw">use </span>sui_types::object::{MoveObject, Owner, PastObjectRead, OBJECT_START_VERSION};
 <span class="kw">use </span>sui_types::storage::{ObjectKey, ObjectStore, WriteKind};
 <span class="kw">use </span>sui_types::sui_system_state::epoch_start_sui_system_state::EpochStartSystemStateTrait;
@@ -4133,6 +4140,9 @@
     <span class="kw">pub </span>consensus_committed_certificates: IntCounterVec,
 
     <span class="kw">pub </span>limits_metrics: Arc&lt;LimitsMetrics&gt;,
+
+    <span class="doccomment">/// bytecode verifier metrics for tracking timeouts
+    </span><span class="kw">pub </span>bytecode_verifier_metrics: Arc&lt;BytecodeVerifierMetrics&gt;,
 }
 
 <span class="comment">// Override default Prom buckets for positive numbers in 0-50k range
@@ -4380,6 +4390,7 @@
             )
                 .unwrap(),
             limits_metrics: Arc::new(LimitsMetrics::new(registry)),
+            bytecode_verifier_metrics: Arc::new(BytecodeVerifierMetrics::new(registry)),
         }
     }
 }
@@ -4486,6 +4497,7 @@
             epoch_store.as_ref(),
             <span class="kw-2">&amp;</span>transaction.data().intent_message().value,
             <span class="kw-2">&amp;</span><span class="self">self</span>.transaction_deny_config,
+            <span class="kw-2">&amp;</span><span class="self">self</span>.metrics.bytecode_verifier_metrics,
         )
         .<span class="kw">await</span><span class="question-mark">?</span>;
 
@@ -5039,6 +5051,7 @@
                     epoch_store.as_ref(),
                     <span class="kw-2">&amp;</span>transaction,
                     gas_object,
+                    <span class="kw-2">&amp;</span><span class="self">self</span>.metrics.bytecode_verifier_metrics,
                 )
                 .<span class="kw">await</span><span class="question-mark">?</span>,
                 <span class="prelude-val">Some</span>(gas_object_id),
@@ -5050,6 +5063,7 @@
                     epoch_store.as_ref(),
                     <span class="kw-2">&amp;</span>transaction,
                     <span class="kw-2">&amp;</span><span class="self">self</span>.transaction_deny_config,
+                    <span class="kw-2">&amp;</span><span class="self">self</span>.metrics.bytecode_verifier_metrics,
                 )
                 .<span class="kw">await</span><span class="question-mark">?</span>,
                 <span class="prelude-val">None</span>,

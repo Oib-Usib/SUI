@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["LimitsMetrics"]};
+window.SIDEBAR_ITEMS = {"struct":["BytecodeVerifierMetrics","LimitsMetrics"]};

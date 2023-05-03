@@ -420,6 +420,11 @@
 <a href="#420" id="420">420</a>
 <a href="#421" id="421">421</a>
 <a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -428,6 +433,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::transaction_signing_filter;
 <span class="kw">use </span>move_bytecode_verifier::meter::BoundMeter;
 <span class="kw">use </span>std::collections::{BTreeMap, HashSet};
+<span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>sui_adapter::adapter::default_verifier_config;
 <span class="kw">use </span>sui_adapter::adapter::run_metered_move_bytecode_verifier;
 <span class="kw">use </span>sui_config::transaction_deny_config::TransactionDenyConfig;
@@ -437,6 +443,7 @@
 <span class="kw">use </span>sui_types::error::{UserInputError, UserInputResult};
 <span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::messages::{TransactionKind, VersionedProtocolMessage};
+<span class="kw">use </span>sui_types::metrics::BytecodeVerifierMetrics;
 <span class="kw">use </span>sui_types::{
     base_types::{SequenceNumber, SuiAddress},
     error::SuiResult,
@@ -484,10 +491,11 @@
     epoch_store: <span class="kw-2">&amp;</span>AuthorityPerEpochStore,
     transaction: <span class="kw-2">&amp;</span>TransactionData,
     transaction_deny_config: <span class="kw-2">&amp;</span>TransactionDenyConfig,
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
 ) -&gt; SuiResult&lt;(SuiGasStatus, InputObjects)&gt; {
     transaction.check_version_supported(epoch_store.protocol_config())<span class="question-mark">?</span>;
     transaction.validity_check(epoch_store.protocol_config())<span class="question-mark">?</span>;
-    check_non_system_packages_to_be_published(transaction, epoch_store.protocol_config())<span class="question-mark">?</span>;
+    check_non_system_packages_to_be_published(transaction, epoch_store.protocol_config(), metrics)<span class="question-mark">?</span>;
     <span class="kw">let </span>input_objects = transaction.input_objects()<span class="question-mark">?</span>;
     transaction_signing_filter::check_transaction_for_signing(
         transaction,
@@ -506,10 +514,11 @@
     epoch_store: <span class="kw-2">&amp;</span>AuthorityPerEpochStore,
     transaction: <span class="kw-2">&amp;</span>TransactionData,
     gas_object: Object,
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
 ) -&gt; SuiResult&lt;(SuiGasStatus, InputObjects)&gt; {
     transaction.check_version_supported(epoch_store.protocol_config())<span class="question-mark">?</span>;
     transaction.validity_check_no_gas_check(epoch_store.protocol_config())<span class="question-mark">?</span>;
-    check_non_system_packages_to_be_published(transaction, epoch_store.protocol_config())<span class="question-mark">?</span>;
+    check_non_system_packages_to_be_published(transaction, epoch_store.protocol_config(), metrics)<span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>input_objects = transaction.input_objects()<span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>objects = store.check_input_objects(<span class="kw-2">&amp;</span>input_objects, epoch_store.protocol_config())<span class="question-mark">?</span>;
 
@@ -823,6 +832,7 @@
 </span><span class="kw">pub fn </span>check_non_system_packages_to_be_published(
     transaction: <span class="kw-2">&amp;</span>TransactionData,
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
 ) -&gt; UserInputResult&lt;()&gt; {
     <span class="comment">// Only meter non-system TXes
     </span><span class="kw">if </span>!transaction.is_system_tx() {
@@ -833,7 +843,7 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>meter = BoundMeter::new(<span class="kw-2">&amp;</span>metered_verifier_config);
         <span class="kw">if let </span>TransactionKind::ProgrammableTransaction(pt) = transaction.kind() {
             pt.non_system_packages_to_be_published()
-            .try_for_each(|q| run_metered_move_bytecode_verifier(q, protocol_config, <span class="kw-2">&amp;</span>metered_verifier_config, <span class="kw-2">&amp;mut </span>meter))
+            .try_for_each(|q| run_metered_move_bytecode_verifier(q, protocol_config, <span class="kw-2">&amp;</span>metered_verifier_config, <span class="kw-2">&amp;mut </span>meter, metrics))
             .map_err(|e| UserInputError::PackageVerificationTimedout { err: e.to_string() })<span class="question-mark">?</span>;
         }
     }
