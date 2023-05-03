@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683149406044,
+  "lastUpdate": 1683154660908,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3743,6 +3743,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 390131,
             "range": "± 23150",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123987499+suiwombat@users.noreply.github.com",
+            "name": "Joe Hrbek",
+            "username": "suiwombat"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1c5968e1f466b5dffa647e742f1c5b232df13243",
+          "message": "[sui-proxy/add debug logging] (#11716)\n\nDescription\r\n* add debug logging for the inventory_hostname so we can, if we wish,\r\nlog what host is hitting what proxy.\r\n* this was previously in the metric labels but caused too many\r\ndimensions\r\n\r\nTest Plan \r\n* cargo build/test/fmt/clippy\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-03T22:43:14Z",
+          "tree_id": "32c259a51e9a6ed89cc86cb2ef5b1aefb4ea7632",
+          "url": "https://github.com/MystenLabs/sui/commit/1c5968e1f466b5dffa647e742f1c5b232df13243"
+        },
+        "date": 1683154655043,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146121716,
+            "range": "± 4768286",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 322394,
+            "range": "± 41855",
             "unit": "ns/iter"
           }
         ]
