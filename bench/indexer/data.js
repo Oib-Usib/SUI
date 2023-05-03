@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683154660908,
+  "lastUpdate": 1683154722030,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3779,6 +3779,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 322394,
             "range": "± 41855",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "laura@mystenlabs.com",
+            "name": "Laura Makdah",
+            "username": "laura-makdah"
+          },
+          "committer": {
+            "email": "51134415+laura-makdah@users.noreply.github.com",
+            "name": "laura",
+            "username": "laura-makdah"
+          },
+          "distinct": true,
+          "id": "b31970a06b75b7dd49941d3e4e023c6c58581505",
+          "message": "refine buckets and split out tags into separate histograms",
+          "timestamp": "2023-05-03T15:46:06-07:00",
+          "tree_id": "e58e127b3d17a58dfba01849fe9d87f2e1c85feb",
+          "url": "https://github.com/MystenLabs/sui/commit/b31970a06b75b7dd49941d3e4e023c6c58581505"
+        },
+        "date": 1683154716127,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 137508056,
+            "range": "± 5652157",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 323159,
+            "range": "± 19213",
             "unit": "ns/iter"
           }
         ]
