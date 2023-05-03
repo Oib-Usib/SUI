@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683154722030,
+  "lastUpdate": 1683157161207,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3815,6 +3815,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 323159,
             "range": "± 19213",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "216a6a9f4a753cc173d7798d88c75fd67aa9109d",
+          "message": "[sui-verifier] Additional tests (#11715)\n\n## Description\r\n\r\nAs in title\r\n\r\n## Test Plan\r\n\r\n```\r\ncrates/sui-verifier-transactional-tests$ cargo nextest run -- id_leak/infinite_loop.mvir\r\n```",
+          "timestamp": "2023-05-03T16:29:06-07:00",
+          "tree_id": "3a1870fd5859cbc5dea94b8e2c8d32905c804f85",
+          "url": "https://github.com/MystenLabs/sui/commit/216a6a9f4a753cc173d7798d88c75fd67aa9109d"
+        },
+        "date": 1683157155152,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146827341,
+            "range": "± 5206894",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309404,
+            "range": "± 12102",
             "unit": "ns/iter"
           }
         ]
