@@ -5826,6 +5826,9 @@
             accumulator,
             expensive_safety_check_config.enable_state_consistency_check(),
         );
+        <span class="self">self</span>.db()
+            .set_epoch_start_configuration(<span class="kw-2">&amp;</span>epoch_start_configuration)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(checkpoint_path) = <span class="kw-2">&amp;</span><span class="self">self</span>.db_checkpoint_config.checkpoint_path {
             <span class="kw">if </span><span class="self">self
                 </span>.db_checkpoint_config
@@ -7550,9 +7553,6 @@
             epoch_start_configuration.epoch_start_state().epoch(),
             new_committee.epoch
         );
-        <span class="self">self</span>.db()
-            .set_epoch_start_configuration(<span class="kw-2">&amp;</span>epoch_start_configuration)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="macro">fail_point!</span>(<span class="string">&quot;before-open-new-epoch-store&quot;</span>);
         <span class="kw">let </span>new_epoch_store = cur_epoch_store.new_at_next_epoch(
             <span class="self">self</span>.name,

@@ -955,7 +955,7 @@
         );
         <span class="kw">let </span>tick_duration = Duration::from_secs(config.pruning_run_delay_seconds.unwrap_or(
             <span class="kw">if </span>config.num_epochs_to_retain &gt; <span class="number">0 </span>{
-                min(<span class="number">1000 </span>* epoch_duration_ms / <span class="number">2</span>, <span class="number">60 </span>* <span class="number">60</span>)
+                min(epoch_duration_ms / (<span class="number">2 </span>* <span class="number">1000</span>), <span class="number">60 </span>* <span class="number">60</span>)
             } <span class="kw">else </span>{
                 <span class="number">60
             </span>},

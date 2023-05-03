@@ -836,6 +836,15 @@
 <a href="#836" id="836">836</a>
 <a href="#837" id="837">837</a>
 <a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1258,11 +1267,14 @@
 
 <span class="kw">impl </span>Default <span class="kw">for </span>AuthorityStorePruningConfig {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="comment">// TODO: Remove this after aggressive pruning is enabled by default
+        </span><span class="kw">let </span>num_epochs_to_retain = <span class="kw">if </span><span class="macro">cfg!</span>(msim) { <span class="number">0 </span>} <span class="kw">else </span>{ <span class="number">2 </span>};
+        <span class="kw">let </span>pruning_run_delay_seconds = <span class="kw">if </span><span class="macro">cfg!</span>(msim) { <span class="prelude-val">Some</span>(<span class="number">5</span>) } <span class="kw">else </span>{ <span class="prelude-val">None </span>};
         <span class="self">Self </span>{
             num_latest_epoch_dbs_to_retain: usize::MAX,
             epoch_db_pruning_period_secs: u64::MAX,
-            num_epochs_to_retain: <span class="number">2</span>,
-            pruning_run_delay_seconds: <span class="prelude-val">None</span>,
+            num_epochs_to_retain,
+            pruning_run_delay_seconds,
             max_checkpoints_in_batch: <span class="number">10</span>,
             max_transactions_in_batch: <span class="number">1000</span>,
             use_range_deletion: <span class="bool-val">true</span>,
@@ -1272,22 +1284,28 @@
 
 <span class="kw">impl </span>AuthorityStorePruningConfig {
     <span class="kw">pub fn </span>validator_config() -&gt; <span class="self">Self </span>{
+        <span class="comment">// TODO: Remove this after aggressive pruning is enabled by default
+        </span><span class="kw">let </span>num_epochs_to_retain = <span class="kw">if </span><span class="macro">cfg!</span>(msim) { <span class="number">0 </span>} <span class="kw">else </span>{ <span class="number">2 </span>};
+        <span class="kw">let </span>pruning_run_delay_seconds = <span class="kw">if </span><span class="macro">cfg!</span>(msim) { <span class="prelude-val">Some</span>(<span class="number">2</span>) } <span class="kw">else </span>{ <span class="prelude-val">None </span>};
         <span class="self">Self </span>{
             num_latest_epoch_dbs_to_retain: <span class="number">3</span>,
             epoch_db_pruning_period_secs: <span class="number">60 </span>* <span class="number">60</span>,
-            num_epochs_to_retain: <span class="number">2</span>,
-            pruning_run_delay_seconds: <span class="prelude-val">None</span>,
+            num_epochs_to_retain,
+            pruning_run_delay_seconds,
             max_checkpoints_in_batch: <span class="number">10</span>,
             max_transactions_in_batch: <span class="number">1000</span>,
             use_range_deletion: <span class="bool-val">true</span>,
         }
     }
     <span class="kw">pub fn </span>fullnode_config() -&gt; <span class="self">Self </span>{
+        <span class="comment">// TODO: Remove this after aggressive pruning is enabled by default
+        </span><span class="kw">let </span>num_epochs_to_retain = <span class="kw">if </span><span class="macro">cfg!</span>(msim) { <span class="number">0 </span>} <span class="kw">else </span>{ <span class="number">2 </span>};
+        <span class="kw">let </span>pruning_run_delay_seconds = <span class="kw">if </span><span class="macro">cfg!</span>(msim) { <span class="prelude-val">Some</span>(<span class="number">2</span>) } <span class="kw">else </span>{ <span class="prelude-val">None </span>};
         <span class="self">Self </span>{
             num_latest_epoch_dbs_to_retain: <span class="number">3</span>,
             epoch_db_pruning_period_secs: <span class="number">60 </span>* <span class="number">60</span>,
-            num_epochs_to_retain: <span class="number">2</span>,
-            pruning_run_delay_seconds: <span class="prelude-val">None</span>,
+            num_epochs_to_retain,
+            pruning_run_delay_seconds,
             max_checkpoints_in_batch: <span class="number">10</span>,
             max_transactions_in_batch: <span class="number">1000</span>,
             use_range_deletion: <span class="bool-val">true</span>,

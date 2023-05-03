@@ -479,6 +479,7 @@
 <a href="#479" id="479">479</a>
 <a href="#480" id="480">480</a>
 <a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -530,6 +531,8 @@
     </span>prune_and_compact_before_upload: bool,
     <span class="doccomment">/// Indirect object config for pruner
     </span>indirect_objects_threshold: usize,
+    <span class="doccomment">/// Pruning objects
+    </span>pruning_config: AuthorityStorePruningConfig,
 }
 
 <span class="kw">impl </span>DBCheckpointHandler {
@@ -539,6 +542,7 @@
         interval_s: u64,
         prune_and_compact_before_upload: bool,
         indirect_objects_threshold: usize,
+        pruning_config: AuthorityStorePruningConfig,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>input_store_config = ObjectStoreConfig {
             object_store: <span class="prelude-val">Some</span>(ObjectStoreType::File),
@@ -553,6 +557,7 @@
             gc_markers: <span class="macro">vec!</span>[UPLOAD_COMPLETED_MARKER.to_string()],
             prune_and_compact_before_upload,
             indirect_objects_threshold,
+            pruning_config,
         })
     }
     <span class="kw">pub fn </span>new_for_test(
@@ -573,6 +578,7 @@
             gc_markers: <span class="macro">vec!</span>[UPLOAD_COMPLETED_MARKER.to_string(), TEST_MARKER.to_string()],
             prune_and_compact_before_upload,
             indirect_objects_threshold: <span class="number">0</span>,
+            pruning_config: AuthorityStorePruningConfig::default(),
         })
     }
     <span class="kw">pub fn </span>start(<span class="self">self</span>) -&gt; Sender&lt;()&gt; {
@@ -601,10 +607,6 @@
             <span class="prelude-val">None</span>,
             <span class="prelude-val">None</span>,
         ));
-        <span class="kw">let </span>config = AuthorityStorePruningConfig {
-            num_epochs_to_retain: <span class="number">1</span>,
-            ..Default::default()
-        };
         <span class="kw">let </span>metrics = AuthorityStorePruningMetrics::new(<span class="kw-2">&amp;</span>Registry::default());
         <span class="kw">let </span>lock_table = Arc::new(RwLockTable::new(<span class="number">1</span>));
         <span class="macro">info!</span>(
@@ -615,7 +617,7 @@
             <span class="kw-2">&amp;</span>perpetual_db,
             <span class="kw-2">&amp;</span>checkpoint_store,
             <span class="kw-2">&amp;</span>lock_table,
-            config,
+            <span class="self">self</span>.pruning_config,
             metrics,
             <span class="self">self</span>.indirect_objects_threshold,
         )
