@@ -184,7 +184,6 @@
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
-<a href="#187" id="187">187</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -200,11 +199,11 @@
 <span class="kw">use </span>rand::seq::IteratorRandom;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>sui_core::test_utils::make_transfer_sui_transaction;
+<span class="kw">use </span>sui_test_transaction_builder::TestTransactionBuilder;
 <span class="kw">use </span>sui_types::base_types::{ObjectRef, SuiAddress};
 <span class="kw">use </span>sui_types::crypto::{get_key_pair, AccountKeyPair};
 <span class="kw">use </span>sui_types::gas_coin::MIST_PER_SUI;
 <span class="kw">use </span>sui_types::messages::VerifiedTransaction;
-<span class="kw">use </span>test_utils::messages::make_staking_transaction;
 <span class="kw">use </span>tracing::error;
 
 <span class="attr">#[derive(Debug)]
@@ -243,17 +242,16 @@
     /// followup call creates delegation transaction itself
     </span><span class="kw">fn </span>make_transaction(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; VerifiedTransaction {
         <span class="kw">match </span><span class="self">self</span>.coin {
-            <span class="prelude-val">Some</span>(coin) =&gt; make_staking_transaction(
-                <span class="self">self</span>.gas,
-                coin,
-                <span class="self">self</span>.validator,
+            <span class="prelude-val">Some</span>(coin) =&gt; TestTransactionBuilder::new(
                 <span class="self">self</span>.sender,
-                <span class="self">self</span>.keypair.as_ref(),
+                <span class="self">self</span>.gas,
                 <span class="self">self</span>.system_state_observer
                     .state
                     .borrow()
                     .reference_gas_price,
-            ),
+            )
+            .call_staking(coin, <span class="self">self</span>.validator)
+            .build_and_sign(<span class="self">self</span>.keypair.as_ref()),
             <span class="prelude-val">None </span>=&gt; make_transfer_sui_transaction(
                 <span class="self">self</span>.gas,
                 <span class="self">self</span>.sender,

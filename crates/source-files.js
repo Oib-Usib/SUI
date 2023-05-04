@@ -72,7 +72,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_verifier":["",[],["entry_points_verifier.rs","global_storage_access_verifier.rs","id_leak_verifier.rs","lib.rs","one_time_witness_verifier.rs","private_generics.rs","struct_with_key_verifier.rs","verifier.rs"]],\
 "sui_verifier_transactional_tests":["",[],["lib.rs"]],\
 "telemetry_subscribers":["",[],["lib.rs","span_latency_prom.rs"]],\
-"test_utils":["",[],["authority.rs","lib.rs","messages.rs","network.rs","transaction.rs"]],\
+"test_utils":["",[],["authority.rs","lib.rs","network.rs","transaction.rs"]],\
 "transaction_fuzzer":["",[["account_universe",[],["account.rs","helpers.rs","transfer_gen.rs","universe.rs"]]],["account_universe.rs","config_fuzzer.rs","executor.rs","lib.rs","programmable_transaction_gen.rs","transaction_data_gen.rs","type_arg_fuzzer.rs"]],\
 "typed_store":["",[["rocks",[],["errors.rs","iter.rs","keys.rs","mod.rs","safe_iter.rs","util.rs","values.rs"]],["sally",[],["mod.rs"]]],["lib.rs","metrics.rs","test_db.rs","traits.rs"]],\
 "typed_store_derive":["",[],["lib.rs"]],\

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["make_staking_transaction","make_staking_transaction_with_wallet_context","make_transfer_object_transaction_with_wallet_context","make_tx_certs_and_signed_effects","make_tx_certs_and_signed_effects_with_committee","move_transaction","move_transaction_with_type_tags","test_shared_object_transactions"]};

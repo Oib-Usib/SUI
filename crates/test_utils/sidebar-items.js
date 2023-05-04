@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["authority","messages","network","transaction"]};
+window.SIDEBAR_ITEMS = {"mod":["authority","network","transaction"]};

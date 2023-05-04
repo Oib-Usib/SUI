@@ -730,7 +730,6 @@
 <span class="kw">use </span>sui_types::gas_coin::GAS;
 <span class="kw">use </span>sui_types::object::Owner;
 <span class="kw">use </span>sui_types::quorum_driver_types::ExecuteTransactionRequestType;
-<span class="kw">use </span>test_utils::messages::make_staking_transaction_with_wallet_context;
 <span class="kw">use </span>tracing::info;
 
 <span class="kw">pub struct </span>CoinIndexTest;
@@ -818,9 +817,10 @@
             .get(<span class="number">0</span>)
             .unwrap()
             .sui_address;
-        <span class="kw">let </span>txn =
-            make_staking_transaction_with_wallet_context(ctx.get_wallet_mut(), validator_addr)
-                .<span class="kw">await</span>;
+        <span class="kw">let </span>txn = ctx
+            .get_wallet()
+            .make_staking_transaction(validator_addr)
+            .<span class="kw">await</span>;
 
         <span class="kw">let </span>response = client
             .quorum_driver_api()

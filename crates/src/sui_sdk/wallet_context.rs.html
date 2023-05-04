@@ -330,6 +330,23 @@
 <a href="#330" id="330">330</a>
 <a href="#331" id="331">331</a>
 <a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -347,6 +364,7 @@
     SuiObjectResponseQuery, SuiTransactionBlockResponse, SuiTransactionBlockResponseOptions,
 };
 <span class="kw">use </span>sui_keys::keystore::AccountKeystore;
+<span class="kw">use </span>sui_test_transaction_builder::TestTransactionBuilder;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, ObjectRef, SuiAddress};
 <span class="kw">use </span>sui_types::crypto::{get_key_pair, AccountKeyPair};
 <span class="kw">use </span>sui_types::gas_coin::GasCoin;
@@ -660,6 +678,22 @@
             }
         }
         res
+    }
+
+    <span class="kw">pub async fn </span>make_staking_transaction(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        validator_address: SuiAddress,
+    ) -&gt; VerifiedTransaction {
+        <span class="kw">let </span>accounts_and_objs = <span class="self">self</span>.get_all_accounts_and_gas_objects().<span class="kw">await</span>.unwrap();
+        <span class="kw">let </span>sender = accounts_and_objs[<span class="number">0</span>].<span class="number">0</span>;
+        <span class="kw">let </span>gas_object = accounts_and_objs[<span class="number">0</span>].<span class="number">1</span>[<span class="number">0</span>];
+        <span class="kw">let </span>stake_object = accounts_and_objs[<span class="number">0</span>].<span class="number">1</span>[<span class="number">1</span>];
+        <span class="kw">let </span>gas_price = <span class="self">self</span>.get_reference_gas_price().<span class="kw">await</span>.unwrap();
+        <span class="self">self</span>.sign_transaction(
+            <span class="kw-2">&amp;</span>TestTransactionBuilder::new(sender, gas_object, gas_price)
+                .call_staking(stake_object, validator_address)
+                .build(),
+        )
     }
 }
 </code></pre></div></section></main></body></html>
