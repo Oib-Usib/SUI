@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683226362645,
+  "lastUpdate": 1683233038940,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3995,6 +3995,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311909,
             "range": "± 12918",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "458a16cba90677d4c052e3db89de38ed98039679",
+          "message": "[bug fix] - struct tag serialization should not trim leading zeros (#11732)\n\n## Description \r\n\r\nstruct tag serialization should not trim leading zeros\r\n\r\n## Test Plan \r\n\r\nadded unit test",
+          "timestamp": "2023-05-04T13:31:00-07:00",
+          "tree_id": "878a065602bd420964b7220f4321efa7c1e58db2",
+          "url": "https://github.com/MystenLabs/sui/commit/458a16cba90677d4c052e3db89de38ed98039679"
+        },
+        "date": 1683233030743,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 138455824,
+            "range": "± 4719982",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314844,
+            "range": "± 17157",
             "unit": "ns/iter"
           }
         ]
