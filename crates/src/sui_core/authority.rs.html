@@ -3913,6 +3913,11 @@
 <a href="#3913" id="3913">3913</a>
 <a href="#3914" id="3914">3914</a>
 <a href="#3915" id="3915">3915</a>
+<a href="#3916" id="3916">3916</a>
+<a href="#3917" id="3917">3917</a>
+<a href="#3918" id="3918">3918</a>
+<a href="#3919" id="3919">3919</a>
+<a href="#3920" id="3920">3920</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -4018,7 +4023,7 @@
     object::{Object, ObjectFormatOptions, ObjectRead},
     SUI_SYSTEM_ADDRESS,
 };
-<span class="kw">use </span>sui_types::{is_system_package, TypeTag};
+<span class="kw">use </span>sui_types::{is_system_package, TypeTag, SUI_CLOCK_OBJECT_ID};
 <span class="kw">use </span>typed_store::Map;
 
 <span class="kw">use </span><span class="kw">crate</span>::authority::authority_per_epoch_store::{AuthorityPerEpochStore, CertTxGuard};
@@ -4599,7 +4604,7 @@
         // this function, in order to prevent a byzantine validator from
         // giving us incorrect effects.
         </span>effects: <span class="kw-2">&amp;</span>VerifiedCertifiedTransactionEffects,
-        objects: <span class="kw-2">&amp;</span>Vec&lt;Object&gt;,
+        objects: Vec&lt;Object&gt;,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
     ) -&gt; SuiResult {
         <span class="macro">assert!</span>(<span class="self">self</span>.is_fullnode(epoch_store));
@@ -4616,6 +4621,11 @@
             }
         );
 
+        <span class="comment">// Lock this down to 0x6 before we pin child versions in effects
+        </span><span class="kw">let </span>objects = objects
+            .into_iter()
+            .filter(|o| o.id() == SUI_CLOCK_OBJECT_ID)
+            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
         <span class="kw">if </span>!objects.is_empty() {
             <span class="macro">debug!</span>(
                 <span class="string">&quot;inserting objects to object store before executing a tx: {:?}&quot;</span>,
@@ -4625,7 +4635,7 @@
                     .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
             );
             <span class="self">self</span>.database
-                .fullnode_fast_path_insert_objects_to_object_store_maybe(objects)<span class="question-mark">?</span>;
+                .fullnode_fast_path_insert_objects_to_object_store_maybe(<span class="kw-2">&amp;</span>objects)<span class="question-mark">?</span>;
             <span class="self">self</span>.transaction_manager()
                 .objects_available(objects.iter().map(InputKey::from).collect(), epoch_store);
         }

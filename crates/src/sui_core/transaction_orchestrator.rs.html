@@ -823,7 +823,7 @@ finalized transactions locally, when possible.
                     <span class="kw-2">&amp;</span><span class="self">self</span>.validator_state,
                     <span class="kw-2">&amp;</span>executable_tx,
                     <span class="kw-2">&amp;</span>effects_cert,
-                    <span class="kw-2">&amp;</span>objects,
+                    objects,
                     <span class="kw-2">&amp;</span><span class="self">self</span>.metrics,
                 )
                 .<span class="kw">await
@@ -868,7 +868,7 @@ finalized transactions locally, when possible.
         validator_state: <span class="kw-2">&amp;</span>Arc&lt;AuthorityState&gt;,
         transaction: <span class="kw-2">&amp;</span>VerifiedExecutableTransaction,
         effects_cert: <span class="kw-2">&amp;</span>VerifiedCertifiedTransactionEffects,
-        objects: <span class="kw-2">&amp;</span>Vec&lt;Object&gt;,
+        objects: Vec&lt;Object&gt;,
         metrics: <span class="kw-2">&amp;</span>TransactionOrchestratorMetrics,
     ) -&gt; SuiResult {
         <span class="kw">let </span>epoch_store = validator_state.load_epoch_store_one_call_per_task();
@@ -965,7 +965,7 @@ finalized transactions locally, when possible.
                         <span class="kw-2">&amp;</span>validator_state,
                         <span class="kw-2">&amp;</span>executable_tx,
                         <span class="kw-2">&amp;</span>effects_cert,
-                        <span class="kw-2">&amp;</span>objects,
+                        objects,
                         <span class="kw-2">&amp;</span>metrics,
                     )
                     .<span class="kw">await</span>;
