@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683233038940,
+  "lastUpdate": 1683241092057,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4031,6 +4031,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314844,
             "range": "± 17157",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ced4a537e8d1eba3d8e2fa83f4c45f1a5cd94ce2",
+          "message": "[Part 2/2] Delete test utils messages (#11738)\n\nThis PR fully deletes test-utils/messages.rs",
+          "timestamp": "2023-05-04T22:45:03Z",
+          "tree_id": "08555d33ea0dca7795721815a2c1f2f573187651",
+          "url": "https://github.com/MystenLabs/sui/commit/ced4a537e8d1eba3d8e2fa83f4c45f1a5cd94ce2"
+        },
+        "date": 1683241085413,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 143408991,
+            "range": "± 4809882",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 305444,
+            "range": "± 19885",
             "unit": "ns/iter"
           }
         ]
