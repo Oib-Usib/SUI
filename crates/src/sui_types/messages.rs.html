@@ -2113,6 +2113,7 @@
 <a href="#2113" id="2113">2113</a>
 <a href="#2114" id="2114">2114</a>
 <a href="#2115" id="2115">2115</a>
+<a href="#2116" id="2116">2116</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3906,7 +3907,8 @@
         <span class="self">Self</span>::from_data(data, intent, signatures)
     }
 
-    <span class="kw">pub fn </span>from_data(data: TransactionData, intent: Intent, signatures: Vec&lt;Signature&gt;) -&gt; <span class="self">Self </span>{
+    <span class="comment">// TODO: Rename this function and above to make it clearer.
+    </span><span class="kw">pub fn </span>from_data(data: TransactionData, intent: Intent, signatures: Vec&lt;Signature&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::from_generic_sig_data(
             data,
             intent,

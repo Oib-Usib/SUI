@@ -765,11 +765,6 @@
 <a href="#765" id="765">765</a>
 <a href="#766" id="766">766</a>
 <a href="#767" id="767">767</a>
-<a href="#768" id="768">768</a>
-<a href="#769" id="769">769</a>
-<a href="#770" id="770">770</a>
-<a href="#771" id="771">771</a>
-<a href="#772" id="772">772</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -803,6 +798,7 @@
 <span class="kw">use </span>sui_types::messages::TEST_ONLY_GAS_UNIT_FOR_SPLIT_COIN;
 <span class="kw">use </span>sui_types::messages::TEST_ONLY_GAS_UNIT_FOR_TRANSFER;
 
+<span class="kw">use </span>sui_test_transaction_builder::TestTransactionBuilder;
 <span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI, TransactionEvents};
 <span class="kw">use </span>sui_types::messages::{CallArg, ObjectArg, Transaction, TransactionData, VerifiedTransaction};
 <span class="kw">use </span>sui_types::messages_grpc::{
@@ -818,8 +814,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::authority::get_client;
 <span class="kw">use </span><span class="kw">crate</span>::messages::{
-    create_publish_move_package_transaction, make_tx_certs_and_signed_effects,
-    make_tx_certs_and_signed_effects_with_committee,
+    make_tx_certs_and_signed_effects, make_tx_certs_and_signed_effects_with_committee,
 };
 
 <span class="kw">pub fn </span>make_publish_package(
@@ -828,14 +823,9 @@
     gas_price: u64,
 ) -&gt; VerifiedTransaction {
     <span class="kw">let </span>(sender, keypair) = deterministic_random_account_key();
-    create_publish_move_package_transaction(
-        gas_object,
-        path,
-        sender,
-        <span class="kw-2">&amp;</span>keypair,
-        gas_price * TEST_ONLY_GAS_UNIT_FOR_PUBLISH,
-        gas_price,
-    )
+    TestTransactionBuilder::new(sender, gas_object, gas_price)
+        .publish(path)
+        .build_and_sign(<span class="kw-2">&amp;</span>keypair)
 }
 
 <span class="kw">pub async fn </span>publish_package(

@@ -61,6 +61,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_surfer":["",[],["default_surf_strategy.rs","lib.rs","surf_strategy.rs","surfer_state.rs","surfer_task.rs"]],\
 "sui_swarm":["",[["memory",[],["container.rs","mod.rs","node.rs","swarm.rs"]]],["lib.rs"]],\
 "sui_telemetry":["",[],["lib.rs"]],\
+"sui_test_transaction_builder":["",[],["lib.rs"]],\
 "sui_test_validator":["",[],["main.rs"]],\
 "sui_tls":["",[],["acceptor.rs","certgen.rs","lib.rs","verifier.rs"]],\
 "sui_tool":["",[["db_tool",[],["db_dump.rs","mod.rs"]]],["commands.rs","lib.rs"]],\

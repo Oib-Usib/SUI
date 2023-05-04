@@ -272,6 +272,64 @@
 <a href="#272" id="272">272</a>
 <a href="#273" id="273">273</a>
 <a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -279,6 +337,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::SuiClient;
 <span class="kw">use </span>anyhow::anyhow;
 <span class="kw">use </span>colored::Colorize;
+<span class="kw">use </span>shared_crypto::intent::Intent;
 <span class="kw">use </span>std::collections::BTreeSet;
 <span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::sync::Arc;
@@ -289,8 +348,12 @@
 };
 <span class="kw">use </span>sui_keys::keystore::AccountKeystore;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, ObjectRef, SuiAddress};
+<span class="kw">use </span>sui_types::crypto::{get_key_pair, AccountKeyPair};
 <span class="kw">use </span>sui_types::gas_coin::GasCoin;
-<span class="kw">use </span>sui_types::messages::VerifiedTransaction;
+<span class="kw">use </span>sui_types::messages::TransactionDataAPI;
+<span class="kw">use </span>sui_types::messages::{
+    Transaction, TransactionData, VerifiedTransaction, TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
+};
 <span class="kw">use </span>tokio::sync::RwLock;
 <span class="kw">use </span>tracing::warn;
 
@@ -525,6 +588,21 @@
         <span class="prelude-val">Ok</span>(gas_price)
     }
 
+    <span class="doccomment">/// Sign a transaction with a key currently managed by the WalletContext
+    </span><span class="kw">pub fn </span>sign_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, data: <span class="kw-2">&amp;</span>TransactionData) -&gt; VerifiedTransaction {
+        <span class="kw">let </span>sig = <span class="self">self
+            </span>.config
+            .keystore
+            .sign_secure(<span class="kw-2">&amp;</span>data.sender(), data, Intent::sui_transaction())
+            .unwrap();
+        <span class="comment">// TODO: To support sponsored transaction, we should also look at the gas owner.
+        </span>VerifiedTransaction::new_unchecked(Transaction::from_data(
+            data.clone(),
+            Intent::sui_transaction(),
+            <span class="macro">vec!</span>[sig],
+        ))
+    }
+
     <span class="kw">pub async fn </span>execute_transaction_block(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx: VerifiedTransaction,
@@ -544,6 +622,44 @@
                 <span class="prelude-val">Some</span>(sui_types::quorum_driver_types::ExecuteTransactionRequestType::WaitForLocalExecution),
             )
             .<span class="kw">await</span><span class="question-mark">?</span>)
+    }
+
+    <span class="doccomment">/// A helper function to make Transactions with controlled accounts in WalletContext.
+    /// Particularly, the wallet needs to own gas objects for transactions.
+    /// However, if this function is called multiple times without any &quot;sync&quot; actions
+    /// on gas object management, txns may fail and objects may be locked.
+    ///
+    /// The param is called `max_txn_num` because it does not always return the exact
+    /// same amount of Transactions, for example when there are not enough gas objects
+    /// controlled by the WalletContext. Caller should rely on the return value to
+    /// check the count.
+    </span><span class="kw">pub async fn </span>batch_make_transfer_transactions(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        max_txn_num: usize,
+    ) -&gt; Vec&lt;VerifiedTransaction&gt; {
+        <span class="kw">let </span>recipient = get_key_pair::&lt;AccountKeyPair&gt;().<span class="number">0</span>;
+        <span class="kw">let </span>accounts_and_objs = <span class="self">self</span>.get_all_accounts_and_gas_objects().<span class="kw">await</span>.unwrap();
+        <span class="kw">let </span><span class="kw-2">mut </span>res = Vec::with_capacity(max_txn_num);
+
+        <span class="kw">let </span>gas_price = <span class="self">self</span>.get_reference_gas_price().<span class="kw">await</span>.unwrap();
+        <span class="kw">for </span>(address, objs) <span class="kw">in </span>accounts_and_objs {
+            <span class="kw">for </span>obj <span class="kw">in </span>objs {
+                <span class="kw">if </span>res.len() &gt;= max_txn_num {
+                    <span class="kw">return </span>res;
+                }
+                <span class="kw">let </span>data = TransactionData::new_transfer_sui(
+                    recipient,
+                    address,
+                    <span class="prelude-val">Some</span>(<span class="number">2</span>),
+                    obj,
+                    gas_price * TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
+                    gas_price,
+                );
+                <span class="kw">let </span>tx = <span class="self">self</span>.sign_transaction(<span class="kw-2">&amp;</span>data);
+                res.push(tx);
+            }
+        }
+        res
     }
 }
 </code></pre></div></section></main></body></html>

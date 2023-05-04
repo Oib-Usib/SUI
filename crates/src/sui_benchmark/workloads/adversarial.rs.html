@@ -558,20 +558,6 @@
 <a href="#558" id="558">558</a>
 <a href="#559" id="559">559</a>
 <a href="#560" id="560">560</a>
-<a href="#561" id="561">561</a>
-<a href="#562" id="562">562</a>
-<a href="#563" id="563">563</a>
-<a href="#564" id="564">564</a>
-<a href="#565" id="565">565</a>
-<a href="#566" id="566">566</a>
-<a href="#567" id="567">567</a>
-<a href="#568" id="568">568</a>
-<a href="#569" id="569">569</a>
-<a href="#570" id="570">570</a>
-<a href="#571" id="571">571</a>
-<a href="#572" id="572">572</a>
-<a href="#573" id="573">573</a>
-<a href="#574" id="574">574</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -599,19 +585,16 @@
 <span class="kw">use </span>strum::{EnumCount, IntoEnumIterator};
 <span class="kw">use </span>strum_macros::{EnumCount <span class="kw">as </span>EnumCountMacro, EnumIter};
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
+<span class="kw">use </span>sui_test_transaction_builder::TestTransactionBuilder;
+<span class="kw">use </span>sui_types::base_types::{random_object_ref, ObjectRef};
 <span class="kw">use </span>sui_types::effects::TransactionEffectsAPI;
 <span class="kw">use </span>sui_types::messages::Command;
 <span class="kw">use </span>sui_types::messages::{CallArg, ObjectArg};
 <span class="kw">use </span>sui_types::{base_types::ObjectID, object::Owner};
 <span class="kw">use </span>sui_types::{base_types::SuiAddress, crypto::get_key_pair, messages::VerifiedTransaction};
-<span class="kw">use </span>sui_types::{
-    base_types::{random_object_ref, ObjectRef},
-    messages::TEST_ONLY_GAS_UNIT_FOR_PUBLISH,
-};
 <span class="kw">use </span>sui_types::{messages::TransactionData, utils::to_sender_signed_transaction};
 <span class="kw">use </span>tracing::debug;
 
-<span class="kw">use </span>test_utils::messages::create_publish_move_package_transaction;
 <span class="doccomment">/// Number of vectors to create in LargeTransientRuntimeVectors workload
 </span><span class="kw">const </span>NUM_VECTORS: u64 = <span class="number">1_000</span>;
 
@@ -818,15 +801,9 @@
             AdversarialPayloadType::MaxPackagePublish =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>path = PathBuf::from(<span class="macro">env!</span>(<span class="string">&quot;CARGO_MANIFEST_DIR&quot;</span>));
                 path.push(<span class="string">&quot;src/workloads/data/max_package&quot;</span>);
-
-                create_publish_move_package_transaction(
-                    account.gas,
-                    path,
-                    <span class="self">self</span>.sender,
-                    account.key(),
-                    gas_price * TEST_ONLY_GAS_UNIT_FOR_PUBLISH,
-                    gas_price,
-                )
+                TestTransactionBuilder::new(<span class="self">self</span>.sender, account.gas, gas_price)
+                    .publish(path)
+                    .build_and_sign(account.key())
             }
             <span class="kw">_ </span>=&gt; <span class="self">self</span>.state.move_call_pt(
                 <span class="self">self</span>.sender,
@@ -1044,14 +1021,9 @@
         } = system_state_observer.state.borrow().clone();
         <span class="kw">let </span>protocol_config = protocol_config.unwrap();
         <span class="kw">let </span>gas_budget = protocol_config.max_tx_gas();
-        <span class="kw">let </span>transaction = create_publish_move_package_transaction(
-            gas.<span class="number">0</span>,
-            path,
-            gas.<span class="number">1</span>,
-            <span class="kw-2">&amp;</span>gas.<span class="number">2</span>,
-            gas_budget,
-            reference_gas_price,
-        );
+        <span class="kw">let </span>transaction = TestTransactionBuilder::new(gas.<span class="number">1</span>, gas.<span class="number">0</span>, reference_gas_price)
+            .publish(path)
+            .build_and_sign(gas.<span class="number">2</span>.as_ref());
         <span class="kw">let </span>effects = proxy
             .execute_transaction_block(transaction.into())
             .<span class="kw">await
