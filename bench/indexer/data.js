@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683207380587,
+  "lastUpdate": 1683224009587,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -3923,6 +3923,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309932,
             "range": "± 9321",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba31e3757f28aa7c71b3fbf72e2d3cd802708c29",
+          "message": "[sui-system] update max commission rate cap (#11720)\n\n## Description \r\n\r\nChange the max commission rate to 20%.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-04T11:00:20-07:00",
+          "tree_id": "dfdb7a9ebcafc4c96dd26fee6541ec6926113f39",
+          "url": "https://github.com/MystenLabs/sui/commit/ba31e3757f28aa7c71b3fbf72e2d3cd802708c29"
+        },
+        "date": 1683223979786,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146117858,
+            "range": "± 5043572",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 381769,
+            "range": "± 64483",
             "unit": "ns/iter"
           }
         ]
