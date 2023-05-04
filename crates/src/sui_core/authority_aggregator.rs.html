@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority_aggregator.rs`."><title>authority_aggregator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a368898de 2023-05-02)" data-search-js="search-618e954b235f6acc.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority_aggregator.rs`."><title>authority_aggregator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (473f916d8 2023-05-03)" data-search-js="search-618e954b235f6acc.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1872,6 +1872,39 @@
 <a href="#1872" id="1872">1872</a>
 <a href="#1873" id="1873">1873</a>
 <a href="#1874" id="1874">1874</a>
+<a href="#1875" id="1875">1875</a>
+<a href="#1876" id="1876">1876</a>
+<a href="#1877" id="1877">1877</a>
+<a href="#1878" id="1878">1878</a>
+<a href="#1879" id="1879">1879</a>
+<a href="#1880" id="1880">1880</a>
+<a href="#1881" id="1881">1881</a>
+<a href="#1882" id="1882">1882</a>
+<a href="#1883" id="1883">1883</a>
+<a href="#1884" id="1884">1884</a>
+<a href="#1885" id="1885">1885</a>
+<a href="#1886" id="1886">1886</a>
+<a href="#1887" id="1887">1887</a>
+<a href="#1888" id="1888">1888</a>
+<a href="#1889" id="1889">1889</a>
+<a href="#1890" id="1890">1890</a>
+<a href="#1891" id="1891">1891</a>
+<a href="#1892" id="1892">1892</a>
+<a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1882,6 +1915,7 @@
 };
 <span class="kw">use </span><span class="kw">crate</span>::safe_client::{SafeClient, SafeClientMetrics, SafeClientMetricsBase};
 <span class="kw">use </span>fastcrypto::encoding::Encoding;
+<span class="kw">use </span>fastcrypto::traits::ToFromBytes;
 <span class="kw">use </span>futures::Future;
 <span class="kw">use </span>futures::{future::BoxFuture, stream::FuturesUnordered, StreamExt};
 <span class="kw">use </span>mysten_metrics::histogram::Histogram;
@@ -1893,9 +1927,7 @@
 <span class="kw">use </span>sui_network::{
     default_mysten_network_config, DEFAULT_CONNECT_TIMEOUT_SEC, DEFAULT_REQUEST_TIMEOUT_SEC,
 };
-<span class="kw">use </span>sui_types::crypto::{
-    AuthorityPublicKeyBytes, AuthoritySignInfo, ConciseAuthorityPublicKeyBytesRef,
-};
+<span class="kw">use </span>sui_types::crypto::{AuthorityPublicKeyBytes, AuthoritySignInfo};
 <span class="kw">use </span>sui_types::error::UserInputError;
 <span class="kw">use </span>sui_types::fp_ensure;
 <span class="kw">use </span>sui_types::message_envelope::Message;
@@ -2238,6 +2270,10 @@
 </span><span class="kw">pub struct </span>AuthorityAggregator&lt;A: Clone&gt; {
     <span class="doccomment">/// Our Sui committee.
     </span><span class="kw">pub </span>committee: Arc&lt;Committee&gt;,
+    <span class="doccomment">/// For more human readable metrics reporting.
+    /// It&#39;s OK for this map to be empty or missing validators, it then defaults
+    /// to use concise validator public keys.
+    </span><span class="kw">pub </span>validator_display_names: Arc&lt;HashMap&lt;AuthorityName, String&gt;&gt;,
     <span class="doccomment">/// How to talk to this committee.
     </span><span class="kw">pub </span>authority_clients: Arc&lt;BTreeMap&lt;AuthorityName, Arc&lt;SafeClient&lt;A&gt;&gt;&gt;&gt;,
     <span class="doccomment">/// Metrics
@@ -2255,12 +2291,14 @@
         committee_store: Arc&lt;CommitteeStore&gt;,
         authority_clients: BTreeMap&lt;AuthorityName, A&gt;,
         registry: <span class="kw-2">&amp;</span>Registry,
+        validator_display_names: Arc&lt;HashMap&lt;AuthorityName, String&gt;&gt;,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new_with_timeouts(
             committee,
             committee_store,
             authority_clients,
             registry,
+            validator_display_names,
             Default::default(),
         )
     }
@@ -2270,11 +2308,13 @@
         committee_store: Arc&lt;CommitteeStore&gt;,
         authority_clients: BTreeMap&lt;AuthorityName, A&gt;,
         registry: <span class="kw-2">&amp;</span>Registry,
+        validator_display_names: Arc&lt;HashMap&lt;AuthorityName, String&gt;&gt;,
         timeouts: TimeoutConfig,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>safe_client_metrics_base = SafeClientMetricsBase::new(registry);
         <span class="self">Self </span>{
             committee: Arc::new(committee),
+            validator_display_names,
             authority_clients: create_safe_clients(
                 authority_clients,
                 <span class="kw-2">&amp;</span>committee_store,
@@ -2293,6 +2333,7 @@
         authority_clients: BTreeMap&lt;AuthorityName, A&gt;,
         safe_client_metrics_base: SafeClientMetricsBase,
         auth_agg_metrics: Arc&lt;AuthAggMetrics&gt;,
+        validator_display_names: Arc&lt;HashMap&lt;AuthorityName, String&gt;&gt;,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             committee: Arc::new(committee),
@@ -2305,6 +2346,7 @@
             safe_client_metrics_base,
             timeouts: Default::default(),
             committee_store,
+            validator_display_names,
         }
     }
 
@@ -2371,6 +2413,7 @@
             timeouts: <span class="self">self</span>.timeouts.clone(),
             safe_client_metrics_base: <span class="self">self</span>.safe_client_metrics_base.clone(),
             committee_store: <span class="self">self</span>.committee_store.clone(),
+            validator_display_names: Arc::new(HashMap::new()),
         })
     }
 
@@ -2437,11 +2480,27 @@
         auth_agg_metrics: AuthAggMetrics,
     ) -&gt; anyhow::Result&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>sui_system_state = store.get_sui_system_state_object()<span class="question-mark">?</span>;
+        <span class="kw">let </span>committee = sui_system_state.get_current_epoch_committee();
+        <span class="kw">let </span>validator_display_names = sui_system_state
+            .into_sui_system_state_summary()
+            .active_validators
+            .into_iter()
+            .filter_map(|s| {
+                <span class="kw">let </span>authority_name =
+                    AuthorityPublicKeyBytes::from_bytes(s.protocol_pubkey_bytes.as_slice());
+                <span class="kw">if </span>authority_name.is_err() {
+                    <span class="kw">return </span><span class="prelude-val">None</span>;
+                }
+                <span class="kw">let </span>human_readble_name = s.name;
+                <span class="prelude-val">Some</span>((authority_name.unwrap(), human_readble_name))
+            })
+            .collect();
         <span class="self">Self</span>::new_from_committee(
-            sui_system_state.get_current_epoch_committee(),
+            committee,
             committee_store,
             safe_client_metrics_base,
             Arc::new(auth_agg_metrics),
+            Arc::new(validator_display_names),
         )
     }
 
@@ -2450,6 +2509,7 @@
         committee_store: <span class="kw-2">&amp;</span>Arc&lt;CommitteeStore&gt;,
         safe_client_metrics_base: SafeClientMetricsBase,
         auth_agg_metrics: Arc&lt;AuthAggMetrics&gt;,
+        validator_display_names: Arc&lt;HashMap&lt;AuthorityName, String&gt;&gt;,
     ) -&gt; anyhow::Result&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>net_config = default_mysten_network_config();
         <span class="kw">let </span>authority_clients =
@@ -2460,6 +2520,7 @@
             authority_clients,
             safe_client_metrics_base,
             auth_agg_metrics,
+            validator_display_names,
         ))
     }
 }
@@ -2955,6 +3016,7 @@
         <span class="kw">let </span>transaction_ref = <span class="kw-2">&amp;</span>transaction;
         <span class="kw">let </span>validity_threshold = committee.validity_threshold();
         <span class="kw">let </span>quorum_threshold = committee.quorum_threshold();
+        <span class="kw">let </span>validator_display_names = <span class="self">self</span>.validator_display_names.clone();
         <span class="kw">let </span>result = AuthorityAggregator::quorum_map_then_reduce_with_timeout(
                 committee.clone(),
                 <span class="self">self</span>.authority_clients.clone(),
@@ -2968,6 +3030,7 @@
                     )
                 },
                 |<span class="kw-2">mut </span>state, name, weight, response| {
+                    <span class="kw">let </span>display_name = validator_display_names.get(<span class="kw-2">&amp;</span>name).unwrap_or(<span class="kw-2">&amp;</span>name.concise().to_string()).clone();
                     Box::pin(<span class="kw">async move </span>{
                         <span class="kw">match </span><span class="self">self</span>.handle_process_transaction_response(
                             tx_digest, <span class="kw-2">&amp;mut </span>state, response, name, weight,
@@ -2992,9 +3055,9 @@
                                 <span class="macro">debug!</span>(<span class="question-mark">?</span>tx_digest, name=<span class="question-mark">?</span>concise_name, weight, <span class="string">&quot;Error processing transaction from validator: {:?}&quot;</span>, err);
                                 <span class="self">self</span>.metrics
                                     .process_tx_errors
-                                    .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>concise_name.to_string(), err.as_ref()])
+                                    .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>display_name, err.as_ref()])
                                     .inc();
-                                <span class="self">Self</span>::record_rpc_error_maybe(<span class="self">self</span>.metrics.clone(), concise_name, <span class="kw-2">&amp;</span>err);
+                                <span class="self">Self</span>::record_rpc_error_maybe(<span class="self">self</span>.metrics.clone(), <span class="kw-2">&amp;</span>display_name, <span class="kw-2">&amp;</span>err);
                                 <span class="kw">let </span>(retryable, categorized) = err.is_retryable();
                                 <span class="kw">if </span>!categorized {
                                     <span class="comment">// TODO: Should minimize possible uncategorized errors here
@@ -3051,13 +3114,13 @@
 
     <span class="kw">fn </span>record_rpc_error_maybe(
         metrics: Arc&lt;AuthAggMetrics&gt;,
-        name: ConciseAuthorityPublicKeyBytesRef,
+        display_name: <span class="kw-2">&amp;</span>String,
         error: <span class="kw-2">&amp;</span>SuiError,
     ) {
         <span class="kw">if let </span>SuiError::RpcError(_message, code) = error {
             metrics
                 .total_rpc_err
-                .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>name.to_string(), code.as_str()])
+                .with_label_values(<span class="kw-2">&amp;</span>[display_name, code.as_str()])
                 .inc();
         }
     }
@@ -3396,6 +3459,7 @@
         <span class="kw">let </span>authority_clients = <span class="self">self</span>.authority_clients.clone();
         <span class="kw">let </span>metrics = <span class="self">self</span>.metrics.clone();
         <span class="kw">let </span>metrics_clone = metrics.clone();
+        <span class="kw">let </span>validator_display_names = <span class="self">self</span>.validator_display_names.clone();
         <span class="kw">let </span>(result, <span class="kw-2">mut </span>remaining_tasks) = AuthorityAggregator::quorum_map_then_reduce_with_timeout(
             committee.clone(),
             authority_clients.clone(),
@@ -3414,6 +3478,7 @@
             <span class="kw">move </span>|<span class="kw-2">mut </span>state, name, weight, response| {
                 <span class="kw">let </span>committee_clone = committee.clone();
                 <span class="kw">let </span>metrics = metrics.clone();
+                <span class="kw">let </span>display_name = validator_display_names.get(<span class="kw-2">&amp;</span>name).unwrap_or(<span class="kw-2">&amp;</span>name.concise().to_string()).clone();
                 Box::pin(<span class="kw">async move </span>{
                     <span class="comment">// We aggregate the effects response, until we have more than 2f
                     // and return.
@@ -3438,9 +3503,9 @@
                             <span class="macro">debug!</span>(<span class="question-mark">?</span>tx_digest, name=<span class="question-mark">?</span>concise_name, <span class="string">&quot;Error processing certificate from validator: {:?}&quot;</span>, err);
                             metrics
                                 .process_cert_errors
-                                .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>concise_name.to_string(), err.as_ref()])
+                                .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>display_name, err.as_ref()])
                                 .inc();
-                            <span class="self">Self</span>::record_rpc_error_maybe(metrics, concise_name, <span class="kw-2">&amp;</span>err);
+                            <span class="self">Self</span>::record_rpc_error_maybe(metrics, <span class="kw-2">&amp;</span>display_name, <span class="kw-2">&amp;</span>err);
                             <span class="kw">let </span>(retryable, categorized) = err.is_retryable();
                             <span class="kw">if </span>!categorized {
                                 <span class="comment">// TODO: Should minimize possible uncategorized errors here
@@ -3741,6 +3806,7 @@
                 committee_store,
                 auth_clients.clone(),
                 registry,
+                Arc::new(HashMap::new()),
             ),
             auth_clients,
         ))
