@@ -156,6 +156,6 @@
 <span class="kw">pub async fn </span>create_wallet_context(timeout_secs: u64) -&gt; <span class="prelude-ty">Result</span>&lt;WalletContext, anyhow::Error&gt; {
     <span class="kw">let </span>wallet_conf = sui_config_dir()<span class="question-mark">?</span>.join(SUI_CLIENT_CONFIG);
     <span class="macro">info!</span>(<span class="string">&quot;Initialize wallet from config path: {:?}&quot;</span>, wallet_conf);
-    WalletContext::new(<span class="kw-2">&amp;</span>wallet_conf, <span class="prelude-val">Some</span>(Duration::from_secs(timeout_secs))).<span class="kw">await
+    WalletContext::new(<span class="kw-2">&amp;</span>wallet_conf, <span class="prelude-val">Some</span>(Duration::from_secs(timeout_secs)), <span class="prelude-val">None</span>).<span class="kw">await
 </span>}
 </code></pre></div></section></main></body></html>

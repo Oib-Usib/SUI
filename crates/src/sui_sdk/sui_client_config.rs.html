@@ -127,6 +127,11 @@
 <a href="#127" id="127">127</a>
 <a href="#128" id="128">128</a>
 <a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -200,6 +205,7 @@
     <span class="kw">pub async fn </span>create_rpc_client(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         request_timeout: <span class="prelude-ty">Option</span>&lt;std::time::Duration&gt;,
+        max_concurrent_requests: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiClient, anyhow::Error&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>builder = SuiClientBuilder::default();
         <span class="kw">if let </span><span class="prelude-val">Some</span>(request_timeout) = request_timeout {
@@ -207,6 +213,10 @@
         }
         <span class="kw">if let </span><span class="prelude-val">Some</span>(ws_url) = <span class="kw-2">&amp;</span><span class="self">self</span>.ws {
             builder = builder.ws_url(ws_url);
+        }
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(max_concurrent_requests) = max_concurrent_requests {
+            builder = builder.max_concurrent_requests(max_concurrent_requests <span class="kw">as </span>usize);
         }
         <span class="prelude-val">Ok</span>(builder.build(<span class="kw-2">&amp;</span><span class="self">self</span>.rpc).<span class="kw">await</span><span class="question-mark">?</span>)
     }

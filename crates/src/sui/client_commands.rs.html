@@ -2866,7 +2866,7 @@
                 <span class="kw">let </span>env = SuiEnv { alias, rpc, ws };
 
                 <span class="comment">// Check urls are valid and server is reachable
-                </span>env.create_rpc_client(<span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+                </span>env.create_rpc_client(<span class="prelude-val">None</span>, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
                 context.config.envs.push(env.clone());
                 context.config.save()<span class="question-mark">?</span>;
                 SuiClientCommandResult::NewEnv(env)

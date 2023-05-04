@@ -269,6 +269,9 @@
 <a href="#269" id="269">269</a>
 <a href="#270" id="270">270</a>
 <a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -295,12 +298,14 @@
     <span class="kw">pub </span>config: PersistedConfig&lt;SuiClientConfig&gt;,
     request_timeout: <span class="prelude-ty">Option</span>&lt;std::time::Duration&gt;,
     client: Arc&lt;RwLock&lt;<span class="prelude-ty">Option</span>&lt;SuiClient&gt;&gt;&gt;,
+    max_concurrent_requests: <span class="prelude-ty">Option</span>&lt;u64&gt;,
 }
 
 <span class="kw">impl </span>WalletContext {
     <span class="kw">pub async fn </span>new(
         config_path: <span class="kw-2">&amp;</span>Path,
         request_timeout: <span class="prelude-ty">Option</span>&lt;std::time::Duration&gt;,
+        max_concurrent_requests: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     ) -&gt; clap::Result&lt;<span class="self">Self</span>, anyhow::Error&gt; {
         <span class="kw">let </span>config: SuiClientConfig = PersistedConfig::read(config_path).map_err(|err| {
             <span class="macro">anyhow!</span>(
@@ -314,6 +319,7 @@
             config,
             request_timeout,
             client: Default::default(),
+            max_concurrent_requests,
         };
         <span class="prelude-val">Ok</span>(context)
     }
@@ -332,7 +338,7 @@
             <span class="kw">let </span>client = <span class="self">self
                 </span>.config
                 .get_active_env()<span class="question-mark">?
-                </span>.create_rpc_client(<span class="self">self</span>.request_timeout)
+                </span>.create_rpc_client(<span class="self">self</span>.request_timeout, <span class="self">self</span>.max_concurrent_requests)
                 .<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = client.check_api_version() {
                 <span class="macro">warn!</span>(<span class="string">&quot;{e}&quot;</span>);

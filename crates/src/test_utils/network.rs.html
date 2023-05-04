@@ -1133,7 +1133,7 @@
             .save()<span class="question-mark">?</span>;
 
         <span class="kw">let </span>wallet_conf = swarm.dir().join(SUI_CLIENT_CONFIG);
-        <span class="kw">let </span>wallet = WalletContext::new(<span class="kw-2">&amp;</span>wallet_conf, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>wallet = WalletContext::new(<span class="kw-2">&amp;</span>wallet_conf, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(TestCluster {
             swarm,

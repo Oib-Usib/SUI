@@ -854,7 +854,7 @@
             SuiCommand::Console { config } =&gt; {
                 <span class="kw">let </span>config = config.unwrap_or(sui_config_dir()<span class="question-mark">?</span>.join(SUI_CLIENT_CONFIG));
                 prompt_if_no_config(<span class="kw-2">&amp;</span>config, <span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
-                <span class="kw">let </span>context = WalletContext::new(<span class="kw-2">&amp;</span>config, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>context = WalletContext::new(<span class="kw-2">&amp;</span>config, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
                 start_console(context, <span class="kw-2">&amp;mut </span>stdout(), <span class="kw-2">&amp;mut </span>stderr()).<span class="kw">await
             </span>}
             SuiCommand::Client {
@@ -865,7 +865,7 @@
             } =&gt; {
                 <span class="kw">let </span>config_path = config.unwrap_or(sui_config_dir()<span class="question-mark">?</span>.join(SUI_CLIENT_CONFIG));
                 prompt_if_no_config(<span class="kw-2">&amp;</span>config_path, accept_defaults).<span class="kw">await</span><span class="question-mark">?</span>;
-                <span class="kw">let </span><span class="kw-2">mut </span>context = WalletContext::new(<span class="kw-2">&amp;</span>config_path, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span><span class="kw-2">mut </span>context = WalletContext::new(<span class="kw-2">&amp;</span>config_path, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(cmd) = cmd {
                     cmd.execute(<span class="kw-2">&amp;mut </span>context).<span class="kw">await</span><span class="question-mark">?</span>.print(!json);
                 } <span class="kw">else </span>{
@@ -884,7 +884,7 @@
             } =&gt; {
                 <span class="kw">let </span>config_path = config.unwrap_or(sui_config_dir()<span class="question-mark">?</span>.join(SUI_CLIENT_CONFIG));
                 prompt_if_no_config(<span class="kw-2">&amp;</span>config_path, accept_defaults).<span class="kw">await</span><span class="question-mark">?</span>;
-                <span class="kw">let </span><span class="kw-2">mut </span>context = WalletContext::new(<span class="kw-2">&amp;</span>config_path, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span><span class="kw-2">mut </span>context = WalletContext::new(<span class="kw-2">&amp;</span>config_path, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(cmd) = cmd {
                     cmd.execute(<span class="kw-2">&amp;mut </span>context).<span class="kw">await</span><span class="question-mark">?</span>.print(!json);
                 } <span class="kw">else </span>{
