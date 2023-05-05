@@ -18,7 +18,7 @@ Example for a field: <code>new_constant: Option&lt;u64&gt;</code>, and for featu
     </span><span class="doccomment">/// Returns the value of the field if exists at the given version, otherise None
     </span><span class="kw">pub fn </span>lookup_attr(<span class="kw-2">&amp;</span><span class="self">self</span>, value: String) -&gt; <span class="prelude-ty">Option</span>&lt;ProtocolConfigValue&gt;;
 
-    <span class="doccomment">/// Returns a map of all confgis to values
+    <span class="doccomment">/// Returns a map of all configs to values
     </span><span class="kw">pub fn </span>attr_map(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; std::collections::BTreeMap&lt;String, <span class="prelude-ty">Option</span>&lt;ProtocolConfigValue&gt;&gt;;
 
     <span class="doccomment">/// Returns a feature by the string name or None if it doesn&#39;t exist

@@ -274,7 +274,7 @@
 ///     /// Returns the value of the field if exists at the given version, otherise None
 ///     pub fn lookup_attr(&amp;self, value: String) -&gt; Option&lt;ProtocolConfigValue&gt;;
 ///
-///     /// Returns a map of all confgis to values
+///     /// Returns a map of all configs to values
 ///     pub fn attr_map(&amp;self) -&gt; std::collections::BTreeMap&lt;String, Option&lt;ProtocolConfigValue&gt;&gt;;
 ///
 ///     /// Returns a feature by the string name or None if it doesn&#39;t exist
@@ -323,7 +323,7 @@
                             <span class="macro">panic!</span>(<span class="string">&quot;Expected angle bracketed arguments.&quot;</span>);
                         };
 
-                        <span class="kw">let </span>getter =<span class="macro">quote! </span>{
+                        <span class="kw">let </span>getter = <span class="macro">quote! </span>{
                             <span class="comment">// Derive the getter
                             </span><span class="kw">pub fn </span>#field_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; #inner_type {
                                 <span class="self">self</span>.#field_name.expect(<span class="self">Self</span>::CONSTANT_ERR_MSG)
