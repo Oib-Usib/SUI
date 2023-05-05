@@ -205,6 +205,7 @@
 <a href="#205" id="205">205</a>
 <a href="#206" id="206">206</a>
 <a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -345,7 +346,7 @@
 <span class="comment">// Anemo variant of BCS codec using Snappy for compression.
 </span><span class="kw">pub mod </span>anemo {
     <span class="kw">use </span>::anemo::rpc::codec::{Codec, Decoder, Encoder};
-    <span class="kw">use </span>bytes::{Buf, BufMut};
+    <span class="kw">use </span>bytes::Buf;
     <span class="kw">use </span>std::{io::Read, marker::PhantomData};
 
     <span class="attr">#[derive(Debug)]
@@ -355,13 +356,12 @@
         <span class="kw">type </span>Item = T;
         <span class="kw">type </span>Error = bcs::Error;
 
-        <span class="kw">fn </span>encode(
-            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-            item: <span class="self">Self</span>::Item,
-            buf: <span class="kw-2">&amp;mut </span>bytes::BytesMut,
-        ) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="self">Self</span>::Error&gt; {
-            <span class="kw">let </span><span class="kw-2">mut </span>snappy_encoder = snap::write::FrameEncoder::new(buf.writer());
-            bcs::serialize_into(<span class="kw-2">&amp;mut </span>snappy_encoder, <span class="kw-2">&amp;</span>item)
+        <span class="kw">fn </span>encode(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: <span class="self">Self</span>::Item) -&gt; <span class="prelude-ty">Result</span>&lt;bytes::Bytes, <span class="self">Self</span>::Error&gt; {
+            <span class="kw">let </span><span class="kw-2">mut </span>buf = Vec::&lt;u8&gt;::new();
+            <span class="kw">let </span><span class="kw-2">mut </span>snappy_encoder = snap::write::FrameEncoder::new(<span class="kw-2">&amp;mut </span>buf);
+            bcs::serialize_into(<span class="kw-2">&amp;mut </span>snappy_encoder, <span class="kw-2">&amp;</span>item)<span class="question-mark">?</span>;
+            drop(snappy_encoder);
+            <span class="prelude-val">Ok</span>(buf.into())
         }
     }
 
@@ -396,8 +396,6 @@
         </span>T: serde::Serialize + Send + <span class="lifetime">&#39;static</span>,
         U: serde::de::DeserializeOwned + Send + <span class="lifetime">&#39;static</span>,
     {
-        <span class="kw">const </span>FORMAT_NAME: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;bcs&quot;</span>;
-
         <span class="kw">type </span>Encode = T;
         <span class="kw">type </span>Decode = U;
         <span class="kw">type </span>Encoder = BcsSnappyEncoder&lt;T&gt;;
@@ -410,6 +408,10 @@
         <span class="kw">fn </span>decoder(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::Decoder {
             BcsSnappyDecoder(PhantomData)
         }
+
+        <span class="kw">fn </span>format_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+            <span class="string">&quot;bcs&quot;
+        </span>}
     }
 }
 </code></pre></div></section></main></body></html>
