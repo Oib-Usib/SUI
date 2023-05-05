@@ -209,23 +209,23 @@
 #[clap(rename_all = <span class="string">&quot;kebab-case&quot;</span>)]
 </span><span class="kw">pub struct </span>Options {
     <span class="doccomment">/// The type of store to dump
-    </span><span class="attr">#[clap(long = <span class="string">&quot;store&quot;</span>, value_enum)]
+    </span><span class="attr">#[clap(long = <span class="string">&quot;store&quot;</span>, short = <span class="string">&#39;s&#39;</span>, value_enum)]
     </span>store_name: StoreName,
     <span class="doccomment">/// The name of the table to dump
-    </span><span class="attr">#[clap(long = <span class="string">&quot;table-name&quot;</span>)]
+    </span><span class="attr">#[clap(long = <span class="string">&quot;table-name&quot;</span>, short = <span class="string">&#39;t&#39;</span>)]
     </span>table_name: String,
     <span class="doccomment">/// The size of page to dump. This is a u16
-    </span><span class="attr">#[clap(long = <span class="string">&quot;page-size&quot;</span>)]
+    </span><span class="attr">#[clap(long = <span class="string">&quot;page-size&quot;</span>, short = <span class="string">&#39;p&#39;</span>)]
     </span>page_size: u16,
     <span class="doccomment">/// The page number to dump
-    </span><span class="attr">#[clap(long = <span class="string">&quot;page-num&quot;</span>)]
+    </span><span class="attr">#[clap(long = <span class="string">&quot;page-num&quot;</span>, short = <span class="string">&#39;n&#39;</span>)]
     </span>page_number: usize,
 
     <span class="comment">// TODO: We should load this automatically from the system object in AuthorityPerpetualTables.
     // This is very difficult to do right now because you can&#39;t share code between
     // AuthorityPerpetualTables and AuthorityEpochTablesReadonly.
     </span><span class="doccomment">/// The epoch to use when loading AuthorityEpochTables.
-    </span><span class="attr">#[clap(long = <span class="string">&quot;epoch&quot;</span>)]
+    </span><span class="attr">#[clap(long = <span class="string">&quot;epoch&quot;</span>, short = <span class="string">&#39;e&#39;</span>)]
     </span>epoch: <span class="prelude-ty">Option</span>&lt;EpochId&gt;,
 }
 
