@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683313115428,
+  "lastUpdate": 1683317374258,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4211,6 +4211,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 342347,
             "range": "± 49031",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6fc4b05ddff31e1c943e79dd6d37c7ecfced4dd6",
+          "message": "[easy] allow short commands for db dump (#11765)\n\n## Description \r\n\r\nEnables short form of options to make commands less verbose.\r\n```\r\nUsage: sui-tool db-tool --db-path <DB_PATH> dump [OPTIONS] --store <STORE_NAME> --table-name <TABLE_NAME> --page-size <PAGE_SIZE> --page-num <PAGE_NUMBER>\r\n\r\nOptions:\r\n  -s, --store <STORE_NAME>       The type of store to dump [possible values: validator, index, epoch]\r\n  -t, --table-name <TABLE_NAME>  The name of the table to dump\r\n  -p, --page-size <PAGE_SIZE>    The size of page to dump. This is a u16\r\n  -n, --page-num <PAGE_NUMBER>   The page number to dump\r\n  -e, --epoch <EPOCH>            The epoch to use when loading AuthorityEpochTables\r\n  -h, --help                     Print help\r\n\r\n```\r\n\r\n## Test Plan \r\n\r\nManual test\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-05T13:01:22-07:00",
+          "tree_id": "ad84e436e3c232bc88ea1ab04dc85a2618384305",
+          "url": "https://github.com/MystenLabs/sui/commit/6fc4b05ddff31e1c943e79dd6d37c7ecfced4dd6"
+        },
+        "date": 1683317365707,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105708459,
+            "range": "± 4718428",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 255927,
+            "range": "± 22771",
             "unit": "ns/iter"
           }
         ]
