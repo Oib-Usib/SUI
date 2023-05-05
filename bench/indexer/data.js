@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683317374258,
+  "lastUpdate": 1683324687071,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4247,6 +4247,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 255927,
             "range": "± 22771",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aschran@mystenlabs.com",
+            "name": "Andrew Schran",
+            "username": "aschran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6cfae5c18b1c999d321b4375eb9e469e0c3465eb",
+          "message": "Update sui to current anemo (#11487)\n\nMigrates codecs to the modified anemo codec interface",
+          "timestamp": "2023-05-05T21:56:26Z",
+          "tree_id": "97fba4c6f3b686a9da2696a00e87f082a11d635b",
+          "url": "https://github.com/MystenLabs/sui/commit/6cfae5c18b1c999d321b4375eb9e469e0c3465eb"
+        },
+        "date": 1683324679067,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 99558032,
+            "range": "± 3373746",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 335052,
+            "range": "± 21832",
             "unit": "ns/iter"
           }
         ]
