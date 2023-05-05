@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["ProtocolConfigGetters"]};
+window.SIDEBAR_ITEMS = {"derive":["ProtocolConfigFeatureFlagsGetters","ProtocolConfigGetters"]};

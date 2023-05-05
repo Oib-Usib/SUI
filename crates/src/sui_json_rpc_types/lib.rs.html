@@ -43,6 +43,8 @@
 <a href="#43" id="43">43</a>
 <a href="#44" id="44">44</a>
 <a href="#45" id="45">45</a>
+<a href="#46" id="46">46</a>
+<a href="#47" id="47">47</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -58,6 +60,7 @@
 <span class="kw">pub use </span>sui_governance::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>sui_move::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>sui_object::<span class="kw-2">*</span>;
+<span class="kw">pub use </span>sui_protocol::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>sui_transaction::<span class="kw-2">*</span>;
 <span class="kw">use </span>sui_types::base_types::ObjectID;
 <span class="kw">use </span>sui_types::dynamic_field::DynamicFieldInfo;
@@ -75,6 +78,7 @@
 <span class="kw">mod </span>sui_governance;
 <span class="kw">mod </span>sui_move;
 <span class="kw">mod </span>sui_object;
+<span class="kw">mod </span>sui_protocol;
 <span class="kw">mod </span>sui_transaction;
 
 <span class="kw">pub type </span>DynamicFieldPage = Page&lt;DynamicFieldInfo, ObjectID&gt;;

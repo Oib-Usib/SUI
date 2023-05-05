@@ -579,6 +579,13 @@
 <a href="#579" id="579">579</a>
 <a href="#580" id="580">580</a>
 <a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -602,10 +609,10 @@
 <span class="kw">use </span>sui_json_rpc_types::{
     Balance, Checkpoint, CheckpointId, Coin, CoinPage, DelegatedStake,
     DryRunTransactionBlockResponse, DynamicFieldPage, EventFilter, EventPage, ObjectsPage,
-    SuiCoinMetadata, SuiCommittee, SuiEvent, SuiGetPastObjectRequest, SuiMoveNormalizedModule,
-    SuiObjectDataOptions, SuiObjectResponse, SuiObjectResponseQuery, SuiPastObjectResponse,
-    SuiTransactionBlockEffectsAPI, SuiTransactionBlockResponse, SuiTransactionBlockResponseOptions,
-    SuiTransactionBlockResponseQuery, TransactionBlocksPage,
+    ProtocolConfigResponse, SuiCoinMetadata, SuiCommittee, SuiEvent, SuiGetPastObjectRequest,
+    SuiMoveNormalizedModule, SuiObjectDataOptions, SuiObjectResponse, SuiObjectResponseQuery,
+    SuiPastObjectResponse, SuiTransactionBlockEffectsAPI, SuiTransactionBlockResponse,
+    SuiTransactionBlockResponseOptions, SuiTransactionBlockResponseQuery, TransactionBlocksPage,
 };
 <span class="kw">use </span>sui_json_rpc_types::{CheckpointPage, SuiLoadedChildObjectsResponse};
 <span class="kw">use </span>sui_types::balance::Supply;
@@ -843,6 +850,13 @@
         digest: TransactionDigest,
     ) -&gt; SuiRpcResult&lt;SuiLoadedChildObjectsResponse&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.api.http.get_loaded_child_objects(digest).<span class="kw">await</span><span class="question-mark">?</span>)
+    }
+
+    <span class="kw">pub async fn </span>get_protocol_config(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        version: <span class="prelude-ty">Option</span>&lt;BigInt&lt;u64&gt;&gt;,
+    ) -&gt; SuiRpcResult&lt;ProtocolConfigResponse&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.api.http.get_protocol_config(version).<span class="kw">await</span><span class="question-mark">?</span>)
     }
 }
 
