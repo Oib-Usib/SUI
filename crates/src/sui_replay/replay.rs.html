@@ -1728,6 +1728,13 @@
 <a href="#1728" id="1728">1728</a>
 <a href="#1729" id="1729">1729</a>
 <a href="#1730" id="1730">1730</a>
+<a href="#1731" id="1731">1731</a>
+<a href="#1732" id="1732">1732</a>
+<a href="#1733" id="1733">1733</a>
+<a href="#1734" id="1734">1734</a>
+<a href="#1735" id="1735">1735</a>
+<a href="#1736" id="1736">1736</a>
+<a href="#1737" id="1737">1737</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2134,7 +2141,7 @@
         // This is okay since the versions can never change
         </span><span class="kw">let </span>non_system_package_objs: Vec&lt;<span class="kw">_</span>&gt; = objs
             .into_iter()
-            .filter(|o| !<span class="self">self</span>.system_package_ids().contains(o))
+            .filter(|o| !<span class="self">Self</span>::system_package_ids(<span class="self">self</span>.current_protocol_version).contains(o))
             .collect();
         <span class="kw">let </span>objs = <span class="self">self
             </span>.multi_download_latest(<span class="kw-2">&amp;</span>non_system_package_objs)
@@ -2499,10 +2506,10 @@
                 .<span class="kw">await
         </span>}
     }
-    <span class="kw">fn </span>system_package_ids(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;ObjectID&gt; {
+    <span class="kw">fn </span>system_package_ids(protocol_version: u64) -&gt; Vec&lt;ObjectID&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>ids = BuiltInFramework::all_package_ids();
 
-        <span class="kw">if </span><span class="self">self</span>.current_protocol_version &lt; <span class="number">5 </span>{
+        <span class="kw">if </span>protocol_version &lt; <span class="number">5 </span>{
             ids.retain(|id| <span class="kw-2">*</span>id != DEEPBOOK_OBJECT_ID)
         }
         ids
@@ -2738,7 +2745,14 @@
     <span class="kw">pub async fn </span>system_package_versions(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;BTreeMap&lt;ObjectID, Vec&lt;(SequenceNumber, TransactionDigest)&gt;&gt;, LocalExecError&gt; {
-        <span class="kw">let </span>system_package_ids = <span class="self">self</span>.system_package_ids();
+        <span class="kw">let </span>system_package_ids = <span class="self">Self</span>::system_package_ids(
+            <span class="kw-2">*</span><span class="self">self
+                </span>.protocol_version_epoch_table
+                .keys()
+                .peekable()
+                .last()
+                .expect(<span class="string">&quot;Protocol version epoch table not populated&quot;</span>),
+        );
         <span class="kw">let </span><span class="kw-2">mut </span>system_package_objs = <span class="self">self</span>.multi_download_latest(<span class="kw-2">&amp;</span>system_package_ids).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>mapping = BTreeMap::new();
