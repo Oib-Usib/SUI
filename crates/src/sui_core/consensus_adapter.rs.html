@@ -1138,6 +1138,27 @@
 <a href="#1138" id="1138">1138</a>
 <a href="#1139" id="1139">1139</a>
 <a href="#1140" id="1140">1140</a>
+<a href="#1141" id="1141">1141</a>
+<a href="#1142" id="1142">1142</a>
+<a href="#1143" id="1143">1143</a>
+<a href="#1144" id="1144">1144</a>
+<a href="#1145" id="1145">1145</a>
+<a href="#1146" id="1146">1146</a>
+<a href="#1147" id="1147">1147</a>
+<a href="#1148" id="1148">1148</a>
+<a href="#1149" id="1149">1149</a>
+<a href="#1150" id="1150">1150</a>
+<a href="#1151" id="1151">1151</a>
+<a href="#1152" id="1152">1152</a>
+<a href="#1153" id="1153">1153</a>
+<a href="#1154" id="1154">1154</a>
+<a href="#1155" id="1155">1155</a>
+<a href="#1156" id="1156">1156</a>
+<a href="#1157" id="1157">1157</a>
+<a href="#1158" id="1158">1158</a>
+<a href="#1159" id="1159">1159</a>
+<a href="#1160" id="1160">1160</a>
+<a href="#1161" id="1161">1161</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1154,12 +1175,14 @@
 <span class="kw">use </span>parking_lot::{Mutex, RwLockReadGuard};
 <span class="kw">use </span>prometheus::Histogram;
 <span class="kw">use </span>prometheus::HistogramVec;
-<span class="kw">use </span>prometheus::IntCounter;
+<span class="kw">use </span>prometheus::IntCounterVec;
 <span class="kw">use </span>prometheus::IntGauge;
+<span class="kw">use </span>prometheus::IntGaugeVec;
 <span class="kw">use </span>prometheus::Registry;
 <span class="kw">use </span>prometheus::{
     register_histogram_vec_with_registry, register_histogram_with_registry,
-    register_int_counter_with_registry, register_int_gauge_with_registry,
+    register_int_counter_vec_with_registry, register_int_gauge_vec_with_registry,
+    register_int_gauge_with_registry,
 };
 <span class="kw">use </span>rand::rngs::StdRng;
 <span class="kw">use </span>rand::SeedableRng;
@@ -1203,10 +1226,10 @@
 
 <span class="kw">pub struct </span>ConsensusAdapterMetrics {
     <span class="comment">// Certificate sequencing metrics
-    </span><span class="kw">pub </span>sequencing_certificate_attempt: IntCounter,
-    <span class="kw">pub </span>sequencing_certificate_success: IntCounter,
-    <span class="kw">pub </span>sequencing_certificate_failures: IntCounter,
-    <span class="kw">pub </span>sequencing_certificate_inflight: IntGauge,
+    </span><span class="kw">pub </span>sequencing_certificate_attempt: IntCounterVec,
+    <span class="kw">pub </span>sequencing_certificate_success: IntCounterVec,
+    <span class="kw">pub </span>sequencing_certificate_failures: IntCounterVec,
+    <span class="kw">pub </span>sequencing_certificate_inflight: IntGaugeVec,
     <span class="kw">pub </span>sequencing_acknowledge_latency: mysten_metrics::histogram::HistogramVec,
     <span class="kw">pub </span>sequencing_certificate_latency: HistogramVec,
     <span class="kw">pub </span>sequencing_certificate_authority_position: Histogram,
@@ -1221,40 +1244,44 @@
 <span class="kw">impl </span>ConsensusAdapterMetrics {
     <span class="kw">pub fn </span>new(registry: <span class="kw-2">&amp;</span>Registry) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            sequencing_certificate_attempt: <span class="macro">register_int_counter_with_registry!</span>(
+            sequencing_certificate_attempt: <span class="macro">register_int_counter_vec_with_registry!</span>(
                 <span class="string">&quot;sequencing_certificate_attempt&quot;</span>,
                 <span class="string">&quot;Counts the number of certificates the validator attempts to sequence.&quot;</span>,
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;tx_type&quot;</span>],
                 registry,
             )
                 .unwrap(),
-            sequencing_certificate_success: <span class="macro">register_int_counter_with_registry!</span>(
+            sequencing_certificate_success: <span class="macro">register_int_counter_vec_with_registry!</span>(
                 <span class="string">&quot;sequencing_certificate_success&quot;</span>,
                 <span class="string">&quot;Counts the number of successfully sequenced certificates.&quot;</span>,
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;tx_type&quot;</span>],
                 registry,
             )
                 .unwrap(),
-            sequencing_certificate_failures: <span class="macro">register_int_counter_with_registry!</span>(
+            sequencing_certificate_failures: <span class="macro">register_int_counter_vec_with_registry!</span>(
                 <span class="string">&quot;sequencing_certificate_failures&quot;</span>,
                 <span class="string">&quot;Counts the number of sequenced certificates that failed other than by timeout.&quot;</span>,
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;tx_type&quot;</span>],
                 registry,
             )
                 .unwrap(),
-            sequencing_certificate_inflight: <span class="macro">register_int_gauge_with_registry!</span>(
+            sequencing_certificate_inflight: <span class="macro">register_int_gauge_vec_with_registry!</span>(
                 <span class="string">&quot;sequencing_certificate_inflight&quot;</span>,
                 <span class="string">&quot;The inflight requests to sequence certificates.&quot;</span>,
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;tx_type&quot;</span>],
                 registry,
             )
                 .unwrap(),
             sequencing_acknowledge_latency: mysten_metrics::histogram::HistogramVec::new_in_registry(
                 <span class="string">&quot;sequencing_acknowledge_latency&quot;</span>,
                 <span class="string">&quot;The latency for acknowledgement from sequencing engine. The overall sequencing latency is measured by the sequencing_certificate_latency metric&quot;</span>,
-                <span class="kw-2">&amp;</span>[<span class="string">&quot;retry&quot;</span>],
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;retry&quot;</span>, <span class="string">&quot;tx_type&quot;</span>],
                 registry,
             ),
             sequencing_certificate_latency: <span class="macro">register_histogram_vec_with_registry!</span>(
                 <span class="string">&quot;sequencing_certificate_latency&quot;</span>,
                 <span class="string">&quot;The latency for sequencing a certificate.&quot;</span>,
-                <span class="kw-2">&amp;</span>[<span class="string">&quot;position&quot;</span>],
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;position&quot;</span>, <span class="string">&quot;tx_type&quot;</span>],
                 SEQUENCING_CERTIFICATE_LATENCY_SEC_BUCKETS.to_vec(),
                 registry,
             ).unwrap(),
@@ -1748,6 +1775,7 @@
             epoch_store.record_epoch_pending_certs_process_time_metric();
         }
 
+        <span class="kw">let </span>tx_type = classify(<span class="kw-2">&amp;</span>transaction);
         <span class="kw">let </span>transaction_key = SequencedConsensusTransactionKey::External(transaction.key());
         <span class="kw">let </span>processed_waiter = epoch_store
             .consensus_message_processed_notify(transaction_key)
@@ -1755,7 +1783,7 @@
 
         <span class="kw">let </span>(await_submit, position, positions_moved, preceding_disconnected) =
             <span class="self">self</span>.await_submit_delay(epoch_store.committee(), <span class="kw-2">&amp;</span>transaction);
-        <span class="kw">let </span><span class="kw-2">mut </span>guard = InflightDropGuard::acquire(<span class="kw-2">&amp;</span><span class="self">self</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>guard = InflightDropGuard::acquire(<span class="kw-2">&amp;</span><span class="self">self</span>, tx_type.to_string());
 
         <span class="comment">// We need to wait for some delay until we submit transaction to the consensus
         // However, if transaction is received by consensus while we wait, we don&#39;t need to wait
@@ -1822,7 +1850,10 @@
                             transaction_key, e, retries,
                         );
                     }
-                    <span class="self">self</span>.metrics.sequencing_certificate_failures.inc();
+                    <span class="self">self</span>.metrics
+                        .sequencing_certificate_failures
+                        .with_label_values(<span class="kw-2">&amp;</span>[tx_type])
+                        .inc();
                     retries += <span class="number">1</span>;
                     time::sleep(Duration::from_secs(<span class="number">10</span>)).<span class="kw">await</span>;
                 }
@@ -1840,7 +1871,7 @@
 
                 <span class="self">self</span>.metrics
                     .sequencing_acknowledge_latency
-                    .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>bucket])
+                    .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>bucket, tx_type])
                     .report(ack_start.elapsed().as_millis() <span class="kw">as </span>u64);
             };
             <span class="kw">match </span>select(processed_waiter, submit_inner.boxed()).<span class="kw">await </span>{
@@ -1885,7 +1916,10 @@
                 <span class="macro">warn!</span>(<span class="string">&quot;Error when sending end of publish message: {:?}&quot;</span>, err);
             }
         }
-        <span class="self">self</span>.metrics.sequencing_certificate_success.inc();
+        <span class="self">self</span>.metrics
+            .sequencing_certificate_success
+            .with_label_values(<span class="kw-2">&amp;</span>[tx_type])
+            .inc();
     }
 }
 
@@ -2020,17 +2054,23 @@
     position: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     positions_moved: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     preceding_disconnected: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+    tx_type: String,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; InflightDropGuard&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub fn </span>acquire(adapter: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ConsensusAdapter) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>acquire(adapter: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ConsensusAdapter, tx_type: String) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>inflight = adapter
             .num_inflight_transactions
             .fetch_add(<span class="number">1</span>, Ordering::SeqCst);
-        adapter.metrics.sequencing_certificate_attempt.inc();
+        adapter
+            .metrics
+            .sequencing_certificate_attempt
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>tx_type])
+            .inc();
         adapter
             .metrics
             .sequencing_certificate_inflight
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>tx_type])
             .set(inflight <span class="kw">as </span>i64);
         <span class="self">Self </span>{
             adapter,
@@ -2038,6 +2078,7 @@
             position: <span class="prelude-val">None</span>,
             positions_moved: <span class="prelude-val">None</span>,
             preceding_disconnected: <span class="prelude-val">None</span>,
+            tx_type,
         }
     }
 }
@@ -2052,6 +2093,7 @@
         </span><span class="self">self</span>.adapter
             .metrics
             .sequencing_certificate_inflight
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="self">self</span>.tx_type])
             .set(inflight <span class="kw">as </span>i64);
 
         <span class="kw">let </span>position = <span class="kw">if let </span><span class="prelude-val">Some</span>(position) = <span class="self">self</span>.position {
@@ -2085,7 +2127,7 @@
         <span class="self">self</span>.adapter
             .metrics
             .sequencing_certificate_latency
-            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>position])
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>position, <span class="kw-2">&amp;</span><span class="self">self</span>.tx_type])
             .observe(latency.as_secs_f64());
     }
 }
@@ -2133,7 +2175,7 @@
     }
 }
 
-<span class="kw">use </span><span class="kw">crate</span>::consensus_handler::SequencedConsensusTransactionKey;
+<span class="kw">use </span><span class="kw">crate</span>::consensus_handler::{classify, SequencedConsensusTransactionKey};
 
 <span class="attr">#[async_trait::async_trait]
 </span><span class="kw">impl </span>SubmitToConsensus <span class="kw">for </span>Arc&lt;ConsensusAdapter&gt; {

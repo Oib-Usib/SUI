@@ -1074,7 +1074,7 @@
     }
 }
 
-<span class="kw">fn </span>classify(transaction: <span class="kw-2">&amp;</span>ConsensusTransaction) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>classify(transaction: <span class="kw-2">&amp;</span>ConsensusTransaction) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
     <span class="kw">match </span><span class="kw-2">&amp;</span>transaction.kind {
         ConsensusTransactionKind::UserTransaction(certificate) =&gt; {
             <span class="kw">if </span>certificate.contains_shared_object() {
