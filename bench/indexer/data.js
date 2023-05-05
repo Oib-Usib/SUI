@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683312109823,
+  "lastUpdate": 1683313115428,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4175,6 +4175,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 331099,
             "range": "± 66456",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8f5fcfaf118f95898c47ffd72fee015b114bbd83",
+          "message": "[rpc] Get protocol config endpoint(#11510)\n\n## Description \r\n\r\n### Adds RPC support to get protocol config.\r\nIf the protocol config is not specified, the node returns the config for\r\nthe epoch its currently processing.\r\n\r\nExamples\r\n**1. Valid protocol version (9) specified**\r\n```\r\ncurl --location --request POST 0.0.0.0:9000  \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n    \"jsonrpc\":\"2.0\",\r\n    \"id\":1,\r\n    \"method\":\"sui_getProtocolConfig\",\r\n    \"params\":[\"9\"]\r\n}'| jq\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n100  8546  100  8453  100    93   547k   6169 --:--:-- --:--:-- --:--:-- 1043k\r\n{\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n    \"minSupportedProtocolVersion\": \"1\",\r\n    \"maxSupportedProtocolVersion\": \"10\",\r\n    \"protocolVersion\": \"9\",\r\n    \"featureFlags\": {\r\n      \"advance_epoch_start_time_in_safe_mode\": true,\r\n      \"advance_to_highest_supported_protocol_version\": true,\r\n      \"ban_entry_init\": true,\r\n      \"commit_root_state_digest\": false,\r\n      .............[truncated]................... \r\n    },\r\n    \"attributes\": {\r\n      \"address_from_bytes_cost_base\": {\r\n        \"u64\": \"52\"\r\n      },\r\n      \"address_from_u256_cost_base\": {\r\n        \"u64\": \"52\"\r\n      },\r\n      \"address_to_u256_cost_base\": {\r\n        \"u64\": \"52\"\r\n      },      \r\n     .............[truncated]................... \r\n```\r\n**2. Invalid protocol version specified**\r\n```\r\ncurl --location --request POST 0.0.0.0:9000  \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n    \"jsonrpc\":\"2.0\",\r\n    \"id\":1,\r\n    \"method\":\"sui_getProtocolConfig\",\r\n    \"params\":[\"19\"]\r\n}'| jq\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n100   230  100   136  100    94   9841   6802 --:--:-- --:--:-- --:--:--  224k\r\n{\r\n  \"jsonrpc\": \"2.0\",\r\n  \"error\": {\r\n    \"code\": -32000,\r\n    \"message\": \"Unsupported protocol version requested. Min supported: 1, max supported: 10\"\r\n  },\r\n  \"id\": 1\r\n}\r\n```\r\n**3. No protocol version specified**\r\nAlthough this node supports protocol version 1-10, it is currently\r\nsyncing TXs at version 1, so it returns 1 as thats the highest it can\r\nprocess currently given its objects state.\r\n```\r\ncurl --location --request POST 0.0.0.0:9000  \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n    \"jsonrpc\":\"2.0\",\r\n    \"id\":1,\r\n    \"method\":\"sui_getProtocolConfig\" \r\n}'| jq\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n100  8469  100  8396  100    73  1022k   9107 --:--:-- --:--:-- --:--:-- 4135k\r\n{\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n    \"minSupportedProtocolVersion\": \"1\",\r\n    \"maxSupportedProtocolVersion\": \"10\",\r\n    \"protocolVersion\": \"1\",\r\n    \"featureFlags\": {\r\n      \"advance_epoch_start_time_in_safe_mode\": false,\r\n      \"advance_to_highest_supported_protocol_version\": false,\r\n      \"ban_entry_init\": false,\r\n      \"commit_root_state_digest\": false,\r\n      .............[truncated]................... \r\n    },\r\n    \"attributes\": {\r\n      \"address_from_bytes_cost_base\": {\r\n        \"u64\": \"52\"\r\n      },\r\n      \"address_from_u256_cost_base\": {\r\n        \"u64\": \"52\"\r\n      },\r\n      \"address_to_u256_cost_base\": {\r\n     .............[truncated]................... \r\n```\r\n\r\n\r\n### Other utilities\r\nAdds some utilities useful for CLI and protocol config attr discovery.\r\nNeeded to support RPC queries of protocol config info.\r\n\r\nFirst a wrapper enum is introduced since config value types are\r\nheterogenous.\r\nThe wrapper will automatically pick up the type for all config\r\nattributes and add it to the enum variant\r\n```\r\npub enum ProtocolConfigValue {\r\n    u32(u32),\r\n    u64(u64),\r\n    ....\r\n}\r\n```\r\n\r\n**1. Logic to lookup protocol config attributes by string repr**\r\n`lookup_attr(&self, attr_as_string) -> Option<ProtocolConfigValue>`\r\n```\r\n  let prot: ProtocolConfig = ProtocolConfig::get_for_version(ProtocolVersion::new(9));\r\n\r\n  // Result should be Some(128)\r\n  assert!(\r\n      prot.lookup_attr(\"max_move_identifier_len\".to_string())\r\n          == Some(ProtocolConfigValue::u64(prot.max_move_identifier_len()))\r\n  );\r\n```\r\n**2. Logic to return a BTreeMap of config attrs to their values**\r\n`attr_map(&self) -> BTreeMap<String, Option<ProtocolConfigValue>>`\r\nThis is equivalent to looping over all entries of `lookup_attr(value)`\r\nand putting them in a map\r\n```\r\n    // attr_map() returns BTreeMap<String, Option<ProtocolConfigValue>>\r\n    // where each key is the string repr of the attribute\r\n  assert!(\r\n    prot.attr_map().get(\"max_arguments\").unwrap()\r\n        == &Some(ProtocolConfigValue::u32(prot.max_arguments()))\r\n     );\r\n```\r\n\r\n## Test Plan \r\n\r\nUnit tests\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-05T18:46:56Z",
+          "tree_id": "f4f01169d321872a9ab11a4318b0496b0c462720",
+          "url": "https://github.com/MystenLabs/sui/commit/8f5fcfaf118f95898c47ffd72fee015b114bbd83"
+        },
+        "date": 1683313106081,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147776602,
+            "range": "± 7617232",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 342347,
+            "range": "± 49031",
             "unit": "ns/iter"
           }
         ]
