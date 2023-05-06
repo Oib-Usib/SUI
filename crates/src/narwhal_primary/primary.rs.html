@@ -1155,6 +1155,7 @@
 <a href="#1155" id="1155">1155</a>
 <a href="#1156" id="1156">1156</a>
 <a href="#1157" id="1157">1157</a>
+<a href="#1158" id="1158">1158</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1194,7 +1195,7 @@
     traits::{KeyPair <span class="kw">as _</span>, ToFromBytes},
 };
 <span class="kw">use </span>futures::{stream::FuturesUnordered, StreamExt};
-<span class="kw">use </span>mysten_metrics::spawn_monitored_task;
+<span class="kw">use </span>mysten_metrics::{monitored_scope, spawn_monitored_task};
 <span class="kw">use </span>mysten_network::{multiaddr::Protocol, Multiaddr};
 <span class="kw">use </span>network::{
     client::NetworkClient,
@@ -2063,6 +2064,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         request: anemo::Request&lt;SendCertificateRequest&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;SendCertificateResponse&gt;, anemo::rpc::Status&gt; {
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;PrimaryReceiverHandler::send_certificate&quot;</span>);
         <span class="kw">let </span>certificate = request.into_body().certificate;
         <span class="kw">match </span><span class="self">self</span>.synchronizer.try_accept_certificate(certificate).<span class="kw">await </span>{
             <span class="prelude-val">Ok</span>(()) =&gt; <span class="prelude-val">Ok</span>(anemo::Response::new(SendCertificateResponse {

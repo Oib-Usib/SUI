@@ -1171,6 +1171,11 @@
 <a href="#1171" id="1171">1171</a>
 <a href="#1172" id="1172">1172</a>
 <a href="#1173" id="1173">1173</a>
+<a href="#1174" id="1174">1174</a>
+<a href="#1175" id="1175">1175</a>
+<a href="#1176" id="1176">1176</a>
+<a href="#1177" id="1177">1177</a>
+<a href="#1178" id="1178">1178</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1319,7 +1324,7 @@
         _lock: <span class="kw-2">&amp;</span>MutexGuard&lt;<span class="lifetime">&#39;_</span>, State&gt;,
         certificate: Certificate,
     ) -&gt; DagResult&lt;()&gt; {
-        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;accept_certificate_internal&quot;</span>);
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::accept_certificate_internal&quot;</span>);
 
         <span class="macro">debug!</span>(<span class="string">&quot;Processing certificate {:?}&quot;</span>, certificate);
 
@@ -1522,6 +1527,7 @@
                     <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
                     <span class="kw">return</span>;
                 }
+                <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::gc_iteration&quot;</span>);
                 <span class="kw">let </span>gc_round = rx_consensus_round_updates.borrow().gc_round;
                 <span class="kw">let </span><span class="prelude-val">Some</span>(inner) = weak_inner.upgrade() <span class="kw">else </span>{
                     <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
@@ -1610,6 +1616,7 @@
     /// If the certificate has missing parents and cannot be accepted immediately, the error would
     /// contain a value that can be awaited on, for signaling when the certificate is accepted.
     </span><span class="kw">pub async fn </span>try_accept_certificate(<span class="kw-2">&amp;</span><span class="self">self</span>, certificate: Certificate) -&gt; DagResult&lt;()&gt; {
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::try_accept_certificate&quot;</span>);
         <span class="self">self</span>.process_certificate_internal(certificate, <span class="bool-val">true</span>, <span class="bool-val">true</span>)
             .<span class="kw">await
     </span>}
@@ -1621,6 +1628,7 @@
     /// potentially return early. This helps to verify consistency, and has little extra cost
     /// because fetched certificates usually are not suspended.
     </span><span class="kw">pub async fn </span>try_accept_fetched_certificate(<span class="kw-2">&amp;</span><span class="self">self</span>, certificate: Certificate) -&gt; DagResult&lt;()&gt; {
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::try_accept_fetched_certificate&quot;</span>);
         <span class="self">self</span>.process_certificate_internal(certificate, <span class="bool-val">false</span>, <span class="bool-val">false</span>)
             .<span class="kw">await
     </span>}
@@ -1730,6 +1738,8 @@
         sanitize: bool,
         early_suspend: bool,
     ) -&gt; DagResult&lt;()&gt; {
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::process_certificate_internal&quot;</span>);
+
         <span class="kw">let </span>digest = certificate.digest();
         <span class="kw">if </span><span class="self">self</span>.inner.certificate_store.contains(<span class="kw-2">&amp;</span>digest)<span class="question-mark">? </span>{
             <span class="macro">trace!</span>(<span class="string">&quot;Certificate {digest:?} has already been processed. Skip processing.&quot;</span>);
@@ -1838,7 +1848,7 @@
         certificate: Certificate,
         early_suspend: bool,
     ) -&gt; DagResult&lt;()&gt; {
-        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;process_certificate_with_lock&quot;</span>);
+        <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::process_certificate_with_lock&quot;</span>);
 
         <span class="macro">debug!</span>(<span class="string">&quot;Processing certificate {:?}&quot;</span>, certificate);
 
