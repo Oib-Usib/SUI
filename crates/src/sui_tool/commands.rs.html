@@ -327,6 +327,38 @@
 <a href="#327" id="327">327</a>
 <a href="#328" id="328">328</a>
 <a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -344,7 +376,10 @@
 <span class="kw">use </span>sui_types::{base_types::<span class="kw-2">*</span>, object::Owner};
 
 <span class="kw">use </span>clap::<span class="kw-2">*</span>;
+<span class="kw">use </span>fastcrypto::encoding::Encoding;
 <span class="kw">use </span>sui_config::Config;
+<span class="kw">use </span>sui_core::authority_aggregator::AuthorityAggregatorBuilder;
+<span class="kw">use </span>sui_types::messages::{SenderSignedData, Transaction};
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CheckpointRequest, CheckpointResponse, CheckpointSequenceNumber,
 };
@@ -485,6 +520,19 @@
         </span>use_authority: bool,
         <span class="attr">#[clap(subcommand)]
         </span>cmd: ReplayToolCommand,
+    },
+
+    <span class="doccomment">/// Ask all validators to sign a transaction through AuthorityAggregator.
+    </span><span class="attr">#[clap(name = <span class="string">&quot;sign-transaction&quot;</span>)]
+    </span>SignTransaction {
+        <span class="attr">#[clap(long = <span class="string">&quot;genesis&quot;</span>)]
+        </span>genesis: PathBuf,
+
+        <span class="attr">#[clap(
+            long,
+            help = <span class="string">&quot;The Base64-encoding of the bcs bytes of SenderSignedData&quot;
+        </span>)]
+        </span>sender_signed_data: String,
     },
 }
 
@@ -651,6 +699,22 @@
                 use_authority,
             } =&gt; {
                 execute_replay_command(rpc_url, safety_checks, use_authority, cmd).<span class="kw">await</span><span class="question-mark">?</span>;
+            }
+            ToolCommand::SignTransaction {
+                genesis,
+                sender_signed_data,
+            } =&gt; {
+                <span class="kw">let </span>genesis = Genesis::load(genesis)<span class="question-mark">?</span>;
+                <span class="kw">let </span>sender_signed_data = bcs::from_bytes::&lt;SenderSignedData&gt;(
+                    <span class="kw-2">&amp;</span>fastcrypto::encoding::Base64::decode(sender_signed_data.as_str()).unwrap(),
+                )
+                .unwrap();
+                <span class="kw">let </span>transaction = Transaction::new(sender_signed_data).verify().unwrap();
+                <span class="kw">let </span>(agg, <span class="kw">_</span>) = AuthorityAggregatorBuilder::from_genesis(<span class="kw-2">&amp;</span>genesis)
+                    .build()
+                    .unwrap();
+                <span class="kw">let </span>result = agg.process_transaction(transaction).<span class="kw">await</span>;
+                <span class="macro">println!</span>(<span class="string">&quot;{:?}&quot;</span>, result);
             }
         };
         <span class="prelude-val">Ok</span>(())

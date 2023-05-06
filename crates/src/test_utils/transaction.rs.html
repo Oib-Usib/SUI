@@ -768,6 +768,10 @@
 <a href="#768" id="768">768</a>
 <a href="#769" id="769">769</a>
 <a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1172,7 +1176,8 @@
         args,
         gas: <span class="prelude-val">Some</span>(gas_object.<span class="number">0</span>),
         gas_budget: TEST_ONLY_GAS_UNIT_FOR_GENERIC * gas_price,
-        serialize_output: <span class="bool-val">false</span>,
+        serialize_unsigned_transaction: <span class="bool-val">false</span>,
+        serialize_signed_transaction: <span class="bool-val">false</span>,
     }
     .execute(context)
     .<span class="kw">await</span><span class="question-mark">?</span>;
@@ -1222,7 +1227,8 @@
         amount: <span class="prelude-val">None</span>,
         sui_coin_object_id: gas_ref.<span class="number">0</span>,
         gas_budget: TEST_ONLY_GAS_UNIT_FOR_TRANSFER * gas_price,
-        serialize_output: <span class="bool-val">false</span>,
+        serialize_unsigned_transaction: <span class="bool-val">false</span>,
+        serialize_signed_transaction: <span class="bool-val">false</span>,
     }
     .execute(context)
     .<span class="kw">await</span><span class="question-mark">?</span>;
@@ -1294,12 +1300,13 @@
         object_id: object_to_send,
         gas: <span class="prelude-val">None</span>,
         gas_budget: TEST_ONLY_GAS_UNIT_FOR_TRANSFER * gas_price,
-        serialize_output: <span class="bool-val">false</span>,
+        serialize_unsigned_transaction: <span class="bool-val">false</span>,
+        serialize_signed_transaction: <span class="bool-val">false</span>,
     }
     .execute(context)
     .<span class="kw">await</span><span class="question-mark">?</span>;
 
-    <span class="kw">let </span>(digest, gas, gas_used) = <span class="kw">if let </span>SuiClientCommandResult::Transfer(<span class="kw">_</span>, response) = res {
+    <span class="kw">let </span>(digest, gas, gas_used) = <span class="kw">if let </span>SuiClientCommandResult::Transfer(response) = res {
         <span class="kw">let </span>effects = response.effects.unwrap();
         <span class="macro">assert!</span>(effects.status().is_ok());
         <span class="kw">let </span>gas_used = effects.gas_cost_summary();
@@ -1336,7 +1343,8 @@
         count: <span class="prelude-val">Some</span>(<span class="number">2</span>),
         gas: <span class="prelude-val">None</span>,
         gas_budget: TEST_ONLY_GAS_UNIT_FOR_SPLIT_COIN * gas_price,
-        serialize_output: <span class="bool-val">false</span>,
+        serialize_unsigned_transaction: <span class="bool-val">false</span>,
+        serialize_signed_transaction: <span class="bool-val">false</span>,
     }
     .execute(context)
     .<span class="kw">await
