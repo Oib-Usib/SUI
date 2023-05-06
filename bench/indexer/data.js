@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683394679518,
+  "lastUpdate": 1683412850031,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4427,6 +4427,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 318280,
             "range": "± 16223",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8346d95f592946032f6d370096b83f98aa4efa72",
+          "message": "Rename messages.rs to transaction.rs (#11645)\n\nmessages.rs now only contains Transaction related types. Rename it to\r\nreflect this.",
+          "timestamp": "2023-05-06T22:29:13Z",
+          "tree_id": "7ac90ce3c428bc8668df11cfe17f242ff95e1341",
+          "url": "https://github.com/MystenLabs/sui/commit/8346d95f592946032f6d370096b83f98aa4efa72"
+        },
+        "date": 1683412842054,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148116679,
+            "range": "± 4960230",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 313755,
+            "range": "± 26714",
             "unit": "ns/iter"
           }
         ]
