@@ -359,7 +359,6 @@
     )
     .unwrap()
 });
-
 <span class="kw">static </span>CONSUMER_OPS: Lazy&lt;CounterVec&gt; = Lazy::new(|| {
     <span class="macro">register_counter_vec!</span>(
         <span class="string">&quot;consumer_operations&quot;</span>,
@@ -387,7 +386,8 @@
         <span class="kw-2">&amp;</span>[<span class="string">&quot;operation&quot;</span>],
         <span class="macro">vec!</span>[
             <span class="number">0.0008</span>, <span class="number">0.0016</span>, <span class="number">0.0032</span>, <span class="number">0.0064</span>, <span class="number">0.0128</span>, <span class="number">0.0256</span>, <span class="number">0.0512</span>, <span class="number">0.1024</span>, <span class="number">0.2048</span>, <span class="number">0.4096</span>, <span class="number">0.8192</span>,
-            <span class="number">1.0</span>, <span class="number">1.25</span>, <span class="number">1.5</span>, <span class="number">1.75</span>, <span class="number">2.0</span>, <span class="number">4.0</span>, <span class="number">8.0</span>, <span class="number">10.0</span>, <span class="number">12.5</span>, <span class="number">15.0
+            <span class="number">1.0</span>, <span class="number">1.25</span>, <span class="number">1.5</span>, <span class="number">1.75</span>, <span class="number">2.0</span>, <span class="number">2.25</span>, <span class="number">2.5</span>, <span class="number">2.75</span>, <span class="number">3.0</span>, <span class="number">3.25</span>, <span class="number">3.5</span>, <span class="number">3.75</span>, <span class="number">4.0</span>, <span class="number">4.25</span>, <span class="number">4.5</span>, <span class="number">4.75</span>,
+            <span class="number">5.0</span>, <span class="number">6.0</span>, <span class="number">7.0</span>, <span class="number">8.0</span>, <span class="number">9.0</span>, <span class="number">10.0</span>, <span class="number">11.0</span>, <span class="number">12.0</span>, <span class="number">13.0</span>, <span class="number">14.0</span>, <span class="number">15.0
         </span>],
     )
     .unwrap()

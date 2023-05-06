@@ -81,6 +81,27 @@
 <a href="#81" id="81">81</a>
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use crate</span>::{consumer::ProtobufDecoder, peers::SuiNodeProvider};
@@ -95,10 +116,20 @@
     BoxError, TypedHeader,
 };
 <span class="kw">use </span>bytes::Buf;
-<span class="kw">use </span>prometheus::proto::MetricFamily;
+<span class="kw">use </span>once_cell::sync::Lazy;
+<span class="kw">use </span>prometheus::{proto::MetricFamily, register_counter_vec, CounterVec};
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>sui_tls::TlsConnectionInfo;
 <span class="kw">use </span>tracing::error;
+
+<span class="kw">static </span>MIDDLEWARE_OPS: Lazy&lt;CounterVec&gt; = Lazy::new(|| {
+    <span class="macro">register_counter_vec!</span>(
+        <span class="string">&quot;middleware_operations&quot;</span>,
+        <span class="string">&quot;Operations counters and status for axum middleware.&quot;</span>,
+        <span class="kw-2">&amp;</span>[<span class="string">&quot;operation&quot;</span>, <span class="string">&quot;status&quot;</span>]
+    )
+    .unwrap()
+});
 
 <span class="doccomment">/// we expect sui-node to send us an http header content-type encoding.
 </span><span class="kw">pub async fn </span>expect_mysten_proxy_header&lt;B&gt;(
@@ -110,6 +141,9 @@
         prometheus::PROTOBUF_FORMAT =&gt; <span class="prelude-val">Ok</span>(next.run(request).<span class="kw">await</span>),
         ct =&gt; {
             <span class="macro">error!</span>(<span class="string">&quot;invalid content-type; {ct}&quot;</span>);
+            MIDDLEWARE_OPS
+                .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;expect_mysten_proxy_header&quot;</span>, <span class="string">&quot;invalid-content-type&quot;</span>])
+                .inc();
             <span class="prelude-val">Err</span>((StatusCode::BAD_REQUEST, <span class="string">&quot;invalid content-type header&quot;</span>))
         }
     }
@@ -125,9 +159,11 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Response, (StatusCode, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str)&gt; {
     <span class="kw">let </span><span class="prelude-val">Some</span>(peer) = allower.get(tls_connect_info.public_key().unwrap()) <span class="kw">else </span>{
         <span class="macro">error!</span>(<span class="string">&quot;node with unknown pub key tried to connect&quot;</span>);
+        MIDDLEWARE_OPS
+        .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;expect_valid_public_key&quot;</span>, <span class="string">&quot;unknown-validator-connection-attempt&quot;</span>])
+        .inc();
         <span class="kw">return </span><span class="prelude-val">Err</span>((StatusCode::FORBIDDEN, <span class="string">&quot;unknown clients are not allowed&quot;</span>));
     };
-
     request.extensions_mut().insert(peer);
     <span class="prelude-val">Ok</span>(next.run(request).<span class="kw">await</span>)
 }
@@ -150,18 +186,24 @@
         <span class="kw">let </span>body = Bytes::from_request(req, state).<span class="kw">await</span>.map_err(|e| {
             <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;error extracting bytes; {e}&quot;</span>);
             <span class="macro">error!</span>(msg);
+            MIDDLEWARE_OPS
+                .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;LenDelimProtobuf_from_request&quot;</span>, <span class="string">&quot;unable-to-extract-bytes&quot;</span>])
+                .inc();
             (StatusCode::BAD_REQUEST, msg)
         })<span class="question-mark">?</span>;
-
         <span class="kw">let </span><span class="kw-2">mut </span>decoder = ProtobufDecoder::new(body.reader());
         <span class="kw">let </span>decoded = decoder.parse::&lt;MetricFamily&gt;().map_err(|e| {
             <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;unable to decode len deliminated protobufs; {e}&quot;</span>);
             <span class="macro">error!</span>(msg);
+            MIDDLEWARE_OPS
+                .with_label_values(<span class="kw-2">&amp;</span>[
+                    <span class="string">&quot;LenDelimProtobuf_from_request&quot;</span>,
+                    <span class="string">&quot;unable-to-decode-protobufs&quot;</span>,
+                ])
+                .inc();
             (StatusCode::BAD_REQUEST, msg)
         })<span class="question-mark">?</span>;
-
-        <span class="comment">// req.extensions_mut().insert(decoded);
-        </span><span class="prelude-val">Ok</span>(<span class="self">Self</span>(decoded))
+        <span class="prelude-val">Ok</span>(<span class="self">Self</span>(decoded))
     }
 }
 </code></pre></div></section></main></body></html>
