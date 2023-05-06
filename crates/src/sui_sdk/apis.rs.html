@@ -619,11 +619,11 @@
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SequenceNumber, SuiAddress, TransactionDigest};
 <span class="kw">use </span>sui_types::error::TRANSACTION_NOT_FOUND_MSG_PREFIX;
 <span class="kw">use </span>sui_types::event::EventID;
-<span class="kw">use </span>sui_types::messages::{TransactionData, VerifiedTransaction};
 <span class="kw">use </span>sui_types::messages_checkpoint::CheckpointSequenceNumber;
 <span class="kw">use </span>sui_types::quorum_driver_types::ExecuteTransactionRequestType;
 <span class="kw">use </span>sui_types::sui_serde::BigInt;
 <span class="kw">use </span>sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
+<span class="kw">use </span>sui_types::transaction::{TransactionData, VerifiedTransaction};
 
 <span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>ReadApi {

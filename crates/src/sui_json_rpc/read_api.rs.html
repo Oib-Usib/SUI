@@ -1295,12 +1295,12 @@
 <span class="kw">use </span>sui_types::display::DisplayVersionUpdatedEvent;
 <span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI, TransactionEvents};
 <span class="kw">use </span>sui_types::error::{SuiObjectResponseError, UserInputError};
-<span class="kw">use </span>sui_types::messages::TransactionDataAPI;
-<span class="kw">use </span>sui_types::messages::{TransactionData, VerifiedTransaction};
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointSequenceNumber, CheckpointTimestamp};
 <span class="kw">use </span>sui_types::move_package::normalize_modules;
 <span class="kw">use </span>sui_types::object::{Data, Object, ObjectRead, PastObjectRead};
 <span class="kw">use </span>sui_types::sui_serde::BigInt;
+<span class="kw">use </span>sui_types::transaction::TransactionDataAPI;
+<span class="kw">use </span>sui_types::transaction::{TransactionData, VerifiedTransaction};
 
 <span class="kw">use </span><span class="kw">crate</span>::api::JsonRpcMetrics;
 <span class="kw">use </span><span class="kw">crate</span>::api::{validate_limit, ReadApiServer};

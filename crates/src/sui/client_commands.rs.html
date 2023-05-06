@@ -1701,15 +1701,15 @@
 <span class="kw">use </span>sui_sdk::SuiClient;
 <span class="kw">use </span>sui_types::crypto::SignatureScheme;
 <span class="kw">use </span>sui_types::dynamic_field::DynamicFieldType;
-<span class="kw">use </span>sui_types::messages::{SenderSignedData, TransactionData};
 <span class="kw">use </span>sui_types::move_package::UpgradeCap;
 <span class="kw">use </span>sui_types::signature::GenericSignature;
+<span class="kw">use </span>sui_types::transaction::{SenderSignedData, TransactionData, TransactionDataAPI};
 <span class="kw">use </span>sui_types::{
     base_types::{ObjectID, SuiAddress},
     gas_coin::GasCoin,
-    messages::{Transaction, TransactionDataAPI},
     object::Owner,
     parse_sui_type_tag,
+    transaction::Transaction,
 };
 <span class="kw">use </span>tracing::info;
 

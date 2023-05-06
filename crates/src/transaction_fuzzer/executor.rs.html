@@ -173,10 +173,10 @@
 <span class="kw">use </span>sui_core::authority::test_authority_builder::TestAuthorityBuilder;
 <span class="kw">use </span>sui_core::{authority::AuthorityState, test_utils::send_and_confirm_transaction};
 <span class="kw">use </span>sui_types::base_types::ObjectRef;
-<span class="kw">use </span>sui_types::messages::TransactionData;
 <span class="kw">use </span>sui_types::object::Owner;
+<span class="kw">use </span>sui_types::transaction::TransactionData;
 <span class="kw">use </span>sui_types::utils::to_sender_signed_transaction;
-<span class="kw">use </span>sui_types::{error::SuiError, messages::VerifiedTransaction, object::Object};
+<span class="kw">use </span>sui_types::{error::SuiError, object::Object, transaction::VerifiedTransaction};
 <span class="kw">use </span>tokio::runtime::Runtime;
 
 <span class="kw">use </span><span class="kw">crate</span>::account_universe::{AccountCurrent, INITIAL_BALANCE};

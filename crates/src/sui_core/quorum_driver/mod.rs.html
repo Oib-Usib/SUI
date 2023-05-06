@@ -876,8 +876,8 @@
 <span class="kw">use </span>mysten_metrics::{spawn_monitored_task, GaugeGuard};
 <span class="kw">use </span>std::fmt::Write;
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
-<span class="kw">use </span>sui_types::messages::{VerifiedCertificate, VerifiedTransaction};
 <span class="kw">use </span>sui_types::messages_grpc::PlainTransactionInfoResponse;
+<span class="kw">use </span>sui_types::transaction::{VerifiedCertificate, VerifiedTransaction};
 
 <span class="kw">use </span><span class="self">self</span>::reconfig_observer::ReconfigObserver;
 

@@ -1705,11 +1705,6 @@
 <span class="kw">use </span>sui_types::error::{ExecutionError, SuiError};
 <span class="kw">use </span>sui_types::execution_status::ExecutionStatus;
 <span class="kw">use </span>sui_types::gas::GasCostSummary;
-<span class="kw">use </span>sui_types::messages::{
-    Argument, CallArg, Command, GenesisObject, InputObjectKind, ObjectArg, ProgrammableMoveCall,
-    ProgrammableTransaction, SenderSignedData, TransactionData, TransactionDataAPI,
-    TransactionKind, VersionedProtocolMessage,
-};
 <span class="kw">use </span>sui_types::messages_checkpoint::CheckpointSequenceNumber;
 <span class="kw">use </span>sui_types::object::Owner;
 <span class="kw">use </span>sui_types::parse_sui_type_tag;
@@ -1719,6 +1714,11 @@
 <span class="kw">use </span>sui_types::sui_serde::Readable;
 <span class="kw">use </span>sui_types::sui_serde::{
     BigInt, SequenceNumber <span class="kw">as </span>AsSequenceNumber, SuiTypeTag <span class="kw">as </span>AsSuiTypeTag,
+};
+<span class="kw">use </span>sui_types::transaction::{
+    Argument, CallArg, Command, GenesisObject, InputObjectKind, ObjectArg, ProgrammableMoveCall,
+    ProgrammableTransaction, SenderSignedData, TransactionData, TransactionDataAPI,
+    TransactionKind, VersionedProtocolMessage,
 };
 
 <span class="comment">// similar to EpochId of sui-types but BigInt

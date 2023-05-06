@@ -124,8 +124,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span><span class="kw">crate</span>::crypto::Signer;
-<span class="kw">use </span><span class="kw">crate</span>::messages::TEST_ONLY_GAS_UNIT_FOR_TRANSFER;
 <span class="kw">use </span><span class="kw">crate</span>::programmable_transaction_builder::ProgrammableTransactionBuilder;
+<span class="kw">use </span><span class="kw">crate</span>::transaction::TEST_ONLY_GAS_UNIT_FOR_TRANSFER;
 <span class="kw">use crate</span>::{
     base_types::{dbg_addr, ExecutionDigests, ObjectID},
     committee::Committee,
@@ -134,11 +134,11 @@
         AuthorityPublicKeyBytes, Signature,
     },
     gas::GasCostSummary,
-    messages::{Transaction, TransactionData, VerifiedTransaction},
     messages_checkpoint::{
         CertifiedCheckpointSummary, CheckpointContents, CheckpointSummary, SignedCheckpointSummary,
     },
     object::Object,
+    transaction::{Transaction, TransactionData, VerifiedTransaction},
 };
 <span class="kw">use </span>fastcrypto::traits::KeyPair <span class="kw">as </span>KeypairTraits;
 <span class="kw">use </span>shared_crypto::intent::Intent;

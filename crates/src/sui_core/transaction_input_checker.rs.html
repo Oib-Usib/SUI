@@ -440,6 +440,8 @@
 <a href="#440" id="440">440</a>
 <a href="#441" id="441">441</a>
 <a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -457,14 +459,16 @@
 <span class="kw">use </span>sui_types::base_types::ObjectRef;
 <span class="kw">use </span>sui_types::error::{UserInputError, UserInputResult};
 <span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
-<span class="kw">use </span>sui_types::messages::{TransactionKind, VersionedProtocolMessage};
 <span class="kw">use </span>sui_types::metrics::BytecodeVerifierMetrics;
+<span class="kw">use </span>sui_types::transaction::{
+    InputObjectKind, InputObjects, TransactionData, TransactionDataAPI, TransactionKind,
+    VersionedProtocolMessage,
+};
 <span class="kw">use </span>sui_types::{
     base_types::{SequenceNumber, SuiAddress},
     error::SuiResult,
     fp_ensure,
     gas::{SuiCostTable, SuiGasStatus},
-    messages::{InputObjectKind, InputObjects, TransactionData, TransactionDataAPI},
     object::{Object, Owner},
 };
 <span class="kw">use </span>sui_types::{SUI_CLOCK_OBJECT_ID, SUI_CLOCK_OBJECT_SHARED_VERSION};

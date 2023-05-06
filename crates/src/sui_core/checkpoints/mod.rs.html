@@ -1695,7 +1695,6 @@
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 <span class="kw">use </span>sui_types::gas::GasCostSummary;
 <span class="kw">use </span>sui_types::message_envelope::Message;
-<span class="kw">use </span>sui_types::messages::{TransactionDataAPI, TransactionKind};
 <span class="kw">use </span>sui_types::messages_checkpoint::SignedCheckpointSummary;
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CertifiedCheckpointSummary, CheckpointContents, CheckpointSequenceNumber,
@@ -1705,6 +1704,7 @@
 <span class="kw">use </span>sui_types::messages_consensus::ConsensusTransactionKey;
 <span class="kw">use </span>sui_types::signature::GenericSignature;
 <span class="kw">use </span>sui_types::sui_system_state::{SuiSystemState, SuiSystemStateTrait};
+<span class="kw">use </span>sui_types::transaction::{TransactionDataAPI, TransactionKind};
 <span class="kw">use </span>tokio::{
     sync::{watch, Notify},
     time::timeout,
@@ -3052,10 +3052,10 @@
     <span class="kw">use </span>sui_types::base_types::{ObjectID, SequenceNumber, TransactionEffectsDigest};
     <span class="kw">use </span>sui_types::crypto::Signature;
     <span class="kw">use </span>sui_types::effects::TransactionEffects;
-    <span class="kw">use </span>sui_types::messages::{GenesisObject, VerifiedTransaction};
     <span class="kw">use </span>sui_types::messages_checkpoint::SignedCheckpointSummary;
     <span class="kw">use </span>sui_types::move_package::MovePackage;
     <span class="kw">use </span>sui_types::object;
+    <span class="kw">use </span>sui_types::transaction::{GenesisObject, VerifiedTransaction};
     <span class="kw">use </span>tokio::sync::mpsc;
 
     <span class="attr">#[tokio::test]

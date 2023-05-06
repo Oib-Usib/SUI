@@ -191,7 +191,6 @@
 <span class="kw">use </span>sui_types::committee::EpochId;
 <span class="kw">use </span>sui_types::digests::{TransactionEffectsDigest, TransactionEventsDigest};
 <span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEvents};
-<span class="kw">use </span>sui_types::messages::VerifiedTransaction;
 <span class="kw">use </span>sui_types::messages_checkpoint::CheckpointContentsDigest;
 <span class="kw">use </span>sui_types::messages_checkpoint::CheckpointDigest;
 <span class="kw">use </span>sui_types::messages_checkpoint::CheckpointSequenceNumber;
@@ -201,6 +200,7 @@
 <span class="kw">use </span>sui_types::messages_checkpoint::VerifiedCheckpointContents;
 <span class="kw">use </span>sui_types::storage::ReadStore;
 <span class="kw">use </span>sui_types::storage::WriteStore;
+<span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
 <span class="kw">use </span>typed_store::Map;
 
 <span class="kw">use </span><span class="kw">crate</span>::authority::AuthorityStore;

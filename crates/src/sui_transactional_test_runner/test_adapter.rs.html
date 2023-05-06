@@ -1581,26 +1581,26 @@
     base_types::{ObjectID, ObjectRef, SuiAddress, TransactionDigest, SUI_ADDRESS_LENGTH},
     crypto::{get_key_pair_from_rng, AccountKeyPair},
     event::Event,
-    messages::{TransactionData, TransactionDataAPI, VerifiedTransaction},
     object::{<span class="self">self</span>, Object, ObjectFormatOptions},
     object::{MoveObject, Owner},
+    transaction::{TransactionData, TransactionDataAPI, VerifiedTransaction},
     MOVE_STDLIB_ADDRESS, SUI_CLOCK_OBJECT_ID, SUI_CLOCK_OBJECT_SHARED_VERSION,
     SUI_FRAMEWORK_ADDRESS, SUI_SYSTEM_STATE_OBJECT_ID,
 };
 <span class="kw">use </span>sui_types::{clock::Clock, SUI_SYSTEM_ADDRESS};
-<span class="kw">use </span>sui_types::{epoch_data::EpochData, messages::Command};
+<span class="kw">use </span>sui_types::{epoch_data::EpochData, transaction::Command};
 <span class="kw">use </span>sui_types::{gas::SuiGasStatus, temporary_store::TemporaryStore};
 <span class="kw">use </span>sui_types::{
     gas::{GasCostSummary, SuiCostTable},
     object::GAS_VALUE_FOR_TESTING,
 };
 <span class="kw">use </span>sui_types::{id::UID, DEEPBOOK_ADDRESS};
-<span class="kw">use </span>sui_types::{in_memory_storage::InMemoryStorage, messages::ProgrammableTransaction};
-<span class="kw">use </span>sui_types::{
-    messages::{Argument, CallArg},
-    move_package::MovePackage,
-};
+<span class="kw">use </span>sui_types::{in_memory_storage::InMemoryStorage, transaction::ProgrammableTransaction};
 <span class="kw">use </span>sui_types::{metrics::LimitsMetrics, DEEPBOOK_OBJECT_ID};
+<span class="kw">use </span>sui_types::{
+    move_package::MovePackage,
+    transaction::{Argument, CallArg},
+};
 <span class="kw">use </span>sui_types::{
     programmable_transaction_builder::ProgrammableTransactionBuilder, SUI_FRAMEWORK_OBJECT_ID,
 };
@@ -2161,7 +2161,7 @@
                 <span class="kw">let </span>gas_budget = gas_budget.unwrap_or(DEFAULT_GAS_BUDGET);
                 <span class="kw">let </span>transaction = <span class="self">self</span>.sign_txn(sender, |sender, gas| {
                     <span class="kw">let </span>rec_arg = builder.pure(recipient).unwrap();
-                    builder.command(sui_types::messages::Command::TransferObjects(
+                    builder.command(sui_types::transaction::Command::TransferObjects(
                         <span class="macro">vec!</span>[obj_arg],
                         rec_arg,
                     ));

@@ -838,12 +838,12 @@
 <span class="kw">use </span><span class="kw">crate</span>::effects::{TransactionEffects, TransactionEvents};
 <span class="kw">use </span><span class="kw">crate</span>::error::SuiError;
 <span class="kw">use </span><span class="kw">crate</span>::message_envelope::Message;
-<span class="kw">use </span><span class="kw">crate</span>::messages::{SenderSignedData, TransactionDataAPI, VerifiedTransaction};
 <span class="kw">use </span><span class="kw">crate</span>::messages_checkpoint::{
     CheckpointContents, CheckpointSequenceNumber, FullCheckpointContents, VerifiedCheckpoint,
     VerifiedCheckpointContents,
 };
 <span class="kw">use </span><span class="kw">crate</span>::move_package::MovePackage;
+<span class="kw">use </span><span class="kw">crate</span>::transaction::{SenderSignedData, TransactionDataAPI, VerifiedTransaction};
 <span class="kw">use crate</span>::{
     base_types::{ObjectID, ObjectRef, SequenceNumber},
     error::SuiResult,
@@ -1551,7 +1551,7 @@
 <span class="doccomment">/// Fetch the `ObjectKey`s (IDs and versions) for non-shared input objects.  Includes owned,
 /// and immutable objects as well as the gas objects, but not move packages or shared objects.
 </span><span class="kw">pub fn </span>transaction_input_object_keys(tx: <span class="kw-2">&amp;</span>SenderSignedData) -&gt; SuiResult&lt;Vec&lt;ObjectKey&gt;&gt; {
-    <span class="kw">use </span><span class="kw">crate</span>::messages::InputObjectKind <span class="kw">as </span>I;
+    <span class="kw">use </span><span class="kw">crate</span>::transaction::InputObjectKind <span class="kw">as </span>I;
     <span class="prelude-val">Ok</span>(tx
         .intent_message()
         .value

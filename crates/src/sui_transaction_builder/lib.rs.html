@@ -806,13 +806,13 @@
 <span class="kw">use </span>sui_types::error::UserInputError;
 <span class="kw">use </span>sui_types::gas_coin::GasCoin;
 <span class="kw">use </span>sui_types::governance::{ADD_STAKE_MUL_COIN_FUN_NAME, WITHDRAW_STAKE_FUN_NAME};
-<span class="kw">use </span>sui_types::messages::{
-    Argument, CallArg, Command, InputObjectKind, ObjectArg, TransactionData, TransactionKind,
-};
 <span class="kw">use </span>sui_types::move_package::MovePackage;
 <span class="kw">use </span>sui_types::object::{Object, Owner};
 <span class="kw">use </span>sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
 <span class="kw">use </span>sui_types::sui_system_state::SUI_SYSTEM_MODULE_NAME;
+<span class="kw">use </span>sui_types::transaction::{
+    Argument, CallArg, Command, InputObjectKind, ObjectArg, TransactionData, TransactionKind,
+};
 <span class="kw">use </span>sui_types::{
     coin, fp_ensure, SUI_FRAMEWORK_OBJECT_ID, SUI_SYSTEM_OBJECT_ID, SUI_SYSTEM_STATE_OBJECT_ID,
     SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,

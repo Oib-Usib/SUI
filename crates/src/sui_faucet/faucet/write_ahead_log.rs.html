@@ -253,7 +253,7 @@
 
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>sui_types::base_types::SuiAddress;
-<span class="kw">use </span>sui_types::{base_types::ObjectID, messages::TransactionData};
+<span class="kw">use </span>sui_types::{base_types::ObjectID, transaction::TransactionData};
 <span class="kw">use </span>typed_store::rocks::{DBMap, TypedStoreError};
 <span class="kw">use </span>typed_store::traits::{TableSummary, TypedStoreDebug};
 <span class="kw">use </span>typed_store::Map;
@@ -357,7 +357,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span>sui_types::{
         base_types::{random_object_ref, ObjectRef},
-        messages::TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
+        transaction::TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
     };
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;

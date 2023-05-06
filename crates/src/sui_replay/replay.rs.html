@@ -1780,17 +1780,17 @@
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 <span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::gas::SuiGasStatus;
-<span class="kw">use </span>sui_types::messages::CertifiedTransaction;
-<span class="kw">use </span>sui_types::messages::Transaction;
-<span class="kw">use </span>sui_types::messages::VerifiedTransaction;
-<span class="kw">use </span>sui_types::messages::{InputObjectKind, InputObjects, TransactionKind};
-<span class="kw">use </span>sui_types::messages::{SenderSignedData, TransactionDataAPI};
 <span class="kw">use </span>sui_types::metrics::LimitsMetrics;
 <span class="kw">use </span>sui_types::object::{Data, Object, Owner};
 <span class="kw">use </span>sui_types::storage::get_module_by_id;
 <span class="kw">use </span>sui_types::storage::{BackingPackageStore, ChildObjectResolver, ObjectStore, ParentSync};
 <span class="kw">use </span>sui_types::sui_system_state::epoch_start_sui_system_state::EpochStartSystemState;
 <span class="kw">use </span>sui_types::temporary_store::InnerTemporaryStore;
+<span class="kw">use </span>sui_types::transaction::CertifiedTransaction;
+<span class="kw">use </span>sui_types::transaction::Transaction;
+<span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
+<span class="kw">use </span>sui_types::transaction::{InputObjectKind, InputObjects, TransactionKind};
+<span class="kw">use </span>sui_types::transaction::{SenderSignedData, TransactionDataAPI};
 <span class="kw">use </span>sui_types::DEEPBOOK_OBJECT_ID;
 <span class="kw">use </span>tracing::{error, warn};
 

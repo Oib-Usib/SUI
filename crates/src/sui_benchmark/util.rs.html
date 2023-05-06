@@ -70,6 +70,8 @@
 <a href="#70" id="70">70</a>
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -82,7 +84,9 @@
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>sui_test_transaction_builder::TestTransactionBuilder;
 <span class="kw">use </span>sui_types::base_types::ObjectRef;
-<span class="kw">use </span>sui_types::messages::{TransactionData, VerifiedTransaction, TEST_ONLY_GAS_UNIT_FOR_TRANSFER};
+<span class="kw">use </span>sui_types::transaction::{
+    TransactionData, VerifiedTransaction, TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
+};
 <span class="kw">use </span>sui_types::utils::to_sender_signed_transaction;
 
 <span class="kw">use </span><span class="kw">crate</span>::workloads::Gas;

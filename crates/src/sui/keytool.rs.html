@@ -429,9 +429,9 @@
 <span class="kw">use </span>sui_types::base_types::SuiAddress;
 <span class="kw">use </span>sui_types::crypto::{get_authority_key_pair, EncodeDecodeBase64, SignatureScheme, SuiKeyPair};
 <span class="kw">use </span>sui_types::crypto::{DefaultHash, PublicKey, Signature};
-<span class="kw">use </span>sui_types::messages::TransactionData;
 <span class="kw">use </span>sui_types::multisig::{MultiSig, MultiSigPublicKey, ThresholdUnit, WeightUnit};
 <span class="kw">use </span>sui_types::signature::GenericSignature;
+<span class="kw">use </span>sui_types::transaction::TransactionData;
 <span class="kw">use </span>tracing::info;
 <span class="attr">#[cfg(test)]
 #[path = <span class="string">&quot;unit_tests/keytool_tests.rs&quot;</span>]
@@ -535,22 +535,22 @@
         </span>threshold: ThresholdUnit,
     },
 
-    <span class="doccomment">/// Converts a Base64 encoded string to its hexademical representation.
+    <span class="doccomment">/// Converts a Base64 encoded string to its hexadecimal representation.
     </span>Base64ToHex {
         base64: String,
     },
 
-    <span class="doccomment">/// Converts a hexademical string to its Base64 encoded representation.
+    <span class="doccomment">/// Converts a hexadecimal string to its Base64 encoded representation.
     </span>HexToBase64 {
         hex: String,
     },
 
-    <span class="doccomment">/// Converts a hexademical string to its correspinding bytes.
+    <span class="doccomment">/// Converts a hexadecimal string to its corresponding bytes.
     </span>HexToBytes {
         hex: String,
     },
 
-    <span class="doccomment">/// Converts an array of bytes to its hexademical string representation.
+    <span class="doccomment">/// Converts an array of bytes to its hexadecimal string representation.
     </span>BytesToHex {
         bytes: Vec&lt;u8&gt;,
     },

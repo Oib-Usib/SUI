@@ -1032,10 +1032,10 @@
 <span class="kw">use </span>sui_types::message_envelope::Message;
 <span class="kw">use </span>sui_types::{
     base_types::{ExecutionDigests, TransactionDigest, TransactionEffectsDigest},
-    messages::VerifiedTransaction,
     messages_checkpoint::{CheckpointSequenceNumber, VerifiedCheckpoint},
+    transaction::VerifiedTransaction,
 };
-<span class="kw">use </span>sui_types::{error::SuiResult, messages::TransactionDataAPI};
+<span class="kw">use </span>sui_types::{error::SuiResult, transaction::TransactionDataAPI};
 <span class="kw">use </span>tap::{TapFallible, TapOptional};
 <span class="kw">use </span>tokio::{
     sync::broadcast::{<span class="self">self</span>, error::RecvError},

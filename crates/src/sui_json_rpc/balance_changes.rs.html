@@ -314,9 +314,9 @@
 <span class="kw">use </span>sui_types::error::SuiError;
 <span class="kw">use </span>sui_types::execution_status::ExecutionStatus;
 <span class="kw">use </span>sui_types::gas_coin::GAS;
-<span class="kw">use </span>sui_types::messages::InputObjectKind;
 <span class="kw">use </span>sui_types::object::{Object, Owner};
 <span class="kw">use </span>sui_types::storage::WriteKind;
+<span class="kw">use </span>sui_types::transaction::InputObjectKind;
 
 <span class="kw">pub async fn </span>get_balance_changes_from_effect&lt;P: ObjectProvider&lt;Error = E&gt;, E&gt;(
     object_provider: <span class="kw-2">&amp;</span>P,

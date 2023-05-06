@@ -883,9 +883,6 @@
 <span class="kw">use </span>sui_types::error::{ExecutionError, ExecutionErrorKind};
 <span class="kw">use </span>sui_types::execution_status::ExecutionStatus;
 <span class="kw">use </span>sui_types::gas::{GasCostSummary, SuiGasStatusAPI};
-<span class="kw">use </span>sui_types::messages::{
-    Argument, Command, GenesisTransaction, ObjectArg, ProgrammableTransaction, TransactionKind,
-};
 <span class="kw">use </span>sui_types::messages_consensus::ConsensusCommitPrologue;
 <span class="kw">use </span>sui_types::storage::{ChildObjectResolver, ObjectStore, ParentSync, WriteKind};
 <span class="attr">#[cfg(msim)]
@@ -893,13 +890,16 @@
 <span class="kw">use </span>sui_types::sui_system_state::{AdvanceEpochParams, ADVANCE_EPOCH_SAFE_MODE_FUNCTION_NAME};
 <span class="kw">use </span>sui_types::temporary_store::InnerTemporaryStore;
 <span class="kw">use </span>sui_types::temporary_store::TemporaryStore;
+<span class="kw">use </span>sui_types::transaction::{
+    Argument, Command, GenesisTransaction, ObjectArg, ProgrammableTransaction, TransactionKind,
+};
 <span class="kw">use </span>sui_types::{
     base_types::{ObjectRef, SuiAddress, TransactionDigest, TxContext},
     gas::SuiGasStatus,
-    messages::{CallArg, ChangeEpoch},
     object::Object,
     storage::BackingPackageStore,
     sui_system_state::{ADVANCE_EPOCH_FUNCTION_NAME, SUI_SYSTEM_MODULE_NAME},
+    transaction::{CallArg, ChangeEpoch},
     SUI_FRAMEWORK_ADDRESS, SUI_SYSTEM_STATE_OBJECT_ID,
 };
 <span class="kw">use </span>sui_types::{
@@ -1337,7 +1337,7 @@
 
             <span class="kw">for </span>genesis_object <span class="kw">in </span>objects {
                 <span class="kw">match </span>genesis_object {
-                    sui_types::messages::GenesisObject::RawObject { data, owner } =&gt; {
+                    sui_types::transaction::GenesisObject::RawObject { data, owner } =&gt; {
                         <span class="kw">let </span>object = Object {
                             data,
                             owner,

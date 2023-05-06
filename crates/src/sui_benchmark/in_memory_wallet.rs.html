@@ -243,14 +243,14 @@
 <span class="kw">use </span>sui_types::{
     base_types::{ObjectID, ObjectRef, SuiAddress},
     crypto::AccountKeyPair,
-    messages::{CallArg, TransactionData, TransactionDataAPI, VerifiedTransaction},
     object::Owner,
+    transaction::{CallArg, TransactionData, TransactionDataAPI, VerifiedTransaction},
     utils::to_sender_signed_transaction,
 };
 
 <span class="kw">use </span><span class="kw">crate</span>::ProgrammableTransactionBuilder;
 <span class="kw">use crate</span>::{convert_move_call_args, workloads::Gas, BenchMoveCallArg, ExecutionEffects};
-<span class="kw">use </span>sui_types::messages::Command;
+<span class="kw">use </span>sui_types::transaction::Command;
 
 <span class="doccomment">/// A Sui account and all of the objects it owns
 </span><span class="attr">#[derive(Debug)]

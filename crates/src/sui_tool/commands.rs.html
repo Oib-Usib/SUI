@@ -379,10 +379,10 @@
 <span class="kw">use </span>fastcrypto::encoding::Encoding;
 <span class="kw">use </span>sui_config::Config;
 <span class="kw">use </span>sui_core::authority_aggregator::AuthorityAggregatorBuilder;
-<span class="kw">use </span>sui_types::messages::{SenderSignedData, Transaction};
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CheckpointRequest, CheckpointResponse, CheckpointSequenceNumber,
 };
+<span class="kw">use </span>sui_types::transaction::{SenderSignedData, Transaction};
 
 <span class="attr">#[derive(Parser, Clone, ValueEnum)]
 </span><span class="kw">pub enum </span>Verbosity {

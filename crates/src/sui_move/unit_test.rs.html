@@ -137,8 +137,8 @@
 <span class="kw">use </span>sui_move_natives::{object_runtime::ObjectRuntime, NativesCostTable};
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>sui_types::{
-    digests::TransactionDigest, in_memory_storage::InMemoryStorage, messages::InputObjects,
-    metrics::LimitsMetrics,
+    digests::TransactionDigest, in_memory_storage::InMemoryStorage, metrics::LimitsMetrics,
+    transaction::InputObjects,
 };
 
 <span class="comment">// Move unit tests will halt after executing this many steps. This is a protection to avoid divergence

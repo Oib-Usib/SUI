@@ -936,11 +936,11 @@
 <span class="kw">use </span>sui_network::{DEFAULT_CONNECT_TIMEOUT_SEC, DEFAULT_REQUEST_TIMEOUT_SEC};
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
 <span class="kw">use </span>sui_types::effects::{CertifiedTransactionEffects, TransactionEffectsAPI, TransactionEvents};
-<span class="kw">use </span>sui_types::messages::Argument;
-<span class="kw">use </span>sui_types::messages::CallArg;
-<span class="kw">use </span>sui_types::messages::ObjectArg;
 <span class="kw">use </span>sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
 <span class="kw">use </span>sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
+<span class="kw">use </span>sui_types::transaction::Argument;
+<span class="kw">use </span>sui_types::transaction::CallArg;
+<span class="kw">use </span>sui_types::transaction::ObjectArg;
 <span class="kw">use </span>sui_types::{
     base_types::ObjectID,
     committee::{Committee, EpochId},
@@ -949,8 +949,8 @@
         AuthoritySignature,
     },
     message_envelope::Envelope,
-    messages::{CertifiedTransaction, Transaction},
     object::Object,
+    transaction::{CertifiedTransaction, Transaction},
 };
 <span class="kw">use </span>sui_types::{base_types::ObjectRef, crypto::AuthorityStrongQuorumSignInfo, object::Owner};
 <span class="kw">use </span>sui_types::{base_types::SequenceNumber, gas_coin::GasCoin};

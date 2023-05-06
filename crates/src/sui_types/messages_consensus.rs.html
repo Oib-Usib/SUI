@@ -225,10 +225,10 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::base_types::{AuthorityName, ObjectRef, TransactionDigest};
 <span class="kw">use </span><span class="kw">crate</span>::committee::Committee;
 <span class="kw">use </span><span class="kw">crate</span>::error::SuiResult;
-<span class="kw">use </span><span class="kw">crate</span>::messages::CertifiedTransaction;
 <span class="kw">use </span><span class="kw">crate</span>::messages_checkpoint::{
     CheckpointSequenceNumber, CheckpointSignatureMessage, CheckpointTimestamp,
 };
+<span class="kw">use </span><span class="kw">crate</span>::transaction::CertifiedTransaction;
 <span class="kw">use </span>byteorder::{BigEndian, ReadBytesExt};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>std::collections::hash_map::DefaultHasher;

@@ -368,9 +368,9 @@
 <span class="kw">use </span>sui_types::base_types::{ObjectID, ObjectRef, SuiAddress};
 <span class="kw">use </span>sui_types::crypto::{get_key_pair, AccountKeyPair};
 <span class="kw">use </span>sui_types::gas_coin::GasCoin;
-<span class="kw">use </span>sui_types::messages::TransactionDataAPI;
-<span class="kw">use </span>sui_types::messages::{
-    Transaction, TransactionData, VerifiedTransaction, TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
+<span class="kw">use </span>sui_types::transaction::{
+    Transaction, TransactionData, TransactionDataAPI, VerifiedTransaction,
+    TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
 };
 <span class="kw">use </span>tokio::sync::RwLock;
 <span class="kw">use </span>tracing::warn;

@@ -638,7 +638,7 @@ finalized transactions locally, when possible.
 <span class="kw">use </span>tokio::time::timeout;
 <span class="kw">use </span>tracing::{debug, error, error_span, info, instrument, warn, Instrument};
 
-<span class="kw">use </span>sui_types::messages::VerifiedTransaction;
+<span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
 
 <span class="comment">// How long to wait for local execution (including parents) before a timeout
 // is returned to client.

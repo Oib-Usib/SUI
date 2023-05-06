@@ -104,8 +104,8 @@
 <span class="kw">use </span>proptest::collection::vec;
 <span class="kw">use </span>proptest::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
-<span class="kw">use </span>sui_types::messages::{Argument, Command, ProgrammableTransaction};
 <span class="kw">use </span>sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
+<span class="kw">use </span>sui_types::transaction::{Argument, Command, ProgrammableTransaction};
 
 <span class="kw">static </span>PROTOCOL_CONFIG: Lazy&lt;ProtocolConfig&gt; = Lazy::new(ProtocolConfig::get_for_max_version);
 

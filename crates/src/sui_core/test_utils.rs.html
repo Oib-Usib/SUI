@@ -476,9 +476,9 @@
 <span class="kw">use </span>sui_types::crypto::{AuthorityKeyPair, Signer};
 <span class="kw">use </span>sui_types::effects::{SignedTransactionEffects, TransactionEffects};
 <span class="kw">use </span>sui_types::error::SuiError;
-<span class="kw">use </span>sui_types::messages::ObjectArg;
-<span class="kw">use </span>sui_types::messages::TEST_ONLY_GAS_UNIT_FOR_OBJECT_BASICS;
-<span class="kw">use </span>sui_types::messages::{
+<span class="kw">use </span>sui_types::transaction::ObjectArg;
+<span class="kw">use </span>sui_types::transaction::TEST_ONLY_GAS_UNIT_FOR_OBJECT_BASICS;
+<span class="kw">use </span>sui_types::transaction::{
     CallArg, SignedTransaction, TransactionData, VerifiedTransaction,
     TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
 };
@@ -489,8 +489,8 @@
     committee::Committee,
     crypto::{AuthoritySignInfo, AuthoritySignature},
     message_envelope::Message,
-    messages::{CertifiedTransaction, Transaction},
     object::Object,
+    transaction::{CertifiedTransaction, Transaction},
 };
 <span class="kw">use </span>tokio::time::timeout;
 <span class="kw">use </span>tracing::{info, warn};

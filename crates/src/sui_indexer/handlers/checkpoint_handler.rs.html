@@ -1191,9 +1191,9 @@
 <span class="kw">use </span>sui_sdk::error::Error;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SequenceNumber};
 <span class="kw">use </span>sui_types::committee::EpochId;
-<span class="kw">use </span>sui_types::messages::SenderSignedData;
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointCommitment, CheckpointSequenceNumber};
 <span class="kw">use </span>sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
+<span class="kw">use </span>sui_types::transaction::SenderSignedData;
 <span class="kw">use </span>sui_types::SUI_SYSTEM_ADDRESS;
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::IndexerError;
@@ -2273,12 +2273,12 @@
     .<span class="kw">await
     </span>.into_iter()
     .try_fold(<span class="macro">vec!</span>[], |<span class="kw-2">mut </span>acc, chunk| {
-        <span class="kw">let </span>object_datas = chunk.<span class="number">0</span><span class="question-mark">?</span>.into_iter().try_fold(<span class="macro">vec!</span>[], |<span class="kw-2">mut </span>acc, resp| {
+        <span class="kw">let </span>object_data = chunk.<span class="number">0</span><span class="question-mark">?</span>.into_iter().try_fold(<span class="macro">vec!</span>[], |<span class="kw-2">mut </span>acc, resp| {
             <span class="kw">let </span>object_data = resp.into_object()<span class="question-mark">?</span>;
             acc.push(object_data);
             <span class="prelude-val">Ok</span>::&lt;Vec&lt;SuiObjectData&gt;, Error&gt;(acc)
         })<span class="question-mark">?</span>;
-        <span class="kw">let </span>mutated_object_chunk = chunk.<span class="number">1</span>.into_iter().zip(object_datas);
+        <span class="kw">let </span>mutated_object_chunk = chunk.<span class="number">1</span>.into_iter().zip(object_data);
         acc.extend(mutated_object_chunk);
         <span class="prelude-val">Ok</span>::&lt;<span class="kw">_</span>, Error&gt;(acc)
     })

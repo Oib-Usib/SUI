@@ -2011,7 +2011,6 @@
 <span class="kw">use </span>sui_types::governance::StakedSui;
 <span class="kw">use </span>sui_types::in_memory_storage::InMemoryStorage;
 <span class="kw">use </span>sui_types::message_envelope::Message;
-<span class="kw">use </span>sui_types::messages::{CallArg, Command, InputObjectKind, InputObjects, Transaction};
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CertifiedCheckpointSummary, CheckpointContents, CheckpointSummary, VerifiedCheckpoint,
 };
@@ -2024,6 +2023,7 @@
     SuiSystemStateWrapper, SuiValidatorGenesis,
 };
 <span class="kw">use </span>sui_types::temporary_store::{InnerTemporaryStore, TemporaryStore};
+<span class="kw">use </span>sui_types::transaction::{CallArg, Command, InputObjectKind, InputObjects, Transaction};
 <span class="kw">use </span>sui_types::{
     base_types::TxContext,
     committee::{Committee, EpochId, ProtocolVersion},
@@ -3314,14 +3314,14 @@
                     <span class="kw-2">*</span>initial_shared_version = SequenceNumber::MIN;
                 }
 
-                sui_types::messages::GenesisObject::RawObject {
+                sui_types::transaction::GenesisObject::RawObject {
                     data: object.data,
                     owner: object.owner,
                 }
             })
             .collect();
 
-        sui_types::messages::VerifiedTransaction::new_genesis_transaction(genesis_objects)
+        sui_types::transaction::VerifiedTransaction::new_genesis_transaction(genesis_objects)
             .into_inner()
     };
 

@@ -2067,11 +2067,11 @@
 <span class="kw">use </span>sui_types::committee::Committee;
 <span class="kw">use </span>sui_types::crypto::{AuthoritySignInfo, AuthorityStrongQuorumSignInfo};
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
-<span class="kw">use </span>sui_types::messages::{
+<span class="kw">use </span>sui_types::signature::GenericSignature;
+<span class="kw">use </span>sui_types::transaction::{
     CertifiedTransaction, SenderSignedData, SharedInputObject, TransactionData, TransactionDataAPI,
     VerifiedCertificate, VerifiedSignedTransaction,
 };
-<span class="kw">use </span>sui_types::signature::GenericSignature;
 <span class="kw">use </span>tracing::{debug, error, info, trace, warn};
 <span class="kw">use </span>typed_store::rocks::{
     default_db_options, DBBatch, DBMap, DBOptions, MetricConf, TypedStoreError,
