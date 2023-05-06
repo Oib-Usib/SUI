@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683336066448,
+  "lastUpdate": 1683394679518,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4391,6 +4391,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 298860,
             "range": "± 24600",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7bca94c3ad1436c3c8f9256e74c43d9a1a4c9b0d",
+          "message": "Add sign-transaction to sui-tool (#11605)\n\nThis PR adds two features:\r\n1. In sui client, extend the ability to serialize a transaction to\r\nsupport both unsigned and signed transaction.\r\n2. In sui-tool, add a new command sign-transaction that would ask all\r\nvalidators to sign a transaction, but not execute the cert.",
+          "timestamp": "2023-05-06T17:26:31Z",
+          "tree_id": "9767ff2372f66c2513039e2f342b3991d89a3df9",
+          "url": "https://github.com/MystenLabs/sui/commit/7bca94c3ad1436c3c8f9256e74c43d9a1a4c9b0d"
+        },
+        "date": 1683394671815,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 140805252,
+            "range": "± 4391905",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 318280,
+            "range": "± 16223",
             "unit": "ns/iter"
           }
         ]
