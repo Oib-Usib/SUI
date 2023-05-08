@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683424336206,
+  "lastUpdate": 1683556839464,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4499,6 +4499,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 526009,
             "range": "± 45435",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zlnju@outlook.com",
+            "name": "wiggins-dev",
+            "username": "wiggins-dev"
+          },
+          "committer": {
+            "email": "sam@mystenlabs.com",
+            "name": "Sam Blackshear",
+            "username": "sblackshear"
+          },
+          "distinct": true,
+          "id": "fed58ad1334c06e5003cb97f8b47fa7a92d175e5",
+          "message": "[Deepbook] Enhancement (#11624)\n\nDescription\n\n- enhance overflow check for mathematical calculations\n- explain why underflow is permitted code clean in test code\n- add test to cover corner case in match_bid\n- add test to cover corner case in match_bid\n- add test to successfully place a limit order of type POST OR ABORT\n- add test to place limit order of type invalid restrictions\n- add test to cover ask side in batch cancel order\n- add test to get single  order status on bid side\n- add test to get level2 book status when time expired\n\nTest Plan\n\ncd to deeobook dir and run \"sui move test\"\n\n---\nIf your changes are not user-facing and not a breaking change, you can\nskip the following section. Otherwise, please indicate what changed, and\nthen add to the Release Notes section as highlighted during the release\nprocess.\n\n- [ ] user-visible impact\n- [ ] breaking change for a client SDKs\n- [ ] breaking change for FNs (FN binary must upgrade)\n- [ ] breaking change for validators or node operators (must upgrade\nbinaries)\n- [ ] breaking change for on-chain data layout\n- [ ] necessitate either a data wipe or data migration",
+          "timestamp": "2023-05-08T07:29:35-07:00",
+          "tree_id": "9af39d4a8869a6ee204f8e296588f6c6537aaf7b",
+          "url": "https://github.com/MystenLabs/sui/commit/fed58ad1334c06e5003cb97f8b47fa7a92d175e5"
+        },
+        "date": 1683556825791,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144590970,
+            "range": "± 4223981",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 443285,
+            "range": "± 32507",
             "unit": "ns/iter"
           }
         ]
