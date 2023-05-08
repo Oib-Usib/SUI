@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683566123642,
+  "lastUpdate": 1683570062400,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4607,6 +4607,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308529,
             "range": "± 19268",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "108701016+joyqvq@users.noreply.github.com",
+            "name": "Joy Wang",
+            "username": "joyqvq"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "21da01373deb48912759bd832bbb0e01c319e49e",
+          "message": "crypto: Use pubkey as bytes (#11596)\n\n## Description \r\n\r\nCloses https://github.com/MystenLabs/sui/issues/10402\r\nCloses https://github.com/MystenLabs/sui/issues/9994\r\n\r\nDepends on https://github.com/MystenLabs/fastcrypto/pull/577\r\n## Test Plan \r\n\r\nExisting tests \r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-08T18:07:18Z",
+          "tree_id": "ec9a004900f8ad932e733defb68a046a0d893ce4",
+          "url": "https://github.com/MystenLabs/sui/commit/21da01373deb48912759bd832bbb0e01c319e49e"
+        },
+        "date": 1683570018478,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146285897,
+            "range": "± 5376149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 317436,
+            "range": "± 10194",
             "unit": "ns/iter"
           }
         ]
