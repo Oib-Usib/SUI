@@ -555,44 +555,13 @@
 <a href="#555" id="555">555</a>
 <a href="#556" id="556">556</a>
 <a href="#557" id="557">557</a>
-<a href="#558" id="558">558</a>
-<a href="#559" id="559">559</a>
-<a href="#560" id="560">560</a>
-<a href="#561" id="561">561</a>
-<a href="#562" id="562">562</a>
-<a href="#563" id="563">563</a>
-<a href="#564" id="564">564</a>
-<a href="#565" id="565">565</a>
-<a href="#566" id="566">566</a>
-<a href="#567" id="567">567</a>
-<a href="#568" id="568">568</a>
-<a href="#569" id="569">569</a>
-<a href="#570" id="570">570</a>
-<a href="#571" id="571">571</a>
-<a href="#572" id="572">572</a>
-<a href="#573" id="573">573</a>
-<a href="#574" id="574">574</a>
-<a href="#575" id="575">575</a>
-<a href="#576" id="576">576</a>
-<a href="#577" id="577">577</a>
-<a href="#578" id="578">578</a>
-<a href="#579" id="579">579</a>
-<a href="#580" id="580">580</a>
-<a href="#581" id="581">581</a>
-<a href="#582" id="582">582</a>
-<a href="#583" id="583">583</a>
-<a href="#584" id="584">584</a>
-<a href="#585" id="585">585</a>
-<a href="#586" id="586">586</a>
-<a href="#587" id="587">587</a>
-<a href="#588" id="588">588</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::collections::BTreeMap;
 <span class="kw">use </span>std::future;
 <span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>std::time::{Duration, Instant};
+<span class="kw">use </span>std::time::Instant;
 
 <span class="kw">use </span>fastcrypto::encoding::Base64;
 <span class="kw">use </span>futures::stream;
@@ -601,7 +570,7 @@
 <span class="kw">use </span>jsonrpsee::core::client::Subscription;
 
 <span class="kw">use </span><span class="kw">crate</span>::error::{Error, SuiRpcResult};
-<span class="kw">use crate</span>::{RpcClient, WAIT_FOR_TX_TIMEOUT_SEC};
+<span class="kw">use </span><span class="kw">crate</span>::RpcClient;
 <span class="kw">use </span>sui_json_rpc::api::GovernanceReadApiClient;
 <span class="kw">use </span>sui_json_rpc::api::{
     CoinReadApiClient, IndexerApiClient, MoveUtilsClient, ReadApiClient, WriteApiClient,
@@ -611,19 +580,20 @@
     DryRunTransactionBlockResponse, DynamicFieldPage, EventFilter, EventPage, ObjectsPage,
     ProtocolConfigResponse, SuiCoinMetadata, SuiCommittee, SuiEvent, SuiGetPastObjectRequest,
     SuiMoveNormalizedModule, SuiObjectDataOptions, SuiObjectResponse, SuiObjectResponseQuery,
-    SuiPastObjectResponse, SuiTransactionBlockEffectsAPI, SuiTransactionBlockResponse,
-    SuiTransactionBlockResponseOptions, SuiTransactionBlockResponseQuery, TransactionBlocksPage,
+    SuiPastObjectResponse, SuiTransactionBlockResponse, SuiTransactionBlockResponseOptions,
+    SuiTransactionBlockResponseQuery, TransactionBlocksPage,
 };
 <span class="kw">use </span>sui_json_rpc_types::{CheckpointPage, SuiLoadedChildObjectsResponse};
 <span class="kw">use </span>sui_types::balance::Supply;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SequenceNumber, SuiAddress, TransactionDigest};
-<span class="kw">use </span>sui_types::error::TRANSACTION_NOT_FOUND_MSG_PREFIX;
 <span class="kw">use </span>sui_types::event::EventID;
 <span class="kw">use </span>sui_types::messages_checkpoint::CheckpointSequenceNumber;
 <span class="kw">use </span>sui_types::quorum_driver_types::ExecuteTransactionRequestType;
 <span class="kw">use </span>sui_types::sui_serde::BigInt;
 <span class="kw">use </span>sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
 <span class="kw">use </span>sui_types::transaction::{TransactionData, VerifiedTransaction};
+
+<span class="kw">const </span>WAIT_FOR_LOCAL_EXECUTION_RETRY_COUNT: u8 = <span class="number">3</span>;
 
 <span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>ReadApi {
@@ -1061,10 +1031,9 @@
     <span class="doccomment">/// Execute a transaction with a FullNode client. `request_type`
     /// defaults to `ExecuteTransactionRequestType::WaitForLocalExecution`.
     /// When `ExecuteTransactionRequestType::WaitForLocalExecution` is used,
-    /// but returned `confirmed_local_execution` is false, the client polls
-    /// the fullnode until the fullnode recognizes this transaction, or
-    /// until times out (see WAIT_FOR_TX_TIMEOUT_SEC). If it times out, an
-    /// error is returned from this call.
+    /// but returned `confirmed_local_execution` is false, the client will
+    /// keep retry for WAIT_FOR_LOCAL_EXECUTION_RETRY_COUNT times. If it
+    /// still fails, it will return an error.
     </span><span class="kw">pub async fn </span>execute_transaction_block(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx: VerifiedTransaction,
@@ -1073,70 +1042,39 @@
     ) -&gt; SuiRpcResult&lt;SuiTransactionBlockResponse&gt; {
         <span class="kw">let </span>(tx_bytes, signatures) = tx.to_tx_bytes_and_signatures();
         <span class="kw">let </span>request_type = request_type.unwrap_or_else(|| options.default_execution_request_type());
-        <span class="kw">let </span><span class="kw-2">mut </span>response: SuiTransactionBlockResponse = <span class="self">self
-            </span>.api
-            .http
-            .execute_transaction_block(
-                tx_bytes,
-                signatures,
-                <span class="prelude-val">Some</span>(options),
-                <span class="prelude-val">Some</span>(request_type.clone()),
-            )
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>retry_count = <span class="number">0</span>;
+        <span class="kw">let </span>start = Instant::now();
+        <span class="kw">while </span>retry_count &lt; WAIT_FOR_LOCAL_EXECUTION_RETRY_COUNT {
+            <span class="kw">let </span>response: SuiTransactionBlockResponse = <span class="self">self
+                </span>.api
+                .http
+                .execute_transaction_block(
+                    tx_bytes.clone(),
+                    signatures.clone(),
+                    <span class="prelude-val">Some</span>(options.clone()),
+                    <span class="prelude-val">Some</span>(request_type.clone()),
+                )
+                .<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="kw">match </span>request_type {
-            ExecuteTransactionRequestType::WaitForEffectsCert =&gt; response,
-            ExecuteTransactionRequestType::WaitForLocalExecution =&gt; {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(confirmed_local_execution) = response.confirmed_local_execution {
-                    <span class="kw">if </span>!confirmed_local_execution {
-                        <span class="self">Self</span>::wait_until_fullnode_sees_tx(
-                            <span class="kw-2">&amp;</span><span class="self">self</span>.api,
-                            <span class="kw-2">*</span>response
-                                .effects
-                                .as_ref()
-                                .map(|e| e.transaction_digest())
-                                .ok_or_else(|| {
-                                    Error::DataError(<span class="string">&quot;Expect effects to be non-empty&quot;</span>.to_string())
-                                })<span class="question-mark">?</span>,
-                        )
-                        .<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">match </span>request_type {
+                ExecuteTransactionRequestType::WaitForEffectsCert =&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(response);
+                }
+                ExecuteTransactionRequestType::WaitForLocalExecution =&gt; {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="bool-val">true</span>) = response.confirmed_local_execution {
+                        <span class="kw">return </span><span class="prelude-val">Ok</span>(response);
+                    } <span class="kw">else </span>{
+                        <span class="comment">// If fullnode executed the cert in the network but did not confirm local
+                        // execution, it must have timed out and hence we could retry.
+                        </span>retry_count += <span class="number">1</span>;
                     }
                 }
-                response.confirmed_local_execution = <span class="prelude-val">Some</span>(<span class="bool-val">true</span>);
-                response
-            }
-        })
-    }
-
-    <span class="kw">async fn </span>wait_until_fullnode_sees_tx(
-        c: <span class="kw-2">&amp;</span>RpcClient,
-        tx_digest: TransactionDigest,
-    ) -&gt; SuiRpcResult&lt;()&gt; {
-        <span class="kw">let </span>start = Instant::now();
-        <span class="kw">loop </span>{
-            <span class="kw">let </span>resp = ReadApiClient::get_transaction_block(
-                <span class="kw-2">&amp;</span>c.http,
-                tx_digest,
-                <span class="prelude-val">Some</span>(SuiTransactionBlockResponseOptions::new()),
-            )
-            .<span class="kw">await</span>;
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = resp {
-                <span class="kw">if </span>err.to_string().contains(TRANSACTION_NOT_FOUND_MSG_PREFIX) {
-                    tokio::time::sleep(Duration::from_millis(<span class="number">300</span>)).<span class="kw">await</span>;
-                } <span class="kw">else </span>{
-                    <span class="comment">// immediately return on other types of errors
-                    </span><span class="kw">return </span><span class="prelude-val">Err</span>(Error::TransactionConfirmationError(tx_digest, err));
-                }
-            } <span class="kw">else </span>{
-                <span class="kw">return </span><span class="prelude-val">Ok</span>(());
-            }
-            <span class="kw">if </span>start.elapsed().as_secs() &gt;= WAIT_FOR_TX_TIMEOUT_SEC {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::FailToConfirmTransactionStatus(
-                    tx_digest,
-                    WAIT_FOR_TX_TIMEOUT_SEC,
-                ));
             }
         }
+        <span class="prelude-val">Err</span>(Error::FailToConfirmTransactionStatus(
+            <span class="kw-2">*</span>tx.digest(),
+            start.elapsed().as_secs(),
+        ))
     }
 }
 

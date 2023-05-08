@@ -1864,7 +1864,7 @@
             <span class="comment">// Fetch transaction to determine existence
             </span><span class="kw">let </span>state = <span class="self">self</span>.state.clone();
             <span class="kw">let </span>transaction = <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-                state.get_executed_transaction(digest).<span class="kw">await</span>.tap_err(
+                state.get_transaction_block(digest).<span class="kw">await</span>.tap_err(
                     |err| <span class="macro">debug!</span>(tx_digest=<span class="question-mark">?</span>digest, <span class="string">&quot;Failed to get transaction: {:?}&quot;</span>, err),
                 )
             })
