@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683570062400,
+  "lastUpdate": 1683575001292,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4643,6 +4643,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 317436,
             "range": "± 10194",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90c374071fb33bdfee5ade976cbd10ced5cb2e13",
+          "message": "Fix wait for local execution bug in sdk (#11811)\n\nThis PR fixes a bug in the SDK where it doesn't properly wait for tx\r\nexecution on fullnodes. Specifically, it returns when it sees the\r\ntransaction, but that doesn't guarantee that the transaction was\r\nactually executed.\r\nIn the fix we simply use retry instead of timeout because fullnode local\r\nexecution already uses a timeout to wait.\r\nThis fixes a flaky test in sui-surfer.",
+          "timestamp": "2023-05-08T12:27:45-07:00",
+          "tree_id": "97b3a82d68a3d1cc37be977a9bb1c7637cd0c601",
+          "url": "https://github.com/MystenLabs/sui/commit/90c374071fb33bdfee5ade976cbd10ced5cb2e13"
+        },
+        "date": 1683574951455,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145152542,
+            "range": "± 4483887",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311194,
+            "range": "± 23670",
             "unit": "ns/iter"
           }
         ]
