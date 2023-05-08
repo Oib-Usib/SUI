@@ -1691,14 +1691,6 @@
 <a href="#1691" id="1691">1691</a>
 <a href="#1692" id="1692">1692</a>
 <a href="#1693" id="1693">1693</a>
-<a href="#1694" id="1694">1694</a>
-<a href="#1695" id="1695">1695</a>
-<a href="#1696" id="1696">1696</a>
-<a href="#1697" id="1697">1697</a>
-<a href="#1698" id="1698">1698</a>
-<a href="#1699" id="1699">1699</a>
-<a href="#1700" id="1700">1700</a>
-<a href="#1701" id="1701">1701</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>anyhow::{anyhow, Error};
@@ -1709,13 +1701,16 @@
     BLS12381PrivateKey, BLS12381PublicKey, BLS12381Signature,
 };
 <span class="kw">use </span>fastcrypto::ed25519::{
-    Ed25519KeyPair, Ed25519PrivateKey, Ed25519PublicKey, Ed25519Signature, Ed25519SignatureAsBytes,
+    Ed25519KeyPair, Ed25519PrivateKey, Ed25519PublicKey, Ed25519PublicKeyAsBytes, Ed25519Signature,
+    Ed25519SignatureAsBytes,
 };
 <span class="kw">use </span>fastcrypto::secp256k1::{
-    Secp256k1KeyPair, Secp256k1PublicKey, Secp256k1Signature, Secp256k1SignatureAsBytes,
+    Secp256k1KeyPair, Secp256k1PublicKey, Secp256k1PublicKeyAsBytes, Secp256k1Signature,
+    Secp256k1SignatureAsBytes,
 };
 <span class="kw">use </span>fastcrypto::secp256r1::{
-    Secp256r1KeyPair, Secp256r1PublicKey, Secp256r1Signature, Secp256r1SignatureAsBytes,
+    Secp256r1KeyPair, Secp256r1PublicKey, Secp256r1PublicKeyAsBytes, Secp256r1Signature,
+    Secp256r1SignatureAsBytes,
 };
 <span class="kw">pub use </span>fastcrypto::traits::KeyPair <span class="kw">as </span>KeypairTraits;
 <span class="kw">pub use </span>fastcrypto::traits::{
@@ -1731,7 +1726,7 @@
 <span class="kw">use </span>serde_with::{serde_as, Bytes};
 <span class="kw">use </span>shared_crypto::intent::{Intent, IntentMessage, IntentScope};
 <span class="kw">use </span>std::collections::BTreeMap;
-<span class="kw">use </span>std::fmt::{<span class="self">self</span>, Display, Formatter};
+<span class="kw">use </span>std::fmt::{Display, Formatter};
 <span class="kw">use </span>std::hash::{Hash, Hasher};
 <span class="kw">use </span>std::str::FromStr;
 <span class="kw">use </span>strum::EnumString;
@@ -1834,22 +1829,12 @@
     Secp256r1(Secp256r1KeyPair),
 }
 
-<span class="attr">#[derive(Clone, PartialEq, Eq, From, JsonSchema)]
-</span><span class="kw">pub enum </span>PublicKey {
-    <span class="attr">#[schemars(with = <span class="string">&quot;Base64&quot;</span>)]
-    </span>Ed25519(Ed25519PublicKey),
-    <span class="attr">#[schemars(with = <span class="string">&quot;Base64&quot;</span>)]
-    </span>Secp256k1(Secp256k1PublicKey),
-    <span class="attr">#[schemars(with = <span class="string">&quot;Base64&quot;</span>)]
-    </span>Secp256r1(Secp256r1PublicKey),
-}
-
 <span class="kw">impl </span>SuiKeyPair {
     <span class="kw">pub fn </span>public(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PublicKey {
         <span class="kw">match </span><span class="self">self </span>{
-            SuiKeyPair::Ed25519(kp) =&gt; PublicKey::Ed25519(kp.public().clone()),
-            SuiKeyPair::Secp256k1(kp) =&gt; PublicKey::Secp256k1(kp.public().clone()),
-            SuiKeyPair::Secp256r1(kp) =&gt; PublicKey::Secp256r1(kp.public().clone()),
+            SuiKeyPair::Ed25519(kp) =&gt; PublicKey::Ed25519(kp.public().into()),
+            SuiKeyPair::Secp256k1(kp) =&gt; PublicKey::Secp256k1(kp.public().into()),
+            SuiKeyPair::Secp256r1(kp) =&gt; PublicKey::Secp256r1(kp.public().into()),
         }
     }
 }
@@ -1877,17 +1862,16 @@
     <span class="doccomment">/// Encode a SuiKeyPair as `flag || privkey` in Base64. Note that the pubkey is not encoded.
     </span><span class="kw">fn </span>encode_base64(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         <span class="kw">let </span><span class="kw-2">mut </span>bytes: Vec&lt;u8&gt; = Vec::new();
+        bytes.push(<span class="self">self</span>.public().flag());
+
         <span class="kw">match </span><span class="self">self </span>{
             SuiKeyPair::Ed25519(kp) =&gt; {
-                bytes.push(<span class="self">self</span>.public().flag());
                 bytes.extend_from_slice(kp.as_bytes());
             }
             SuiKeyPair::Secp256k1(kp) =&gt; {
-                bytes.push(<span class="self">self</span>.public().flag());
                 bytes.extend_from_slice(kp.as_bytes());
             }
             SuiKeyPair::Secp256r1(kp) =&gt; {
-                bytes.push(<span class="self">self</span>.public().flag());
                 bytes.extend_from_slice(kp.as_bytes());
             }
         }
@@ -1942,12 +1926,19 @@
     }
 }
 
+<span class="attr">#[derive(Clone, Debug, PartialEq, Eq, JsonSchema)]
+</span><span class="kw">pub enum </span>PublicKey {
+    Ed25519(Ed25519PublicKeyAsBytes),
+    Secp256k1(Secp256k1PublicKeyAsBytes),
+    Secp256r1(Secp256r1PublicKeyAsBytes),
+}
+
 <span class="kw">impl </span>AsRef&lt;[u8]&gt; <span class="kw">for </span>PublicKey {
     <span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
         <span class="kw">match </span><span class="self">self </span>{
-            PublicKey::Ed25519(pk) =&gt; pk.as_ref(),
-            PublicKey::Secp256k1(pk) =&gt; pk.as_ref(),
-            PublicKey::Secp256r1(pk) =&gt; pk.as_ref(),
+            PublicKey::Ed25519(pk) =&gt; <span class="kw-2">&amp;</span>pk.<span class="number">0</span>,
+            PublicKey::Secp256k1(pk) =&gt; <span class="kw-2">&amp;</span>pk.<span class="number">0</span>,
+            PublicKey::Secp256r1(pk) =&gt; <span class="kw-2">&amp;</span>pk.<span class="number">0</span>,
         }
     }
 }
@@ -1964,21 +1955,21 @@
         <span class="kw">let </span>bytes = Base64::decode(value).map_err(|e| <span class="macro">eyre!</span>(<span class="string">&quot;{}&quot;</span>, e.to_string()))<span class="question-mark">?</span>;
         <span class="kw">match </span>bytes.first() {
             <span class="prelude-val">Some</span>(x) =&gt; {
-                <span class="kw">if </span>x == <span class="kw-2">&amp;</span>&lt;Ed25519PublicKey <span class="kw">as </span>SuiPublicKey&gt;::SIGNATURE_SCHEME.flag() {
-                    <span class="kw">let </span>pk = Ed25519PublicKey::from_bytes(
+                <span class="kw">if </span>x == <span class="kw-2">&amp;</span>SignatureScheme::ED25519.flag() {
+                    <span class="kw">let </span>pk: Ed25519PublicKey = Ed25519PublicKey::from_bytes(
                         bytes.get(<span class="number">1</span>..).ok_or_else(|| <span class="macro">eyre!</span>(<span class="string">&quot;Invalid length&quot;</span>))<span class="question-mark">?</span>,
                     )<span class="question-mark">?</span>;
-                    <span class="prelude-val">Ok</span>(PublicKey::Ed25519(pk))
-                } <span class="kw">else if </span>x == <span class="kw-2">&amp;</span>&lt;Secp256k1PublicKey <span class="kw">as </span>SuiPublicKey&gt;::SIGNATURE_SCHEME.flag() {
+                    <span class="prelude-val">Ok</span>(PublicKey::Ed25519((<span class="kw-2">&amp;</span>pk).into()))
+                } <span class="kw">else if </span>x == <span class="kw-2">&amp;</span>SignatureScheme::Secp256k1.flag() {
                     <span class="kw">let </span>pk = Secp256k1PublicKey::from_bytes(
                         bytes.get(<span class="number">1</span>..).ok_or_else(|| <span class="macro">eyre!</span>(<span class="string">&quot;Invalid length&quot;</span>))<span class="question-mark">?</span>,
                     )<span class="question-mark">?</span>;
-                    <span class="prelude-val">Ok</span>(PublicKey::Secp256k1(pk))
-                } <span class="kw">else if </span>x == <span class="kw-2">&amp;</span>&lt;Secp256r1PublicKey <span class="kw">as </span>SuiPublicKey&gt;::SIGNATURE_SCHEME.flag() {
+                    <span class="prelude-val">Ok</span>(PublicKey::Secp256k1((<span class="kw-2">&amp;</span>pk).into()))
+                } <span class="kw">else if </span>x == <span class="kw-2">&amp;</span>SignatureScheme::Secp256r1.flag() {
                     <span class="kw">let </span>pk = Secp256r1PublicKey::from_bytes(
                         bytes.get(<span class="number">1</span>..).ok_or_else(|| <span class="macro">eyre!</span>(<span class="string">&quot;Invalid length&quot;</span>))<span class="question-mark">?</span>,
                     )<span class="question-mark">?</span>;
-                    <span class="prelude-val">Ok</span>(PublicKey::Secp256r1(pk))
+                    <span class="prelude-val">Ok</span>(PublicKey::Secp256r1((<span class="kw-2">&amp;</span>pk).into()))
                 } <span class="kw">else </span>{
                     <span class="prelude-val">Err</span>(<span class="macro">eyre!</span>(<span class="string">&quot;Invalid flag byte&quot;</span>))
                 }
@@ -2010,19 +2001,9 @@
     }
 }
 
-<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>PublicKey {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">&quot;{:?}&quot;</span>, <span class="self">self</span>.encode_base64())
-    }
-}
-
 <span class="kw">impl </span>PublicKey {
     <span class="kw">pub fn </span>flag(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u8 {
-        <span class="kw">match </span><span class="self">self </span>{
-            PublicKey::Ed25519(<span class="kw">_</span>) =&gt; Ed25519SuiSignature::SCHEME.flag(),
-            PublicKey::Secp256k1(<span class="kw">_</span>) =&gt; Secp256k1SuiSignature::SCHEME.flag(),
-            PublicKey::Secp256r1(<span class="kw">_</span>) =&gt; Secp256r1SuiSignature::SCHEME.flag(),
-        }
+        <span class="self">self</span>.scheme().flag()
     }
 
     <span class="kw">pub fn </span>try_from_bytes(
@@ -2030,15 +2011,15 @@
         key_bytes: <span class="kw-2">&amp;</span>[u8],
     ) -&gt; <span class="prelude-ty">Result</span>&lt;PublicKey, eyre::Report&gt; {
         <span class="kw">match </span>curve {
-            SignatureScheme::ED25519 =&gt; {
-                <span class="prelude-val">Ok</span>(PublicKey::Ed25519(Ed25519PublicKey::from_bytes(key_bytes)<span class="question-mark">?</span>))
-            }
-            SignatureScheme::Secp256k1 =&gt; <span class="prelude-val">Ok</span>(PublicKey::Secp256k1(Secp256k1PublicKey::from_bytes(
-                key_bytes,
-            )<span class="question-mark">?</span>)),
-            SignatureScheme::Secp256r1 =&gt; <span class="prelude-val">Ok</span>(PublicKey::Secp256r1(Secp256r1PublicKey::from_bytes(
-                key_bytes,
-            )<span class="question-mark">?</span>)),
+            SignatureScheme::ED25519 =&gt; <span class="prelude-val">Ok</span>(PublicKey::Ed25519(
+                (<span class="kw-2">&amp;</span>Ed25519PublicKey::from_bytes(key_bytes)<span class="question-mark">?</span>).into(),
+            )),
+            SignatureScheme::Secp256k1 =&gt; <span class="prelude-val">Ok</span>(PublicKey::Secp256k1(
+                (<span class="kw-2">&amp;</span>Secp256k1PublicKey::from_bytes(key_bytes)<span class="question-mark">?</span>).into(),
+            )),
+            SignatureScheme::Secp256r1 =&gt; <span class="prelude-val">Ok</span>(PublicKey::Secp256r1(
+                (<span class="kw-2">&amp;</span>Secp256r1PublicKey::from_bytes(key_bytes)<span class="question-mark">?</span>).into(),
+            )),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">eyre!</span>(<span class="string">&quot;Unsupported curve&quot;</span>)),
         }
     }
@@ -2429,16 +2410,19 @@
         <span class="kw">let </span>bytes = <span class="self">self</span>.public_key_bytes();
         <span class="kw">match </span><span class="self">self</span>.scheme() {
             SignatureScheme::ED25519 =&gt; <span class="prelude-val">Ok</span>(PublicKey::Ed25519(
-                Ed25519PublicKey::from_bytes(bytes)
-                    .map_err(|<span class="kw">_</span>| SuiError::KeyConversionError(<span class="string">&quot;Cannot parse pk&quot;</span>.to_string()))<span class="question-mark">?</span>,
+                (<span class="kw-2">&amp;</span>Ed25519PublicKey::from_bytes(bytes)
+                    .map_err(|<span class="kw">_</span>| SuiError::KeyConversionError(<span class="string">&quot;Cannot parse pk&quot;</span>.to_string()))<span class="question-mark">?</span>)
+                    .into(),
             )),
             SignatureScheme::Secp256k1 =&gt; <span class="prelude-val">Ok</span>(PublicKey::Secp256k1(
-                Secp256k1PublicKey::from_bytes(bytes)
-                    .map_err(|<span class="kw">_</span>| SuiError::KeyConversionError(<span class="string">&quot;Cannot parse pk&quot;</span>.to_string()))<span class="question-mark">?</span>,
+                (<span class="kw-2">&amp;</span>Secp256k1PublicKey::from_bytes(bytes)
+                    .map_err(|<span class="kw">_</span>| SuiError::KeyConversionError(<span class="string">&quot;Cannot parse pk&quot;</span>.to_string()))<span class="question-mark">?</span>)
+                    .into(),
             )),
             SignatureScheme::Secp256r1 =&gt; <span class="prelude-val">Ok</span>(PublicKey::Secp256r1(
-                Secp256r1PublicKey::from_bytes(bytes)
-                    .map_err(|<span class="kw">_</span>| SuiError::KeyConversionError(<span class="string">&quot;Cannot parse pk&quot;</span>.to_string()))<span class="question-mark">?</span>,
+                (<span class="kw-2">&amp;</span>Secp256r1PublicKey::from_bytes(bytes)
+                    .map_err(|<span class="kw">_</span>| SuiError::KeyConversionError(<span class="string">&quot;Cannot parse pk&quot;</span>.to_string()))<span class="question-mark">?</span>)
+                    .into(),
             )),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
                 error: <span class="string">&quot;Unsupported signature scheme in MultiSig&quot;</span>.to_string(),

@@ -954,7 +954,6 @@
 <a href="#954" id="954">954</a>
 <a href="#955" id="955">955</a>
 <a href="#956" id="956">956</a>
-<a href="#957" id="957">957</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -964,7 +963,6 @@
 <span class="kw">use </span>axum::response::{IntoResponse, Response};
 <span class="kw">use </span>axum::Json;
 <span class="kw">use </span>fastcrypto::encoding::Hex;
-<span class="kw">use </span>fastcrypto::traits::ToFromBytes;
 <span class="kw">use </span>serde::de::Error <span class="kw">as </span>DeError;
 <span class="kw">use </span>serde::{Deserialize, Serializer};
 <span class="kw">use </span>serde::{Deserializer, Serialize};
@@ -1286,15 +1284,15 @@
     <span class="kw">fn </span>from(pk: SuiPublicKey) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span>pk {
             SuiPublicKey::Ed25519(k) =&gt; PublicKey {
-                hex_bytes: Hex::from_bytes(k.as_bytes()),
+                hex_bytes: Hex::from_bytes(<span class="kw-2">&amp;</span>k.<span class="number">0</span>),
                 curve_type: CurveType::Edwards25519,
             },
             SuiPublicKey::Secp256k1(k) =&gt; PublicKey {
-                hex_bytes: Hex::from_bytes(k.as_bytes()),
+                hex_bytes: Hex::from_bytes(<span class="kw-2">&amp;</span>k.<span class="number">0</span>),
                 curve_type: CurveType::Secp256k1,
             },
             SuiPublicKey::Secp256r1(k) =&gt; PublicKey {
-                hex_bytes: Hex::from_bytes(k.as_bytes()),
+                hex_bytes: Hex::from_bytes(<span class="kw-2">&amp;</span>k.<span class="number">0</span>),
                 curve_type: CurveType::Secp256r1,
             },
         }

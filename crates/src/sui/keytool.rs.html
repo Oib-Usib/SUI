@@ -729,7 +729,7 @@
                         <span class="macro">println!</span>(<span class="string">&quot;Public Key: {}&quot;</span>, keypair.public().encode_base64());
                         <span class="macro">println!</span>(<span class="string">&quot;Flag: {}&quot;</span>, keypair.public().flag());
                         <span class="kw">if let </span>PublicKey::Ed25519(public_key) = keypair.public() {
-                            <span class="kw">let </span>peer_id = anemo::PeerId(public_key.<span class="number">0</span>.into());
+                            <span class="kw">let </span>peer_id = anemo::PeerId(public_key.<span class="number">0</span>);
                             <span class="macro">println!</span>(<span class="string">&quot;PeerId: {}&quot;</span>, peer_id);
                         }
                     }

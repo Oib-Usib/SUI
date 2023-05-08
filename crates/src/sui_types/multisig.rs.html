@@ -295,6 +295,16 @@
 <a href="#295" id="295">295</a>
 <a href="#296" id="296">296</a>
 <a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -473,7 +483,6 @@
                 });
             }
         }
-
         <span class="kw">if </span>weight_sum &gt;= <span class="self">self</span>.multisig_pk.threshold {
             <span class="prelude-val">Ok</span>(())
         } <span class="kw">else </span>{
@@ -490,11 +499,13 @@
         full_sigs: Vec&lt;Signature&gt;,
         multisig_pk: MultiSigPublicKey,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, SuiError&gt; {
-        <span class="kw">if </span>full_sigs.len() &gt; multisig_pk.pk_map.len()
-            || multisig_pk.pk_map.len() &gt; MAX_SIGNER_IN_MULTISIG
-            || full_sigs.is_empty()
-            || multisig_pk.pk_map.is_empty()
-        {
+        multisig_pk
+            .validate()
+            .map_err(|<span class="kw">_</span>| SuiError::InvalidSignature {
+                error: <span class="string">&quot;Invalid multisig public key&quot;</span>.to_string(),
+            })<span class="question-mark">?</span>;
+
+        <span class="kw">if </span>full_sigs.len() &gt; multisig_pk.pk_map.len() || full_sigs.is_empty() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::InvalidSignature {
                 error: <span class="string">&quot;Invalid number of signatures&quot;</span>.to_string(),
             });
@@ -502,11 +513,17 @@
         <span class="kw">let </span><span class="kw-2">mut </span>bitmap = RoaringBitmap::new();
         <span class="kw">let </span><span class="kw-2">mut </span>sigs = Vec::with_capacity(full_sigs.len());
         <span class="kw">for </span>s <span class="kw">in </span>full_sigs {
-            bitmap.insert(multisig_pk.get_index(s.to_public_key()<span class="question-mark">?</span>).ok_or(
+            <span class="kw">let </span>pk = s.to_public_key()<span class="question-mark">?</span>;
+            <span class="kw">let </span>inserted = bitmap.insert(multisig_pk.get_index(<span class="kw-2">&amp;</span>pk).ok_or(
                 SuiError::IncorrectSigner {
-                    error: <span class="string">&quot;pk does not exist&quot;</span>.to_string(),
+                    error: <span class="macro">format!</span>(<span class="string">&quot;pk does not exist: {:?}&quot;</span>, pk),
                 },
             )<span class="question-mark">?</span>);
+            <span class="kw">if </span>!inserted {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::InvalidSignature {
+                    error: <span class="string">&quot;Duplicate sigature&quot;</span>.to_string(),
+                });
+            }
             sigs.push(s.to_compressed()<span class="question-mark">?</span>);
         }
         <span class="prelude-val">Ok</span>(MultiSig {
@@ -554,7 +571,7 @@
                 &lt; threshold
         {
             <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::InvalidSignature {
-                error: <span class="string">&quot;Invalid number of public keys&quot;</span>.to_string(),
+                error: <span class="string">&quot;Invalid multisig public key construction&quot;</span>.to_string(),
             });
         }
         <span class="prelude-val">Ok</span>(MultiSigPublicKey {
@@ -563,8 +580,11 @@
         })
     }
 
-    <span class="kw">pub fn </span>get_index(<span class="kw-2">&amp;</span><span class="self">self</span>, pk: PublicKey) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-        <span class="self">self</span>.pk_map.iter().position(|x| x.<span class="number">0 </span>== pk).map(|x| x <span class="kw">as </span>u32)
+    <span class="kw">pub fn </span>get_index(<span class="kw-2">&amp;</span><span class="self">self</span>, pk: <span class="kw-2">&amp;</span>PublicKey) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
+        <span class="self">self</span>.pk_map
+            .iter()
+            .position(|x| <span class="kw-2">&amp;</span>x.<span class="number">0 </span>== pk)
+            .map(|x| x <span class="kw">as </span>u32)
     }
 
     <span class="kw">pub fn </span>threshold(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>ThresholdUnit {
@@ -576,12 +596,12 @@
     }
 
     <span class="kw">pub fn </span>validate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), FastCryptoError&gt; {
+        <span class="kw">let </span>pk_map = <span class="self">self</span>.pubkeys();
         <span class="kw">if </span><span class="self">self</span>.threshold == <span class="number">0
-            </span>|| <span class="self">self</span>.pubkeys().is_empty()
-            || <span class="self">self</span>.pubkeys().len() &gt; MAX_SIGNER_IN_MULTISIG
-            || <span class="self">self</span>.pubkeys().iter().any(|(_pk, weight)| <span class="kw-2">*</span>weight == <span class="number">0</span>)
-            || <span class="self">self
-                </span>.pubkeys()
+            </span>|| pk_map.is_empty()
+            || pk_map.len() &gt; MAX_SIGNER_IN_MULTISIG
+            || pk_map.iter().any(|(_pk, weight)| <span class="kw-2">*</span>weight == <span class="number">0</span>)
+            || pk_map
                 .iter()
                 .map(|(_pk, weight)| <span class="kw-2">*</span>weight <span class="kw">as </span>ThresholdUnit)
                 .sum::&lt;ThresholdUnit&gt;()
