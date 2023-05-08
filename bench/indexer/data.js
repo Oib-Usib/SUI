@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683556839464,
+  "lastUpdate": 1683563696669,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4535,6 +4535,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 443285,
             "range": "± 32507",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "51927076+phoenix-o@users.noreply.github.com",
+            "name": "phoenix",
+            "username": "phoenix-o"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "73c5c8eae35cfbc4ad9dada1cc5368d74c63199f",
+          "message": "[pruner] remove open iterator between await points (#11808)",
+          "timestamp": "2023-05-08T18:23:47+02:00",
+          "tree_id": "4563c7a671461d6b4f1303a3ce97205962fd5af7",
+          "url": "https://github.com/MystenLabs/sui/commit/73c5c8eae35cfbc4ad9dada1cc5368d74c63199f"
+        },
+        "date": 1683563683225,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145697094,
+            "range": "± 4521401",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 355790,
+            "range": "± 36164",
             "unit": "ns/iter"
           }
         ]
