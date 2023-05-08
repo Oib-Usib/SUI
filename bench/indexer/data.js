@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683575001292,
+  "lastUpdate": 1683577211065,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4679,6 +4679,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311194,
             "range": "± 23670",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123408603+healthydeve@users.noreply.github.com",
+            "name": "Jian Lu",
+            "username": "healthydeve"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6811ecba9a0957070c024325cc5ea833322d26f6",
+          "message": "[docs] dynamic object documentation (#11711)\n\n## Description \r\n\r\nAdding some of the documentation for dynamic fields apis\r\n```\r\nNo example found for method: sui_getLoadedChildObjects\r\nNo example found for method: sui_getMoveFunctionArgTypes\r\nNo example found for method: sui_getNormalizedMoveFunction\r\nNo example found for method: sui_getNormalizedMoveModule\r\nNo example found for method: sui_getNormalizedMoveModulesByPackage\r\nNo example found for method: sui_getNormalizedMoveStruct\r\nNo example found for method: sui_tryMultiGetPastObjects\r\nNo example found for method: suix_getStakes\r\nNo example found for method: suix_getStakesByIds\r\nNo example found for method: suix_resolveNameServiceAddress\r\nNo example found for method: suix_resolveNameServiceNames\r\nNo example found for method: suix_subscribeEvent\r\nNo example found for method: suix_subscribeTransaction\r\nNo example found for method: unsafe_batchTransaction\r\nNo example found for method: unsafe_mergeCoins\r\nNo example found for method: unsafe_moveCall\r\nNo example found for method: unsafe_pay\r\nNo example found for method: unsafe_payAllSui\r\nNo example found for method: unsafe_paySui\r\nNo example found for method: unsafe_publish\r\nNo example found for method: unsafe_requestAddStake\r\nNo example found for method: unsafe_requestWithdrawStake\r\nNo example found for method: unsafe_splitCoin\r\nNo example found for method: unsafe_splitCoinEqual\r\nNo example found for method: unsafe_transferObject\r\nNo example found for method: unsafe_transferSui\r\n```\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-08T16:08:50-04:00",
+          "tree_id": "7966842bdb925958761ec7d36d9a3f3f58f6bbce",
+          "url": "https://github.com/MystenLabs/sui/commit/6811ecba9a0957070c024325cc5ea833322d26f6"
+        },
+        "date": 1683577202134,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149232724,
+            "range": "± 5863656",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 402582,
+            "range": "± 55484",
             "unit": "ns/iter"
           }
         ]
