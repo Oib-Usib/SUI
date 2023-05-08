@@ -409,6 +409,111 @@
 <a href="#409" id="409">409</a>
 <a href="#410" id="410">410</a>
 <a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>anyhow::anyhow;
@@ -416,7 +521,16 @@
 <span class="kw">use </span>clap::<span class="kw-2">*</span>;
 <span class="kw">use </span>fastcrypto::encoding::{decode_bytes_hex, Base64, Encoding, Hex};
 <span class="kw">use </span>fastcrypto::hash::HashFunction;
+<span class="kw">use </span>fastcrypto::hash::Sha256;
+<span class="kw">use </span>fastcrypto::secp256k1::recoverable::Secp256k1RecoverableSignature;
+<span class="kw">use </span>fastcrypto::secp256k1::recoverable::Secp256k1Sig;
+<span class="kw">use </span>fastcrypto::secp256k1::Secp256k1Signature;
 <span class="kw">use </span>fastcrypto::traits::KeyPair;
+<span class="kw">use </span>fastcrypto::traits::RecoverableSignature;
+<span class="kw">use </span>fastcrypto::traits::ToFromBytes;
+<span class="kw">use </span>fastcrypto::traits::VerifyingKey;
+<span class="kw">use </span>rusoto_core::Region;
+<span class="kw">use </span>rusoto_kms::{Kms, KmsClient, SignRequest};
 <span class="kw">use </span>shared_crypto::intent::{Intent, IntentMessage};
 <span class="kw">use </span>std::fs;
 <span class="kw">use </span>std::path::{Path, PathBuf};
@@ -433,6 +547,7 @@
 <span class="kw">use </span>sui_types::signature::GenericSignature;
 <span class="kw">use </span>sui_types::transaction::TransactionData;
 <span class="kw">use </span>tracing::info;
+
 <span class="attr">#[cfg(test)]
 #[path = <span class="string">&quot;unit_tests/keytool_tests.rs&quot;</span>]
 </span><span class="kw">mod </span>keytool_tests;
@@ -481,6 +596,21 @@
         </span>address: SuiAddress,
         <span class="attr">#[clap(long)]
         </span>data: String,
+        <span class="attr">#[clap(long)]
+        </span>intent: <span class="prelude-ty">Option</span>&lt;Intent&gt;,
+    },
+    <span class="doccomment">/// Create signature using leveraging AWS KMS. Pass in a key-id to leverage Amazon
+    /// KMS to sign a message.
+    /// Any signature commits to a [struct IntentMessage] consisting of the Base64 encoded
+    /// of the BCS serialized transaction bytes itself (the result of
+    /// [transaction builder API](https://docs.sui.io/sui-jsonrpc) and its intent. If
+    /// intent is absent, default will be used. See [struct IntentMessage] and [struct Intent]
+    /// for more details.
+    </span>SignKMS {
+        <span class="attr">#[clap(long)]
+        </span>data: String,
+        <span class="attr">#[clap(long)]
+        </span>keyid: String,
         <span class="attr">#[clap(long)]
         </span>intent: <span class="prelude-ty">Option</span>&lt;Intent&gt;,
     },
@@ -567,7 +697,7 @@
 }
 
 <span class="kw">impl </span>KeyToolCommand {
-    <span class="kw">pub fn </span>execute(<span class="self">self</span>, keystore: <span class="kw-2">&amp;mut </span>Keystore) -&gt; <span class="prelude-ty">Result</span>&lt;(), anyhow::Error&gt; {
+    <span class="kw">pub async fn </span>execute(<span class="self">self</span>, keystore: <span class="kw-2">&amp;mut </span>Keystore) -&gt; <span class="prelude-ty">Result</span>&lt;(), anyhow::Error&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             KeyToolCommand::Generate {
                 key_scheme,
@@ -762,6 +892,86 @@
                         }
                     }
                 }
+            }
+            KeyToolCommand::SignKMS {
+                data,
+                keyid,
+                intent,
+            } =&gt; {
+                <span class="comment">// Currently only supports secp256k1 keys
+                </span><span class="macro">println!</span>(<span class="string">&quot;Raw tx_bytes to execute: {}&quot;</span>, data);
+                <span class="kw">let </span>intent = intent.unwrap_or_else(Intent::sui_transaction);
+                <span class="macro">println!</span>(<span class="string">&quot;Intent: {:?}&quot;</span>, intent);
+                <span class="kw">let </span>msg: TransactionData =
+                    bcs::from_bytes(<span class="kw-2">&amp;</span>Base64::decode(<span class="kw-2">&amp;</span>data).map_err(|e| {
+                        <span class="macro">anyhow!</span>(<span class="string">&quot;Cannot deserialize data as TransactionData {:?}&quot;</span>, e)
+                    })<span class="question-mark">?</span>)<span class="question-mark">?</span>;
+                <span class="kw">let </span>intent_msg = IntentMessage::new(intent, msg);
+                <span class="macro">println!</span>(
+                    <span class="string">&quot;Raw intent message: {:?}&quot;</span>,
+                    Base64::encode(bcs::to_bytes(<span class="kw-2">&amp;</span>intent_msg)<span class="question-mark">?</span>)
+                );
+                <span class="kw">let </span><span class="kw-2">mut </span>hasher = DefaultHash::default();
+                hasher.update(bcs::to_bytes(<span class="kw-2">&amp;</span>intent_msg)<span class="question-mark">?</span>);
+                <span class="kw">let </span>digest = hasher.finalize().digest;
+                <span class="macro">println!</span>(<span class="string">&quot;Digest to sign: {:?}&quot;</span>, Base64::encode(digest));
+
+                <span class="comment">// Set up the KMS client in default region.
+                </span><span class="kw">let </span>region: Region = Region::default();
+                <span class="kw">let </span>kms: KmsClient = KmsClient::new(region);
+
+                <span class="comment">// Construct the signing request.
+                </span><span class="kw">let </span>request: SignRequest = SignRequest {
+                    key_id: keyid.to_string(),
+                    message: digest.to_vec().into(),
+                    message_type: <span class="prelude-val">Some</span>(<span class="string">&quot;RAW&quot;</span>.to_string()),
+                    signing_algorithm: <span class="string">&quot;ECDSA_SHA_256&quot;</span>.to_string(),
+                    ..Default::default()
+                };
+
+                <span class="comment">// Sign the message, normalize the signature and then compacts it
+                // serialize_compact is loaded as bytes for Secp256k1Sinature
+                // to convert it into a RecoverableSignature
+                </span><span class="kw">let </span>response = kms.sign(request).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>sig_bytes_der = response
+                    .signature
+                    .map(|b| b.to_vec())
+                    .expect(<span class="string">&quot;Requires Asymmetric Key Generated in KMS&quot;</span>);
+
+                <span class="kw">let </span><span class="kw-2">mut </span>external_sig = Secp256k1Sig::from_der(<span class="kw-2">&amp;</span>sig_bytes_der)<span class="question-mark">?</span>;
+                external_sig.normalize_s();
+                <span class="kw">let </span>sig_compact = external_sig.serialize_compact();
+                <span class="kw">let </span>sig = Secp256k1Signature::from_bytes(<span class="kw-2">&amp;</span>sig_compact)<span class="question-mark">?</span>;
+
+                <span class="comment">// Covert a 64-byte signature to 65-byte signature recoverable signature.
+                // by trying all 4 possible recovery ids as the last byte. The first 64
+                // bytes are copied over.
+                </span><span class="kw">let </span><span class="kw-2">mut </span>n_bytes: [u8; <span class="number">65</span>] = [<span class="number">0u8</span>; <span class="number">65</span>];
+                n_bytes[..<span class="number">64</span>].copy_from_slice(<span class="kw-2">&amp;</span>sig_compact[..]);
+
+                <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">4 </span>{
+                    n_bytes[<span class="number">64</span>] = i;
+                    <span class="kw">let </span>sig_r = Secp256k1RecoverableSignature::from_bytes(<span class="kw-2">&amp;</span>n_bytes)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>pk = sig_r.recover_with_hash::&lt;Sha256&gt;(digest.as_ref())<span class="question-mark">?</span>;
+
+                    <span class="comment">// If the recovered pk is valid, output serialized signature.
+                    </span><span class="kw">if </span>pk.verify(digest.as_ref(), <span class="kw-2">&amp;</span>sig).is_ok() {
+                        <span class="macro">println!</span>(
+                            <span class="string">&quot;Address For Corresponding KMS Key: {}&quot;</span>,
+                            Into::&lt;SuiAddress&gt;::into(<span class="kw-2">&amp;</span>pk),
+                        );
+                        <span class="kw">let </span><span class="kw-2">mut </span>serialized_sig = <span class="macro">vec!</span>[SignatureScheme::Secp256k1.flag()];
+                        serialized_sig.extend_from_slice(<span class="kw-2">&amp;</span>sig_compact);
+                        serialized_sig.extend_from_slice(pk.as_ref());
+                        <span class="kw">let </span>serialized_sig = Base64::encode(<span class="kw-2">&amp;</span>serialized_sig);
+                        <span class="macro">println!</span>(
+                            <span class="string">&quot;Serialized signature (`flag || sig || pk` in Base64): {:?}&quot;</span>,
+                            serialized_sig
+                        );
+                        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+                    }
+                }
+                <span class="macro">println!</span>(<span class="string">&quot;Invalid signature to recover secp256k1 public key&quot;</span>);
             }
             KeyToolCommand::MultiSigAddress {
                 threshold,
