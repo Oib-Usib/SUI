@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683577211065,
+  "lastUpdate": 1683579596109,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4715,6 +4715,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 402582,
             "range": "± 55484",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123408603+healthydeve@users.noreply.github.com",
+            "name": "Jian Lu",
+            "username": "healthydeve"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6d4b98e83af30f69ff8d16a3422451223d7ed7f2",
+          "message": "[Faucet] Adding merge/ split coin functions from rust script (#11814)\n\n## Description \r\n\r\nAdded a script to do merge/split coins instead of having to use CLI\r\n\r\n## Test Plan \r\n\r\n\r\n![](https://media2.giphy.com/media/x0npYExCGOZeo/giphy.gif?cid=ecf05e47ds44alb30295vmyjy8xcvl84ozjsv51qfv0rmhnp&rid=giphy.gif&ct=g)\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-08T16:47:54-04:00",
+          "tree_id": "9d0862a63cb175e2d6e024b18a31eb0aaade827e",
+          "url": "https://github.com/MystenLabs/sui/commit/6d4b98e83af30f69ff8d16a3422451223d7ed7f2"
+        },
+        "date": 1683579588278,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146760927,
+            "range": "± 5154165",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312515,
+            "range": "± 18563",
             "unit": "ns/iter"
           }
         ]
