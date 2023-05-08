@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683563696669,
+  "lastUpdate": 1683566123642,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4571,6 +4571,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 355790,
             "range": "± 36164",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "119884990+chargarlic@users.noreply.github.com",
+            "name": "Rahul Nair",
+            "username": "chargarlic"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5b4437e10272692c6e649d7a62786f4c740c0677",
+          "message": "Extend Keytool for Signing with AWS KMS (#11283)\n\n## Description \r\n\r\nExtends the sui keytool to sign a transaction with a AWS KMS (only for\r\nsecp256k1)\r\n- Sets up the KMS Client\r\n- Constructs signing request with AWS, normalizes the signature and\r\ncompacts it\r\n- Converts 64byte sig to RecoverableSignature and Recovers the PublicKey\r\nby trying all 4 recovery ids.\r\n- Prints Address for Corresponding PublicKey and Serialized Signature\r\n\r\n## Test Plan \r\n\r\nMock Unit Tests are a fast follow; tried with a test KMS key and\r\nexecuted corresponding transaction.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nExtend Sui Keytool to sign with AWS KMS (secp256k1)\r\n\r\n---------\r\n\r\nCo-authored-by: Joy Wang <108701016+joyqvq@users.noreply.github.com>",
+          "timestamp": "2023-05-08T10:00:09-07:00",
+          "tree_id": "2ee2ac7d56a0dc12623b6ce57f859f576f64cc52",
+          "url": "https://github.com/MystenLabs/sui/commit/5b4437e10272692c6e649d7a62786f4c740c0677"
+        },
+        "date": 1683566074936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146808600,
+            "range": "± 4609085",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308529,
+            "range": "± 19268",
             "unit": "ns/iter"
           }
         ]
