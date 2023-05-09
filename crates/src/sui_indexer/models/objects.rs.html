@@ -470,11 +470,6 @@
 <a href="#470" id="470">470</a>
 <a href="#471" id="471">471</a>
 <a href="#472" id="472">472</a>
-<a href="#473" id="473">473</a>
-<a href="#474" id="474">474</a>
-<a href="#475" id="475">475</a>
-<a href="#476" id="476">476</a>
-<a href="#477" id="477">477</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -674,11 +669,6 @@
             ))
         })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>((object_id, (<span class="self">self</span>.version <span class="kw">as </span>u64).into(), digest))
-    }
-
-    <span class="comment">// MUSTFIX(gegaowp): trim data to reduce short-term storage consumption.
-    </span><span class="kw">pub fn </span>trim_data(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.bcs.clear();
     }
 }
 

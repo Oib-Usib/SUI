@@ -1813,30 +1813,6 @@
 <a href="#1813" id="1813">1813</a>
 <a href="#1814" id="1814">1814</a>
 <a href="#1815" id="1815">1815</a>
-<a href="#1816" id="1816">1816</a>
-<a href="#1817" id="1817">1817</a>
-<a href="#1818" id="1818">1818</a>
-<a href="#1819" id="1819">1819</a>
-<a href="#1820" id="1820">1820</a>
-<a href="#1821" id="1821">1821</a>
-<a href="#1822" id="1822">1822</a>
-<a href="#1823" id="1823">1823</a>
-<a href="#1824" id="1824">1824</a>
-<a href="#1825" id="1825">1825</a>
-<a href="#1826" id="1826">1826</a>
-<a href="#1827" id="1827">1827</a>
-<a href="#1828" id="1828">1828</a>
-<a href="#1829" id="1829">1829</a>
-<a href="#1830" id="1830">1830</a>
-<a href="#1831" id="1831">1831</a>
-<a href="#1832" id="1832">1832</a>
-<a href="#1833" id="1833">1833</a>
-<a href="#1834" id="1834">1834</a>
-<a href="#1835" id="1835">1835</a>
-<a href="#1836" id="1836">1836</a>
-<a href="#1837" id="1837">1837</a>
-<a href="#1838" id="1838">1838</a>
-<a href="#1839" id="1839">1839</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -3105,17 +3081,9 @@ GROUP BY table_name;
         checkpoint: <span class="kw-2">&amp;</span>Checkpoint,
         transactions: <span class="kw-2">&amp;</span>[Transaction],
     ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, IndexerError&gt; {
-        <span class="kw">let </span>trimmed_transactions = transactions
-            .iter()
-            .map(|t| {
-                <span class="kw">let </span><span class="kw-2">mut </span>t = t.clone();
-                t.trim_data();
-                t
-            })
-            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
         <span class="macro">transactional_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
             <span class="comment">// Commit indexed transactions
-            </span><span class="kw">for </span>transaction_chunk <span class="kw">in </span>trimmed_transactions.chunks(PG_COMMIT_CHUNK_SIZE) {
+            </span><span class="kw">for </span>transaction_chunk <span class="kw">in </span>transactions.chunks(PG_COMMIT_CHUNK_SIZE) {
                 diesel::insert_into(transactions::table)
                     .values(transaction_chunk)
                     .on_conflict(transactions::transaction_digest)
@@ -3176,26 +3144,10 @@ WHERE e1.epoch = e2.epoch
                     .collect();
                 <span class="kw">let </span>(mutation_count, deletion_count) =
                     (mutated_objects.len(), deleted_objects.len());
-
-                <span class="comment">// MUSTFIX(gegaowp): trim data to reduce short-term storage consumption.
-                </span><span class="kw">let </span>trimmed_mutated_objects = mutated_objects
-                    .into_iter()
-                    .map(|<span class="kw-2">mut </span>o| {
-                        o.trim_data();
-                        o
-                    })
-                    .collect::&lt;Vec&lt;Object&gt;&gt;();
-                <span class="kw">let </span>trimmed_deleted_objects = deleted_objects
-                    .into_iter()
-                    .map(|<span class="kw-2">mut </span>o| {
-                        o.trim_data();
-                        o
-                    })
-                    .collect::&lt;Vec&lt;Object&gt;&gt;();
                 persist_transaction_object_changes(
                     conn,
-                    trimmed_mutated_objects,
-                    trimmed_deleted_objects,
+                    mutated_objects,
+                    deleted_objects,
                     <span class="prelude-val">Some</span>(object_mutation_latency),
                     <span class="prelude-val">Some</span>(object_deletion_latency),
                 )<span class="question-mark">?</span>;
