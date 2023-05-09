@@ -305,6 +305,48 @@
 <a href="#305" id="305">305</a>
 <a href="#306" id="306">306</a>
 <a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -316,7 +358,7 @@
 <span class="kw">pub use </span>enum_dispatch::enum_dispatch;
 <span class="kw">use </span>fastcrypto::{
     ed25519::Ed25519PublicKey,
-    encoding::Base64,
+    encoding::{Base64, Encoding},
     error::FastCryptoError,
     hash::HashFunction,
     secp256k1::Secp256k1PublicKey,
@@ -329,7 +371,10 @@
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>serde_with::serde_as;
 <span class="kw">use </span>shared_crypto::intent::IntentMessage;
-<span class="kw">use </span>std::hash::{Hash, Hasher};
+<span class="kw">use </span>std::{
+    hash::{Hash, Hasher},
+    str::FromStr,
+};
 
 <span class="kw">use crate</span>::{
     base_types::SuiAddress,
@@ -373,7 +418,7 @@
     #[serde_as(<span class="kw">as </span>= <span class="string">&quot;SuiBitmap&quot;</span>)]
     </span>bitmap: RoaringBitmap,
     <span class="doccomment">/// The public key encoded with each public key with its signature scheme used along with the corresponding weight.
-    </span><span class="kw">pub </span>multisig_pk: MultiSigPublicKey,
+    </span>multisig_pk: MultiSigPublicKey,
     <span class="doccomment">/// A bytes representation of [struct MultiSig]. This helps with implementing [trait AsRef&lt;[u8]&gt;].
     </span><span class="attr">#[serde(skip)]
     </span>bytes: OnceCell&lt;Vec&lt;u8&gt;&gt;,
@@ -413,7 +458,7 @@
             });
         }
 
-        <span class="kw">if </span>&lt;SuiAddress <span class="kw">as </span>From&lt;MultiSigPublicKey&gt;&gt;::from(<span class="self">self</span>.multisig_pk.clone()) != author {
+        <span class="kw">if </span>SuiAddress::from(<span class="kw-2">&amp;</span><span class="self">self</span>.multisig_pk) != author {
             <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::InvalidSignature {
                 error: <span class="string">&quot;Invalid address&quot;</span>.to_string(),
             });
@@ -541,8 +586,19 @@
         <span class="self">self</span>.multisig_pk.validate()<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
-}
 
+    <span class="kw">pub fn </span>get_pk(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>MultiSigPublicKey {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.multisig_pk
+    }
+
+    <span class="kw">pub fn </span>get_sigs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[CompressedSignature] {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.sigs
+    }
+
+    <span class="kw">pub fn </span>get_bitmap(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>RoaringBitmap {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.bitmap
+    }
+}
 <span class="doccomment">/// The struct that contains the public key used for authenticating a MultiSig.
 </span><span class="attr">#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 </span><span class="kw">pub struct </span>MultiSigPublicKey {
@@ -610,6 +666,34 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(FastCryptoError::InvalidInput);
         }
         <span class="prelude-val">Ok</span>(())
+    }
+}
+
+<span class="kw">impl </span>ToFromBytes <span class="kw">for </span>MultiSig {
+    <span class="kw">fn </span>from_bytes(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;MultiSig, FastCryptoError&gt; {
+        <span class="comment">// The first byte matches the flag of MultiSig.
+        </span><span class="kw">if </span>bytes.first().ok_or(FastCryptoError::InvalidInput)<span class="question-mark">? </span>!= <span class="kw-2">&amp;</span>SignatureScheme::MultiSig.flag()
+        {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FastCryptoError::InvalidInput);
+        }
+        <span class="kw">let </span>multisig: MultiSig =
+            bcs::from_bytes(<span class="kw-2">&amp;</span>bytes[<span class="number">1</span>..]).map_err(|<span class="kw">_</span>| FastCryptoError::InvalidSignature)<span class="question-mark">?</span>;
+        multisig.validate()<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(multisig)
+    }
+}
+
+<span class="kw">impl </span>FromStr <span class="kw">for </span>MultiSig {
+    <span class="kw">type </span><span class="prelude-val">Err </span>= SuiError;
+
+    <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
+        <span class="kw">let </span>bytes = Base64::decode(s).map_err(|<span class="kw">_</span>| SuiError::InvalidSignature {
+            error: <span class="string">&quot;Invalid base64 string&quot;</span>.to_string(),
+        })<span class="question-mark">?</span>;
+        <span class="kw">let </span>sig = MultiSig::from_bytes(<span class="kw-2">&amp;</span>bytes).map_err(|<span class="kw">_</span>| SuiError::InvalidSignature {
+            error: <span class="string">&quot;Invalid multisig bytes&quot;</span>.to_string(),
+        })<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(sig)
     }
 }
 </code></pre></div></section></main></body></html>

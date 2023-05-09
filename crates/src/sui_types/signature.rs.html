@@ -117,10 +117,6 @@
 <a href="#117" id="117">117</a>
 <a href="#118" id="118">118</a>
 <a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -174,11 +170,7 @@
                     Signature::from_bytes(bytes).map_err(|<span class="kw">_</span>| FastCryptoError::InvalidSignature)<span class="question-mark">?</span>,
                 )),
                 SignatureScheme::MultiSig =&gt; {
-                    <span class="comment">// The flag is added to the bytes representation of MultiSig in MultiSig::as_ref().
-                    </span><span class="kw">let </span>multisig: MultiSig =
-                        bcs::from_bytes(bytes.get(<span class="number">1</span>..).ok_or(FastCryptoError::InvalidInput)<span class="question-mark">?</span>)
-                            .map_err(|<span class="kw">_</span>| FastCryptoError::InvalidSignature)<span class="question-mark">?</span>;
-                    multisig.validate()<span class="question-mark">?</span>;
+                    <span class="kw">let </span>multisig = MultiSig::from_bytes(bytes)<span class="question-mark">?</span>;
                     <span class="prelude-val">Ok</span>(GenericSignature::MultiSig(multisig))
                 }
                 <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(FastCryptoError::InvalidInput),
