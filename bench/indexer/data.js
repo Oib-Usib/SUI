@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683659232776,
+  "lastUpdate": 1683662557119,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5399,6 +5399,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 324963,
             "range": "± 21925",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "653c3a0287f9c28889f4cd6185681c01da4645f4",
+          "message": "Index store search debug util (#11856)\n\n## Description \r\n\r\nEnables searching DB by key and range\r\nExample\r\nThis searches the `transactions_from_addr` index for 3 items starting\r\nfrom key `(0x0, 0)`\r\n```\r\nsui-tool db-tool --db-path $INDEX_STORE_PATH index-search-count -t \"transactions_from_addr\" -s \" 0x0000000000000000000000000000000000000000000000000000000000000000  , 0 \"  -c 3\r\n\r\n(0x0000000000000000000000000000000000000000000000000000000000000000, 0): TransactionDigest(Cgww1sn7XViCPSdDcAPmVcARueWuexJ8af8zD842Ff43)\r\n(0x0000000000000000000000000000000000000000000000000000000000000000, 1): TransactionDigest(ENSA1UVsdNfa66Hifs8YmELAPMUraTkMLnb5vBma7yjG)\r\n(0x0000000000000000000000000000000000000000000000000000000000000000, 2): TransactionDigest(6JrvQmai4CfoepqArnJYa4sRQbRAY4bSXc5tY7ub4HzJ)\r\n```\r\n\r\nWhile this searches the `transactions_from_addr` index for all keys in\r\nrange [start, end)\r\nwhere\r\nstart =\r\n`(0x0000002a71724c656e54172366d1496adc7e7a96e7703f8eba56c771334f1652 ,\r\n0)`\r\nend =\r\n`(0x000008c4eeb482d337eabdce6d8d362c930d2778cb6169c5ed5bbf6359e49cc0,\r\n0)`\r\n```\r\nsui-tool db-tool --db-path $INDEX_STORE_PATH index-search-key-range -t \"transactions_from_addr\" -s \" 0x0000002a71724c656e54172366d1496adc7e7a96e7703f8eba56c771334f1652 , 0 \"  -e \"0x000008c4eeb482d337eabdce6d8d362c930d2778cb6169c5ed5bbf6359e49cc0, 0\"\r\n\r\n(0x0000002a71724c656e54172366d1496adc7e7a96e7703f8eba56c771334f1652, 199901503): TransactionDigest(p6pdecwK6xFV94gW3hEDJC7nXiEMkXT7qBcLmwa4zqt)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 178533636): TransactionDigest(2y6CdZ6a2vgXgN47VUwPnR38dyg7uF6VJYChUyEiCqiA)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 179965983): TransactionDigest(GNUZ9RdVcwqR3UB6B1CAZt54szrbxB9ibTqZNuqgz93z)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 211941432): TransactionDigest(52BvMgFVfTPmNHZLUKxvAW7aBCyMnLT6tLFvQAiKBhz7)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 226460529): TransactionDigest(aSHK7cDyRScPXkQCsjYa3yHqvLMA9yejwTWcwQLcC5o)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 229949905): TransactionDigest(napYj2jRXURtDFPWMqMhFMGhD7ZyY3mRT4z95MtU9mj)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 241586260): TransactionDigest(3exq8i5CnkFng8tdkPD7SkfUTHSEQyaty3BR6fjNgzSV)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 247068758): TransactionDigest(BFdWNnkunrDL6tzCcyFKSauvMs4z7Kb4gNuxytbRaVkE)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 262296597): TransactionDigest(9JcoEYnLEXhig9VfZAJJVwTYKnukd1H66wYL3trtdJee)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 267627735): TransactionDigest(8xNDcr1AwbrEqb2u23itmifTgqMrgPtvfAhVh18AsXRZ)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 271524485): TransactionDigest(3DrULVDahoZBzDQgPzLQYXnDTwLQQgqxoEvhPMxxtQo2)\r\n(0x000001ec0b8dc49b0554336403df1e2ada04fdb57419b771c8eb630e9b3ca04b, 314070917): TransactionDigest(J2YDEhftnRRPhVCjQd5i8DEC2bFPXUeTHpkAC7Nm7Dvp)\r\n(0x000006711d82cfef20f556c7f70ed9fbd90802934831f32c5dddd1dd428477ec, 113151128): TransactionDigest(5UEyecqJBqsmpxpxmjycty6ZZSS2aj2ryYLUL5CuSCpS)\r\n(0x000006711d82cfef20f556c7f70ed9fbd90802934831f32c5dddd1dd428477ec, 140330634): TransactionDigest(9EE8xVh78HKn6R99vPg8sV9Bw1HKw1nbrvmu2Ff4gPNo)\r\n(0x000006711d82cfef20f556c7f70ed9fbd90802934831f32c5dddd1dd428477ec, 183838323): TransactionDigest(5qvFw1xwfpejf5kLzs5ecrqFDsF3AecwhbdiCztVJJ1L)\r\n(0x000006711d82cfef20f556c7f70ed9fbd90802934831f32c5dddd1dd428477ec, 183856691): TransactionDigest(EnzmKUKhMH7Q2HmxJfPkkJD4vvR72UndmXerxQhw1k5T)\r\n(0x000006711d82cfef20f556c7f70ed9fbd90802934831f32c5dddd1dd428477ec, 237505827): TransactionDigest(BXGYqePT88AvvN7ZvbN1Etb3Q1Wabjc9c9tdqEY1ohND)\r\n\r\n\r\n```\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-09T19:52:07Z",
+          "tree_id": "71c333042f4172234cdda96c3d7f711d5a03ff62",
+          "url": "https://github.com/MystenLabs/sui/commit/653c3a0287f9c28889f4cd6185681c01da4645f4"
+        },
+        "date": 1683662497677,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 103409924,
+            "range": "± 4571210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 302929,
+            "range": "± 7809",
             "unit": "ns/iter"
           }
         ]
