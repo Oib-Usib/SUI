@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683642975440,
+  "lastUpdate": 1683649944939,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5003,6 +5003,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 324928,
             "range": "± 33158",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123987499+suiwombat@users.noreply.github.com",
+            "name": "Joe Hrbek",
+            "username": "suiwombat"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "60bbef8c447669b3cd0dffb3a09c0e3c710d120b",
+          "message": "[sui-proxy/increase post body limit to 5 MB] (#11832)\n\nSummary:\r\n\r\n* raise the metrics post limit to 5 MB from 2 MB.\r\n* added instrumentation and also an additional header check for\r\ncontent-length\r\n* move the mimir decode/encode to a dedicated spawn blocking pool to\r\nprevent (potentially) blocking the async runtime\r\n\r\nTest Plan:\r\n\r\nlocal testing and testnet\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-09T11:19:19-05:00",
+          "tree_id": "815303c3ac511c3cf01903aa094e571f92762ed1",
+          "url": "https://github.com/MystenLabs/sui/commit/60bbef8c447669b3cd0dffb3a09c0e3c710d120b"
+        },
+        "date": 1683649923543,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141254217,
+            "range": "± 4673471",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314718,
+            "range": "± 10011",
             "unit": "ns/iter"
           }
         ]
