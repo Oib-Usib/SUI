@@ -359,6 +359,24 @@
 <a href="#359" id="359">359</a>
 <a href="#360" id="360">360</a>
 <a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -415,11 +433,14 @@
         </span>)]
         </span>validator: <span class="prelude-ty">Option</span>&lt;AuthorityName&gt;,
 
-        <span class="attr">#[clap(long = <span class="string">&quot;genesis&quot;</span>)]
-        </span>genesis: PathBuf,
+        <span class="comment">// At least one of genesis or fullnode_rpc_url must be provided
+        </span><span class="attr">#[clap(long = <span class="string">&quot;genesis&quot;</span>)]
+        </span>genesis: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
 
-        <span class="attr">#[clap(long = <span class="string">&quot;history&quot;</span>, help = <span class="string">&quot;show full history of object&quot;</span>)]
-        </span>history: bool,
+        <span class="comment">// At least one of genesis or fullnode_rpc_url must be provided
+        // RPC address to provide the up-to-date committee info
+        </span><span class="attr">#[clap(long = <span class="string">&quot;fullnode-rpc-url&quot;</span>)]
+        </span>fullnode_rpc_url: <span class="prelude-ty">Option</span>&lt;String&gt;,
 
         <span class="doccomment">/// Concise mode groups responses by results.
         /// prints tabular output suitable for processing with unix tools. For
@@ -427,7 +448,7 @@
         /// ```text
         /// $ sui-tool fetch-object --id 0x260efde76ebccf57f4c5e951157f5c361cde822c \
         ///      --genesis $HOME/.sui/sui_config/genesis.blob \
-        ///      --history --verbosity concise --concise-no-header
+        ///      --verbosity concise --concise-no-header
         /// ```
         </span><span class="attr">#[clap(
             value_enum,
@@ -447,8 +468,14 @@
     <span class="doccomment">/// Fetch the effects association with transaction `digest`
     </span><span class="attr">#[clap(name = <span class="string">&quot;fetch-transaction&quot;</span>)]
     </span>FetchTransaction {
-        <span class="attr">#[clap(long = <span class="string">&quot;genesis&quot;</span>)]
-        </span>genesis: PathBuf,
+        <span class="comment">// At least one of genesis or fullnode_rpc_url must be provided
+        </span><span class="attr">#[clap(long = <span class="string">&quot;genesis&quot;</span>)]
+        </span>genesis: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
+
+        <span class="comment">// At least one of genesis or fullnode_rpc_url must be provided
+        // RPC address to provide the up-to-date committee info
+        </span><span class="attr">#[clap(long = <span class="string">&quot;fullnode-rpc-url&quot;</span>)]
+        </span>fullnode_rpc_url: <span class="prelude-ty">Option</span>&lt;String&gt;,
 
         <span class="attr">#[clap(long, help = <span class="string">&quot;The transaction ID to fetch&quot;</span>)]
         </span>digest: TransactionDigest,
@@ -490,8 +517,15 @@
     /// If sequence number is not specified, get the latest authenticated checkpoint.
     </span><span class="attr">#[clap(name = <span class="string">&quot;fetch-checkpoint&quot;</span>)]
     </span>FetchCheckpoint {
-        <span class="attr">#[clap(long = <span class="string">&quot;genesis&quot;</span>)]
-        </span>genesis: PathBuf,
+        <span class="comment">// At least one of genesis or fullnode_rpc_url must be provided
+        </span><span class="attr">#[clap(long = <span class="string">&quot;genesis&quot;</span>)]
+        </span>genesis: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
+
+        <span class="comment">// At least one of genesis or fullnode_rpc_url must be provided
+        // RPC address to provide the up-to-date committee info
+        </span><span class="attr">#[clap(long = <span class="string">&quot;fullnode-rpc-url&quot;</span>)]
+        </span>fullnode_rpc_url: <span class="prelude-ty">Option</span>&lt;String&gt;,
+
         <span class="attr">#[clap(long, help = <span class="string">&quot;Fetch checkpoint at a specific sequence number&quot;</span>)]
         </span>sequence_number: <span class="prelude-ty">Option</span>&lt;CheckpointSequenceNumber&gt;,
     },
@@ -598,11 +632,11 @@
                 validator,
                 genesis,
                 version,
-                history,
+                fullnode_rpc_url,
                 verbosity,
                 concise_no_header,
             } =&gt; {
-                <span class="kw">let </span>output = get_object(id, version, validator, genesis, history).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>output = get_object(id, version, validator, genesis, fullnode_rpc_url).<span class="kw">await</span><span class="question-mark">?</span>;
 
                 <span class="kw">match </span>verbosity {
                     Verbosity::Grouped =&gt; {
@@ -623,10 +657,11 @@
                 genesis,
                 digest,
                 show_input_tx,
+                fullnode_rpc_url,
             } =&gt; {
                 <span class="macro">print!</span>(
                     <span class="string">&quot;{}&quot;</span>,
-                    get_transaction_block(digest, genesis, show_input_tx).<span class="kw">await</span><span class="question-mark">?
+                    get_transaction_block(digest, genesis, show_input_tx, fullnode_rpc_url).<span class="kw">await</span><span class="question-mark">?
                 </span>);
             }
             ToolCommand::DbTool { db_path, cmd } =&gt; {
@@ -661,8 +696,9 @@
             ToolCommand::FetchCheckpoint {
                 genesis,
                 sequence_number,
+                fullnode_rpc_url,
             } =&gt; {
-                <span class="kw">let </span>clients = make_clients(genesis)<span class="question-mark">?</span>;
+                <span class="kw">let </span>clients = make_clients(genesis, fullnode_rpc_url).<span class="kw">await</span><span class="question-mark">?</span>;
 
                 <span class="kw">for </span>(name, (<span class="kw">_</span>, client)) <span class="kw">in </span>clients {
                     <span class="kw">let </span>resp = client

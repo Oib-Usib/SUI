@@ -574,20 +574,62 @@
 <a href="#574" id="574">574</a>
 <a href="#575" id="575">575</a>
 <a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>anyhow::Result;
+<span class="kw">use </span>fastcrypto::traits::ToFromBytes;
 <span class="kw">use </span>futures::future::join_all;
 <span class="kw">use </span>itertools::Itertools;
 <span class="kw">use </span>std::collections::BTreeMap;
 <span class="kw">use </span>std::fmt::Write;
 <span class="kw">use </span>std::path::{Path, PathBuf};
+<span class="kw">use </span>std::time::Duration;
 <span class="kw">use </span>std::{fs, io};
 <span class="kw">use </span>sui_config::{genesis::Genesis, NodeConfig};
 <span class="kw">use </span>sui_core::authority_client::{AuthorityAPI, NetworkAuthorityClient};
 <span class="kw">use </span>sui_network::default_mysten_network_config;
+<span class="kw">use </span>sui_sdk::SuiClientBuilder;
+<span class="kw">use </span>sui_types::crypto::AuthorityPublicKeyBytes;
 <span class="kw">use </span>sui_types::multiaddr::Multiaddr;
 <span class="kw">use </span>sui_types::object::ObjectFormatOptions;
 <span class="kw">use </span>sui_types::{base_types::<span class="kw-2">*</span>, object::Owner};
@@ -602,23 +644,47 @@
 <span class="kw">pub mod </span>commands;
 <span class="kw">pub mod </span>db_tool;
 
-<span class="kw">fn </span>make_clients(
-    genesis: PathBuf,
+<span class="comment">// This functions requires at least one of genesis or fullnode_rpc to be `Some`.
+</span><span class="kw">async fn </span>make_clients(
+    genesis: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
+    fullnode_rpc: <span class="prelude-ty">Option</span>&lt;String&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;BTreeMap&lt;AuthorityName, (Multiaddr, NetworkAuthorityClient)&gt;&gt; {
-    <span class="kw">let </span>net_config = default_mysten_network_config();
-
-    <span class="kw">let </span>genesis = Genesis::load(genesis)<span class="question-mark">?</span>;
-
+    <span class="kw">let </span><span class="kw-2">mut </span>net_config = default_mysten_network_config();
+    net_config.connect_timeout = <span class="prelude-val">Some</span>(Duration::from_secs(<span class="number">5</span>));
     <span class="kw">let </span><span class="kw-2">mut </span>authority_clients = BTreeMap::new();
 
-    <span class="kw">for </span>validator <span class="kw">in </span>genesis.validator_set_for_tooling() {
-        <span class="kw">let </span>metadata = validator.verified_metadata();
-        <span class="kw">let </span>channel = net_config
-            .connect_lazy(<span class="kw-2">&amp;</span>metadata.net_address)
-            .map_err(|err| <span class="macro">anyhow!</span>(err.to_string()))<span class="question-mark">?</span>;
-        <span class="kw">let </span>client = NetworkAuthorityClient::new(channel);
-        <span class="kw">let </span>public_key_bytes = metadata.sui_pubkey_bytes();
-        authority_clients.insert(public_key_bytes, (metadata.net_address.clone(), client));
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(fullnode_rpc) = fullnode_rpc {
+        <span class="kw">let </span>sui_client = SuiClientBuilder::default().build(fullnode_rpc).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>active_validators = sui_client
+            .governance_api()
+            .get_latest_sui_system_state()
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.active_validators;
+
+        <span class="kw">for </span>validator <span class="kw">in </span>active_validators {
+            <span class="kw">let </span>net_addr = Multiaddr::try_from(validator.net_address).unwrap();
+            <span class="kw">let </span>channel = net_config
+                .connect_lazy(<span class="kw-2">&amp;</span>net_addr)
+                .map_err(|err| <span class="macro">anyhow!</span>(err.to_string()))<span class="question-mark">?</span>;
+            <span class="kw">let </span>client = NetworkAuthorityClient::new(channel);
+            <span class="kw">let </span>public_key_bytes =
+                AuthorityPublicKeyBytes::from_bytes(<span class="kw-2">&amp;</span>validator.protocol_pubkey_bytes)<span class="question-mark">?</span>;
+            authority_clients.insert(public_key_bytes, (net_addr.clone(), client));
+        }
+    } <span class="kw">else </span>{
+        <span class="kw">if </span>genesis.is_none() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Either genesis or fullnode_rpc must be specified&quot;</span>));
+        }
+        <span class="kw">let </span>genesis = Genesis::load(genesis.unwrap())<span class="question-mark">?</span>;
+        <span class="kw">for </span>validator <span class="kw">in </span>genesis.validator_set_for_tooling() {
+            <span class="kw">let </span>metadata = validator.verified_metadata();
+            <span class="kw">let </span>channel = net_config
+                .connect_lazy(<span class="kw-2">&amp;</span>metadata.net_address)
+                .map_err(|err| <span class="macro">anyhow!</span>(err.to_string()))<span class="question-mark">?</span>;
+            <span class="kw">let </span>client = NetworkAuthorityClient::new(channel);
+            <span class="kw">let </span>public_key_bytes = metadata.sui_pubkey_bytes();
+            authority_clients.insert(public_key_bytes, (metadata.net_address.clone(), client));
+        }
     }
 
     <span class="prelude-val">Ok</span>(authority_clients)
@@ -694,14 +760,24 @@
             .iter()
             .flat_map(|(name, multiaddr, resp)| {
                 resp.iter().map(|(seq_num, r, timespent)| {
-                    (<span class="kw-2">*</span>name, multiaddr.clone(), seq_num, r, timespent)
+                    (
+                        <span class="kw-2">*</span>name,
+                        multiaddr.clone(),
+                        seq_num,
+                        r,
+                        timespent,
+                        r.as_ref().err(),
+                    )
                 })
             })
-            .sorted_by(|a, b| Ord::cmp(<span class="kw-2">&amp;</span>b.<span class="number">2</span>, <span class="kw-2">&amp;</span>a.<span class="number">2</span>))
-            .group_by(|(<span class="kw">_</span>, <span class="kw">_</span>, seq_num, _r, _ts)| <span class="kw-2">**</span>seq_num);
+            .sorted_by(|a, b| {
+                Ord::cmp(<span class="kw-2">&amp;</span>b.<span class="number">2</span>, <span class="kw-2">&amp;</span>a.<span class="number">2</span>)
+                    .then_with(|| Ord::cmp(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="kw-2">&amp;</span>b.<span class="number">5</span>), <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="kw-2">&amp;</span>a.<span class="number">5</span>)))
+            })
+            .group_by(|(<span class="kw">_</span>, <span class="kw">_</span>, seq_num, _r, _ts, <span class="kw">_</span>)| <span class="kw-2">**</span>seq_num);
         <span class="kw">for </span>(seq_num, group) <span class="kw">in </span><span class="kw-2">&amp;</span>responses {
             <span class="macro">writeln!</span>(f, <span class="string">&quot;seq num: {}&quot;</span>, seq_num.opt_debug(<span class="string">&quot;latest-seq-num&quot;</span>))<span class="question-mark">?</span>;
-            <span class="kw">let </span>cur_version_resp = group.group_by(|(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, r, <span class="kw">_</span>)| <span class="kw">match </span>r {
+            <span class="kw">let </span>cur_version_resp = group.group_by(|(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, r, <span class="kw">_</span>, <span class="kw">_</span>)| <span class="kw">match </span>r {
                 <span class="prelude-val">Ok</span>(result) =&gt; {
                     <span class="kw">let </span>parent_tx_digest = result.object.previous_transaction;
                     <span class="kw">let </span>obj_digest = result.object.compute_object_reference().<span class="number">2</span>;
@@ -722,32 +798,33 @@
                         <span class="macro">writeln!</span>(f, <span class="string">&quot;parent tx: {parent_tx_digest}&quot;</span>)<span class="question-mark">?</span>;
                         <span class="macro">writeln!</span>(f, <span class="string">&quot;owner: {owner}&quot;</span>)<span class="question-mark">?</span>;
                         <span class="macro">writeln!</span>(f, <span class="string">&quot;lock: {lock}&quot;</span>)<span class="question-mark">?</span>;
-                        <span class="kw">for </span>(i, (name, multiaddr, <span class="kw">_</span>, <span class="kw">_</span>, timespent)) <span class="kw">in </span>group.enumerate() {
+                        <span class="kw">for </span>(i, (name, multiaddr, <span class="kw">_</span>, <span class="kw">_</span>, timespent, <span class="kw">_</span>)) <span class="kw">in </span>group.enumerate() {
                             <span class="macro">writeln!</span>(
                                 f,
-                                <span class="string">&quot;        {:&lt;4} {:&lt;66} {:&lt;56} (using {:.3} seconds)&quot;</span>,
+                                <span class="string">&quot;        {:&lt;4} {:&lt;20} {:&lt;56} ({:.3}s)&quot;</span>,
                                 i,
-                                name,
+                                name.concise(),
                                 <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, multiaddr),
                                 timespent
                             )<span class="question-mark">?</span>;
                         }
                     }
                     <span class="prelude-val">None </span>=&gt; {
-                        <span class="macro">writeln!</span>(f, <span class="string">&quot; error&quot;</span>)<span class="question-mark">?</span>;
-                        <span class="kw">for </span>(i, (name, multiaddr, <span class="kw">_</span>, resp, timespent)) <span class="kw">in </span>group.enumerate() {
+                        <span class="macro">writeln!</span>(f, <span class="string">&quot;ERROR&quot;</span>)<span class="question-mark">?</span>;
+                        <span class="kw">for </span>(i, (name, multiaddr, <span class="kw">_</span>, resp, timespent, <span class="kw">_</span>)) <span class="kw">in </span>group.enumerate() {
                             <span class="macro">writeln!</span>(
                                 f,
-                                <span class="string">&quot;        {:&lt;4} {:&lt;66} {:&lt;56} (using {:.3} seconds) {:?}&quot;</span>,
+                                <span class="string">&quot;        {:&lt;4} {:&lt;20} {:&lt;56} ({:.3}s) {:?}&quot;</span>,
                                 i,
-                                name,
+                                name.concise(),
                                 <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, multiaddr),
                                 timespent,
                                 resp
                             )<span class="question-mark">?</span>;
                         }
                     }
-                }
+                };
+                <span class="macro">writeln!</span>(f, <span class="string">&quot;{:&lt;100}\n&quot;</span>, <span class="string">&quot;-&quot;</span>.repeat(<span class="number">100</span>))<span class="question-mark">?</span>;
             }
         }
         <span class="prelude-val">Ok</span>(())
@@ -759,7 +836,7 @@
 <span class="kw">impl </span>ConciseObjectOutput {
     <span class="kw">fn </span>header() -&gt; String {
         <span class="macro">format!</span>(
-            <span class="string">&quot;{:&lt;66} {:&lt;8} {:&lt;66} {:&lt;45} {}&quot;</span>,
+            <span class="string">&quot;{:&lt;20} {:&lt;8} {:&lt;66} {:&lt;45} {}&quot;</span>,
             <span class="string">&quot;validator&quot;</span>, <span class="string">&quot;version&quot;</span>, <span class="string">&quot;digest&quot;</span>, <span class="string">&quot;parent_cert&quot;</span>, <span class="string">&quot;owner&quot;
         </span>)
     }
@@ -771,8 +848,8 @@
             <span class="kw">for </span>(version, resp, _time_elapsed) <span class="kw">in </span>versions {
                 <span class="macro">write!</span>(
                     f,
-                    <span class="string">&quot;{:&lt;66} {:&lt;8}&quot;</span>,
-                    <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, name),
+                    <span class="string">&quot;{:&lt;20} {:&lt;8}&quot;</span>,
+                    <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, name.concise()),
                     version.map(|s| s.value()).opt_debug(<span class="string">&quot;-&quot;</span>)
                 )<span class="question-mark">?</span>;
                 <span class="kw">match </span>resp {
@@ -802,12 +879,12 @@
         <span class="macro">writeln!</span>(f, <span class="string">&quot;Object: {}&quot;</span>, <span class="self">self</span>.<span class="number">0</span>.requested_id)<span class="question-mark">?</span>;
 
         <span class="kw">for </span>(name, multiaddr, versions) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>.responses {
-            <span class="macro">writeln!</span>(f, <span class="string">&quot;validator: {:?}, addr: {:?}&quot;</span>, name, multiaddr)<span class="question-mark">?</span>;
+            <span class="macro">writeln!</span>(f, <span class="string">&quot;validator: {:?}, addr: {:?}&quot;</span>, name.concise(), multiaddr)<span class="question-mark">?</span>;
 
             <span class="kw">for </span>(version, resp, timespent) <span class="kw">in </span>versions {
                 <span class="macro">writeln!</span>(
                     f,
-                    <span class="string">&quot;-- version: {} (using {:.3} seconds)&quot;</span>,
+                    <span class="string">&quot;-- version: {} ({:.3}s)&quot;</span>,
                     version.opt_debug(<span class="string">&quot;&lt;version not available&gt;&quot;</span>),
                     timespent,
                 )<span class="question-mark">?</span>;
@@ -852,10 +929,10 @@
     obj_id: ObjectID,
     version: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     validator: <span class="prelude-ty">Option</span>&lt;AuthorityName&gt;,
-    genesis: PathBuf,
-    history: bool,
+    genesis: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
+    fullnode_rpc: <span class="prelude-ty">Option</span>&lt;String&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectData&gt; {
-    <span class="kw">let </span>clients = make_clients(genesis)<span class="question-mark">?</span>;
+    <span class="kw">let </span>clients = make_clients(genesis, fullnode_rpc).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">let </span>responses = join_all(
         clients
@@ -868,7 +945,7 @@
                 </span>}
             })
             .map(|(name, (address, client))| <span class="kw">async </span>{
-                <span class="kw">let </span>object_versions = get_object_impl(client, obj_id, version, history).<span class="kw">await</span>;
+                <span class="kw">let </span>object_versions = get_object_impl(client, obj_id, version).<span class="kw">await</span>;
                 (<span class="kw-2">*</span>name, address.clone(), object_versions)
             }),
     )
@@ -882,10 +959,11 @@
 
 <span class="kw">pub async fn </span>get_transaction_block(
     tx_digest: TransactionDigest,
-    genesis: PathBuf,
+    genesis: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
     show_input_tx: bool,
+    fullnode_rpc: <span class="prelude-ty">Option</span>&lt;String&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-    <span class="kw">let </span>clients = make_clients(genesis)<span class="question-mark">?</span>;
+    <span class="kw">let </span>clients = make_clients(genesis, fullnode_rpc).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">let </span>timer = Instant::now();
     <span class="kw">let </span>responses = join_all(clients.iter().map(|(name, (address, client))| <span class="kw">async </span>{
         <span class="kw">let </span>result = client
@@ -902,6 +980,9 @@
     }))
     .<span class="kw">await</span>;
 
+    <span class="comment">// Grab one validator that return Some(TransactionInfoResponse)
+    </span><span class="kw">let </span>validator_aware_of_tx = responses.iter().find(|r| r.<span class="number">2</span>.is_ok());
+
     <span class="kw">let </span>responses = responses
         .iter()
         .map(|r| {
@@ -912,10 +993,13 @@
                         TransactionStatus::Executed(<span class="kw">_</span>, effects, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(effects.digest()),
                     })
                     .ok();
-            (key, r)
+            <span class="kw">let </span>err = r.<span class="number">2</span>.as_ref().err();
+            (key, err, r)
         })
-        .sorted_by(|(k1, <span class="kw">_</span>), (k2, <span class="kw">_</span>)| Ord::cmp(k1, k2))
-        .group_by(|(<span class="kw">_</span>, r)| {
+        .sorted_by(|(k1, err1, <span class="kw">_</span>), (k2, err2, <span class="kw">_</span>)| {
+            Ord::cmp(k1, k2).then_with(|| Ord::cmp(err1, err2))
+        })
+        .group_by(|(<span class="kw">_</span>, _err, r)| {
             r.<span class="number">2</span>.as_ref().map(|ok_result| <span class="kw">match </span><span class="kw-2">&amp;</span>ok_result.status {
                 TransactionStatus::Signed(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
                 TransactionStatus::Executed(<span class="kw">_</span>, effects, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((
@@ -945,67 +1029,59 @@
                     <span class="string">&quot;#{:&lt;2} tx_digest: {:&lt;68?} Signed but not executed&quot;</span>,
                     i, tx_digest
                 )<span class="question-mark">?</span>;
+                <span class="kw">if </span>show_input_tx {
+                    <span class="comment">// In this case, we expect at least one validator knows about this tx
+                    </span><span class="kw">let </span>validator_aware_of_tx = validator_aware_of_tx.unwrap();
+                    <span class="kw">let </span>client = <span class="kw-2">&amp;</span>clients.get(<span class="kw-2">&amp;</span>validator_aware_of_tx.<span class="number">0</span>).unwrap().<span class="number">1</span>;
+                    <span class="kw">let </span>tx_info = client.handle_transaction_info_request(TransactionInfoRequest {
+                        transaction_digest: tx_digest,
+                    }).<span class="kw">await</span>.unwrap_or_else(|e| <span class="macro">panic!</span>(<span class="string">&quot;Validator {:?} should have known about tx_digest: {:?}, got error: {:?}&quot;</span>, validator_aware_of_tx.<span class="number">0</span>, tx_digest, e));
+                    <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut </span>s, <span class="string">&quot;{:#?}&quot;</span>, tx_info)<span class="question-mark">?</span>;
+                }
             }
             other =&gt; {
                 <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut </span>s, <span class="string">&quot;#{:&lt;2} {:#?}&quot;</span>, i, other)<span class="question-mark">?</span>;
             }
         }
-        <span class="kw">for </span>(j, (<span class="kw">_</span>, res)) <span class="kw">in </span>group.enumerate() {
+        <span class="kw">for </span>(j, (<span class="kw">_</span>, <span class="kw">_</span>, res)) <span class="kw">in </span>group.enumerate() {
             <span class="macro">writeln!</span>(
                 <span class="kw-2">&amp;mut </span>s,
-                <span class="string">&quot;        {:&lt;4} {:&lt;66} {:&lt;56} (using {:.3} seconds)&quot;</span>,
+                <span class="string">&quot;        {:&lt;4} {:&lt;20} {:&lt;56} ({:.3}s)&quot;</span>,
                 j,
-                res.<span class="number">0</span>,
+                res.<span class="number">0</span>.concise(),
                 <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, res.<span class="number">1</span>),
                 res.<span class="number">3
             </span>)<span class="question-mark">?</span>;
         }
-        <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut </span>s)<span class="question-mark">?</span>;
+        <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut </span>s, <span class="string">&quot;{:&lt;100}\n&quot;</span>, <span class="string">&quot;-&quot;</span>.repeat(<span class="number">100</span>))<span class="question-mark">?</span>;
     }
     <span class="prelude-val">Ok</span>(s)
 }
 
-<span class="kw">async fn </span>get_object_impl(
+<span class="comment">// Keep the return type a vector in case we need support for lamport versions in the near future
+</span><span class="kw">async fn </span>get_object_impl(
     client: <span class="kw-2">&amp;</span>NetworkAuthorityClient,
     id: ObjectID,
-    start_version: <span class="prelude-ty">Option</span>&lt;u64&gt;,
-    full_history: bool,
+    version: <span class="prelude-ty">Option</span>&lt;u64&gt;,
 ) -&gt; Vec&lt;(<span class="prelude-ty">Option</span>&lt;SequenceNumber&gt;, <span class="prelude-ty">Result</span>&lt;ObjectInfoResponse&gt;, f64)&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>ret = Vec::new();
-    <span class="kw">let </span><span class="kw-2">mut </span>version = start_version;
 
-    <span class="kw">loop </span>{
-        <span class="kw">let </span>start = Instant::now();
-        <span class="kw">let </span>resp = client
-            .handle_object_info_request(ObjectInfoRequest {
-                object_id: id,
-                object_format_options: <span class="prelude-val">Some</span>(ObjectFormatOptions::default()),
-                request_kind: <span class="kw">match </span>version {
-                    <span class="prelude-val">None </span>=&gt; ObjectInfoRequestKind::LatestObjectInfo,
-                    <span class="prelude-val">Some</span>(v) =&gt; {
-                        ObjectInfoRequestKind::PastObjectInfoDebug(SequenceNumber::from_u64(v))
-                    }
-                },
-            })
-            .<span class="kw">await
-            </span>.map_err(anyhow::Error::from);
-        <span class="kw">let </span>elapsed = start.elapsed().as_secs_f64();
+    <span class="kw">let </span>start = Instant::now();
+    <span class="kw">let </span>resp = client
+        .handle_object_info_request(ObjectInfoRequest {
+            object_id: id,
+            object_format_options: <span class="prelude-val">Some</span>(ObjectFormatOptions::default()),
+            request_kind: <span class="kw">match </span>version {
+                <span class="prelude-val">None </span>=&gt; ObjectInfoRequestKind::LatestObjectInfo,
+                <span class="prelude-val">Some</span>(v) =&gt; ObjectInfoRequestKind::PastObjectInfoDebug(SequenceNumber::from_u64(v)),
+            },
+        })
+        .<span class="kw">await
+        </span>.map_err(anyhow::Error::from);
+    <span class="kw">let </span>elapsed = start.elapsed().as_secs_f64();
 
-        <span class="kw">let </span>resp_version = resp.as_ref().ok().map(|r| r.object.version().value());
-        ret.push((resp_version.map(SequenceNumber::from), resp, elapsed));
-
-        version = <span class="kw">match </span>(version, resp_version) {
-            (<span class="prelude-val">Some</span>(v), <span class="kw">_</span>) | (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(v)) =&gt; {
-                <span class="kw">if </span>v == <span class="number">1 </span>|| !full_history {
-                    <span class="kw">break</span>;
-                } <span class="kw">else </span>{
-                    <span class="comment">// TODO: With lamport versioning, this is very inefficient.
-                    </span><span class="prelude-val">Some</span>(v - <span class="number">1</span>)
-                }
-            }
-            <span class="kw">_ </span>=&gt; <span class="kw">break</span>,
-        };
-    }
+    <span class="kw">let </span>resp_version = resp.as_ref().ok().map(|r| r.object.version().value());
+    ret.push((resp_version.map(SequenceNumber::from), resp, elapsed));
 
     ret
 }
