@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683651079336,
+  "lastUpdate": 1683651467149,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5219,6 +5219,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 382678,
             "range": "± 34963",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "127570466+wlmyng@users.noreply.github.com",
+            "name": "wlmyng",
+            "username": "wlmyng"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bac24f75b4ddb900b3720ce43a0bbecd65dd5f5f",
+          "message": "1/n improve sui-json-rpc error codes and handling (#11736)\n\n## Description \r\nMost of the errors we return in `sui-json-rpc` are `anyhow::Error`s that\r\nthen get converted to `RpcError`. Or, if we keep things in\r\n`sui_json_rpc::Error`, there is a catch-all `From` implementation that\r\nconverts all variants to `CallError::Failed`.\r\n\r\nIn this PR, the `From` implementation is expanded to map some variants\r\nto `RpcError::Call(CallError::InvalidParams` instead, so that we can\r\nreturn different error codes rather than defaulting to `-32000` for\r\neverything.\r\n\r\nThis will help w/ differentiating server from client errors, and we can\r\nmake use of this for alerting on error logs.\r\nStart with `UserInputErrors`, which now map to error code `-32602`. Also\r\nlog error code if available.\r\n\r\nIn terms of performance, there shouldn't be any impact since we do the\r\nsame number of conversions. Only, instead of `JoinError` ->\r\n`anyhow::Error` -> `RpcError`, or `anyhow::Error` -> `anyhow::Error` ->\r\n`RpcError`, we now do `error from inner call` -> `sui_json_rpc::Error`\r\n-> `RpcError`.\r\n\r\n```\r\ncurl --location '127.0.0.1:9000' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"jsonrpc\": \"2.0\",\r\n  \"id\": 1,\r\n  \"method\": \"sui_getTransactionBlock\",\r\n  \"params\": [\r\n    [\r\n      \"DwRWCvrkfauz95wTrfJxi3VSWdMZWCEtdPCiaZhcanZh\"\r\n    ],\r\n    {\r\n      \"showInput\": true,\r\n      \"showRawInput\": false,\r\n      \"showEffects\": true,\r\n      \"showEvents\": true,\r\n      \"showObjectChanges\": false,\r\n      \"showBalanceChanges\": false\r\n    }\r\n  ]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"error\":{\"code\":-32602,\"message\":\"invalid type: sequence, expected a string at line 2 column 4\"},\"id\":1}%       \r\n```\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-09T09:41:46-07:00",
+          "tree_id": "1e3b4659a92bb24d57aabe84bbea9c9e4ef3aee1",
+          "url": "https://github.com/MystenLabs/sui/commit/bac24f75b4ddb900b3720ce43a0bbecd65dd5f5f"
+        },
+        "date": 1683651454790,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149929364,
+            "range": "± 5042065",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308866,
+            "range": "± 19160",
             "unit": "ns/iter"
           }
         ]
