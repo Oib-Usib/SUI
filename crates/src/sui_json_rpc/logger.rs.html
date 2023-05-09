@@ -18,6 +18,20 @@
 <a href="#18" id="18">18</a>
 <a href="#19" id="19">19</a>
 <a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,13 +39,27 @@
 </span><span class="macro">macro_rules! </span>with_tracing {
     (<span class="macro-nonterminal">$method_name</span>:literal, <span class="macro-nonterminal">$future</span>:expr) =&gt; {{
         <span class="kw">use </span>tracing::{info, error, Instrument, Span};
+        <span class="kw">use </span>jsonrpsee::core::{RpcResult, Error <span class="kw">as </span>RpcError};
+        <span class="kw">use </span>jsonrpsee::types::error::{CallError, INVALID_PARAMS_CODE, CALL_EXECUTION_FAILED_CODE};
+
         <span class="kw">async move </span>{
-            <span class="kw">let </span>result = <span class="macro-nonterminal">$future</span>.<span class="kw">await</span>;
+            <span class="kw">let </span>result: RpcResult&lt;<span class="kw">_</span>&gt; = <span class="macro-nonterminal">$future</span>.<span class="kw">await</span>;
+
             <span class="kw">match </span><span class="kw-2">&amp;</span>result {
                 <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">info!</span>(<span class="string">&quot;success&quot;</span>),
-                <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">error!</span>(error = <span class="question-mark">?</span>e, <span class="string">&quot;failed&quot;</span>),
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="kw">match </span>e {
+                        RpcError::Call(call_error) =&gt; {
+                            <span class="kw">let </span>error_code = <span class="kw">match </span>call_error {
+                                CallError::InvalidParams(<span class="kw">_</span>) =&gt; INVALID_PARAMS_CODE,
+                                <span class="kw">_ </span>=&gt; CALL_EXECUTION_FAILED_CODE
+                            };
+                            <span class="macro">error!</span>(error = <span class="question-mark">?</span>e, error_code = error_code);
+                        }
+                        <span class="kw">_ </span>=&gt; <span class="macro">error!</span>(error = <span class="question-mark">?</span>e),
+                    }
+                }
             }
-
             result
         }
         .instrument(Span::current())
