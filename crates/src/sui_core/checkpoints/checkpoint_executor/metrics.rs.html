@@ -94,7 +94,6 @@
 <a href="#94" id="94">94</a>
 <a href="#95" id="95">95</a>
 <a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -108,7 +107,6 @@
 <span class="kw">pub struct </span>CheckpointExecutorMetrics {
     <span class="kw">pub </span>checkpoint_exec_sync_tps: IntGauge,
     <span class="kw">pub </span>last_executed_checkpoint: IntGauge,
-    <span class="kw">pub </span>last_executed_checkpoint_timestamp_ms: IntGauge,
     <span class="kw">pub </span>checkpoint_exec_errors: IntCounter,
     <span class="kw">pub </span>checkpoint_exec_epoch: IntGauge,
     <span class="kw">pub </span>checkpoint_exec_inflight: IntGauge,
@@ -116,6 +114,7 @@
     <span class="kw">pub </span>checkpoint_prepare_latency_us: Histogram,
     <span class="kw">pub </span>checkpoint_transaction_count: Histogram,
     <span class="kw">pub </span>checkpoint_contents_age_ms: Histogram,
+    <span class="kw">pub </span>last_executed_checkpoint_age_ms: Histogram,
     <span class="kw">pub </span>accumulator_inconsistent_state: IntGauge,
 }
 
@@ -131,12 +130,6 @@
             last_executed_checkpoint: <span class="macro">register_int_gauge_with_registry!</span>(
                 <span class="string">&quot;last_executed_checkpoint&quot;</span>,
                 <span class="string">&quot;Last executed checkpoint&quot;</span>,
-                registry
-            )
-            .unwrap(),
-            last_executed_checkpoint_timestamp_ms: <span class="macro">register_int_gauge_with_registry!</span>(
-                <span class="string">&quot;last_executed_checkpoint_timestamp_ms&quot;</span>,
-                <span class="string">&quot;Last executed checkpoint timestamp ms&quot;</span>,
                 registry
             )
             .unwrap(),
@@ -177,6 +170,11 @@
                 <span class="string">&quot;checkpoint_contents_age_ms&quot;</span>,
                 <span class="string">&quot;Age of checkpoints when they arrive for execution&quot;</span>,
                 registry,
+            ),
+            last_executed_checkpoint_age_ms: Histogram::new_in_registry(
+                <span class="string">&quot;last_executed_checkpoint_age_ms&quot;</span>,
+                <span class="string">&quot;Age of the last executed checkpoint&quot;</span>,
+                registry
             ),
             accumulator_inconsistent_state: <span class="macro">register_int_gauge_with_registry!</span>(
                 <span class="string">&quot;accumulator_inconsistent_state&quot;</span>,

@@ -674,6 +674,23 @@
 <a href="#674" id="674">674</a>
 <a href="#675" id="675">675</a>
 <a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -704,12 +721,16 @@
 <span class="kw">use </span>std::fmt::{Debug, Display, Formatter};
 <span class="kw">use </span>std::slice::Iter;
 <span class="kw">use </span>std::time::{Duration, SystemTime, UNIX_EPOCH};
+<span class="kw">use </span>tap::TapFallible;
+<span class="kw">use </span>tracing::warn;
 
 <span class="kw">pub use </span><span class="kw">crate</span>::digests::CheckpointContentsDigest;
 <span class="kw">pub use </span><span class="kw">crate</span>::digests::CheckpointDigest;
 
 <span class="kw">pub type </span>CheckpointSequenceNumber = u64;
 <span class="kw">pub type </span>CheckpointTimestamp = u64;
+
+<span class="kw">use </span>mysten_metrics::histogram::Histogram;
 
 <span class="attr">#[derive(Clone, Debug, Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>CheckpointRequest {
@@ -879,6 +900,19 @@
         <span class="self">self</span>.end_of_epoch_data
             .as_ref()
             .map(|e| e.next_epoch_committee.as_slice())
+    }
+
+    <span class="kw">pub fn </span>report_checkpoint_age_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, metrics: <span class="kw-2">&amp;</span>Histogram) {
+        SystemTime::now()
+            .duration_since(<span class="self">self</span>.timestamp())
+            .map(|latency| metrics.report(latency.as_millis() <span class="kw">as </span>u64))
+            .tap_err(|err| {
+                <span class="macro">warn!</span>(
+                    checkpoint_seq = <span class="self">self</span>.sequence_number,
+                    <span class="string">&quot;unable to compute checkpoint age: {}&quot;</span>, err
+                )
+            })
+            .ok();
     }
 }
 

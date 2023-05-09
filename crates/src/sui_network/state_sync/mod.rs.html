@@ -1188,8 +1188,6 @@
 <a href="#1188" id="1188">1188</a>
 <a href="#1189" id="1189">1189</a>
 <a href="#1190" id="1190">1190</a>
-<a href="#1191" id="1191">1191</a>
-<a href="#1192" id="1192">1192</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1244,7 +1242,7 @@
 <span class="kw">use </span>std::{
     collections::HashMap,
     sync::{Arc, RwLock},
-    time::{Duration, SystemTime},
+    time::Duration,
 };
 <span class="kw">use </span>sui_config::p2p::StateSyncConfig;
 <span class="kw">use </span>sui_types::{
@@ -1261,7 +1259,7 @@
     sync::{broadcast, mpsc, watch},
     task::{AbortHandle, JoinSet},
 };
-<span class="kw">use </span>tracing::{debug, info, trace, warn};
+<span class="kw">use </span>tracing::{debug, info, trace};
 
 <span class="kw">mod </span>generated {
     <span class="macro">include!</span>(<span class="macro">concat!</span>(<span class="macro">env!</span>(<span class="string">&quot;OUT_DIR&quot;</span>), <span class="string">&quot;/sui.StateSync.rs&quot;</span>));
@@ -2098,12 +2096,10 @@
             }
         };
 
-        <span class="macro">debug!</span>(sequence_number = <span class="question-mark">?</span>checkpoint.sequence_number(), <span class="string">&quot;verified checkpoint summary&quot;</span>);
-        SystemTime::now()
-            .duration_since(checkpoint.timestamp())
-            .map(|latency| metrics.report_checkpoint_summary_age(latency))
-            .tap_err(|err| <span class="macro">warn!</span>(<span class="string">&quot;unable to compute checkpoint age: {}&quot;</span>, err))
-            .ok();
+        <span class="macro">debug!</span>(checkpoint_seq = <span class="question-mark">?</span>checkpoint.sequence_number(), <span class="string">&quot;verified checkpoint summary&quot;</span>);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(checkpoint_summary_age_metric) = metrics.checkpoint_summary_age_metric() {
+            checkpoint.report_checkpoint_age_ms(checkpoint_summary_age_metric);
+        }
 
         current = checkpoint.clone();
         <span class="comment">// Insert the newly verified checkpoint into our store, which will bump our highest

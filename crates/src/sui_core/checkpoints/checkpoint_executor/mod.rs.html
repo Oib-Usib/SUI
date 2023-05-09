@@ -988,13 +988,6 @@
 <a href="#988" id="988">988</a>
 <a href="#989" id="989">989</a>
 <a href="#990" id="990">990</a>
-<a href="#991" id="991">991</a>
-<a href="#992" id="992">992</a>
-<a href="#993" id="993">993</a>
-<a href="#994" id="994">994</a>
-<a href="#995" id="995">995</a>
-<a href="#996" id="996">996</a>
-<a href="#997" id="997">997</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1018,7 +1011,7 @@
 </span><span class="kw">use </span>std::{
     collections::HashMap,
     sync::Arc,
-    time::{Duration, Instant, SystemTime},
+    time::{Duration, Instant},
 };
 
 <span class="kw">use </span>futures::stream::FuturesOrdered;
@@ -1036,7 +1029,7 @@
     transaction::VerifiedTransaction,
 };
 <span class="kw">use </span>sui_types::{error::SuiResult, transaction::TransactionDataAPI};
-<span class="kw">use </span>tap::{TapFallible, TapOptional};
+<span class="kw">use </span>tap::TapOptional;
 <span class="kw">use </span>tokio::{
     sync::broadcast::{<span class="self">self</span>, error::RecvError},
     task::JoinHandle,
@@ -1199,12 +1192,7 @@
                             sequence_number = <span class="question-mark">?</span>checkpoint.sequence_number,
                             <span class="string">&quot;received checkpoint summary from state sync&quot;
                         </span>);
-                        SystemTime::now().duration_since(checkpoint.timestamp())
-                            .map(|latency|
-                                <span class="self">self</span>.metrics.checkpoint_contents_age_ms.report(latency.as_millis() <span class="kw">as </span>u64)
-                            )
-                            .tap_err(|err| <span class="macro">warn!</span>(<span class="string">&quot;unable to compute checkpoint age: {}&quot;</span>, err))
-                            .ok();
+                        checkpoint.report_checkpoint_age_ms(<span class="kw-2">&amp;</span><span class="self">self</span>.metrics.checkpoint_contents_age_ms);
                     },
                     <span class="comment">// In this case, messages in the mailbox have been overwritten
                     // as a result of lagging too far behind.
@@ -1233,7 +1221,6 @@
     </span><span class="kw">fn </span>process_executed_checkpoint(<span class="kw-2">&amp;</span><span class="self">self</span>, checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint) {
         <span class="comment">// Ensure that we are not skipping checkpoints at any point
         </span><span class="kw">let </span>seq = <span class="kw-2">*</span>checkpoint.sequence_number();
-        <span class="kw">let </span>timestamp_ms = checkpoint.timestamp_ms;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(prev_highest) = <span class="self">self
             </span>.checkpoint_store
             .get_highest_executed_checkpoint_seq_number()
@@ -1272,9 +1259,8 @@
             .update_highest_executed_checkpoint(checkpoint)
             .unwrap();
         <span class="self">self</span>.metrics.last_executed_checkpoint.set(seq <span class="kw">as </span>i64);
-        <span class="self">self</span>.metrics
-            .last_executed_checkpoint_timestamp_ms
-            .set(timestamp_ms <span class="kw">as </span>i64);
+
+        checkpoint.report_checkpoint_age_ms(<span class="kw-2">&amp;</span><span class="self">self</span>.metrics.last_executed_checkpoint_age_ms);
     }
 
     <span class="kw">async fn </span>schedule_synced_checkpoints(
