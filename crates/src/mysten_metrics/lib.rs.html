@@ -417,6 +417,9 @@
 <a href="#417" id="417">417</a>
 <a href="#418" id="418">418</a>
 <a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -728,8 +731,11 @@
 
 <span class="doccomment">/// Create a metric that measures the uptime from when this metric was constructed.
 /// The metric is labeled with the provided &#39;version&#39; label (this should generally be of the
-/// format: &#39;semver-gitrevision&#39;).
-</span><span class="kw">pub fn </span>uptime_metric(version: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; Box&lt;<span class="kw">dyn </span>prometheus::core::Collector&gt; {
+/// format: &#39;semver-gitrevision&#39;) and the provided &#39;chain_identifier&#39; label.
+</span><span class="kw">pub fn </span>uptime_metric(
+    version: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+    chain_identifier: <span class="kw-2">&amp;</span>str,
+) -&gt; Box&lt;<span class="kw">dyn </span>prometheus::core::Collector&gt; {
     <span class="kw">let </span>opts = <span class="macro">prometheus::opts!</span>(<span class="string">&quot;uptime&quot;</span>, <span class="string">&quot;uptime of the node service in seconds&quot;</span>)
         .variable_label(<span class="string">&quot;version&quot;</span>);
 
@@ -739,7 +745,7 @@
         opts,
         prometheus_closure_metric::ValueType::Counter,
         uptime,
-        <span class="kw-2">&amp;</span>[version],
+        <span class="kw-2">&amp;</span>[version, chain_identifier],
     )
     .unwrap();
 
