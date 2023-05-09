@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683651467149,
+  "lastUpdate": 1683651965657,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5255,6 +5255,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308866,
             "range": "± 19160",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6786ccfb71a2a3077a1f65d01f302974af340324",
+          "message": "indexer: revert data trimming on obj & tx data (#11848)\n\n## Description \r\n\r\nBefore mainnet, I trimmed obj & tx data to temp. reduce storage\r\nconsumption, but these are needed for new features of address & active\r\naddress count, thus this PR resumed that.\r\nAlso per [DB size\r\ndash](https://metrics.sui.io/d/4P9w6d14z/sui-indexer?orgId=1&refresh=1m&from=1683606004118&to=1683649204118&viewPanel=55),\r\ncurrent storage is 20GB after a week, and we can at least do 2.5TiB, so\r\nthis move should be safe.\r\n\r\n## Test Plan \r\n\r\nLocal run to make sure that tx and object data are indeed populated with\r\nfull contents.",
+          "timestamp": "2023-05-09T12:54:23-04:00",
+          "tree_id": "6943b1d905abce4410681cbb965976ea60b288af",
+          "url": "https://github.com/MystenLabs/sui/commit/6786ccfb71a2a3077a1f65d01f302974af340324"
+        },
+        "date": 1683651953134,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 154259248,
+            "range": "± 4956978",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 405175,
+            "range": "± 24043",
             "unit": "ns/iter"
           }
         ]
