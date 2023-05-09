@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683670654085,
+  "lastUpdate": 1683672869539,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5543,6 +5543,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312264,
             "range": "± 19736",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "55d459d7f07663914684c5d9aedb6e4fe01e0098",
+          "message": "allow some sui tool commands to take a fullnode-rpc arg and use the latest committee (#11824)\n\n## Description \r\n\r\nAs title. Also remove some stale implementations and use concise keys.\r\n\r\nExample:\r\n```\r\n./sui-tool fetch-object --id 0xa577f89fcadd5805f2a9ae0b12670d3051d938e34c702484d2a5b15dd92bc057   --fullnode-rpc https://rpc.mainnet.sui.io:443\r\n```\r\n\r\n## Test Plan \r\n\r\nlocally tested sui-tool\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nAllow some sui tool commands to take a fullnode-rpc arg and use the\r\nlatest committee. Also remove some stale implementations and use concise\r\nkeys.",
+          "timestamp": "2023-05-09T22:39:37Z",
+          "tree_id": "152fc01acc9f8b0903226d7d94375b98e8a19af1",
+          "url": "https://github.com/MystenLabs/sui/commit/55d459d7f07663914684c5d9aedb6e4fe01e0098"
+        },
+        "date": 1683672845047,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 140942822,
+            "range": "± 4626756",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 303694,
+            "range": "± 21384",
             "unit": "ns/iter"
           }
         ]
