@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683650760974,
+  "lastUpdate": 1683651079336,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5183,6 +5183,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 315152,
             "range": "± 11463",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "119884990+chargarlic@users.noreply.github.com",
+            "name": "Rahul Nair",
+            "username": "chargarlic"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "82c162e7755d05377e8bead5df847b8dfe5d0c6f",
+          "message": "Simply Signing With KMS (#11822)\n\n## Description \r\n\r\nFollow up to #11283 This PR simplifies the SignKMS function by adding an\r\noption to pass the sui secp256k1 publickey in base64 as a parameter.\r\nPreviously we were signing a digest with AWS KMS and recovered the\r\npublic key from the signature but leads to unwanted side effects such as\r\noccasionally recovering the wrong public key/ incorrect\r\nserialized_signature.\r\nThe pem pubkey from aws can be converted with this helper\r\n[program](https://github.com/MystenLabs/base64pemkey).\r\n\r\nSince the user has to know their publickey/address in order to figure\r\nout the object_id it would be best to pass the publickey as a parameter\r\nand leverage it rather than going down the path of ecrecover.\r\n\r\nIdeal usage would be \r\n`sui keytool sign-kms --data $TX_BYTES --keyid $KMS_KEY_ID --base64pk\r\n$pubkey_b64`\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nRemove SignatureRecovery to Obtain PubKey for AWS KMS Signing.",
+          "timestamp": "2023-05-09T09:38:17-07:00",
+          "tree_id": "d2edb77f38db9b918ec431ddd8132b1de558b6d2",
+          "url": "https://github.com/MystenLabs/sui/commit/82c162e7755d05377e8bead5df847b8dfe5d0c6f"
+        },
+        "date": 1683650991472,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151211613,
+            "range": "± 4418949",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 382678,
+            "range": "± 34963",
             "unit": "ns/iter"
           }
         ]
