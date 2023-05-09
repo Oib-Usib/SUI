@@ -1253,6 +1253,7 @@
 <a href="#1253" id="1253">1253</a>
 <a href="#1254" id="1254">1254</a>
 <a href="#1255" id="1255">1255</a>
+<a href="#1256" id="1256">1256</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1395,10 +1396,11 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiTransactionBlockResponse&gt;, Error&gt; {
         <span class="kw">let </span>num_digests = digests.len();
         <span class="kw">if </span>num_digests &gt; <span class="kw-2">*</span>QUERY_MAX_RESULT_LIMIT {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UserInputError(UserInputError::SizeLimitExceeded {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(UserInputError::SizeLimitExceeded {
                 limit: <span class="string">&quot;multi get transaction input limit&quot;</span>.to_string(),
-                value: QUERY_MAX_RESULT_LIMIT.to_string(),
-            }));
+                value: QUERY_MAX_RESULT_LIMIT.to_string()
+            })
+            .into());
         }
         <span class="self">self</span>.metrics
             .get_tx_blocks_limit
@@ -1742,9 +1744,9 @@
                     .inc_by(objects.len() <span class="kw">as </span>u64);
                 <span class="prelude-val">Ok</span>(objects)
             } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(Error::UserInputError(UserInputError::SizeLimitExceeded {
+                <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(UserInputError::SizeLimitExceeded {
                     limit: <span class="string">&quot;input limit&quot;</span>.to_string(),
-                    value: QUERY_MAX_RESULT_LIMIT.to_string(),
+                    value: QUERY_MAX_RESULT_LIMIT.to_string()
                 })
                 .into())
             }
@@ -1833,9 +1835,9 @@
                     <span class="prelude-val">Ok</span>(success)
                 }
             } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(Error::UserInputError(UserInputError::SizeLimitExceeded {
+                <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(UserInputError::SizeLimitExceeded {
                     limit: <span class="string">&quot;input limit&quot;</span>.to_string(),
-                    value: QUERY_MAX_RESULT_LIMIT.to_string(),
+                    value: QUERY_MAX_RESULT_LIMIT.to_string()
                 })
                 .into())
             }
@@ -2012,7 +2014,7 @@
                     .<span class="kw">await
             </span>})
             .<span class="kw">await
-            </span>.map_err(Error::from)<span class="question-mark">??</span>)
+            </span>.map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">??</span>)
         })
     }
 
