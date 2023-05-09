@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683650217330,
+  "lastUpdate": 1683650522100,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5111,6 +5111,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 344606,
             "range": "± 42007",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8ba704b55eaee72f664ef94947085860360b7ba2",
+          "message": "[Narwhal] deduplicate missing parents in vote requests (#11835)\n\n## Description \r\n\r\nWe have observed correlations among spikes in certificates in votes,\r\nsend certificate handler p95 latency, and observed average latency when\r\nsubmitting to consensus. This issue can be observed in many validators\r\non testnet and private-testnet too. It seems the logic to request\r\nmissing parent certificates from header proposer is problematic, where\r\nit is easy to cause a surge of certificates and overwhelm Narwhal, e.g.\r\nwith requests to certificate stores.\r\n\r\nIn this PR, a limit is added to request a missing parent certificate\r\nonly from one header proposer. Additional protections against byzantine\r\nprimaries sending unrequested parent certificates and overwhelming the\r\nsystem have also been added.\r\n\r\nThis change weakens the guarantee of certificate propagation via header\r\nproposal and voting. A missing parent certificate may never get sent by\r\nthe header proposer because it is down. So to maintain liveness\r\nguarantee, certificate fetching is triggered 30s after no consensus\r\ncommit happens.\r\n\r\n## Test Plan \r\n\r\nCI. Deploy to private testnet.\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-09T16:26:08Z",
+          "tree_id": "81cf44770611ae78b851019d5a24fd9dc5c0cbf3",
+          "url": "https://github.com/MystenLabs/sui/commit/8ba704b55eaee72f664ef94947085860360b7ba2"
+        },
+        "date": 1683650454929,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148638213,
+            "range": "± 5268661",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 465267,
+            "range": "± 86289",
             "unit": "ns/iter"
           }
         ]
