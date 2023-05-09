@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683649977417,
+  "lastUpdate": 1683650217330,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5075,6 +5075,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 303890,
             "range": "± 17282",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123987499+suiwombat@users.noreply.github.com",
+            "name": "Joe Hrbek",
+            "username": "suiwombat"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "53210d36bc187ff5431e6d051962b402d66551bf",
+          "message": "[sui-proxy/increase mimir timeout] (#11845)\n\nSummary:\r\n\r\n* mimir is getting close to 15 seconds for posting in the p95 graphs.\r\n* bump this timeout to 30 to buy us time to root cause\r\n\r\nTest Plan:\r\n\r\nlocally & cargo build\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-09T16:22:26Z",
+          "tree_id": "b6a4837cf99bfaaa9a3c4b128e1a7900c36dafab",
+          "url": "https://github.com/MystenLabs/sui/commit/53210d36bc187ff5431e6d051962b402d66551bf"
+        },
+        "date": 1683650128632,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151330848,
+            "range": "± 4836850",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 344606,
+            "range": "± 42007",
             "unit": "ns/iter"
           }
         ]
