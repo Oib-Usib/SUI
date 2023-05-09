@@ -942,18 +942,6 @@
 <a href="#942" id="942">942</a>
 <a href="#943" id="943">943</a>
 <a href="#944" id="944">944</a>
-<a href="#945" id="945">945</a>
-<a href="#946" id="946">946</a>
-<a href="#947" id="947">947</a>
-<a href="#948" id="948">948</a>
-<a href="#949" id="949">949</a>
-<a href="#950" id="950">950</a>
-<a href="#951" id="951">951</a>
-<a href="#952" id="952">952</a>
-<a href="#953" id="953">953</a>
-<a href="#954" id="954">954</a>
-<a href="#955" id="955">955</a>
-<a href="#956" id="956">956</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -979,9 +967,7 @@
 <span class="kw">use </span>sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
 <span class="kw">use </span>sui_types::sui_system_state::SUI_SYSTEM_MODULE_NAME;
 <span class="kw">use </span>sui_types::transaction::{Argument, CallArg, Command, ObjectArg, TransactionData};
-<span class="kw">use </span>sui_types::{
-    SUI_SYSTEM_OBJECT_ID, SUI_SYSTEM_STATE_OBJECT_ID, SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
-};
+<span class="kw">use </span>sui_types::SUI_SYSTEM_OBJECT_ID;
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::{Error, ErrorType};
 <span class="kw">use </span><span class="kw">crate</span>::operations::Operations;
@@ -1835,22 +1821,17 @@
                 validator, amount, ..
             } =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>builder = ProgrammableTransactionBuilder::new();
-                <span class="kw">let </span>system_state = CallArg::Object(ObjectArg::SharedObject {
-                    id: SUI_SYSTEM_STATE_OBJECT_ID,
-                    initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
-                    mutable: <span class="bool-val">true</span>,
-                });
 
                 <span class="comment">// [WORKAROUND] - this is a hack to work out if the staking ops is for a selected amount or None amount (whole wallet).
                 // if amount is none, validator input will be created after the system object input
                 </span><span class="kw">let </span>(validator, system_state, amount) = <span class="kw">if let </span><span class="prelude-val">Some</span>(amount) = amount {
                     <span class="kw">let </span>amount = builder.pure(amount)<span class="question-mark">?</span>;
                     <span class="kw">let </span>validator = builder.input(CallArg::Pure(bcs::to_bytes(<span class="kw-2">&amp;</span>validator)<span class="question-mark">?</span>))<span class="question-mark">?</span>;
-                    <span class="kw">let </span>state = builder.input(system_state)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>state = builder.input(CallArg::SUI_SYSTEM_MUT)<span class="question-mark">?</span>;
                     (validator, state, amount)
                 } <span class="kw">else </span>{
                     <span class="kw">let </span>amount = builder.pure(metadata.total_coin_value - metadata.budget)<span class="question-mark">?</span>;
-                    <span class="kw">let </span>state = builder.input(system_state)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>state = builder.input(CallArg::SUI_SYSTEM_MUT)<span class="question-mark">?</span>;
                     <span class="kw">let </span>validator = builder.input(CallArg::Pure(bcs::to_bytes(<span class="kw-2">&amp;</span>validator)<span class="question-mark">?</span>))<span class="question-mark">?</span>;
                     (validator, state, amount)
                 };
@@ -1869,22 +1850,17 @@
             }
             InternalOperation::WithdrawStake { stake_ids, .. } =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>builder = ProgrammableTransactionBuilder::new();
-                <span class="kw">let </span>system_state = CallArg::Object(ObjectArg::SharedObject {
-                    id: SUI_SYSTEM_STATE_OBJECT_ID,
-                    initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
-                    mutable: <span class="bool-val">true</span>,
-                });
 
                 <span class="kw">for </span>stake_id <span class="kw">in </span>metadata.objects {
                     <span class="comment">// [WORKAROUND] - this is a hack to work out if the withdraw stake ops is for selected stake_ids or None (all stakes) using the index of the call args.
                     // if stake_ids is not empty, id input will be created after the system object input
                     </span><span class="kw">let </span>(system_state, id) = <span class="kw">if </span>!stake_ids.is_empty() {
-                        <span class="kw">let </span>system_state = builder.input(system_state.clone())<span class="question-mark">?</span>;
+                        <span class="kw">let </span>system_state = builder.input(CallArg::SUI_SYSTEM_MUT)<span class="question-mark">?</span>;
                         <span class="kw">let </span>id = builder.obj(ObjectArg::ImmOrOwnedObject(stake_id))<span class="question-mark">?</span>;
                         (system_state, id)
                     } <span class="kw">else </span>{
                         <span class="kw">let </span>id = builder.obj(ObjectArg::ImmOrOwnedObject(stake_id))<span class="question-mark">?</span>;
-                        <span class="kw">let </span>system_state = builder.input(system_state.clone())<span class="question-mark">?</span>;
+                        <span class="kw">let </span>system_state = builder.input(CallArg::SUI_SYSTEM_MUT)<span class="question-mark">?</span>;
                         (system_state, id)
                     };
 

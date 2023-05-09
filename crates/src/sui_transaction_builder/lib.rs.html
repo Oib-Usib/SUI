@@ -768,19 +768,6 @@
 <a href="#768" id="768">768</a>
 <a href="#769" id="769">769</a>
 <a href="#770" id="770">770</a>
-<a href="#771" id="771">771</a>
-<a href="#772" id="772">772</a>
-<a href="#773" id="773">773</a>
-<a href="#774" id="774">774</a>
-<a href="#775" id="775">775</a>
-<a href="#776" id="776">776</a>
-<a href="#777" id="777">777</a>
-<a href="#778" id="778">778</a>
-<a href="#779" id="779">779</a>
-<a href="#780" id="780">780</a>
-<a href="#781" id="781">781</a>
-<a href="#782" id="782">782</a>
-<a href="#783" id="783">783</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -813,10 +800,7 @@
 <span class="kw">use </span>sui_types::transaction::{
     Argument, CallArg, Command, InputObjectKind, ObjectArg, TransactionData, TransactionKind,
 };
-<span class="kw">use </span>sui_types::{
-    coin, fp_ensure, SUI_FRAMEWORK_OBJECT_ID, SUI_SYSTEM_OBJECT_ID, SUI_SYSTEM_STATE_OBJECT_ID,
-    SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
-};
+<span class="kw">use </span>sui_types::{coin, fp_ensure, SUI_FRAMEWORK_OBJECT_ID, SUI_SYSTEM_OBJECT_ID};
 
 <span class="attr">#[async_trait]
 </span><span class="kw">pub trait </span>DataReader {
@@ -1479,13 +1463,7 @@
         <span class="kw">let </span>pt = {
             <span class="kw">let </span><span class="kw-2">mut </span>builder = ProgrammableTransactionBuilder::new();
             <span class="kw">let </span>arguments = <span class="macro">vec!</span>[
-                builder
-                    .input(CallArg::Object(ObjectArg::SharedObject {
-                        id: SUI_SYSTEM_STATE_OBJECT_ID,
-                        initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
-                        mutable: <span class="bool-val">true</span>,
-                    }))
-                    .unwrap(),
+                builder.input(CallArg::SUI_SYSTEM_MUT).unwrap(),
                 builder.make_obj_vec(obj_vec)<span class="question-mark">?</span>,
                 builder
                     .input(CallArg::Pure(bcs::to_bytes(<span class="kw-2">&amp;</span>amount)<span class="question-mark">?</span>))
@@ -1532,11 +1510,7 @@
             <span class="macro">vec!</span>[],
             gas,
             <span class="macro">vec!</span>[
-                CallArg::Object(ObjectArg::SharedObject {
-                    id: SUI_SYSTEM_STATE_OBJECT_ID,
-                    initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
-                    mutable: <span class="bool-val">true</span>,
-                }),
+                CallArg::SUI_SYSTEM_MUT,
                 CallArg::Object(ObjectArg::ImmOrOwnedObject(staked_sui)),
             ],
             gas_budget,

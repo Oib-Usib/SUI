@@ -965,10 +965,6 @@
 <a href="#965" id="965">965</a>
 <a href="#966" id="966">966</a>
 <a href="#967" id="967">967</a>
-<a href="#968" id="968">968</a>
-<a href="#969" id="969">969</a>
-<a href="#970" id="970">970</a>
-<a href="#971" id="971">971</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1021,12 +1017,8 @@
 <span class="kw">use </span>sui_types::crypto::{
     generate_proof_of_possession, get_authority_key_pair, AuthorityPublicKeyBytes,
 };
-<span class="kw">use </span>sui_types::transaction::Transaction;
-<span class="kw">use </span>sui_types::transaction::{CallArg, ObjectArg, TransactionData};
-<span class="kw">use </span>sui_types::{
-    crypto::{AuthorityKeyPair, NetworkKeyPair, SignatureScheme, SuiKeyPair},
-    SUI_SYSTEM_OBJ_CALL_ARG,
-};
+<span class="kw">use </span>sui_types::crypto::{AuthorityKeyPair, NetworkKeyPair, SignatureScheme, SuiKeyPair};
+<span class="kw">use </span>sui_types::transaction::{CallArg, ObjectArg, Transaction, TransactionData};
 
 <span class="kw">const </span>DEFAULT_GAS_BUDGET: u64 = <span class="number">200_000_000</span>; <span class="comment">// 0.2 SUI
 
@@ -1525,7 +1517,7 @@
 ) -&gt; anyhow::Result&lt;SuiTransactionBlockResponse&gt; {
     <span class="kw">let </span>sender = context.active_address()<span class="question-mark">?</span>;
     <span class="kw">let </span>sui_client = context.get_client().<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>args = <span class="macro">vec!</span>[SUI_SYSTEM_OBJ_CALL_ARG];
+    <span class="kw">let </span><span class="kw-2">mut </span>args = <span class="macro">vec!</span>[CallArg::SUI_SYSTEM_MUT];
     args.extend(call_args);
     <span class="kw">let </span>rgp = sui_client
         .governance_api()

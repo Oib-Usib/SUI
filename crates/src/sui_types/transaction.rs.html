@@ -2114,6 +2114,30 @@
 <a href="#2114" id="2114">2114</a>
 <a href="#2115" id="2115">2115</a>
 <a href="#2116" id="2116">2116</a>
+<a href="#2117" id="2117">2117</a>
+<a href="#2118" id="2118">2118</a>
+<a href="#2119" id="2119">2119</a>
+<a href="#2120" id="2120">2120</a>
+<a href="#2121" id="2121">2121</a>
+<a href="#2122" id="2122">2122</a>
+<a href="#2123" id="2123">2123</a>
+<a href="#2124" id="2124">2124</a>
+<a href="#2125" id="2125">2125</a>
+<a href="#2126" id="2126">2126</a>
+<a href="#2127" id="2127">2127</a>
+<a href="#2128" id="2128">2128</a>
+<a href="#2129" id="2129">2129</a>
+<a href="#2130" id="2130">2130</a>
+<a href="#2131" id="2131">2131</a>
+<a href="#2132" id="2132">2132</a>
+<a href="#2133" id="2133">2133</a>
+<a href="#2134" id="2134">2134</a>
+<a href="#2135" id="2135">2135</a>
+<a href="#2136" id="2136">2136</a>
+<a href="#2137" id="2137">2137</a>
+<a href="#2138" id="2138">2138</a>
+<a href="#2139" id="2139">2139</a>
+<a href="#2140" id="2140">2140</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -2178,6 +2202,20 @@
     </span>Pure(Vec&lt;u8&gt;),
     <span class="comment">// an object
     </span>Object(ObjectArg),
+}
+
+<span class="kw">impl </span>CallArg {
+    <span class="kw">pub const </span>SUI_SYSTEM_MUT: <span class="self">Self </span>= <span class="self">Self</span>::Object(ObjectArg::SUI_SYSTEM_MUT);
+    <span class="kw">pub const </span>CLOCK_IMM: <span class="self">Self </span>= <span class="self">Self</span>::Object(ObjectArg::SharedObject {
+        id: SUI_CLOCK_OBJECT_ID,
+        initial_shared_version: SUI_CLOCK_OBJECT_SHARED_VERSION,
+        mutable: <span class="bool-val">false</span>,
+    });
+    <span class="kw">pub const </span>CLOCK_MUT: <span class="self">Self </span>= <span class="self">Self</span>::Object(ObjectArg::SharedObject {
+        id: SUI_CLOCK_OBJECT_ID,
+        initial_shared_version: SUI_CLOCK_OBJECT_SHARED_VERSION,
+        mutable: <span class="bool-val">true</span>,
+    });
 }
 
 <span class="attr">#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Serialize, Deserialize)]
@@ -2410,6 +2448,12 @@
 }
 
 <span class="kw">impl </span>ObjectArg {
+    <span class="kw">pub const </span>SUI_SYSTEM_MUT: <span class="self">Self </span>= <span class="self">Self</span>::SharedObject {
+        id: SUI_SYSTEM_STATE_OBJECT_ID,
+        initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
+        mutable: <span class="bool-val">true</span>,
+    };
+
     <span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ObjectID {
         <span class="kw">match </span><span class="self">self </span>{
             ObjectArg::ImmOrOwnedObject((id, <span class="kw">_</span>, <span class="kw">_</span>)) | ObjectArg::SharedObject { id, .. } =&gt; <span class="kw-2">*</span>id,
@@ -2881,6 +2925,12 @@
 }
 
 <span class="kw">impl </span>SharedInputObject {
+    <span class="kw">pub const </span>SUI_SYSTEM_OBJ: <span class="self">Self </span>= <span class="self">Self </span>{
+        id: SUI_SYSTEM_STATE_OBJECT_ID,
+        initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
+        mutable: <span class="bool-val">true</span>,
+    };
+
     <span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ObjectID {
         <span class="self">self</span>.id
     }
@@ -2926,11 +2976,9 @@
     /// It covers both Call and ChangeEpoch transaction kind, because both makes Move calls.
     </span><span class="kw">pub fn </span>shared_input_objects(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = SharedInputObject&gt; + <span class="lifetime">&#39;_ </span>{
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self </span>{
-            <span class="self">Self</span>::ChangeEpoch(<span class="kw">_</span>) =&gt; Either::Left(Either::Left(iter::once(SharedInputObject {
-                id: SUI_SYSTEM_STATE_OBJECT_ID,
-                initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
-                mutable: <span class="bool-val">true</span>,
-            }))),
+            <span class="self">Self</span>::ChangeEpoch(<span class="kw">_</span>) =&gt; {
+                Either::Left(Either::Left(iter::once(SharedInputObject::SUI_SYSTEM_OBJ)))
+            }
 
             <span class="self">Self</span>::ConsensusCommitPrologue(<span class="kw">_</span>) =&gt; {
                 Either::Left(Either::Right(iter::once(SharedInputObject {

@@ -240,18 +240,21 @@
 <a href="#240" id="240">240</a>
 <a href="#241" id="241">241</a>
 <a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span><span class="kw">crate</span>::config::{PeerValidationConfig, RemoteWriteConfig};
 <span class="kw">use </span><span class="kw">crate</span>::handlers::publish_metrics;
 <span class="kw">use </span><span class="kw">crate</span>::histogram_relay::HistogramRelay;
-<span class="kw">use </span><span class="kw">crate</span>::middleware::{expect_mysten_proxy_header, expect_valid_public_key};
+<span class="kw">use </span><span class="kw">crate</span>::middleware::{
+    expect_content_length, expect_mysten_proxy_header, expect_valid_public_key,
+};
 <span class="kw">use </span><span class="kw">crate</span>::peers::SuiNodeProvider;
+<span class="kw">use </span><span class="kw">crate</span>::var;
 <span class="kw">use </span>anyhow::Result;
-
-<span class="kw">use </span>axum::routing::post <span class="kw">as </span>axum_post;
-<span class="kw">use </span>axum::Extension;
-<span class="kw">use </span>axum::{middleware, Router};
+<span class="kw">use </span>axum::{extract::DefaultBodyLimit, middleware, routing::post, Extension, Router};
 <span class="kw">use </span>fastcrypto::ed25519::{Ed25519KeyPair, Ed25519PublicKey};
 <span class="kw">use </span>fastcrypto::traits::KeyPair;
 <span class="kw">use </span>std::fs;
@@ -259,10 +262,8 @@
 <span class="kw">use </span>std::net::SocketAddr;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::time::Duration;
-
 <span class="kw">use </span>sui_tls::{rustls::ServerConfig, AllowAll, CertVerifier, SelfSignedCertificate, TlsAcceptor};
 <span class="kw">use </span>tokio::signal;
-
 <span class="kw">use </span>tower::ServiceBuilder;
 <span class="kw">use </span>tower_http::{
     trace::{DefaultOnResponse, TraceLayer},
@@ -339,7 +340,7 @@
         client: reqwest::Client::builder()
             .user_agent(APP_USER_AGENT)
             .pool_max_idle_per_host(settings.pool_max_idle_per_host)
-            .timeout(Duration::from_secs(<span class="number">15</span>))
+            .timeout(Duration::from_secs(<span class="macro">var!</span>(<span class="string">&quot;MIMIR_CLIENT_TIMEOUT&quot;</span>, <span class="number">30</span>)))
             .build()
             .expect(<span class="string">&quot;cannot create reqwest client&quot;</span>),
         settings,
@@ -362,8 +363,13 @@
 ) -&gt; Router {
     <span class="comment">// build our application with a route and our sender mpsc
     </span><span class="kw">let </span><span class="kw-2">mut </span>router = Router::new()
-        .route(<span class="string">&quot;/publish/metrics&quot;</span>, axum_post(publish_metrics))
-        .route_layer(middleware::from_fn(expect_mysten_proxy_header));
+        .route(<span class="string">&quot;/publish/metrics&quot;</span>, post(publish_metrics))
+        .route_layer(DefaultBodyLimit::max(<span class="macro">var!</span>(
+            <span class="string">&quot;MAX_BODY_SIZE&quot;</span>,
+            <span class="number">1024 </span>* <span class="number">1024 </span>* <span class="number">5
+        </span>)))
+        .route_layer(middleware::from_fn(expect_mysten_proxy_header))
+        .route_layer(middleware::from_fn(expect_content_length));
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(allower) = allower {
         router = router

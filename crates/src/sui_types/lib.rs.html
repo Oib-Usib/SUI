@@ -252,14 +252,6 @@
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
 <a href="#254" id="254">254</a>
-<a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="attr">#![warn(
@@ -269,21 +261,19 @@
     rust_2021_compatibility
 )]
 
-</span><span class="kw">use </span>base_types::{SequenceNumber, SuiAddress, RESOLVED_ASCII_STR, RESOLVED_UTF8_STR};
-<span class="kw">use </span>move_binary_format::{
-    binary_views::BinaryIndexedView,
-    file_format::{AbilitySet, SignatureToken},
-};
+</span><span class="kw">use </span>base_types::{SequenceNumber, SuiAddress};
+<span class="kw">use </span>move_binary_format::binary_views::BinaryIndexedView;
+<span class="kw">use </span>move_binary_format::file_format::{AbilitySet, SignatureToken};
 <span class="kw">use </span>move_bytecode_utils::resolve_struct;
 <span class="kw">use </span>move_core_types::{account_address::AccountAddress, language_storage::StructTag};
 <span class="kw">pub use </span>move_core_types::{identifier::Identifier, language_storage::TypeTag};
 <span class="kw">use </span>object::OBJECT_START_VERSION;
-<span class="kw">use </span>transaction::{CallArg, ObjectArg};
 
 <span class="kw">use </span>base_types::ObjectID;
 
 <span class="kw">pub use </span>mysten_network::multiaddr;
 
+<span class="kw">use </span><span class="kw">crate</span>::base_types::{RESOLVED_ASCII_STR, RESOLVED_UTF8_STR};
 <span class="kw">use crate</span>::{base_types::RESOLVED_STD_OPTION, id::RESOLVED_SUI_ID};
 
 <span class="attr">#[macro_use]
@@ -357,12 +347,6 @@
 <span class="doccomment">/// 0x5: hardcoded object ID for the singleton sui system state object.
 </span><span class="kw">pub const </span>SUI_SYSTEM_STATE_OBJECT_ID: ObjectID = ObjectID::from_single_byte(<span class="number">5</span>);
 <span class="kw">pub const </span>SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION: SequenceNumber = OBJECT_START_VERSION;
-
-<span class="kw">pub const </span>SUI_SYSTEM_OBJ_CALL_ARG: CallArg = CallArg::Object(ObjectArg::SharedObject {
-    id: SUI_SYSTEM_STATE_OBJECT_ID,
-    initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
-    mutable: <span class="bool-val">true</span>,
-});
 
 <span class="doccomment">/// 0x6: hardcoded object ID for the singleton clock object.
 </span><span class="kw">pub const </span>SUI_CLOCK_OBJECT_ID: ObjectID = ObjectID::from_single_byte(<span class="number">6</span>);
