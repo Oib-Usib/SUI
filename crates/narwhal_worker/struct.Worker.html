@@ -6,7 +6,7 @@
     worker_cache: WorkerCache,
     parameters: Parameters,
     validator: impl <a class="trait" href="trait.TransactionValidator.html" title="trait narwhal_worker::TransactionValidator">TransactionValidator</a>,
-    client: <a class="struct" href="../narwhal_network/client/struct.NetworkClient.html" title="struct narwhal_network::client::NetworkClient">NetworkClient</a>,
+    client: NetworkClient,
     store: DBMap&lt;BatchDigest, Batch&gt;,
     metrics: <a class="struct" href="metrics/struct.Metrics.html" title="struct narwhal_worker::metrics::Metrics">Metrics</a>,
     tx_shutdown: &amp;mut PreSubscribedBroadcastSender
