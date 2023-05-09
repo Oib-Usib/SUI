@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683607123714,
+  "lastUpdate": 1683642975440,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -4967,6 +4967,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 303078,
             "range": "± 13263",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2491d4582904a906637c28d92a1acc0f6eb3d325",
+          "message": "metered bytecode verifier cli check (#11817)\n\n## Description \r\nAs requested, users want to be able to quickly check if their packages\r\nwill pass metered verification.\r\nSample usage\r\n``` \r\n./target/debug/sui client verify-bytecode crates/sui-framework/packages/sui-framework \r\nBytecode verification succeeded!\r\n```\r\n## Test Plan \r\n\r\nManual\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-09T14:18:42Z",
+          "tree_id": "de326905e28162be733a875818bd35ef9bd2087b",
+          "url": "https://github.com/MystenLabs/sui/commit/2491d4582904a906637c28d92a1acc0f6eb3d325"
+        },
+        "date": 1683642853833,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148590590,
+            "range": "± 4728601",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 324928,
+            "range": "± 33158",
             "unit": "ns/iter"
           }
         ]
