@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683650522100,
+  "lastUpdate": 1683650760974,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5147,6 +5147,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 465267,
             "range": "± 86289",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "79330b43a62a823e0ef6b9b593e29eaa0a2c3dcb",
+          "message": "enable rosetta ci (#11836)",
+          "timestamp": "2023-05-09T17:33:16+01:00",
+          "tree_id": "af071b0d8ac6307992e55275923ce01dada4d2a7",
+          "url": "https://github.com/MystenLabs/sui/commit/79330b43a62a823e0ef6b9b593e29eaa0a2c3dcb"
+        },
+        "date": 1683650696709,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144529084,
+            "range": "± 6925959",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315152,
+            "range": "± 11463",
             "unit": "ns/iter"
           }
         ]
