@@ -241,6 +241,7 @@
 <a href="#241" id="241">241</a>
 <a href="#242" id="242">242</a>
 <a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -255,8 +256,9 @@
 <span class="kw">use </span>tracing::{error, info};
 <span class="kw">mod </span>data_fetcher;
 <span class="kw">mod </span>db_rider;
+<span class="kw">pub mod </span>fuzz;
 <span class="kw">mod </span>replay;
-<span class="kw">mod </span>types;
+<span class="kw">pub mod </span>types;
 
 <span class="attr">#[derive(Parser, Clone)]
 #[clap(rename_all = <span class="string">&quot;kebab-case&quot;</span>)]

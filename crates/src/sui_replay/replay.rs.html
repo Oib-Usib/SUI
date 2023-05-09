@@ -1735,6 +1735,80 @@
 <a href="#1735" id="1735">1735</a>
 <a href="#1736" id="1736">1736</a>
 <a href="#1737" id="1737">1737</a>
+<a href="#1738" id="1738">1738</a>
+<a href="#1739" id="1739">1739</a>
+<a href="#1740" id="1740">1740</a>
+<a href="#1741" id="1741">1741</a>
+<a href="#1742" id="1742">1742</a>
+<a href="#1743" id="1743">1743</a>
+<a href="#1744" id="1744">1744</a>
+<a href="#1745" id="1745">1745</a>
+<a href="#1746" id="1746">1746</a>
+<a href="#1747" id="1747">1747</a>
+<a href="#1748" id="1748">1748</a>
+<a href="#1749" id="1749">1749</a>
+<a href="#1750" id="1750">1750</a>
+<a href="#1751" id="1751">1751</a>
+<a href="#1752" id="1752">1752</a>
+<a href="#1753" id="1753">1753</a>
+<a href="#1754" id="1754">1754</a>
+<a href="#1755" id="1755">1755</a>
+<a href="#1756" id="1756">1756</a>
+<a href="#1757" id="1757">1757</a>
+<a href="#1758" id="1758">1758</a>
+<a href="#1759" id="1759">1759</a>
+<a href="#1760" id="1760">1760</a>
+<a href="#1761" id="1761">1761</a>
+<a href="#1762" id="1762">1762</a>
+<a href="#1763" id="1763">1763</a>
+<a href="#1764" id="1764">1764</a>
+<a href="#1765" id="1765">1765</a>
+<a href="#1766" id="1766">1766</a>
+<a href="#1767" id="1767">1767</a>
+<a href="#1768" id="1768">1768</a>
+<a href="#1769" id="1769">1769</a>
+<a href="#1770" id="1770">1770</a>
+<a href="#1771" id="1771">1771</a>
+<a href="#1772" id="1772">1772</a>
+<a href="#1773" id="1773">1773</a>
+<a href="#1774" id="1774">1774</a>
+<a href="#1775" id="1775">1775</a>
+<a href="#1776" id="1776">1776</a>
+<a href="#1777" id="1777">1777</a>
+<a href="#1778" id="1778">1778</a>
+<a href="#1779" id="1779">1779</a>
+<a href="#1780" id="1780">1780</a>
+<a href="#1781" id="1781">1781</a>
+<a href="#1782" id="1782">1782</a>
+<a href="#1783" id="1783">1783</a>
+<a href="#1784" id="1784">1784</a>
+<a href="#1785" id="1785">1785</a>
+<a href="#1786" id="1786">1786</a>
+<a href="#1787" id="1787">1787</a>
+<a href="#1788" id="1788">1788</a>
+<a href="#1789" id="1789">1789</a>
+<a href="#1790" id="1790">1790</a>
+<a href="#1791" id="1791">1791</a>
+<a href="#1792" id="1792">1792</a>
+<a href="#1793" id="1793">1793</a>
+<a href="#1794" id="1794">1794</a>
+<a href="#1795" id="1795">1795</a>
+<a href="#1796" id="1796">1796</a>
+<a href="#1797" id="1797">1797</a>
+<a href="#1798" id="1798">1798</a>
+<a href="#1799" id="1799">1799</a>
+<a href="#1800" id="1800">1800</a>
+<a href="#1801" id="1801">1801</a>
+<a href="#1802" id="1802">1802</a>
+<a href="#1803" id="1803">1803</a>
+<a href="#1804" id="1804">1804</a>
+<a href="#1805" id="1805">1805</a>
+<a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1788,6 +1862,7 @@
 <span class="kw">use </span>sui_types::temporary_store::InnerTemporaryStore;
 <span class="kw">use </span>sui_types::transaction::CertifiedTransaction;
 <span class="kw">use </span>sui_types::transaction::Transaction;
+<span class="kw">use </span>sui_types::transaction::TransactionData;
 <span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
 <span class="kw">use </span>sui_types::transaction::{InputObjectKind, InputObjects, TransactionKind};
 <span class="kw">use </span>sui_types::transaction::{SenderSignedData, TransactionDataAPI};
@@ -2062,6 +2137,10 @@
         <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
 
+    <span class="kw">pub async fn </span>reset_for_new_execution(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
+        <span class="self">Self</span>::new(<span class="self">self</span>.client).<span class="kw">await</span><span class="question-mark">?</span>.init_for_execution().<span class="kw">await
+    </span>}
+
     <span class="kw">pub async fn </span>new(client: SuiClient) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
         <span class="comment">// Use a throwaway metrics registry for local execution.
         </span><span class="kw">let </span>registry = prometheus::Registry::new();
@@ -2249,6 +2328,16 @@
         }
     }
 
+    <span class="kw">pub async fn </span>get_checkpoint_txs(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        checkpoint_id: u64,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, LocalExecError&gt; {
+        <span class="self">self</span>.fetcher
+            .get_checkpoint_txs(checkpoint_id)
+            .<span class="kw">await
+            </span>.map_err(|e| LocalExecError::SuiRpcError { err: e.to_string() })
+    }
+
     <span class="kw">pub async fn </span>execute_all_in_checkpoints(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         checkpoint_ids: <span class="kw-2">&amp;</span>[u64],
@@ -2259,12 +2348,7 @@
         <span class="comment">// Get all the TXs at this checkpoint
         </span><span class="kw">let </span><span class="kw-2">mut </span>txs = Vec::new();
         <span class="kw">for </span>checkpoint_id <span class="kw">in </span>checkpoint_ids {
-            txs.extend(
-                <span class="self">self</span>.fetcher
-                    .get_checkpoint_txs(<span class="kw-2">*</span>checkpoint_id)
-                    .<span class="kw">await
-                    </span>.map_err(|e| LocalExecError::SuiRpcError { err: e.to_string() })<span class="question-mark">?</span>,
-            );
+            txs.extend(<span class="self">self</span>.get_checkpoint_txs(<span class="kw-2">*</span>checkpoint_id).<span class="kw">await</span><span class="question-mark">?</span>);
         }
         <span class="kw">let </span>num = txs.len();
         <span class="kw">let </span><span class="kw-2">mut </span>succeeded = <span class="number">0</span>;
@@ -2289,20 +2373,13 @@
         <span class="prelude-val">Ok</span>((succeeded, num <span class="kw">as </span>u64))
     }
 
-    <span class="doccomment">/// Must be called after `init_for_execution`
-    </span><span class="kw">pub async fn </span>execute_impl(
+    <span class="kw">pub async fn </span>execution_engine_execute_with_tx_info_impl(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
+        tx_info: <span class="kw-2">&amp;</span>OnChainTransactionInfo,
+        override_transaction_kind: <span class="prelude-ty">Option</span>&lt;TransactionKind&gt;,
         expensive_safety_check_config: ExpensiveSafetyCheckConfig,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecutionSandboxState, LocalExecError&gt; {
-        <span class="macro">assert!</span>(
-            !<span class="self">self</span>.protocol_version_system_package_table.is_empty()
-                || !<span class="self">self</span>.protocol_version_epoch_table.is_empty(),
-            <span class="string">&quot;Required tables not populated. Must call `init_for_execution` first&quot;
-        </span>);
-
-        <span class="kw">let </span>tx_info = <span class="self">self</span>.resolve_tx_components(tx_digest).<span class="kw">await</span><span class="question-mark">?</span>;
-
+        <span class="kw">let </span>tx_digest = <span class="kw-2">&amp;</span>tx_info.tx_digest;
         <span class="comment">// A lot of the logic here isnt designed for genesis
         </span><span class="kw">if </span><span class="kw-2">*</span>tx_digest == TransactionDigest::genesis() || tx_info.sender == SuiAddress::ZERO {
             <span class="comment">// Genesis.
@@ -2314,7 +2391,7 @@
             // Assume genesis transactions are always successful
             </span><span class="kw">let </span>effects = tx_info.effects.clone();
             <span class="kw">return </span><span class="prelude-val">Ok</span>(ExecutionSandboxState {
-                transaction_info: tx_info,
+                transaction_info: tx_info.clone(),
                 required_objects: <span class="macro">vec!</span>[],
                 local_exec_temporary_store: <span class="prelude-val">None</span>,
                 local_exec_effects: effects,
@@ -2324,7 +2401,7 @@
 
         <span class="comment">// Initialize the state necessary for execution
         // Get the input objects
-        </span><span class="kw">let </span>input_objects = <span class="self">self</span>.initialize_execution_env_state(<span class="kw-2">&amp;</span>tx_info).<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>input_objects = <span class="self">self</span>.initialize_execution_env_state(tx_info).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// At this point we have all the objects needed for replay
 
@@ -2353,7 +2430,7 @@
         </span><span class="kw">let </span>res = execute_transaction_to_effects_impl::&lt;execution_mode::Normal, <span class="kw">_</span>&gt;(
             tx_info.shared_object_refs.clone(),
             temporary_store,
-            tx_info.kind.clone(),
+            override_transaction_kind.unwrap_or(tx_info.kind.clone()),
             tx_info.sender,
             <span class="kw-2">&amp;</span>tx_info.gas.clone(),
             <span class="kw-2">*</span>tx_digest,
@@ -2372,7 +2449,7 @@
         <span class="kw">let </span>effects = SuiTransactionBlockEffects::try_from(res.<span class="number">1</span>).map_err(LocalExecError::from)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(ExecutionSandboxState {
-            transaction_info: tx_info,
+            transaction_info: tx_info.clone(),
             required_objects: all_required_objects,
             local_exec_temporary_store: <span class="prelude-val">Some</span>(res.<span class="number">0</span>),
             local_exec_effects: effects,
@@ -2381,39 +2458,84 @@
     }
 
     <span class="doccomment">/// Must be called after `init_for_execution`
-    /// This executes from `sui_core::authority::AuthorityState::try_execute_immediately`
-    </span><span class="kw">pub async fn </span>certificate_execute(
+    </span><span class="kw">pub async fn </span>execution_engine_execute_impl(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
         expensive_safety_check_config: ExpensiveSafetyCheckConfig,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecutionSandboxState, LocalExecError&gt; {
-        <span class="kw">let </span>pre_run_sandbox = <span class="self">self
-            </span>.execute_impl(tx_digest, expensive_safety_check_config)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="macro">assert!</span>(
+            !<span class="self">self</span>.protocol_version_system_package_table.is_empty()
+                || !<span class="self">self</span>.protocol_version_epoch_table.is_empty(),
+            <span class="string">&quot;Required tables not populated. Must call `init_for_execution` before executing transactions&quot;
+        </span>);
 
-        <span class="kw">let </span>(authority_state, epoch_store) = prep_network(
-            <span class="kw-2">&amp;</span>pre_run_sandbox.transaction_info,
-            <span class="kw-2">&amp;</span>pre_run_sandbox.required_objects,
+        <span class="kw">let </span>tx_info = <span class="self">self</span>.resolve_tx_components(tx_digest).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="self">self</span>.execution_engine_execute_with_tx_info_impl(
+            <span class="kw-2">&amp;</span>tx_info,
+            <span class="prelude-val">None</span>,
+            expensive_safety_check_config,
         )
-        .<span class="kw">await</span>;
+        .<span class="kw">await
+    </span>}
 
-        <span class="kw">let </span>sender_signed_tx = Transaction::from_generic_sig_data(
+    <span class="doccomment">/// Executes a transaction with the state specified in `pre_run_sandbox`
+    /// This is useful for executing a transaction with a specific state
+    /// However if the state in invalid, the behavior is undefined. Use wisely
+    /// If no transaction is provided, the transaction in the sandbox state is used
+    /// Currently if the transaction is provided, the signing will fail, so this feature is TBD
+    </span><span class="kw">pub async fn </span>certificate_execute_with_sandbox_state(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        pre_run_sandbox: <span class="kw-2">&amp;</span>ExecutionSandboxState,
+        override_transaction_data: <span class="prelude-ty">Option</span>&lt;TransactionData&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecutionSandboxState, LocalExecError&gt; {
+        <span class="macro">assert!</span>(
+            override_transaction_data.is_none(),
+            <span class="string">&quot;Custom transaction data is not supported yet&quot;
+        </span>);
+
+        <span class="comment">// These cannot be changed and are inherited from the sandbox state
+        </span><span class="kw">let </span>executed_epoch = pre_run_sandbox.transaction_info.executed_epoch;
+        <span class="kw">let </span>reference_gas_price = pre_run_sandbox.transaction_info.reference_gas_price;
+        <span class="kw">let </span>epoch_start_timestamp = pre_run_sandbox.transaction_info.epoch_start_timestamp;
+        <span class="kw">let </span>protocol_config = pre_run_sandbox.transaction_info.protocol_config.clone();
+        <span class="kw">let </span>required_objects = pre_run_sandbox.required_objects.clone();
+        <span class="kw">let </span>shared_object_refs = pre_run_sandbox.transaction_info.shared_object_refs.clone();
+
+        <span class="kw">let </span>transaction_intent = pre_run_sandbox
+            .transaction_info
+            .sender_signed_data
+            .intent_message()
+            .intent
+            .clone();
+        <span class="kw">let </span>transaction_signatures = pre_run_sandbox
+            .transaction_info
+            .sender_signed_data
+            .tx_signatures()
+            .to_vec();
+
+        <span class="comment">// This must be provided
+        </span><span class="kw">let </span>transaction_data = override_transaction_data.unwrap_or(
             pre_run_sandbox
                 .transaction_info
                 .sender_signed_data
                 .transaction_data()
                 .clone(),
-            pre_run_sandbox
-                .transaction_info
-                .sender_signed_data
-                .intent_message()
-                .intent
-                .clone(),
-            pre_run_sandbox
-                .transaction_info
-                .sender_signed_data
-                .tx_signatures()
-                .to_vec(),
+        );
+
+        <span class="comment">// Begin state prep
+        </span><span class="kw">let </span>(authority_state, epoch_store) = prep_network(
+            <span class="kw-2">&amp;</span>required_objects,
+            reference_gas_price,
+            executed_epoch,
+            epoch_start_timestamp,
+            <span class="kw-2">&amp;</span>protocol_config,
+        )
+        .<span class="kw">await</span>;
+
+        <span class="kw">let </span>sender_signed_tx = Transaction::from_generic_sig_data(
+            transaction_data,
+            transaction_intent,
+            transaction_signatures,
         );
         <span class="kw">let </span>sender_signed_tx = VerifiedTransaction::new_unchecked(
             VerifiedTransaction::new_unchecked(sender_signed_tx).into(),
@@ -2426,7 +2548,7 @@
         <span class="kw">let </span>auth_vote = response.status.into_signed_for_testing();
 
         <span class="kw">let </span><span class="kw-2">mut </span>committee = authority_state.clone_committee_for_testing();
-        committee.epoch = pre_run_sandbox.transaction_info.executed_epoch;
+        committee.epoch = executed_epoch;
         <span class="kw">let </span>certificate = CertifiedTransaction::new(
             sender_signed_tx.into_message(),
             <span class="macro">vec!</span>[auth_vote.clone()],
@@ -2438,12 +2560,12 @@
 
         <span class="kw">let </span>certificate = <span class="kw-2">&amp;</span>VerifiedExecutableTransaction::new_from_certificate(certificate.clone());
 
+        <span class="kw">let </span>new_tx_digest = certificate.digest();
+
         epoch_store
             .set_shared_object_versions_for_testing(
-                tx_digest,
-                <span class="kw-2">&amp;</span>pre_run_sandbox
-                    .transaction_info
-                    .shared_object_refs
+                new_tx_digest,
+                <span class="kw-2">&amp;</span>shared_object_refs
                     .iter()
                     .map(|(id, version, <span class="kw">_</span>)| (<span class="kw-2">*</span>id, <span class="kw-2">*</span>version))
                     .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;(),
@@ -2454,7 +2576,7 @@
         </span>{
             <span class="kw">let </span>db = authority_state.db();
             <span class="kw">let </span><span class="kw-2">mut </span>execution_lock = db.execution_lock_for_reconfiguration().<span class="kw">await</span>;
-            <span class="kw-2">*</span>execution_lock = pre_run_sandbox.transaction_info.executed_epoch;
+            <span class="kw-2">*</span>execution_lock = executed_epoch;
             drop(execution_lock);
         }
 
@@ -2470,13 +2592,28 @@
         <span class="kw">let </span>effects = SuiTransactionBlockEffects::try_from(res.<span class="number">0</span>).map_err(LocalExecError::from)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(ExecutionSandboxState {
-            transaction_info: pre_run_sandbox.transaction_info,
-            required_objects: pre_run_sandbox.required_objects,
+            transaction_info: pre_run_sandbox.transaction_info.clone(),
+            required_objects,
             local_exec_temporary_store: <span class="prelude-val">None</span>, <span class="comment">// We dont capture it for cert exec run
             </span>local_exec_effects: effects,
             local_exec_status: exec_res,
         })
     }
+
+    <span class="doccomment">/// Must be called after `init_for_execution`
+    /// This executes from `sui_core::authority::AuthorityState::try_execute_immediately`
+    </span><span class="kw">pub async fn </span>certificate_execute(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
+        expensive_safety_check_config: ExpensiveSafetyCheckConfig,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecutionSandboxState, LocalExecError&gt; {
+        <span class="comment">// Use the lighterweight execution engine to get the pre-run state
+        </span><span class="kw">let </span>pre_run_sandbox = <span class="self">self
+            </span>.execution_engine_execute_impl(tx_digest, expensive_safety_check_config)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="self">self</span>.certificate_execute_with_sandbox_state(<span class="kw-2">&amp;</span>pre_run_sandbox, <span class="prelude-val">None</span>)
+            .<span class="kw">await
+    </span>}
 
     <span class="doccomment">/// Must be called after `init_for_execution`
     /// This executes from `sui_adapter::execution_engine::execute_transaction_to_effects_impl`
@@ -2486,7 +2623,7 @@
         expensive_safety_check_config: ExpensiveSafetyCheckConfig,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecutionSandboxState, LocalExecError&gt; {
         <span class="kw">let </span>sandbox_state = <span class="self">self
-            </span>.execute_impl(tx_digest, expensive_safety_check_config)
+            </span>.execution_engine_execute_impl(tx_digest, expensive_safety_check_config)
             .<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(sandbox_state)
@@ -3402,24 +3539,33 @@
 }
 
 <span class="kw">async fn </span>prep_network(
-    tx_info: <span class="kw-2">&amp;</span>OnChainTransactionInfo,
     objects: <span class="kw-2">&amp;</span>[Object],
+    reference_gas_price: u64,
+    executed_epoch: u64,
+    epoch_start_timestamp: u64,
+    protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
 ) -&gt; (Arc&lt;AuthorityState&gt;, Arc&lt;AuthorityPerEpochStore&gt;) {
-    <span class="kw">let </span>authority_state = authority_state(tx_info, objects, tx_info.reference_gas_price).<span class="kw">await</span>;
-    <span class="kw">let </span>epoch_store =
-        create_epoch_store(tx_info, <span class="kw-2">&amp;</span>authority_state, tx_info.reference_gas_price).<span class="kw">await</span>;
+    <span class="kw">let </span>authority_state = authority_state(protocol_config, objects, reference_gas_price).<span class="kw">await</span>;
+    <span class="kw">let </span>epoch_store = create_epoch_store(
+        <span class="kw-2">&amp;</span>authority_state,
+        reference_gas_price,
+        executed_epoch,
+        epoch_start_timestamp,
+        protocol_config.version.as_u64(),
+    )
+    .<span class="kw">await</span>;
 
     (authority_state, epoch_store)
 }
 
 <span class="kw">async fn </span>authority_state(
-    tx_info: <span class="kw-2">&amp;</span>OnChainTransactionInfo,
+    protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     objects: <span class="kw-2">&amp;</span>[Object],
     reference_gas_price: u64,
 ) -&gt; Arc&lt;AuthorityState&gt; {
     <span class="comment">// Initiaize some network
     </span>TestAuthorityBuilder::new()
-        .with_protocol_config(tx_info.protocol_config.clone())
+        .with_protocol_config(protocol_config.clone())
         .with_reference_gas_price(reference_gas_price)
         .with_starting_objects(objects)
         .build()
@@ -3427,16 +3573,18 @@
 </span>}
 
 <span class="kw">async fn </span>create_epoch_store(
-    tx_info: <span class="kw-2">&amp;</span>OnChainTransactionInfo,
     authority_state: <span class="kw-2">&amp;</span>Arc&lt;AuthorityState&gt;,
     reference_gas_price: u64,
+    executed_epoch: u64,
+    epoch_start_timestamp: u64,
+    protocol_version: u64,
 ) -&gt; Arc&lt;AuthorityPerEpochStore&gt; {
     <span class="kw">let </span>sys_state = EpochStartSystemState::new_v1(
-        tx_info.executed_epoch,
-        tx_info.protocol_config.version.as_u64(),
+        executed_epoch,
+        protocol_version,
         reference_gas_price,
         <span class="bool-val">false</span>,
-        tx_info.epoch_start_timestamp,
+        epoch_start_timestamp,
         ONE_DAY_MS,
         <span class="macro">vec!</span>[], <span class="comment">// TODO: add validators
     </span>);
@@ -3456,7 +3604,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>committee = authority_state.committee_store().get_latest_committee();
 
     <span class="comment">// Overwrite the epoch so it matches this TXs
-    </span>committee.epoch = tx_info.executed_epoch;
+    </span>committee.epoch = executed_epoch;
 
     <span class="kw">let </span>name = committee.names().next().unwrap();
     AuthorityPerEpochStore::new(

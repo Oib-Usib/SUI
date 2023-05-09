@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ReplayToolCommand"],"fn":["execute_replay_command"]};
+window.SIDEBAR_ITEMS = {"enum":["ReplayToolCommand"],"fn":["execute_replay_command"],"mod":["fuzz","types"]};
