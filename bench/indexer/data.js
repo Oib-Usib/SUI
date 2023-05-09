@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683656159708,
+  "lastUpdate": 1683659232776,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5363,6 +5363,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 424734,
             "range": "± 58583",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8ca220526bcf669d08dfa63417c9ba8ce8bedc82",
+          "message": "[rosetta] - dryrun using mock coin instead of guessing the rough cost of transaction. (#11838)\n\n* dryrun using mock coin to get the gas estimation instead of guessing\r\nthe rough budget.\r\n* increase the mock coin size to 1B, to avoid dry run failing when try\r\nto transfer > 100M SUI",
+          "timestamp": "2023-05-09T18:53:16Z",
+          "tree_id": "64180692816862e880adbbd1803fa1361922530a",
+          "url": "https://github.com/MystenLabs/sui/commit/8ca220526bcf669d08dfa63417c9ba8ce8bedc82"
+        },
+        "date": 1683659175636,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141209815,
+            "range": "± 4355148",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 324963,
+            "range": "± 21925",
             "unit": "ns/iter"
           }
         ]
