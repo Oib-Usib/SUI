@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683662557119,
+  "lastUpdate": 1683666363734,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5435,6 +5435,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 302929,
             "range": "± 7809",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zlnju@outlook.com",
+            "name": "wiggins-dev",
+            "username": "wiggins-dev"
+          },
+          "committer": {
+            "email": "sam@mystenlabs.com",
+            "name": "Sam Blackshear",
+            "username": "sblackshear"
+          },
+          "distinct": true,
+          "id": "732007aa6a921ca4b4fe457765e5957adb9a3127",
+          "message": "leave 0 as the invaild order id",
+          "timestamp": "2023-05-09T13:51:27-07:00",
+          "tree_id": "60c1df8e0134ddb07aac90e7261ff4348438b6ea",
+          "url": "https://github.com/MystenLabs/sui/commit/732007aa6a921ca4b4fe457765e5957adb9a3127"
+        },
+        "date": 1683666301283,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149676997,
+            "range": "± 5994751",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315722,
+            "range": "± 34199",
             "unit": "ns/iter"
           }
         ]
