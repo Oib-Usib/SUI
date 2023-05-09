@@ -1156,6 +1156,77 @@
 <a href="#1156" id="1156">1156</a>
 <a href="#1157" id="1157">1157</a>
 <a href="#1158" id="1158">1158</a>
+<a href="#1159" id="1159">1159</a>
+<a href="#1160" id="1160">1160</a>
+<a href="#1161" id="1161">1161</a>
+<a href="#1162" id="1162">1162</a>
+<a href="#1163" id="1163">1163</a>
+<a href="#1164" id="1164">1164</a>
+<a href="#1165" id="1165">1165</a>
+<a href="#1166" id="1166">1166</a>
+<a href="#1167" id="1167">1167</a>
+<a href="#1168" id="1168">1168</a>
+<a href="#1169" id="1169">1169</a>
+<a href="#1170" id="1170">1170</a>
+<a href="#1171" id="1171">1171</a>
+<a href="#1172" id="1172">1172</a>
+<a href="#1173" id="1173">1173</a>
+<a href="#1174" id="1174">1174</a>
+<a href="#1175" id="1175">1175</a>
+<a href="#1176" id="1176">1176</a>
+<a href="#1177" id="1177">1177</a>
+<a href="#1178" id="1178">1178</a>
+<a href="#1179" id="1179">1179</a>
+<a href="#1180" id="1180">1180</a>
+<a href="#1181" id="1181">1181</a>
+<a href="#1182" id="1182">1182</a>
+<a href="#1183" id="1183">1183</a>
+<a href="#1184" id="1184">1184</a>
+<a href="#1185" id="1185">1185</a>
+<a href="#1186" id="1186">1186</a>
+<a href="#1187" id="1187">1187</a>
+<a href="#1188" id="1188">1188</a>
+<a href="#1189" id="1189">1189</a>
+<a href="#1190" id="1190">1190</a>
+<a href="#1191" id="1191">1191</a>
+<a href="#1192" id="1192">1192</a>
+<a href="#1193" id="1193">1193</a>
+<a href="#1194" id="1194">1194</a>
+<a href="#1195" id="1195">1195</a>
+<a href="#1196" id="1196">1196</a>
+<a href="#1197" id="1197">1197</a>
+<a href="#1198" id="1198">1198</a>
+<a href="#1199" id="1199">1199</a>
+<a href="#1200" id="1200">1200</a>
+<a href="#1201" id="1201">1201</a>
+<a href="#1202" id="1202">1202</a>
+<a href="#1203" id="1203">1203</a>
+<a href="#1204" id="1204">1204</a>
+<a href="#1205" id="1205">1205</a>
+<a href="#1206" id="1206">1206</a>
+<a href="#1207" id="1207">1207</a>
+<a href="#1208" id="1208">1208</a>
+<a href="#1209" id="1209">1209</a>
+<a href="#1210" id="1210">1210</a>
+<a href="#1211" id="1211">1211</a>
+<a href="#1212" id="1212">1212</a>
+<a href="#1213" id="1213">1213</a>
+<a href="#1214" id="1214">1214</a>
+<a href="#1215" id="1215">1215</a>
+<a href="#1216" id="1216">1216</a>
+<a href="#1217" id="1217">1217</a>
+<a href="#1218" id="1218">1218</a>
+<a href="#1219" id="1219">1219</a>
+<a href="#1220" id="1220">1220</a>
+<a href="#1221" id="1221">1221</a>
+<a href="#1222" id="1222">1222</a>
+<a href="#1223" id="1223">1223</a>
+<a href="#1224" id="1224">1224</a>
+<a href="#1225" id="1225">1225</a>
+<a href="#1226" id="1226">1226</a>
+<a href="#1227" id="1227">1227</a>
+<a href="#1228" id="1228">1228</a>
+<a href="#1229" id="1229">1229</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1194,7 +1265,6 @@
     signature_service::SignatureService,
     traits::{KeyPair <span class="kw">as _</span>, ToFromBytes},
 };
-<span class="kw">use </span>futures::{stream::FuturesUnordered, StreamExt};
 <span class="kw">use </span>mysten_metrics::{monitored_scope, spawn_monitored_task};
 <span class="kw">use </span>mysten_network::{multiaddr::Protocol, Multiaddr};
 <span class="kw">use </span>network::{
@@ -1202,8 +1272,9 @@
     epoch_filter::{AllowedEpoch, EPOCH_HEADER_KEY},
 };
 <span class="kw">use </span>network::{failpoints::FailpointsMakeCallbackHandler, metrics::MetricsMakeCallbackHandler};
+<span class="kw">use </span>parking_lot::Mutex;
 <span class="kw">use </span>prometheus::Registry;
-<span class="kw">use </span>std::collections::HashMap;
+<span class="kw">use </span>std::collections::{btree_map::Entry, BTreeMap, HashMap};
 <span class="kw">use </span>std::{
     cmp::Reverse,
     collections::{BTreeSet, BinaryHeap},
@@ -1220,13 +1291,12 @@
 };
 <span class="kw">use </span>tower::ServiceBuilder;
 <span class="kw">use </span>tracing::{debug, error, info, instrument, warn};
-
 <span class="kw">use </span>types::{
     ensure,
     error::{DagError, DagResult},
     metered_channel::{channel_with_total, Receiver, Sender},
     now, Certificate, CertificateAPI, CertificateDigest, FetchCertificatesRequest,
-    FetchCertificatesResponse, GetCertificatesRequest, GetCertificatesResponse, HeaderAPI,
+    FetchCertificatesResponse, GetCertificatesRequest, GetCertificatesResponse, Header, HeaderAPI,
     PayloadAvailabilityRequest, PayloadAvailabilityResponse, PreSubscribedBroadcastSender,
     PrimaryToPrimary, PrimaryToPrimaryServer, RequestVoteRequest, RequestVoteResponse, Round,
     SendCertificateRequest, SendCertificateResponse, Vote, VoteInfoAPI, WorkerOthersBatchMessage,
@@ -1380,6 +1450,7 @@
             payload_store: payload_store.clone(),
             vote_digest_store,
             rx_narwhal_round_updates,
+            parent_digests: Default::default(),
             metrics: node_metrics.clone(),
         })
         <span class="comment">// Allow only one inflight RequestVote RPC at a time per peer.
@@ -1806,6 +1877,11 @@
     </span>vote_digest_store: VoteDigestStore,
     <span class="doccomment">/// Get a signal when the round changes.
     </span>rx_narwhal_round_updates: watch::Receiver&lt;Round&gt;,
+    <span class="doccomment">/// Known parent digests that are being fetched from header proposers.
+    /// Values are where the digests are first known from.
+    /// TODO: consider limiting maximum number of digests from one authority, allow timeout
+    /// and retries from other authorities.
+    </span>parent_digests: Arc&lt;Mutex&lt;BTreeMap&lt;(Round, CertificateDigest), AuthorityIdentifier&gt;&gt;&gt;,
     metrics: Arc&lt;PrimaryMetrics&gt;,
 }
 
@@ -1840,6 +1916,15 @@
         <span class="kw">let </span>committee = <span class="self">self</span>.committee.clone();
         header.validate(<span class="kw-2">&amp;</span>committee, <span class="kw-2">&amp;</span><span class="self">self</span>.worker_cache)<span class="question-mark">?</span>;
 
+        <span class="kw">let </span>num_parents = request.body().parents.len();
+        <span class="macro">ensure!</span>(
+            num_parents &lt;= committee.size(),
+            DagError::TooManyParents(num_parents, committee.size())
+        );
+        <span class="self">self</span>.metrics
+            .certificates_in_votes
+            .inc_by(num_parents <span class="kw">as </span>u64);
+
         <span class="comment">// Vote request must come from the Header&#39;s author.
         </span><span class="kw">let </span>peer_id = request
             .peer_id()
@@ -1870,71 +1955,39 @@
             header.round()
         );
 
-        <span class="comment">// Clone the round updates channel so we can get update notifications specific to
-        // this RPC handler.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>rx_narwhal_round_updates = <span class="self">self</span>.rx_narwhal_round_updates.clone();
-        <span class="comment">// Maximum header age is chosen to strike a balance between allowing for slightly older
-        // certificates to still have a chance to be included in the DAG while not wasting
-        // resources on very old vote requests. This value affects performance but not correctness
-        // of the algorithm.
-        </span><span class="kw">const </span>HEADER_AGE_LIMIT: Round = <span class="number">3</span>;
-
-        <span class="comment">// If requester has provided us with parent certificates, process them all
-        // before proceeding.
-        </span><span class="self">self</span>.metrics
-            .certificates_in_votes
-            .inc_by(request.body().parents.len() <span class="kw">as </span>u64);
-        <span class="kw">let </span><span class="kw-2">mut </span>wait_notifications: FuturesUnordered&lt;<span class="kw">_</span>&gt; = request
-            .body()
-            .parents
-            .clone()
-            .into_iter()
-            .map(|cert| <span class="self">self</span>.synchronizer.wait_to_accept_certificate(cert))
-            .collect();
-        <span class="kw">loop </span>{
-            <span class="macro">tokio::select! </span>{
-                result = wait_notifications.next() =&gt; {
-                    <span class="kw">match </span>result {
-                        <span class="prelude-val">Some</span>(result) =&gt; {
-                            result<span class="question-mark">?</span>;
-                            <span class="kw">continue</span>;
-                        },
-                        <span class="comment">// Waits are done. Missing parents have been accepted.
-                        </span><span class="prelude-val">None </span>=&gt; <span class="kw">break</span>,
-                    }
-                },
-                result = rx_narwhal_round_updates.changed() =&gt; {
-                    <span class="kw">if </span>result.is_err() {
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(DagError::NetworkError(<span class="string">&quot;Node shutting down&quot;</span>.to_owned()));
-                    }
-                    <span class="kw">let </span>narwhal_round = <span class="kw-2">*</span>rx_narwhal_round_updates.borrow();
-                    <span class="macro">ensure!</span>(
-                        narwhal_round.saturating_sub(HEADER_AGE_LIMIT) &lt;= header.round(),
-                        DagError::TooOld(header.digest().into(), header.round(), narwhal_round)
-                    )
-                },
+        <span class="comment">// Request missing parent certificates from the header proposer, to reduce voting latency
+        // when some certificates are not broadcasted to many primaries.
+        // This is only a latency optimization, and not required for liveness.
+        </span><span class="kw">let </span>parents = request.body().parents.clone();
+        <span class="kw">if </span>parents.is_empty() {
+            <span class="comment">// If any parent is still unknown, ask the header proposer to include them with another
+            // vote request.
+            </span><span class="kw">let </span>unknown_digests = <span class="self">self</span>.get_unknown_parent_digests(header).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">if </span>!unknown_digests.is_empty() {
+                <span class="macro">debug!</span>(
+                    <span class="string">&quot;Received vote request for {:?} with unknown parents {:?}&quot;</span>,
+                    header, unknown_digests
+                );
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(RequestVoteResponse {
+                    vote: <span class="prelude-val">None</span>,
+                    missing: unknown_digests,
+                });
             }
+        } <span class="kw">else </span>{
+            <span class="comment">// If requester has provided parent certificates, try to accept them.
+            // It is ok to not check for additional unknown digests, because certificates can
+            // become available asynchronously from broadcast or certificate fetching.
+            </span><span class="self">self</span>.try_accept_unknown_parents(header, parents).<span class="kw">await</span><span class="question-mark">?</span>;
         }
 
-        <span class="comment">// Ensure we have the parents. If any are missing, the requester should provide them on retry.
-        // This check is necessary for correctness, because it is possible that the list of missing
-        // parents in the request is incomplete, or wait_notifications get notified on shut down
-        // without actually having the parents available.
-        </span><span class="kw">let </span>(parents, missing) = <span class="self">self</span>.synchronizer.get_parents(header)<span class="question-mark">?</span>;
-        <span class="kw">if </span>!missing.is_empty() {
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(RequestVoteResponse {
-                vote: <span class="prelude-val">None</span>,
-                missing,
-            });
-        }
-
-        <span class="comment">// Now that we&#39;ve got all the required certificates, ensure we&#39;re voting on a
-        // current Header.
-        </span><span class="kw">let </span>narwhal_round = <span class="kw-2">*</span>rx_narwhal_round_updates.borrow();
-        <span class="macro">ensure!</span>(
-            narwhal_round.saturating_sub(HEADER_AGE_LIMIT) &lt;= header.round(),
-            DagError::TooOld(header.digest().into(), header.round(), narwhal_round)
-        );
+        <span class="comment">// Ensure the header has all parents accepted. If some are missing, waits until they become
+        // available from broadcast or certificate fetching. If no certificate becomes available
+        // for a digest, this request will time out or get cancelled by the requestor eventually.
+        // This check is necessary for correctness.
+        </span><span class="kw">let </span>parents = <span class="self">self
+            </span>.synchronizer
+            .notify_read_parent_certificates(header)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Check the parent certificates. Ensure the parents:
         // - form a quorum
@@ -2010,33 +2063,46 @@
             .map_err(DagError::StoreError)<span class="question-mark">?</span>;
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(vote_info) = result {
-            <span class="kw">if </span>header.epoch() &lt; vote_info.epoch()
-                || (header.epoch() == vote_info.epoch() &amp;&amp; header.round() &lt; vote_info.round())
-            {
-                <span class="comment">// Already voted on a newer Header for this publicKey.
-                </span><span class="kw">return </span><span class="prelude-val">Err</span>(DagError::TooOld(
-                    header.digest().into(),
+            <span class="macro">ensure!</span>(
+                header.epoch() == vote_info.epoch(),
+                DagError::InvalidEpoch {
+                    expected: header.epoch(),
+                    received: vote_info.epoch()
+                }
+            );
+            <span class="macro">ensure!</span>(
+                header.round() &gt;= vote_info.round(),
+                DagError::AlreadyVotedNewerHeader(
+                    header.digest(),
                     header.round(),
-                    narwhal_round,
-                ));
-            }
-            <span class="kw">if </span>header.epoch() == vote_info.epoch() &amp;&amp; header.round() == vote_info.round() {
+                    vote_info.round(),
+                )
+            );
+            <span class="kw">if </span>header.round() == vote_info.round() {
                 <span class="comment">// Make sure we don&#39;t vote twice for the same authority in the same epoch/round.
-                </span><span class="kw">let </span>temp_vote =
-                    Vote::new(header, <span class="kw-2">&amp;</span><span class="self">self</span>.authority_id, <span class="kw-2">&amp;</span><span class="self">self</span>.signature_service).<span class="kw">await</span>;
-                <span class="kw">if </span>temp_vote.digest() != vote_info.vote_digest() {
-                    <span class="macro">info!</span>(
-                        <span class="string">&quot;Authority {} submitted duplicate header for votes at epoch {}, round {}&quot;</span>,
+                </span><span class="kw">let </span>vote = Vote::new(header, <span class="kw-2">&amp;</span><span class="self">self</span>.authority_id, <span class="kw-2">&amp;</span><span class="self">self</span>.signature_service).<span class="kw">await</span>;
+                <span class="kw">if </span>vote.digest() != vote_info.vote_digest() {
+                    <span class="macro">warn!</span>(
+                        <span class="string">&quot;Authority {} submitted different header {:?} for voting&quot;</span>,
                         header.author(),
-                        header.epoch(),
-                        header.round()
+                        header,
                     );
                     <span class="self">self</span>.metrics.votes_dropped_equivocation_protection.inc();
                     <span class="kw">return </span><span class="prelude-val">Err</span>(DagError::AlreadyVoted(
                         vote_info.vote_digest(),
+                        header.digest(),
                         header.round(),
                     ));
                 }
+                <span class="macro">debug!</span>(
+                    <span class="string">&quot;Resending vote {vote:?} for {} at round {}&quot;</span>,
+                    header,
+                    header.round()
+                );
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(RequestVoteResponse {
+                    vote: <span class="prelude-val">Some</span>(vote),
+                    missing: Vec::new(),
+                });
             }
         }
 
@@ -2055,6 +2121,81 @@
             vote: <span class="prelude-val">Some</span>(vote),
             missing: Vec::new(),
         })
+    }
+
+    <span class="comment">// Tries to accept certificates if they have been requested from the header author.
+    // The filtering is to avoid overload from unrequested certificates. It is ok that this
+    // filter may result in a certificate never arriving via header proposals, because
+    // liveness is guaranteed by certificate fetching.
+    </span><span class="kw">async fn </span>try_accept_unknown_parents(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        header: <span class="kw-2">&amp;</span>Header,
+        <span class="kw-2">mut </span>parents: Vec&lt;Certificate&gt;,
+    ) -&gt; DagResult&lt;()&gt; {
+        {
+            <span class="kw">let </span>parent_digests = <span class="self">self</span>.parent_digests.lock();
+            parents.retain(|cert| {
+                <span class="kw">let </span><span class="prelude-val">Some</span>(from) = parent_digests.get(<span class="kw-2">&amp;</span>(cert.round(), cert.digest())) <span class="kw">else </span>{
+                    <span class="kw">return </span><span class="bool-val">false</span>;
+                };
+                <span class="comment">// Only process a certificate from the primary where it is first known.
+                </span><span class="kw-2">*</span>from == header.author()
+            });
+        }
+        <span class="kw">for </span>parent <span class="kw">in </span>parents {
+            <span class="self">self</span>.synchronizer.try_accept_certificate(parent).<span class="kw">await</span><span class="question-mark">?</span>;
+        }
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Gets parent certificate digests not known before, in storage, among suspended certificates,
+    /// or being requested from other header proposers.
+    </span><span class="kw">async fn </span>get_unknown_parent_digests(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        header: <span class="kw-2">&amp;</span>Header,
+    ) -&gt; DagResult&lt;Vec&lt;CertificateDigest&gt;&gt; {
+        <span class="comment">// Get digests not known by the synchronizer, in storage or among suspended certificates.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>digests = <span class="self">self</span>.synchronizer.get_unknown_parent_digests(header).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="comment">// Maximum header age is chosen to strike a balance between allowing for slightly older
+        // certificates to still have a chance to be included in the DAG while not wasting
+        // resources on very old vote requests. This value affects performance but not correctness
+        // of the algorithm.
+        </span><span class="kw">const </span>HEADER_AGE_LIMIT: Round = <span class="number">3</span>;
+
+        <span class="comment">// Lock to ensure consistency between limit_round and where parent_digests are gc&#39;ed.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>parent_digests = <span class="self">self</span>.parent_digests.lock();
+
+        <span class="comment">// Check that the header is not too old.
+        </span><span class="kw">let </span>narwhal_round = <span class="kw-2">*</span><span class="self">self</span>.rx_narwhal_round_updates.borrow();
+        <span class="kw">let </span>limit_round = narwhal_round.saturating_sub(HEADER_AGE_LIMIT);
+        <span class="macro">ensure!</span>(
+            limit_round &lt;= header.round(),
+            DagError::TooOld(header.digest().into(), header.round(), narwhal_round)
+        );
+
+        <span class="comment">// Drop old entries from parent_digests.
+        </span><span class="kw">while let </span><span class="prelude-val">Some</span>(((round, _digest), _authority)) = parent_digests.first_key_value() {
+            <span class="comment">// Minimum header round is limit_round, so minimum parent round is limit_round - 1.
+            </span><span class="kw">if </span><span class="kw-2">*</span>round &lt; limit_round.saturating_sub(<span class="number">1</span>) {
+                parent_digests.pop_first();
+            } <span class="kw">else </span>{
+                <span class="kw">break</span>;
+            }
+        }
+
+        <span class="comment">// Filter out digests that are already requested from other header proposers.
+        </span>digests.retain(
+            |digest| <span class="kw">match </span>parent_digests.entry((header.round() - <span class="number">1</span>, <span class="kw-2">*</span>digest)) {
+                Entry::Occupied(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+                Entry::Vacant(v) =&gt; {
+                    v.insert(header.author());
+                    <span class="bool-val">true
+                </span>}
+            },
+        );
+
+        <span class="prelude-val">Ok</span>(digests)
     }
 }
 
@@ -2094,7 +2235,8 @@
                         | DagError::HeaderHasBadWorkerIds(<span class="kw">_</span>)
                         | DagError::HeaderHasInvalidParentRoundNumbers(<span class="kw">_</span>)
                         | DagError::HeaderHasDuplicateParentAuthorities(<span class="kw">_</span>)
-                        | DagError::AlreadyVoted(<span class="kw">_</span>, <span class="kw">_</span>)
+                        | DagError::AlreadyVoted(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>)
+                        | DagError::AlreadyVotedNewerHeader(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>)
                         | DagError::HeaderRequiresQuorum(<span class="kw">_</span>)
                         | DagError::TooOld(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
                             anemo::types::response::StatusCode::BadRequest

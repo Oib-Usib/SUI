@@ -562,6 +562,13 @@
 <a href="#562" id="562">562</a>
 <a href="#563" id="563">563</a>
 <a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span><span class="kw">crate</span>::EndpointMetrics;
@@ -884,6 +891,8 @@
     </span><span class="kw">pub </span>header_to_certificate_latency: Histogram,
     <span class="doccomment">/// Millisecs taken to wait for max parent time, when proposing headers.
     </span><span class="kw">pub </span>header_max_parent_wait_ms: IntCounter,
+    <span class="doccomment">/// Counts when the GC loop in synchronizer times out waiting for consensus commit.
+    </span><span class="kw">pub </span>synchronizer_gc_timeout: IntCounter,
 }
 
 <span class="kw">impl </span>PrimaryMetrics {
@@ -1062,6 +1071,11 @@
             header_max_parent_wait_ms: <span class="macro">register_int_counter_with_registry!</span>(
                 <span class="string">&quot;header_max_parent_wait_ms&quot;</span>,
                 <span class="string">&quot;Millisecs taken to wait for max parent time, when proposing headers.&quot;</span>,
+                registry
+            ).unwrap(),
+            synchronizer_gc_timeout: <span class="macro">register_int_counter_with_registry!</span>(
+                <span class="string">&quot;synchronizer_gc_timeout&quot;</span>,
+                <span class="string">&quot;Counts when the GC loop in synchronizer times out waiting for consensus commit.&quot;</span>,
                 registry
             ).unwrap(),
         }
