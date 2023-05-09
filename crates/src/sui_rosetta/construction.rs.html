@@ -365,6 +365,10 @@
 <a href="#365" id="365">365</a>
 <a href="#366" id="366">366</a>
 <a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -583,13 +587,13 @@
         .get_reference_gas_price()
         .<span class="kw">await</span><span class="question-mark">?</span>;
 
-    <span class="comment">// Get sender, amount, and rough budget for the operation
-    </span><span class="kw">let </span>(total_required_amount, objects, budget) = <span class="kw">match </span><span class="kw-2">&amp;</span>option.internal_operation {
+    <span class="comment">// Get amount, objects, for the operation
+    </span><span class="kw">let </span>(total_required_amount, objects) = <span class="kw">match </span><span class="kw-2">&amp;</span>option.internal_operation {
         InternalOperation::PaySui { amounts, .. } =&gt; {
             <span class="kw">let </span>amount = amounts.iter().sum::&lt;u64&gt;();
-            (<span class="prelude-val">Some</span>(amount), <span class="macro">vec!</span>[], <span class="number">5_000_000</span>)
+            (<span class="prelude-val">Some</span>(amount), <span class="macro">vec!</span>[])
         }
-        InternalOperation::Stake { amount, .. } =&gt; (<span class="kw-2">*</span>amount, <span class="macro">vec!</span>[], <span class="number">100_000_000</span>),
+        InternalOperation::Stake { amount, .. } =&gt; (<span class="kw-2">*</span>amount, <span class="macro">vec!</span>[]),
         InternalOperation::WithdrawStake { sender, stake_ids } =&gt; {
             <span class="kw">let </span>stake_ids = <span class="kw">if </span>stake_ids.is_empty() {
                 <span class="comment">// unstake all
@@ -628,13 +632,42 @@
                 .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()
                 .map_err(SuiError::from)<span class="question-mark">?</span>;
 
-            (<span class="prelude-val">Some</span>(<span class="number">0</span>), stake_refs, <span class="number">100_000_000</span>)
+            (<span class="prelude-val">Some</span>(<span class="number">0</span>), stake_refs)
         }
     };
 
+    <span class="comment">// Dry run the transaction to get the gas used, amount doesn&#39;t really matter here when using mock coins.
+    // get gas estimation from dry-run, this will also return any tx error.
+    </span><span class="kw">let </span>data = option
+        .internal_operation
+        .try_into_data(ConstructionMetadata {
+            sender,
+            coins: <span class="macro">vec!</span>[],
+            objects: objects.clone(),
+            <span class="comment">// Mock coin have 1B SUI
+            </span>total_coin_value: <span class="number">1_000_000_000 </span>* <span class="number">1_000_000_000</span>,
+            gas_price,
+            <span class="comment">// MAX BUDGET
+            </span>budget: <span class="number">50_000_000_000</span>,
+        })<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>dry_run = context
+        .client
+        .read_api()
+        .dry_run_transaction_block(data)
+        .<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>effects = dry_run.effects;
+
+    <span class="kw">if let </span>SuiExecutionStatus::Failure { error } = effects.status() {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::TransactionDryRunError(error.to_string()));
+    }
+
+    <span class="kw">let </span>budget =
+        effects.gas_cost_summary().computation_cost + effects.gas_cost_summary().storage_cost;
+
     <span class="comment">// Try select coins for required amounts
     </span><span class="kw">let </span>coins = <span class="kw">if let </span><span class="prelude-val">Some</span>(amount) = total_required_amount {
-        <span class="kw">let </span>total_amount = amount + (budget * gas_price);
+        <span class="kw">let </span>total_amount = amount + budget;
         context
             .client
             .coin_read_api()
@@ -644,6 +677,7 @@
     } <span class="kw">else </span>{
         <span class="prelude-val">None
     </span>};
+
     <span class="comment">// If required amount is None (all SUI) or failed to select coin (might not have enough SUI), select all coins.
     </span><span class="kw">let </span>coins = <span class="kw">if let </span><span class="prelude-val">Some</span>(coins) = coins {
         coins
@@ -662,32 +696,6 @@
         .into_iter()
         .map(|c| c.object_ref())
         .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-
-    <span class="comment">// get gas estimation from dry-run, this will also return any tx error.
-    </span><span class="kw">let </span>data = option
-        .internal_operation
-        .try_into_data(ConstructionMetadata {
-            sender,
-            coins: coins.clone(),
-            objects: objects.clone(),
-            total_coin_value,
-            gas_price,
-            budget: budget * gas_price,
-        })<span class="question-mark">?</span>;
-
-    <span class="kw">let </span>dry_run = context
-        .client
-        .read_api()
-        .dry_run_transaction_block(data)
-        .<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span>effects = dry_run.effects;
-
-    <span class="kw">if let </span>SuiExecutionStatus::Failure { error } = effects.status() {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::TransactionDryRunError(error.to_string()));
-    }
-
-    <span class="kw">let </span>budget =
-        effects.gas_cost_summary().computation_cost + effects.gas_cost_summary().storage_cost;
 
     <span class="prelude-val">Ok</span>(ConstructionMetadataResponse {
         metadata: ConstructionMetadata {

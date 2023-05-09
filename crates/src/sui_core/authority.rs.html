@@ -5087,9 +5087,9 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>gas_object_refs = transaction.gas().to_vec();
         <span class="kw">let </span>((gas_status, input_objects), mock_gas) = <span class="kw">if </span>transaction.gas().is_empty() {
             <span class="kw">let </span>sender = transaction.sender();
-            <span class="comment">// use a 100M sui coin
+            <span class="comment">// use a 1B sui coin
             </span><span class="kw">const </span>MIST_TO_SUI: u64 = <span class="number">1_000_000_000</span>;
-            <span class="kw">const </span>DRY_RUN_SUI: u64 = <span class="number">100_000_000</span>;
+            <span class="kw">const </span>DRY_RUN_SUI: u64 = <span class="number">1_000_000_000</span>;
             <span class="kw">let </span>max_coin_value = MIST_TO_SUI * DRY_RUN_SUI;
             <span class="kw">let </span>gas_object_id = ObjectID::random();
             <span class="kw">let </span>gas_object = Object::new_move(
