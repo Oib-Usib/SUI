@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683672869539,
+  "lastUpdate": 1683674062567,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5579,6 +5579,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 303694,
             "range": "± 21384",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d2ae28091e9533d60ebefda672e713eaa620ef68",
+          "message": "[1/x] move some test util functions to wallet context (#11821)\n\n## Description \r\n\r\nFirst step towards moving functions in `test-utils/transaction` to\r\nplaces where they belong better. This PR deals with some of functions\r\nthat take in a `WalletContext`. Some of them are moved to\r\n`wallet_context.rs` and a few are moved to the caller site. More wallet\r\ncontext functions will be moved in following PRs.\r\n\r\n## Test Plan \r\n\r\nIt's all tests.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-09T23:03:03Z",
+          "tree_id": "f3f544ec2b1ed0fe957f6001a6e22d084ec29847",
+          "url": "https://github.com/MystenLabs/sui/commit/d2ae28091e9533d60ebefda672e713eaa620ef68"
+        },
+        "date": 1683674052922,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 142311446,
+            "range": "± 4515490",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 355404,
+            "range": "± 39597",
             "unit": "ns/iter"
           }
         ]
