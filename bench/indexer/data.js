@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683649944939,
+  "lastUpdate": 1683649977417,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5039,6 +5039,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314718,
             "range": "± 10011",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "84862080feb6b3e29e405f2a609836a64cf613e3",
+          "message": "Clean up system object CallArg (#10388)\n\nChange all direct init of the system object CallArg using CallArg\r\nconstant.\r\nSimilar for clock. Non-functional change.",
+          "timestamp": "2023-05-09T16:23:22Z",
+          "tree_id": "8e0f780f8610538b2c5b9af0492b54f11dc7abe4",
+          "url": "https://github.com/MystenLabs/sui/commit/84862080feb6b3e29e405f2a609836a64cf613e3"
+        },
+        "date": 1683649953950,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106720945,
+            "range": "± 4095191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 303890,
+            "range": "± 17282",
             "unit": "ns/iter"
           }
         ]
