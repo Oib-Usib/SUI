@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683754514003,
+  "lastUpdate": 1683759290445,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6263,6 +6263,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 313032,
             "range": "± 25126",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "113150618+dariorussi@users.noreply.github.com",
+            "name": "Dario Russi",
+            "username": "dariorussi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7c6accabbb5d57c7cfbf0c4b27c574ebeea5469e",
+          "message": "Create a LayoutResolver to compute layout from VM types (#11529)\n\n## Description \r\n\r\n- Move expensive_check_sui_conservation to node init\r\n- Expose a layout resolver based on a VM session\r\n- Decouple MoveResolver traits from Storage traits\r\n\r\nIn some of the places where we want to use the layout resolver, we\r\ndon't have access to all the information to implement `StorageView`,\r\nbut we only need to use the `BackingPackageStore`.\r\n\r\nTo support these cases, we need to provide a state view to\r\n`LinkageView` that can serve packages, and then shim the Module and\r\nResource resolution functions.\r\n\r\nThis requires that `LinkageView` no longer accept a reference\r\nparameter, but a value (so we can inject state into it) -- similar to\r\nthe trick we pulled to allow `Session` to own a `LinkageView`.  Then\r\nimplementors (like `TemporaryStore`) that only need to be passed by\r\nreference can be passed by explicit reference,\r\n\r\ni.e. `LinkageView<'state, TemporaryStore>` becomes\r\n`LinkageView<&'state TemporaryStore>`.\r\n\r\nHowever, we cannot impose a `&'state S: StorageView` bound, because\r\nsome APIs in `StorageView` require a mutable reference, so we needed\r\nto decouple the resolution traits (now `SuiResolver`) and the storage\r\ntraits, to impose twin constraints:\r\n\r\n```\r\nfn ...<'state, S>\r\nwhere\r\n  S: StorageView\r\n  &'state S: SuiResolver\r\n```\r\n\r\n- Logging improvements\r\n- Bring `invariant_violation!` macro into `sui-types`.\r\n- Create a variant of it -- `make_invariant_violation!` -- that\r\n  creates the error, but does not wrap it in a result of return it.\r\n- Add `format!` string support to these macros\r\n- Use this macro for invariant violations within conservation checking\r\n  with extra context on what is failing (what stage, what type is\r\n  involved)\r\n- Enable telemetry_subscription in the `move_package_upgrade_tests` to\r\n  see the logs from authorities during tests.\r\n- (Temporary) Print the IDs of published/upgraded packages in the\r\n  failing test, for context.\r\n\r\n## Test Plan \r\n\r\nExisting tests\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-10T17:42:01-05:00",
+          "tree_id": "286ef222404121bde90666b369821ff26fa4f360",
+          "url": "https://github.com/MystenLabs/sui/commit/7c6accabbb5d57c7cfbf0c4b27c574ebeea5469e"
+        },
+        "date": 1683759280933,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149846040,
+            "range": "± 4498837",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 336563,
+            "range": "± 40108",
             "unit": "ns/iter"
           }
         ]
