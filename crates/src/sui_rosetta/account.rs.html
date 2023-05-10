@@ -141,10 +141,85 @@
 <a href="#141" id="141">141</a>
 <a href="#142" id="142">142</a>
 <a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="doccomment">//! This module implements the [Rosetta Account API](https://www.rosetta-api.org/docs/AccountApi.html)
-
 </span><span class="kw">use </span>axum::extract::State;
 <span class="kw">use </span>axum::{Extension, Json};
 <span class="kw">use </span>axum_extra::extract::WithRejection;
@@ -153,6 +228,7 @@
 <span class="kw">use </span>sui_sdk::rpc_types::StakeStatus;
 <span class="kw">use </span>sui_sdk::{SuiClient, SUI_COIN_TYPE};
 <span class="kw">use </span>sui_types::base_types::SuiAddress;
+<span class="kw">use </span>tracing::info;
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::Error;
 <span class="kw">use </span><span class="kw">crate</span>::types::{
@@ -160,6 +236,7 @@
     Amount, Coin, SubAccount, SubAccountType, SubBalance,
 };
 <span class="kw">use crate</span>::{OnlineServerContext, SuiEnv};
+<span class="kw">use </span>std::time::Duration;
 
 <span class="doccomment">/// Get an array of all AccountBalances for an AccountIdentifier and the BlockIdentifier
 /// at which the balance lookup was performed.
@@ -171,30 +248,105 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;AccountBalanceResponse, Error&gt; {
     env.check_network_identifier(<span class="kw-2">&amp;</span>request.network_identifier)<span class="question-mark">?</span>;
     <span class="kw">let </span>address = request.account_identifier.address;
+    <span class="kw">let </span><span class="kw-2">mut </span>retry_attempts = <span class="number">5</span>;
     <span class="kw">if let </span><span class="prelude-val">Some</span>(SubAccount { account_type }) = request.account_identifier.sub_account {
-        <span class="kw">let </span>balances = get_sub_account_balances(account_type, <span class="kw-2">&amp;</span>ctx.client, address).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(AccountBalanceResponse {
-            block_identifier: ctx.blocks().current_block_identifier().<span class="kw">await</span><span class="question-mark">?</span>,
-            balances,
-        })
-    } <span class="kw">else </span>{
-        <span class="kw">let </span>block_identifier = <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = request.block_identifier.index {
-            <span class="kw">let </span>response = ctx.blocks().get_block_by_index(index).<span class="kw">await</span><span class="question-mark">?</span>;
-            response.block.block_identifier
-        } <span class="kw">else if let </span><span class="prelude-val">Some</span>(hash) = request.block_identifier.hash {
-            <span class="kw">let </span>response = ctx.blocks().get_block_by_hash(hash).<span class="kw">await</span><span class="question-mark">?</span>;
-            response.block.block_identifier
-        } <span class="kw">else </span>{
-            ctx.blocks().current_block_identifier().<span class="kw">await</span><span class="question-mark">?
-        </span>};
+        <span class="kw">while </span>retry_attempts &gt; <span class="number">0 </span>{
+            <span class="kw">let </span>balances_first =
+                get_sub_account_balances(account_type.clone(), <span class="kw-2">&amp;</span>ctx.client, address).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>checkpoint1 = ctx
+                .client
+                .read_api()
+                .get_latest_checkpoint_sequence_number()
+                .<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="comment">// Get another checkpoint which is greater than current
+            </span><span class="kw">let </span><span class="kw-2">mut </span>checkpoint2 = ctx
+                .client
+                .read_api()
+                .get_latest_checkpoint_sequence_number()
+                .<span class="kw">await</span><span class="question-mark">?</span>;
 
-        ctx.blocks()
-            .get_balance_at_block(address, block_identifier.index)
-            .<span class="kw">await
-            </span>.map(|balance| AccountBalanceResponse {
-                block_identifier,
-                balances: <span class="macro">vec!</span>[Amount::new(balance)],
-            })
+            <span class="kw">while </span>checkpoint2 &lt;= checkpoint1 {
+                checkpoint2 = ctx
+                    .client
+                    .read_api()
+                    .get_latest_checkpoint_sequence_number()
+                    .<span class="kw">await</span><span class="question-mark">?</span>;
+                tokio::time::sleep(Duration::from_secs(<span class="number">1</span>)).<span class="kw">await</span>;
+            }
+            <span class="kw">let </span>balances_second =
+                get_sub_account_balances(account_type.clone(), <span class="kw-2">&amp;</span>ctx.client, address).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">if </span>balances_first.eq(<span class="kw-2">&amp;</span>balances_second) {
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(AccountBalanceResponse {
+                    block_identifier: ctx.blocks().create_block_identifier(checkpoint2).<span class="kw">await</span><span class="question-mark">?</span>,
+                    balances: balances_first,
+                });
+            } <span class="kw">else </span>{
+                <span class="comment">// retry logic needs to be aaded
+                </span>retry_attempts -= <span class="number">1</span>;
+            }
+        }
+        <span class="prelude-val">Err</span>(Error::RetryExhausted(String::from(<span class="string">&quot;retry&quot;</span>)))
+    } <span class="kw">else </span>{
+        <span class="comment">// Get current live balance
+        </span><span class="kw">while </span>retry_attempts &gt; <span class="number">0 </span>{
+            <span class="kw">let </span>balances_first = ctx
+                .client
+                .coin_read_api()
+                .get_balance(address, <span class="prelude-val">Some</span>(SUI_COIN_TYPE.to_string()))
+                .<span class="kw">await</span><span class="question-mark">?
+                </span>.total_balance <span class="kw">as </span>i128;
+
+            <span class="comment">// Get current latest checkpoint
+            </span><span class="kw">let </span>checkpoint1 = ctx
+                .client
+                .read_api()
+                .get_latest_checkpoint_sequence_number()
+                .<span class="kw">await</span><span class="question-mark">?</span>;
+
+            <span class="comment">// Get another checkpoint which is greater than current
+            </span><span class="kw">let </span><span class="kw-2">mut </span>checkpoint2 = ctx
+                .client
+                .read_api()
+                .get_latest_checkpoint_sequence_number()
+                .<span class="kw">await</span><span class="question-mark">?</span>;
+
+            <span class="kw">while </span>checkpoint2 &lt;= checkpoint1 {
+                checkpoint2 = ctx
+                    .client
+                    .read_api()
+                    .get_latest_checkpoint_sequence_number()
+                    .<span class="kw">await</span><span class="question-mark">?</span>;
+                tokio::time::sleep(Duration::from_secs(<span class="number">1</span>)).<span class="kw">await</span>;
+            }
+
+            <span class="comment">// Get live balance again
+            </span><span class="kw">let </span>balances_second = ctx
+                .client
+                .coin_read_api()
+                .get_balance(address, <span class="prelude-val">Some</span>(SUI_COIN_TYPE.to_string()))
+                .<span class="kw">await</span><span class="question-mark">?
+                </span>.total_balance <span class="kw">as </span>i128;
+
+            <span class="comment">// if those two live balances are equal then that is the current balance for checkpoint2
+            </span><span class="kw">if </span>balances_first.eq(<span class="kw-2">&amp;</span>balances_second) {
+                <span class="macro">info!</span>(
+                    <span class="string">&quot;same balance for account {} at checkpoint {}&quot;</span>,
+                    address, checkpoint2
+                );
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(AccountBalanceResponse {
+                    block_identifier: ctx.blocks().create_block_identifier(checkpoint2).<span class="kw">await</span><span class="question-mark">?</span>,
+                    balances: <span class="macro">vec!</span>[Amount::new(balances_first)],
+                });
+            } <span class="kw">else </span>{
+                <span class="comment">// balances are different so we need to try again.
+                </span><span class="macro">info!</span>(
+                    <span class="string">&quot;different balance for account {} at checkpoint {}&quot;</span>,
+                    address, checkpoint2
+                );
+                retry_attempts -= <span class="number">1</span>;
+            }
+        }
+        <span class="prelude-val">Err</span>(Error::RetryExhausted(String::from(<span class="string">&quot;retry&quot;</span>)))
     }
 }
 

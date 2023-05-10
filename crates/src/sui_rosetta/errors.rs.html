@@ -123,6 +123,23 @@
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -142,6 +159,7 @@
 <span class="kw">use </span>sui_types::error::SuiError;
 
 <span class="kw">use </span><span class="kw">crate</span>::types::{BlockHash, OperationType, PublicKey, SuiEnv};
+<span class="kw">use </span>strum::EnumProperty;
 <span class="kw">use </span>strum_macros::Display;
 <span class="kw">use </span>strum_macros::EnumDiscriminants;
 <span class="kw">use </span>thiserror::Error;
@@ -149,7 +167,7 @@
 
 <span class="doccomment">/// Sui-Rosetta specific error types.
 /// This contains all the errors returns by the sui-rosetta server.
-</span><span class="attr">#[derive(Debug, Error, EnumDiscriminants)]
+</span><span class="attr">#[derive(Debug, Error, EnumDiscriminants, EnumProperty)]
 #[strum_discriminants(
     name(ErrorType),
     derive(Display, EnumIter),
@@ -203,6 +221,10 @@
     </span>DBError(<span class="attr">#[from] </span>TypedStoreError),
     <span class="attr">#[error(transparent)]
     </span>JsonExtractorRejection(<span class="attr">#[from] </span>JsonRejection),
+
+    <span class="attr">#[error(<span class="string">&quot;Retries exhausted while getting balance. try again.&quot;</span>)]
+    #[strum(props(retriable = <span class="string">&quot;true&quot;</span>))]
+    </span>RetryExhausted(String),
 }
 
 <span class="kw">impl </span>Serialize <span class="kw">for </span>ErrorType {
@@ -214,6 +236,16 @@
     }
 }
 
+<span class="kw">trait </span>CustomProperties {
+    <span class="kw">fn </span>retriable(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
+}
+
+<span class="kw">impl </span>CustomProperties <span class="kw">for </span>Error {
+    <span class="kw">fn </span>retriable(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="macro">matches!</span>(<span class="self">self</span>.get_str(<span class="string">&quot;retriable&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">&quot;true&quot;</span>))
+    }
+}
+
 <span class="kw">impl </span>ErrorType {
     <span class="kw">fn </span>json(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Value {
         <span class="kw">let </span>retriable = <span class="bool-val">false</span>;
@@ -221,10 +253,11 @@
         </span><span class="kw">let </span>error_code = ErrorType::iter().position(|e| <span class="kw-2">&amp;</span>e == <span class="self">self</span>).unwrap();
         <span class="kw">let </span>message = <span class="macro">format!</span>(<span class="string">&quot;{self}&quot;</span>).replace(<span class="string">&#39;-&#39;</span>, <span class="string">&quot; &quot;</span>);
         <span class="kw">let </span>message = message[<span class="number">0</span>..<span class="number">1</span>].to_uppercase() + <span class="kw-2">&amp;</span>message[<span class="number">1</span>..];
+
         <span class="macro">json!</span>[{
             <span class="string">&quot;code&quot;</span>: error_code,
             <span class="string">&quot;message&quot;</span>: message,
-            <span class="string">&quot;retriable&quot;</span>:retriable,
+            <span class="string">&quot;retriable&quot;</span>: retriable,
         }]
     }
 }
@@ -239,6 +272,7 @@
         <span class="comment">// Safe to unwrap, we know ErrorType must be an object.
         </span><span class="kw">let </span>error = json.as_object_mut().unwrap();
         error.insert(<span class="string">&quot;details&quot;</span>.into(), <span class="macro">json!</span>({ <span class="string">&quot;error&quot;</span>: <span class="macro">format!</span>(<span class="string">&quot;{self}&quot;</span>) }));
+        error.insert(<span class="string">&quot;retriable&quot;</span>.into(), <span class="macro">json!</span>(<span class="self">self</span>.retriable()));
         error.serialize(serializer)
     }
 }
