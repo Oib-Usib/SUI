@@ -243,6 +243,11 @@
 <a href="#243" id="243">243</a>
 <a href="#244" id="244">244</a>
 <a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -260,6 +265,7 @@
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>sui_config::certificate_deny_config::CertificateDenyConfig;
 <span class="kw">use </span>sui_config::genesis::Genesis;
+<span class="kw">use </span>sui_config::node::StateDebugDumpConfig;
 <span class="kw">use </span>sui_config::node::{
     AuthorityStorePruningConfig, DBCheckpointConfig, ExpensiveSafetyCheckConfig,
 };
@@ -275,6 +281,7 @@
 <span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemStateTrait;
 <span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
+<span class="kw">use </span>tempfile::tempdir;
 
 <span class="attr">#[derive(Default)]
 </span><span class="kw">pub struct </span>TestAuthorityBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -459,6 +466,9 @@
             transaction_deny_config,
             certificate_deny_config,
             usize::MAX,
+            StateDebugDumpConfig {
+                dump_file_directory: <span class="prelude-val">Some</span>(tempdir().unwrap().into_path()),
+            },
         )
         .<span class="kw">await</span>;
         <span class="comment">// For any type of local testing that does not actually spawn a node, the checkpoint executor

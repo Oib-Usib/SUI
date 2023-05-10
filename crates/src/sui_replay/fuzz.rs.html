@@ -228,6 +228,9 @@
 <a href="#228" id="228">228</a>
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -320,7 +323,10 @@
         <span class="kw-2">mut </span><span class="self">self</span>,
         base_transaction: <span class="prelude-ty">Option</span>&lt;TransactionDigest&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, anyhow::Error&gt; {
-        <span class="kw">let </span>local_executor = <span class="self">self</span>.local_exec.reset_for_new_execution().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>local_executor = <span class="self">self
+            </span>.local_exec
+            .reset_for_new_execution_with_client()
+            .<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="self">self</span>.config
             .mutator
             .reset(<span class="self">self</span>.config.num_mutations_per_base);

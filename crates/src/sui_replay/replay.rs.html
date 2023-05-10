@@ -1814,10 +1814,101 @@
 <a href="#1814" id="1814">1814</a>
 <a href="#1815" id="1815">1815</a>
 <a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
+<a href="#1825" id="1825">1825</a>
+<a href="#1826" id="1826">1826</a>
+<a href="#1827" id="1827">1827</a>
+<a href="#1828" id="1828">1828</a>
+<a href="#1829" id="1829">1829</a>
+<a href="#1830" id="1830">1830</a>
+<a href="#1831" id="1831">1831</a>
+<a href="#1832" id="1832">1832</a>
+<a href="#1833" id="1833">1833</a>
+<a href="#1834" id="1834">1834</a>
+<a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
+<a href="#1838" id="1838">1838</a>
+<a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
+<a href="#1847" id="1847">1847</a>
+<a href="#1848" id="1848">1848</a>
+<a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
+<a href="#1851" id="1851">1851</a>
+<a href="#1852" id="1852">1852</a>
+<a href="#1853" id="1853">1853</a>
+<a href="#1854" id="1854">1854</a>
+<a href="#1855" id="1855">1855</a>
+<a href="#1856" id="1856">1856</a>
+<a href="#1857" id="1857">1857</a>
+<a href="#1858" id="1858">1858</a>
+<a href="#1859" id="1859">1859</a>
+<a href="#1860" id="1860">1860</a>
+<a href="#1861" id="1861">1861</a>
+<a href="#1862" id="1862">1862</a>
+<a href="#1863" id="1863">1863</a>
+<a href="#1864" id="1864">1864</a>
+<a href="#1865" id="1865">1865</a>
+<a href="#1866" id="1866">1866</a>
+<a href="#1867" id="1867">1867</a>
+<a href="#1868" id="1868">1868</a>
+<a href="#1869" id="1869">1869</a>
+<a href="#1870" id="1870">1870</a>
+<a href="#1871" id="1871">1871</a>
+<a href="#1872" id="1872">1872</a>
+<a href="#1873" id="1873">1873</a>
+<a href="#1874" id="1874">1874</a>
+<a href="#1875" id="1875">1875</a>
+<a href="#1876" id="1876">1876</a>
+<a href="#1877" id="1877">1877</a>
+<a href="#1878" id="1878">1878</a>
+<a href="#1879" id="1879">1879</a>
+<a href="#1880" id="1880">1880</a>
+<a href="#1881" id="1881">1881</a>
+<a href="#1882" id="1882">1882</a>
+<a href="#1883" id="1883">1883</a>
+<a href="#1884" id="1884">1884</a>
+<a href="#1885" id="1885">1885</a>
+<a href="#1886" id="1886">1886</a>
+<a href="#1887" id="1887">1887</a>
+<a href="#1888" id="1888">1888</a>
+<a href="#1889" id="1889">1889</a>
+<a href="#1890" id="1890">1890</a>
+<a href="#1891" id="1891">1891</a>
+<a href="#1892" id="1892">1892</a>
+<a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span><span class="kw">crate</span>::data_fetcher::DataFetcher;
+</span><span class="kw">use </span><span class="kw">crate</span>::data_fetcher::extract_epoch_and_version;
+<span class="kw">use </span><span class="kw">crate</span>::data_fetcher::DataFetcher;
+<span class="kw">use </span><span class="kw">crate</span>::data_fetcher::Fetchers;
+<span class="kw">use </span><span class="kw">crate</span>::data_fetcher::NodeStateDumpFetcher;
 <span class="kw">use </span><span class="kw">crate</span>::data_fetcher::RemoteFetcher;
 <span class="kw">use </span><span class="kw">crate</span>::types::<span class="kw-2">*</span>;
 <span class="kw">use </span>futures::executor::block_on;
@@ -1825,11 +1916,11 @@
 <span class="kw">use </span>move_bytecode_utils::module_cache::GetModule;
 <span class="kw">use </span>move_core_types::account_address::AccountAddress;
 <span class="kw">use </span>move_core_types::language_storage::{ModuleId, StructTag};
-<span class="kw">use </span>move_core_types::parser::parse_struct_tag;
 <span class="kw">use </span>move_core_types::resolver::{ModuleResolver, ResourceResolver};
 <span class="kw">use </span>prometheus::Registry;
 <span class="kw">use </span>similar::{ChangeTag, TextDiff};
 <span class="kw">use </span>std::collections::{BTreeMap, HashSet};
+<span class="kw">use </span>std::path::PathBuf;
 <span class="kw">use </span>std::str::FromStr;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::sync::Mutex;
@@ -1841,6 +1932,7 @@
 <span class="kw">use </span>sui_core::authority::epoch_start_configuration::EpochStartConfiguration;
 <span class="kw">use </span>sui_core::authority::test_authority_builder::TestAuthorityBuilder;
 <span class="kw">use </span>sui_core::authority::AuthorityState;
+<span class="kw">use </span>sui_core::authority::NodeStateDump;
 <span class="kw">use </span>sui_core::authority::TemporaryStore;
 <span class="kw">use </span>sui_core::epoch::epoch_metrics::EpochMetrics;
 <span class="kw">use </span>sui_core::module_cache_metrics::ResolverMetrics;
@@ -1848,7 +1940,6 @@
 <span class="kw">use </span>sui_framework::BuiltInFramework;
 <span class="kw">use </span>sui_json_rpc_types::SuiTransactionBlockEffects;
 <span class="kw">use </span>sui_json_rpc_types::SuiTransactionBlockEffectsAPI;
-<span class="kw">use </span>sui_json_rpc_types::{EventFilter, SuiEvent};
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
 <span class="kw">use </span>sui_types::base_types::{ObjectID, ObjectRef, SequenceNumber, SuiAddress, VersionNumber};
@@ -2019,7 +2110,7 @@
 }
 
 <span class="kw">pub struct </span>LocalExec {
-    <span class="kw">pub </span>client: SuiClient,
+    <span class="kw">pub </span>client: <span class="prelude-ty">Option</span>&lt;SuiClient&gt;,
     <span class="comment">// For a given protocol version, what TX created it, and what is the valid range of epochs
     // at this protocol version.
     </span><span class="kw">pub </span>protocol_version_epoch_table: BTreeMap&lt;u64, ProtocolVersionSummary&gt;,
@@ -2034,7 +2125,7 @@
     <span class="comment">// Debug events
     </span><span class="kw">pub </span>metrics: Arc&lt;LimitsMetrics&gt;,
     <span class="comment">// Used for fetching data from the network or remote store
-    </span><span class="kw">pub </span>fetcher: RemoteFetcher,
+    </span><span class="kw">pub </span>fetcher: Fetchers,
     <span class="doccomment">/// For special casing some logic
     </span><span class="kw">pub </span>is_testnet: bool,
 
@@ -2101,29 +2192,8 @@
         </span><span class="self">self</span>.fetcher.get_loaded_child_objects(tx_digest).<span class="kw">await
     </span>}
 
-    <span class="doccomment">/// Gets all the epoch change events
-    </span><span class="kw">pub async fn </span>get_epoch_change_events(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        reverse: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = SuiEvent&gt;, LocalExecError&gt; {
-        <span class="kw">let </span>struct_tag_str = EPOCH_CHANGE_STRUCT_TAG.to_string();
-        <span class="kw">let </span>struct_tag = parse_struct_tag(<span class="kw-2">&amp;</span>struct_tag_str)<span class="question-mark">?</span>;
-
-        <span class="comment">// TODO: Should probably limit/page this but okay for now?
-        </span><span class="prelude-val">Ok</span>(<span class="self">self
-            </span>.client
-            .event_api()
-            .query_events(EventFilter::MoveEventType(struct_tag), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, reverse)
-            .<span class="kw">await
-            </span>.map_err(|e| LocalExecError::UnableToQuerySystemEvents {
-                rpc_err: e.to_string(),
-            })<span class="question-mark">?
-            </span>.data
-            .into_iter())
-    }
-
     <span class="kw">pub async fn </span>new_from_fn_url(http_url: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
-        <span class="self">Self</span>::new(
+        <span class="self">Self</span>::new_for_remote(
             SuiClientBuilder::default()
                 .request_timeout(RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD)
                 .max_concurrent_requests(MAX_CONCURRENT_REQUESTS)
@@ -2142,11 +2212,14 @@
         <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">pub async fn </span>reset_for_new_execution(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
-        <span class="self">Self</span>::new(<span class="self">self</span>.client).<span class="kw">await</span><span class="question-mark">?</span>.init_for_execution().<span class="kw">await
+    <span class="kw">pub async fn </span>reset_for_new_execution_with_client(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
+        <span class="self">Self</span>::new_for_remote(<span class="self">self</span>.client.expect(<span class="string">&quot;Remote client not initialized&quot;</span>))
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.init_for_execution()
+            .<span class="kw">await
     </span>}
 
-    <span class="kw">pub async fn </span>new(client: SuiClient) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
+    <span class="kw">pub async fn </span>new_for_remote(client: SuiClient) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
         <span class="comment">// Use a throwaway metrics registry for local execution.
         </span><span class="kw">let </span>registry = prometheus::Registry::new();
         <span class="kw">let </span>metrics = Arc::new(LimitsMetrics::new(<span class="kw-2">&amp;</span>registry));
@@ -2162,14 +2235,41 @@
             .any(|tx| tx == <span class="kw-2">&amp;</span>TransactionDigest::from_str(TESTNET_GENESIX_TX_DIGEST).unwrap());
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
-            client,
+            client: <span class="prelude-val">Some</span>(client),
             protocol_version_epoch_table: BTreeMap::new(),
             protocol_version_system_package_table: BTreeMap::new(),
             current_protocol_version: <span class="number">0</span>,
             exec_store_events: Arc::new(Mutex::new(Vec::new())),
             metrics,
             storage: Storage::default(),
-            fetcher,
+            fetcher: Fetchers::Remote(fetcher),
+            is_testnet,
+            <span class="comment">// TODO: make these configurable
+            </span>num_retries_for_timeout: RPC_TIMEOUT_ERR_NUM_RETRIES,
+            sleep_period_for_timeout: RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD,
+        })
+    }
+
+    <span class="kw">pub async fn </span>new_for_state_dump(path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, LocalExecError&gt; {
+        <span class="comment">// Use a throwaway metrics registry for local execution.
+        </span><span class="kw">let </span>registry = prometheus::Registry::new();
+        <span class="kw">let </span>metrics = Arc::new(LimitsMetrics::new(<span class="kw-2">&amp;</span>registry));
+
+        <span class="kw">let </span>state = NodeStateDump::read_from_file(<span class="kw-2">&amp;</span>PathBuf::from(path))<span class="question-mark">?</span>;
+        <span class="kw">let </span>current_protocol_version = state.protocol_version;
+        <span class="kw">let </span>fetcher = NodeStateDumpFetcher::from(state);
+
+        <span class="kw">let </span>is_testnet =<span class="bool-val">false</span><span class="comment">/* should not matter */</span>;
+
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+            client: <span class="prelude-val">None</span>,
+            protocol_version_epoch_table: BTreeMap::new(),
+            protocol_version_system_package_table: BTreeMap::new(),
+            current_protocol_version,
+            exec_store_events: Arc::new(Mutex::new(Vec::new())),
+            metrics,
+            storage: Storage::default(),
+            fetcher: Fetchers::NodeStateDump(fetcher),
             is_testnet,
             <span class="comment">// TODO: make these configurable
             </span>num_retries_for_timeout: RPC_TIMEOUT_ERR_NUM_RETRIES,
@@ -2417,7 +2517,7 @@
 
         <span class="comment">// Extract the epoch start timestamp
         </span><span class="kw">let </span>(epoch_start_timestamp, <span class="kw">_</span>) = <span class="self">self
-            </span>.get_epoch_start_timestamp_and_rgp(tx_info.executed_epoch)
+            </span>.get_epoch_start_timestamp_and_rgp(tx_info.executed_epoch, <span class="self">self</span>.is_testnet)
             .<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Create the gas status
@@ -2468,13 +2568,19 @@
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
         expensive_safety_check_config: ExpensiveSafetyCheckConfig,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecutionSandboxState, LocalExecError&gt; {
-        <span class="macro">assert!</span>(
+        <span class="kw">if </span><span class="self">self</span>.is_remote_replay() {
+            <span class="macro">assert!</span>(
             !<span class="self">self</span>.protocol_version_system_package_table.is_empty()
                 || !<span class="self">self</span>.protocol_version_epoch_table.is_empty(),
             <span class="string">&quot;Required tables not populated. Must call `init_for_execution` before executing transactions&quot;
         </span>);
+        }
 
-        <span class="kw">let </span>tx_info = <span class="self">self</span>.resolve_tx_components(tx_digest).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>tx_info = <span class="kw">if </span><span class="self">self</span>.is_remote_replay() {
+            <span class="self">self</span>.resolve_tx_components(tx_digest).<span class="kw">await</span><span class="question-mark">?
+        </span>} <span class="kw">else </span>{
+            <span class="self">self</span>.resolve_tx_components_from_dump(tx_digest).<span class="kw">await</span><span class="question-mark">?
+        </span>};
         <span class="self">self</span>.execution_engine_execute_with_tx_info_impl(
             <span class="kw-2">&amp;</span>tx_info,
             <span class="prelude-val">None</span>,
@@ -2634,6 +2740,24 @@
         <span class="prelude-val">Ok</span>(sandbox_state)
     }
 
+    <span class="kw">pub async fn </span>execute_state_dump(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        expensive_safety_check_config: ExpensiveSafetyCheckConfig,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(ExecutionSandboxState, NodeStateDump), LocalExecError&gt; {
+        <span class="macro">assert!</span>(!<span class="self">self</span>.is_remote_replay());
+
+        <span class="kw">let </span>d = <span class="kw">match </span><span class="self">self</span>.fetcher.clone() {
+            Fetchers::NodeStateDump(d) =&gt; d,
+            <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Invalid fetcher for state dump&quot;</span>),
+        };
+        <span class="kw">let </span>tx_digest = d.node_state_dump.clone().tx_digest;
+        <span class="kw">let </span>sandbox_state = <span class="self">self
+            </span>.execution_engine_execute_impl(<span class="kw-2">&amp;</span>tx_digest, expensive_safety_check_config)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>((sandbox_state, d.node_state_dump))
+    }
+
     <span class="kw">pub async fn </span>execute_transaction(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
@@ -2706,19 +2830,43 @@
         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(o))
     }
 
+    <span class="kw">pub fn </span>is_remote_replay(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="macro">matches!</span>(<span class="self">self</span>.fetcher, Fetchers::Remote(<span class="kw">_</span>))
+    }
+
     <span class="doccomment">/// Must be called after `populate_protocol_version_tables`
     </span><span class="kw">pub fn </span>system_package_versions_for_epoch(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch: u64,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, LocalExecError&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self
-            </span>.protocol_version_system_package_table
-            .get(<span class="kw-2">&amp;</span>epoch)
-            .ok_or(LocalExecError::FrameworkObjectVersionTableNotPopulated { epoch })<span class="question-mark">?
-            </span>.clone()
-            .into_iter()
-            .collect())
-    }
+        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.fetcher {
+            Fetchers::Remote(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="self">self
+                </span>.protocol_version_system_package_table
+                .get(<span class="kw-2">&amp;</span>epoch)
+                .ok_or(LocalExecError::FrameworkObjectVersionTableNotPopulated { epoch })<span class="question-mark">?
+                </span>.clone()
+                .into_iter()
+                .collect()),
+
+            Fetchers::NodeStateDump(d) =&gt; <span class="prelude-val">Ok</span>(d
+                .node_state_dump
+                .relevant_system_packages
+                .iter()
+                .map(|w| w.compute_object_reference())
+                .map(|q| (q.<span class="number">0</span>, q.<span class="number">1</span>))
+                .collect()),
+        }
+
+        <span class="comment">// if self.is_remote_replay() {
+        //     Ok(self
+        //         .protocol_version_system_package_table
+        //         .get(&amp;epoch)
+        //         .ok_or(LocalExecError::FrameworkObjectVersionTableNotPopulated { epoch })?
+        //         .clone()
+        //         .into_iter()
+        //         .collect())
+        // }
+    </span>}
 
     <span class="doccomment">/// Very testnet specific now
     /// This function is testnet specific and will be extended for other networs later
@@ -2726,7 +2874,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;BTreeMap&lt;u64, ProtocolVersionSummary&gt;, LocalExecError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>range_map = BTreeMap::new();
-        <span class="kw">let </span>epoch_change_events = <span class="self">self</span>.get_epoch_change_events(<span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>epoch_change_events = <span class="self">self</span>.fetcher.get_epoch_change_events(<span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Exception for Genesis: Protocol version 1 at epoch 0
         </span><span class="kw">let </span><span class="kw-2">mut </span>tx_digest = TransactionDigest::from_str(TESTNET_GENESIX_TX_DIGEST).unwrap();
@@ -2979,9 +3127,11 @@
 
     <span class="kw">pub async fn </span>checkpoints_for_epoch(<span class="kw-2">&amp;</span><span class="self">self</span>, epoch_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
         <span class="kw">let </span>epoch_change_events = <span class="self">self
-            </span>.get_epoch_change_events(<span class="bool-val">true</span>)
+            </span>.fetcher
+            .get_epoch_change_events(<span class="bool-val">true</span>)
             .<span class="kw">await</span><span class="question-mark">?
-            </span>.collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+            </span>.into_iter()
+            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
         <span class="kw">let </span>(start_checkpoint, start_epoch_idx) = <span class="kw">if </span>epoch_id == <span class="number">0 </span>{
             (<span class="number">0</span>, <span class="number">1</span>)
         } <span class="kw">else </span>{
@@ -3023,45 +3173,18 @@
     </span><span class="kw">pub async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_id: u64,
+        is_testnet: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
-        <span class="comment">// Hack for testnet: for epoch in range [3, 742), we have no data, but no user TX was executed, so return dummy
-        </span><span class="kw">if </span>(<span class="self">self</span>.is_testnet) &amp;&amp; (<span class="number">2 </span>&lt; epoch_id) &amp;&amp; (epoch_id &lt; <span class="number">742</span>) {
-            <span class="kw">return </span><span class="prelude-val">Ok</span>((<span class="number">0</span>, <span class="number">1</span>));
-        }
-
-        <span class="kw">let </span>event = <span class="self">self
-            </span>.get_epoch_change_events(<span class="bool-val">true</span>)
-            .<span class="kw">await</span><span class="question-mark">?
-            </span>.find(|ev| <span class="kw">match </span>extract_epoch_and_version(ev.clone()) {
-                <span class="prelude-val">Ok</span>((epoch, <span class="kw">_</span>)) =&gt; epoch == epoch_id,
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
-            })
-            .ok_or(LocalExecError::EventNotFound { epoch: epoch_id })<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>reference_gas_price = <span class="kw">if let </span>serde_json::Value::Object(w) = event.parsed_json {
-            u64::from_str(<span class="kw-2">&amp;</span>w[<span class="string">&quot;reference_gas_price&quot;</span>].to_string().replace(<span class="string">&#39;\&quot;&#39;</span>, <span class="string">&quot;&quot;</span>)).unwrap()
-        } <span class="kw">else </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(LocalExecError::UnexpectedEventFormat { event });
-        };
-
-        <span class="kw">let </span>epoch_change_tx = event.id.tx_digest;
-
-        <span class="comment">// Fetch full transaction content
-        </span><span class="kw">let </span>tx_info = <span class="self">self</span>.fetcher.get_transaction(<span class="kw-2">&amp;</span>epoch_change_tx).<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="kw">let </span>orig_tx: SenderSignedData = bcs::from_bytes(<span class="kw-2">&amp;</span>tx_info.raw_transaction).unwrap();
-        <span class="kw">let </span>tx_kind_orig = orig_tx.transaction_data().kind();
-
-        <span class="kw">if let </span>TransactionKind::ChangeEpoch(change) = tx_kind_orig {
-            <span class="kw">return </span><span class="prelude-val">Ok</span>((change.epoch_start_timestamp_ms, reference_gas_price));
-        }
-        <span class="prelude-val">Err</span>(LocalExecError::InvalidEpochChangeTx { epoch: epoch_id })
-    }
+        <span class="self">self</span>.fetcher
+            .get_epoch_start_timestamp_and_rgp(epoch_id, is_testnet)
+            .<span class="kw">await
+    </span>}
 
     <span class="kw">async fn </span>resolve_tx_components(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;OnChainTransactionInfo, LocalExecError&gt; {
+        <span class="macro">assert!</span>(<span class="self">self</span>.is_remote_replay());
         <span class="comment">// Fetch full transaction content
         </span><span class="kw">let </span>tx_info = <span class="self">self</span>.fetcher.get_transaction(tx_digest).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>sender = <span class="kw">match </span>tx_info.clone().transaction.unwrap().data {
@@ -3093,8 +3216,9 @@
         <span class="kw">let </span>epoch_id = effects.executed_epoch;
 
         <span class="comment">// Extract the epoch start timestamp
-        </span><span class="kw">let </span>(epoch_start_timestamp, reference_gas_price) =
-            <span class="self">self</span>.get_epoch_start_timestamp_and_rgp(epoch_id).<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>(epoch_start_timestamp, reference_gas_price) = <span class="self">self
+            </span>.get_epoch_start_timestamp_and_rgp(epoch_id, <span class="self">self</span>.is_testnet)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(OnChainTransactionInfo {
             kind: tx_kind_orig.clone(),
@@ -3111,6 +3235,68 @@
             <span class="comment">// Find the protocol version for this epoch
             // This assumes we already initialized the protocol version table `protocol_version_epoch_table`
             </span>protocol_config: <span class="self">self</span>.get_protocol_config(epoch_id).<span class="kw">await</span><span class="question-mark">?</span>,
+            tx_digest: <span class="kw-2">*</span>tx_digest,
+            epoch_start_timestamp,
+            sender_signed_data: orig_tx.clone(),
+            reference_gas_price,
+        })
+    }
+
+    <span class="kw">async fn </span>resolve_tx_components_from_dump(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;OnChainTransactionInfo, LocalExecError&gt; {
+        <span class="macro">assert!</span>(!<span class="self">self</span>.is_remote_replay());
+
+        <span class="kw">let </span>dp = <span class="self">self</span>.fetcher.as_node_state_dump();
+
+        <span class="kw">let </span>sender = dp
+            .node_state_dump
+            .sender_signed_data
+            .transaction_data()
+            .sender();
+        <span class="kw">let </span>orig_tx = dp.node_state_dump.sender_signed_data.clone();
+        <span class="kw">let </span>effects = dp.node_state_dump.computed_effects.clone();
+        <span class="kw">let </span>effects = SuiTransactionBlockEffects::try_from(effects).unwrap();
+
+        <span class="comment">// Fetch full transaction content
+        //let tx_info = self.fetcher.get_transaction(tx_digest).await?;
+
+        </span><span class="kw">let </span>input_objs = orig_tx
+            .transaction_data()
+            .input_objects()
+            .map_err(|e| LocalExecError::UserInputError { err: e })<span class="question-mark">?</span>;
+        <span class="kw">let </span>tx_kind_orig = orig_tx.transaction_data().kind();
+
+        <span class="comment">// Download the objects at the version right before the execution of this TX
+        </span><span class="kw">let </span>modified_at_versions: Vec&lt;(ObjectID, SequenceNumber)&gt; = effects.modified_at_versions();
+
+        <span class="kw">let </span>shared_obj_refs = effects.shared_objects();
+        <span class="kw">let </span>gas_data = orig_tx.transaction_data().gas_data();
+        <span class="kw">let </span>gas_object_refs: Vec&lt;<span class="kw">_</span>&gt; = gas_data.clone().payment.into_iter().collect();
+
+        <span class="kw">let </span>epoch_id = dp.node_state_dump.executed_epoch;
+
+        <span class="kw">let </span>protocol_config =
+            ProtocolConfig::get_for_version(dp.node_state_dump.protocol_version.into());
+        <span class="comment">// Extract the epoch start timestamp
+        </span><span class="kw">let </span>(epoch_start_timestamp, reference_gas_price) = <span class="self">self
+            </span>.get_epoch_start_timestamp_and_rgp(epoch_id, <span class="self">self</span>.is_testnet)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(OnChainTransactionInfo {
+            kind: tx_kind_orig.clone(),
+            sender,
+            modified_at_versions,
+            input_objects: input_objs,
+            shared_object_refs: shared_obj_refs.iter().map(|r| r.to_object_ref()).collect(),
+            gas: gas_object_refs,
+            gas_budget: gas_data.budget,
+            gas_price: gas_data.price,
+            executed_epoch: epoch_id,
+            dependencies: effects.dependencies().to_vec(),
+            effects,
+            protocol_config,
             tx_digest: <span class="kw-2">*</span>tx_digest,
             epoch_start_timestamp,
             sender_signed_data: orig_tx.clone(),
@@ -3536,16 +3722,6 @@
         .expect(<span class="string">&quot;We defined natives to not fail here&quot;</span>),
     );
     <span class="prelude-val">Ok</span>(move_vm)
-}
-
-<span class="kw">fn </span>extract_epoch_and_version(ev: SuiEvent) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
-    <span class="kw">if let </span>serde_json::Value::Object(w) = ev.parsed_json {
-        <span class="kw">let </span>epoch = u64::from_str(<span class="kw-2">&amp;</span>w[<span class="string">&quot;epoch&quot;</span>].to_string().replace(<span class="string">&#39;\&quot;&#39;</span>, <span class="string">&quot;&quot;</span>)).unwrap();
-        <span class="kw">let </span>version = u64::from_str(<span class="kw-2">&amp;</span>w[<span class="string">&quot;protocol_version&quot;</span>].to_string().replace(<span class="string">&#39;\&quot;&#39;</span>, <span class="string">&quot;&quot;</span>)).unwrap();
-        <span class="kw">return </span><span class="prelude-val">Ok</span>((epoch, version));
-    }
-
-    <span class="prelude-val">Err</span>(LocalExecError::UnexpectedEventFormat { event: ev })
 }
 
 <span class="kw">async fn </span>prep_network(

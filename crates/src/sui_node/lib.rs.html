@@ -1221,6 +1221,7 @@
 <a href="#1221" id="1221">1221</a>
 <a href="#1222" id="1222">1222</a>
 <a href="#1223" id="1223">1223</a>
+<a href="#1224" id="1224">1224</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1573,6 +1574,7 @@
             config.transaction_deny_config.clone(),
             config.certificate_deny_config.clone(),
             config.indirect_objects_threshold,
+            config.state_debug_dump_config.clone(),
         )
         .<span class="kw">await</span>;
         <span class="comment">// ensure genesis txn was executed

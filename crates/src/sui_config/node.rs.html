@@ -845,6 +845,18 @@
 <a href="#845" id="845">845</a>
 <a href="#846" id="846">846</a>
 <a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -968,6 +980,9 @@
 
     <span class="attr">#[serde(default)]
     </span><span class="kw">pub </span>certificate_deny_config: CertificateDenyConfig,
+
+    <span class="attr">#[serde(default)]
+    </span><span class="kw">pub </span>state_debug_dump_config: StateDebugDumpConfig,
 }
 
 <span class="kw">fn </span>default_authority_store_pruning_config() -&gt; AuthorityStorePruningConfig {
@@ -1581,6 +1596,15 @@
             })
             .as_ref()
     }
+}
+
+<span class="doccomment">/// Configurations which determine how we dump state debug info.
+/// Debug info is dumped when a node forks.
+</span><span class="attr">#[derive(Clone, Debug, Deserialize, Serialize, Default)]
+#[serde(rename_all = <span class="string">&quot;kebab-case&quot;</span>)]
+</span><span class="kw">pub struct </span>StateDebugDumpConfig {
+    <span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
+    </span><span class="kw">pub </span>dump_file_directory: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
 }
 
 <span class="attr">#[cfg(test)]
