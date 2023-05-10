@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683687892400,
+  "lastUpdate": 1683696166183,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5723,6 +5723,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 256237,
             "range": "± 10797",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8359729aba22d81f3ff8f2abad59bf6a99231a0a",
+          "message": "Check for any changes to protocol config snapshots relative to deployed commits (#11869)\n\nUsage:\r\n\r\n```\r\n$ API_USER=incoming_metrics API_KEY=xxxxxxxx ./scripts/compatibility/check-protocol-compatibility.sh mainnet\r\nFound following versions on mainnet:\r\n  87 1.0.0-ae1212baf\r\n  10 1.0.0-ae1212baf8\r\n   1 1.0.0-ae1212baf-dirty\r\n   1 1.0.0-ae1212b\r\n   1 1.0.0-92d2c16dc\r\n\r\nUsing most frequent version 1.0.0-ae1212baf for compatibility check\r\nChecking protocol compatibility with mainnet (ae1212baf)\r\nChecking out mainnet snapshot files\r\nChecking for changes to snapshot files\r\nRunning snapshot tests...\r\n    Finished test [unoptimized + debuginfo] target(s) in 0.61s\r\nwarning: the following packages contain code that will be rejected by a future version of Rust: nom v5.1.2\r\nnote: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 459`\r\n     Running unittests src/lib.rs (target/debug/deps/sui_protocol_config-aa6de2cd5cfddab5)\r\n\r\nrunning 1 test\r\ntest test::snapshot_tests ... ok\r\n\r\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.36s\r\n```",
+          "timestamp": "2023-05-09T22:11:00-07:00",
+          "tree_id": "75412c0c36736137633248b60c54d149c0709041",
+          "url": "https://github.com/MystenLabs/sui/commit/8359729aba22d81f3ff8f2abad59bf6a99231a0a"
+        },
+        "date": 1683696156653,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109750006,
+            "range": "± 3401253",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 301884,
+            "range": "± 4193",
             "unit": "ns/iter"
           }
         ]
