@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683733479687,
+  "lastUpdate": 1683734538414,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5867,6 +5867,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 255141,
             "range": "± 19537",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e17e9cd4628ebecc14b63aea33f4f4dae9206490",
+          "message": "[Part 1/3] Use TestCluster universally in sui tests (#11816)\n\nA lot of tests spawn authority nodes individually. This is redundant to\r\nthe functionality of TestCluster.\r\nThis PR replaces a large number of those tests to use TestCluster\r\ninsdead.\r\n\r\nThere are two categories that are not update in this PR:\r\n1. Dynamic committee change tests: these types of tests requires some\r\ncareful crafting of validator set and their keys. I need to figure out a\r\nsystematic way for integrating them into TestCluster.\r\n2. Many of the shared object tests heavily depend on transactions.rs,\r\nwhich is currently being cleaned up. Leaving that part along to avoid\r\nmerge conflicts.",
+          "timestamp": "2023-05-10T08:49:46-07:00",
+          "tree_id": "a108e4bc0509f7b4d038cc40e34a95bfc82fc9fc",
+          "url": "https://github.com/MystenLabs/sui/commit/e17e9cd4628ebecc14b63aea33f4f4dae9206490"
+        },
+        "date": 1683734528813,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146464703,
+            "range": "± 4788941",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 338668,
+            "range": "± 23792",
             "unit": "ns/iter"
           }
         ]
