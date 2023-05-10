@@ -322,6 +322,13 @@
 <a href="#322" id="322">322</a>
 <a href="#323" id="323">323</a>
 <a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>axum::{
@@ -343,7 +350,7 @@
 <span class="kw">use </span>sui_network::tonic::Code;
 
 <span class="kw">use </span>mysten_metrics::RegistryService;
-<span class="kw">use </span>tracing::warn;
+<span class="kw">use </span>tracing::{error, warn};
 
 <span class="kw">const </span>METRICS_ROUTE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/metrics&quot;</span>;
 
@@ -466,11 +473,18 @@
         <span class="kw">let </span>encoder = prometheus::ProtobufEncoder::new();
         encoder.encode(<span class="kw-2">&amp;</span>metric_families, <span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
 
+        <span class="kw">let </span><span class="kw-2">mut </span>s = snap::raw::Encoder::new();
+        <span class="kw">let </span>compressed = s.compress_vec(<span class="kw-2">&amp;</span>buf).map_err(|err| {
+            <span class="macro">error!</span>(<span class="string">&quot;unable to snappy encode; {err}&quot;</span>);
+            err
+        })<span class="question-mark">?</span>;
+
         <span class="kw">let </span>response = client
             .client()
             .post(url.to_owned())
+            .header(reqwest::header::CONTENT_ENCODING, <span class="string">&quot;snappy&quot;</span>)
             .header(header::CONTENT_TYPE, PROTOBUF_FORMAT)
-            .body(buf)
+            .body(compressed)
             .send()
             .<span class="kw">await</span><span class="question-mark">?</span>;
 

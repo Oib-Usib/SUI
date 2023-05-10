@@ -121,6 +121,32 @@
 <a href="#121" id="121">121</a>
 <a href="#122" id="122">122</a>
 <a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use crate</span>::{consumer::ProtobufDecoder, peers::SuiNodeProvider};
@@ -135,6 +161,7 @@
     BoxError, TypedHeader,
 };
 <span class="kw">use </span>bytes::Buf;
+<span class="kw">use </span>hyper::header::CONTENT_ENCODING;
 <span class="kw">use </span>once_cell::sync::Lazy;
 <span class="kw">use </span>prometheus::{proto::MetricFamily, register_counter_vec, CounterVec};
 <span class="kw">use </span>std::sync::Arc;
@@ -221,6 +248,12 @@
     <span class="kw">type </span>Rejection = (StatusCode, String);
 
     <span class="kw">async fn </span>from_request(req: Request&lt;B&gt;, state: <span class="kw-2">&amp;</span>S) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Rejection&gt; {
+        <span class="kw">let </span>should_be_snappy = req
+            .headers()
+            .get(CONTENT_ENCODING)
+            .map(|v| v.as_bytes() == <span class="string">b&quot;snappy&quot;</span>)
+            .unwrap_or(<span class="bool-val">false</span>);
+
         <span class="kw">let </span>body = Bytes::from_request(req, state).<span class="kw">await</span>.map_err(|e| {
             <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;error extracting bytes; {e}&quot;</span>);
             <span class="macro">error!</span>(msg);
@@ -229,7 +262,26 @@
                 .inc();
             (e.status(), msg)
         })<span class="question-mark">?</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>decoder = ProtobufDecoder::new(body.reader());
+
+        <span class="kw">let </span>intermediate = <span class="kw">if </span>should_be_snappy {
+            <span class="kw">let </span><span class="kw-2">mut </span>s = snap::raw::Decoder::new();
+            <span class="kw">let </span>decompressed = s.decompress_vec(<span class="kw-2">&amp;</span>body).map_err(|e| {
+                <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;unable to decode snappy encoded protobufs; {e}&quot;</span>);
+                <span class="macro">error!</span>(msg);
+                MIDDLEWARE_OPS
+                    .with_label_values(<span class="kw-2">&amp;</span>[
+                        <span class="string">&quot;LenDelimProtobuf_decompress_vec&quot;</span>,
+                        <span class="string">&quot;unable-to-decode-snappy&quot;</span>,
+                    ])
+                    .inc();
+                (StatusCode::BAD_REQUEST, msg)
+            })<span class="question-mark">?</span>;
+            Bytes::from(decompressed).reader()
+        } <span class="kw">else </span>{
+            body.reader()
+        };
+
+        <span class="kw">let </span><span class="kw-2">mut </span>decoder = ProtobufDecoder::new(intermediate);
         <span class="kw">let </span>decoded = decoder.parse::&lt;MetricFamily&gt;().map_err(|e| {
             <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;unable to decode len deliminated protobufs; {e}&quot;</span>);
             <span class="macro">error!</span>(msg);
