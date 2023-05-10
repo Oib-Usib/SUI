@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683740861747,
+  "lastUpdate": 1683746405208,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5975,6 +5975,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314879,
             "range": "± 27855",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a1aa56dd99761466166bca3d602996a62137facd",
+          "message": "Rename OBJECT_ID to PACKAGE_ID for framework (#11846)\n\nTo reduce confusion",
+          "timestamp": "2023-05-10T12:06:49-07:00",
+          "tree_id": "e62c64cd2ce821ec505ce68633864f5944598cb1",
+          "url": "https://github.com/MystenLabs/sui/commit/a1aa56dd99761466166bca3d602996a62137facd"
+        },
+        "date": 1683746395446,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147580673,
+            "range": "± 5005899",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 617483,
+            "range": "± 66266",
             "unit": "ns/iter"
           }
         ]
