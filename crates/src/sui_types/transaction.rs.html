@@ -2138,6 +2138,8 @@
 <a href="#2138" id="2138">2138</a>
 <a href="#2139" id="2139">2139</a>
 <a href="#2140" id="2140">2140</a>
+<a href="#2141" id="2141">2141</a>
+<a href="#2142" id="2142">2142</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -2180,7 +2182,9 @@
 <span class="kw">use </span>tap::Pipe;
 <span class="kw">use </span>tracing::trace;
 
-<span class="kw">pub const </span>TEST_ONLY_GAS_UNIT_FOR_TRANSFER: u64 = <span class="number">2_000_000</span>;
+<span class="comment">// TODO: The following constants appear to be very large.
+// We should revisit them.
+</span><span class="kw">pub const </span>TEST_ONLY_GAS_UNIT_FOR_TRANSFER: u64 = <span class="number">2_000_000</span>;
 <span class="kw">pub const </span>TEST_ONLY_GAS_UNIT_FOR_OBJECT_BASICS: u64 = <span class="number">10_000_000</span>;
 <span class="kw">pub const </span>TEST_ONLY_GAS_UNIT_FOR_PUBLISH: u64 = <span class="number">25_000_000</span>;
 <span class="kw">pub const </span>TEST_ONLY_GAS_UNIT_FOR_STAKING: u64 = <span class="number">10_000_000</span>;

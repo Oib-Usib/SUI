@@ -243,7 +243,6 @@
 <a href="#243" id="243">243</a>
 <a href="#244" id="244">244</a>
 <a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -256,8 +255,7 @@
 <span class="kw">use </span>sui_types::sui_system_state::SUI_SYSTEM_MODULE_NAME;
 <span class="kw">use </span>sui_types::transaction::{
     CallArg, ObjectArg, Transaction, TransactionData, VerifiedTransaction,
-    TEST_ONLY_GAS_UNIT_FOR_GENERIC, TEST_ONLY_GAS_UNIT_FOR_PUBLISH,
-    TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
+    TEST_ONLY_GAS_UNIT_FOR_GENERIC, TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
 };
 <span class="kw">use </span>sui_types::{TypeTag, SUI_SYSTEM_OBJECT_ID};
 
@@ -440,7 +438,7 @@
                     <span class="self">self</span>.gas_object,
                     all_module_bytes,
                     dependencies,
-                    <span class="self">self</span>.gas_price * TEST_ONLY_GAS_UNIT_FOR_PUBLISH,
+                    <span class="self">self</span>.gas_price * TEST_ONLY_GAS_UNIT_FOR_GENERIC,
                     <span class="self">self</span>.gas_price,
                 )
             }
