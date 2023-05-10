@@ -248,10 +248,13 @@
 <a href="#248" id="248">248</a>
 <a href="#249" id="249">249</a>
 <a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span><span class="kw">crate</span>::authority::authority_per_epoch_store::AuthorityPerEpochStore;
+<span class="kw">use </span><span class="kw">crate</span>::authority::authority_store_tables::AuthorityPerpetualTables;
 <span class="kw">use </span><span class="kw">crate</span>::authority::epoch_start_configuration::EpochStartConfiguration;
 <span class="kw">use </span><span class="kw">crate</span>::authority::{AuthorityState, AuthorityStore};
 <span class="kw">use </span><span class="kw">crate</span>::checkpoints::CheckpointStore;
@@ -392,10 +395,11 @@
         <span class="kw">let </span>authority_store = <span class="kw">match </span><span class="self">self</span>.store {
             <span class="prelude-val">Some</span>(store) =&gt; store,
             <span class="prelude-val">None </span>=&gt; {
+                <span class="kw">let </span>perpetual_tables =
+                    Arc::new(AuthorityPerpetualTables::open(<span class="kw-2">&amp;</span>path.join(<span class="string">&quot;store&quot;</span>), <span class="prelude-val">None</span>));
                 <span class="comment">// unwrap ok - for testing only.
                 </span>AuthorityStore::open_with_committee_for_testing(
-                    <span class="kw-2">&amp;</span>path.join(<span class="string">&quot;store&quot;</span>),
-                    <span class="prelude-val">None</span>,
+                    perpetual_tables,
                     <span class="kw-2">&amp;</span>genesis_committee,
                     genesis,
                     <span class="number">0</span>,

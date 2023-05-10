@@ -1891,18 +1891,11 @@
 <a href="#1891" id="1891">1891</a>
 <a href="#1892" id="1892">1892</a>
 <a href="#1893" id="1893">1893</a>
-<a href="#1894" id="1894">1894</a>
-<a href="#1895" id="1895">1895</a>
-<a href="#1896" id="1896">1896</a>
-<a href="#1897" id="1897">1897</a>
-<a href="#1898" id="1898">1898</a>
-<a href="#1899" id="1899">1899</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::cmp::Ordering;
 <span class="kw">use </span>std::ops::Not;
-<span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::{iter, mem, thread};
 
@@ -1911,8 +1904,8 @@
 <span class="kw">use </span>futures::stream::FuturesUnordered;
 <span class="kw">use </span>move_bytecode_utils::module_cache::GetModule;
 <span class="kw">use </span>move_core_types::resolver::ModuleResolver;
+<span class="kw">use </span>move_vm_runtime::move_vm::MoveVM;
 <span class="kw">use </span>once_cell::sync::OnceCell;
-<span class="kw">use </span>rocksdb::Options;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>sui_types::messages_checkpoint::ECMHLiveObjectSetDigest;
 <span class="kw">use </span>tokio::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
@@ -1943,6 +1936,7 @@
 <span class="kw">use </span><span class="kw">super</span>::authority_store_tables::LiveObject;
 <span class="kw">use super</span>::{authority_store_tables::AuthorityPerpetualTables, <span class="kw-2">*</span>};
 <span class="kw">use </span>mysten_common::sync::notify_read::NotifyRead;
+<span class="kw">use </span>sui_adapter::type_layout_resolver::TypeLayoutResolver;
 <span class="kw">use </span>sui_storage::package_object_cache::PackageObjectCache;
 <span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEvents};
 <span class="kw">use </span>sui_types::gas_coin::TOTAL_SUPPLY_MIST;
@@ -2039,15 +2033,13 @@
     <span class="doccomment">/// Open an authority store by directory path.
     /// If the store is empty, initialize it using genesis.
     </span><span class="kw">pub async fn </span>open(
-        path: <span class="kw-2">&amp;</span>Path,
-        db_options: <span class="prelude-ty">Option</span>&lt;Options&gt;,
+        perpetual_tables: Arc&lt;AuthorityPerpetualTables&gt;,
         genesis: <span class="kw-2">&amp;</span>Genesis,
         committee_store: <span class="kw-2">&amp;</span>Arc&lt;CommitteeStore&gt;,
         indirect_objects_threshold: usize,
         enable_epoch_sui_conservation_check: bool,
         registry: <span class="kw-2">&amp;</span>Registry,
     ) -&gt; SuiResult&lt;Arc&lt;<span class="self">Self</span>&gt;&gt; {
-        <span class="kw">let </span>perpetual_tables = Arc::new(AuthorityPerpetualTables::open(path, db_options.clone()));
         <span class="kw">let </span>epoch_start_configuration = <span class="kw">if </span>perpetual_tables.database_is_empty()<span class="question-mark">? </span>{
             <span class="macro">info!</span>(<span class="string">&quot;Creating new epoch start config from genesis&quot;</span>);
             <span class="kw">let </span>epoch_start_configuration = EpochStartConfiguration::new(
@@ -2100,8 +2092,7 @@
     }
 
     <span class="kw">pub async fn </span>open_with_committee_for_testing(
-        path: <span class="kw-2">&amp;</span>Path,
-        db_options: <span class="prelude-ty">Option</span>&lt;Options&gt;,
+        perpetual_tables: Arc&lt;AuthorityPerpetualTables&gt;,
         committee: <span class="kw-2">&amp;</span>Committee,
         genesis: <span class="kw-2">&amp;</span>Genesis,
         indirect_objects_threshold: usize,
@@ -2109,7 +2100,6 @@
         <span class="comment">// TODO: Since we always start at genesis, the committee should be technically the same
         // as the genesis committee.
         </span><span class="macro">assert_eq!</span>(committee.epoch, <span class="number">0</span>);
-        <span class="kw">let </span>perpetual_tables = Arc::new(AuthorityPerpetualTables::open(path, db_options.clone()));
         <span class="self">Self</span>::open_inner(
             genesis,
             perpetual_tables,
@@ -2179,13 +2169,6 @@
                 .enumerate()
                 .map(|(i, e)| ((event_digests, i), e));
             store.perpetual_tables.events.multi_insert(events).unwrap();
-            <span class="comment">// When we are opening the db table, the only time when it&#39;s safe to
-            // check SUI conservation is at genesis. Otherwise we may be in the middle of
-            // an epoch and the SUI conservation check will fail. This also initialize
-            // the expected_network_sui_amount table.
-            </span>store
-                .expensive_check_sui_conservation()
-                .expect(<span class="string">&quot;SUI conservation check cannot fail at genesis&quot;</span>);
         }
 
         <span class="prelude-val">Ok</span>(store)
@@ -3420,7 +3403,7 @@
         <span class="self">self</span>.perpetual_tables.iter_live_object_set()
     }
 
-    <span class="kw">pub fn </span>expensive_check_sui_conservation(<span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;) -&gt; SuiResult {
+    <span class="kw">pub fn </span>expensive_check_sui_conservation(<span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;, move_vm: <span class="kw-2">&amp;</span>Arc&lt;MoveVM&gt;) -&gt; SuiResult {
         <span class="kw">if </span>!<span class="self">self</span>.enable_epoch_sui_conservation_check {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
@@ -3429,8 +3412,9 @@
                 .expect(<span class="string">&quot;Read sui system state object cannot fail&quot;</span>)
                 .protocol_version(),
         );
+        <span class="kw">let </span>protocol_config = ProtocolConfig::get_for_version(protocol_version);
         <span class="comment">// Prior to gas model v2, SUI conservation is not guaranteed.
-        </span><span class="kw">if </span>ProtocolConfig::get_for_version(protocol_version).gas_model_version() &lt;= <span class="number">1 </span>{
+        </span><span class="kw">if </span>protocol_config.gas_model_version() &lt;= <span class="number">1 </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
 
@@ -3451,6 +3435,8 @@
                             mem::swap(<span class="kw-2">&amp;mut </span>pending_objects, <span class="kw-2">&amp;mut </span>task_objects);
                             <span class="kw">let </span>package_cache_clone = package_cache.clone();
                             pending_tasks.push(s.spawn(<span class="kw">move </span>|| {
+                                <span class="kw">let </span><span class="kw-2">mut </span>layout_resolver =
+                                    TypeLayoutResolver::new(move_vm, <span class="kw-2">&amp;</span>package_cache_clone);
                                 <span class="kw">let </span><span class="kw-2">mut </span>total_storage_rebate = <span class="number">0</span>;
                                 <span class="kw">let </span><span class="kw-2">mut </span>total_sui = <span class="number">0</span>;
                                 <span class="kw">for </span>object <span class="kw">in </span>task_objects {
@@ -3458,7 +3444,7 @@
                                     <span class="comment">// get_total_sui includes storage rebate, however all storage rebate is
                                     // also stored in the storage fund, so we need to subtract it here.
                                     </span>total_sui +=
-                                        object.get_total_sui(<span class="kw-2">&amp;</span>package_cache_clone).unwrap()
+                                        object.get_total_sui(<span class="kw-2">&amp;mut </span>layout_resolver).unwrap()
                                             - object.storage_rebate;
                                 }
                                 <span class="kw">if </span>count % <span class="number">50_000_000 </span>== <span class="number">0 </span>{
@@ -3476,9 +3462,11 @@
                 (init.<span class="number">0 </span>+ result.<span class="number">0</span>, init.<span class="number">1 </span>+ result.<span class="number">1</span>)
             })
         });
+        <span class="kw">let </span><span class="kw-2">mut </span>layout_resolver = TypeLayoutResolver::new(move_vm, <span class="self">self</span>.as_ref());
         <span class="kw">for </span>object <span class="kw">in </span>pending_objects {
             total_storage_rebate += object.storage_rebate;
-            total_sui += object.get_total_sui(<span class="self">self</span>).unwrap() - object.storage_rebate;
+            total_sui +=
+                object.get_total_sui(<span class="kw-2">&amp;mut </span>layout_resolver).unwrap() - object.storage_rebate;
         }
         <span class="macro">info!</span>(
             <span class="string">&quot;Scanned {} live objects, took {:?}&quot;</span>,

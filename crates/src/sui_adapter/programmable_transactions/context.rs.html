@@ -1190,6 +1190,32 @@
 <a href="#1190" id="1190">1190</a>
 <a href="#1191" id="1191">1191</a>
 <a href="#1192" id="1192">1192</a>
+<a href="#1193" id="1193">1193</a>
+<a href="#1194" id="1194">1194</a>
+<a href="#1195" id="1195">1195</a>
+<a href="#1196" id="1196">1196</a>
+<a href="#1197" id="1197">1197</a>
+<a href="#1198" id="1198">1198</a>
+<a href="#1199" id="1199">1199</a>
+<a href="#1200" id="1200">1200</a>
+<a href="#1201" id="1201">1201</a>
+<a href="#1202" id="1202">1202</a>
+<a href="#1203" id="1203">1203</a>
+<a href="#1204" id="1204">1204</a>
+<a href="#1205" id="1205">1205</a>
+<a href="#1206" id="1206">1206</a>
+<a href="#1207" id="1207">1207</a>
+<a href="#1208" id="1208">1208</a>
+<a href="#1209" id="1209">1209</a>
+<a href="#1210" id="1210">1210</a>
+<a href="#1211" id="1211">1211</a>
+<a href="#1212" id="1212">1212</a>
+<a href="#1213" id="1213">1213</a>
+<a href="#1214" id="1214">1214</a>
+<a href="#1215" id="1215">1215</a>
+<a href="#1216" id="1216">1216</a>
+<a href="#1217" id="1217">1217</a>
+<a href="#1218" id="1218">1218</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1251,7 +1277,7 @@
     <span class="doccomment">/// The gas status used for metering
     </span><span class="kw">pub </span>gas_status: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>SuiGasStatus,
     <span class="doccomment">/// The session used for interacting with Move types and calls
-    </span><span class="kw">pub </span>session: Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt;,
+    </span><span class="kw">pub </span>session: Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;,
     <span class="doccomment">/// Additional transfers not from the Move runtime
     </span>additional_transfers: Vec&lt;(<span class="comment">/* new owner */ </span>SuiAddress, ObjectValue)&gt;,
     <span class="doccomment">/// Newly published packages
@@ -1284,7 +1310,10 @@
     </span>bytes: Vec&lt;u8&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt; ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt; ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;
+<span class="kw">where
+    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+{
     <span class="kw">pub fn </span>new(
         protocol_config: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ProtocolConfig,
         metrics: Arc&lt;LimitsMetrics&gt;,
@@ -1926,7 +1955,7 @@
         <span class="kw">for </span>(id, delete_kind) <span class="kw">in </span>deletions {
             <span class="kw">let </span>version = <span class="kw">match </span>input_object_metadata.get(<span class="kw-2">&amp;</span>id) {
                 <span class="prelude-val">Some</span>(metadata) =&gt; {
-                    <span class="macro">assert_invariant!</span>(!<span class="macro">matches!</span>(metadata.owner, Owner::Immutable), <span class="macro">format!</span>(<span class="string">&quot;Attempting to delete immutable object {id} via delete kind {delete_kind}&quot;</span>));
+                    <span class="macro">assert_invariant!</span>(!<span class="macro">matches!</span>(metadata.owner, Owner::Immutable), <span class="string">&quot;Attempting to delete immutable object {id} via delete kind {delete_kind}&quot;</span>);
                     metadata.version
                 }
                 <span class="prelude-val">None </span>=&gt; <span class="kw">match </span>state_view.get_latest_parent_entry_ref(id) {
@@ -1934,7 +1963,7 @@
                     <span class="comment">// This object was not created this transaction but has never existed in
                     // storage, skip it.
                     </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) =&gt; <span class="kw">continue</span>,
-                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">invariant_violation!</span>(missing_unwrapped_msg(<span class="kw-2">&amp;</span>id)),
+                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">invariant_violation!</span>(<span class="string">&quot;{}&quot;</span>, missing_unwrapped_msg(<span class="kw-2">&amp;</span>id)),
                 },
             };
             object_changes.insert(id, ObjectChange::Delete(version, delete_kind));
@@ -2044,23 +2073,34 @@
     }
 }
 
-<span class="kw">fn </span>new_session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, S: StorageView&gt;(
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new_session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, S: StorageView&gt;(
     vm: <span class="kw-2">&amp;</span><span class="lifetime">&#39;vm </span>MoveVM,
-    linkage: LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;,
+    linkage: LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;,
     input_objects: BTreeMap&lt;ObjectID, Owner&gt;,
     is_metered: bool,
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     metrics: Arc&lt;LimitsMetrics&gt;,
-) -&gt; Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt; {
-    <span class="kw">let </span>store = linkage.storage();
+) -&gt; Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;
+<span class="kw">where
+    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+{
+    <span class="kw">let </span>store = <span class="kw-2">*</span>linkage.storage();
     vm.new_session_with_extensions(
         linkage,
         new_native_extensions(store, input_objects, is_metered, protocol_config, metrics),
     )
 }
 
+<span class="comment">// Create a new Session suitable for resolving type and type operations rather than execution
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new_session_for_linkage&lt;<span class="lifetime">&#39;state</span>, S: SuiResolver&gt;(
+    vm: <span class="kw-2">&amp;</span>MoveVM,
+    linkage: LinkageView&lt;S&gt;,
+) -&gt; Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;_</span>, LinkageView&lt;S&gt;&gt; {
+    vm.new_session(linkage)
+}
+
 <span class="doccomment">/// Set the link context for the session from the linkage information in the `package`.
-</span><span class="kw">pub fn </span>set_linkage&lt;S: StorageView&gt;(
+</span><span class="kw">pub fn </span>set_linkage&lt;S: SuiResolver&gt;(
     session: <span class="kw-2">&amp;mut </span>Session&lt;LinkageView&lt;S&gt;&gt;,
     linkage: <span class="kw-2">&amp;</span>MovePackage,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;AccountAddress, ExecutionError&gt; {
@@ -2069,17 +2109,17 @@
 
 <span class="doccomment">/// Turn off linkage information, so that the next use of the session will need to set linkage
 /// information to succeed.
-</span><span class="kw">pub fn </span>reset_linkage&lt;S: StorageView&gt;(session: <span class="kw-2">&amp;mut </span>Session&lt;LinkageView&lt;S&gt;&gt;) {
+</span><span class="kw">pub fn </span>reset_linkage&lt;S: SuiResolver&gt;(session: <span class="kw-2">&amp;mut </span>Session&lt;LinkageView&lt;S&gt;&gt;) {
     session.get_resolver_mut().reset_linkage();
 }
 
-<span class="kw">pub fn </span>steal_linkage&lt;S: StorageView&gt;(
+<span class="kw">pub fn </span>steal_linkage&lt;S: SuiResolver&gt;(
     session: <span class="kw-2">&amp;mut </span>Session&lt;LinkageView&lt;S&gt;&gt;,
 ) -&gt; <span class="prelude-ty">Option</span>&lt;SavedLinkage&gt; {
     session.get_resolver_mut().steal_linkage()
 }
 
-<span class="kw">pub fn </span>restore_linkage&lt;S: StorageView&gt;(
+<span class="kw">pub fn </span>restore_linkage&lt;S: SuiResolver&gt;(
     session: <span class="kw-2">&amp;mut </span>Session&lt;LinkageView&lt;S&gt;&gt;,
     saved: <span class="prelude-ty">Option</span>&lt;SavedLinkage&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExecutionError&gt; {
@@ -2088,7 +2128,7 @@
 
 <span class="doccomment">/// Fetch the package at `package_id` with a view to using it as a link context.  Produces an error
 /// if the object at that ID does not exist, or is not a package.
-</span><span class="kw">fn </span>package_for_linkage&lt;S: StorageView&gt;(
+</span><span class="kw">fn </span>package_for_linkage&lt;S: SuiResolver&gt;(
     session: <span class="kw-2">&amp;</span>Session&lt;LinkageView&lt;S&gt;&gt;,
     package_id: ObjectID,
 ) -&gt; VMResult&lt;MovePackage&gt; {
@@ -2111,8 +2151,8 @@
 
 <span class="doccomment">/// Load `type_tag` to get a `Type` in the provided `session`.  `session`&#39;s linkage context may be
 /// reset after this operation, because during the operation, it may change when loading a struct.
-</span><span class="kw">pub fn </span>load_type&lt;<span class="lifetime">&#39;state</span>, S: StorageView&gt;(
-    session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;_</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt;,
+</span><span class="kw">pub fn </span>load_type&lt;S: SuiResolver&gt;(
+    session: <span class="kw-2">&amp;mut </span>Session&lt;LinkageView&lt;S&gt;&gt;,
     type_tag: <span class="kw-2">&amp;</span>TypeTag,
 ) -&gt; VMResult&lt;Type&gt; {
     <span class="kw">use </span>move_binary_format::errors::PartialVMError;
@@ -2191,14 +2231,17 @@
 </span><span class="kw">fn </span>load_object&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, S: StorageView&gt;(
     vm: <span class="kw-2">&amp;</span><span class="lifetime">&#39;vm </span>MoveVM,
     state_view: <span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S,
-    session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt;,
+    session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;,
     object_owner_map: <span class="kw-2">&amp;mut </span>BTreeMap&lt;ObjectID, Owner&gt;,
     override_as_immutable: bool,
     id: ObjectID,
-) -&gt; <span class="prelude-ty">Result</span>&lt;InputValue, ExecutionError&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;InputValue, ExecutionError&gt;
+<span class="kw">where
+    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+{
     <span class="kw">let </span><span class="prelude-val">Some</span>(obj) = state_view.read_object(<span class="kw-2">&amp;</span>id) <span class="kw">else </span>{
         <span class="comment">// protected by transaction input checker
-        </span><span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(<span class="string">&quot;Object {} does not exist yet&quot;</span>, id));
+        </span><span class="macro">invariant_violation!</span>(<span class="string">&quot;Object {} does not exist yet&quot;</span>, id);
     };
     <span class="comment">// override_as_immutable ==&gt; Owner::Shared
     </span><span class="macro">assert_invariant!</span>(
@@ -2222,7 +2265,7 @@
     };
     <span class="kw">let </span>prev = object_owner_map.insert(id, obj.owner);
     <span class="comment">// protected by transaction input checker
-    </span><span class="macro">assert_invariant!</span>(prev.is_none(), <span class="macro">format!</span>(<span class="string">&quot;Duplicate input object {}&quot;</span>, id));
+    </span><span class="macro">assert_invariant!</span>(prev.is_none(), <span class="string">&quot;Duplicate input object {}&quot;</span>, id);
     <span class="kw">let </span>obj_value = ObjectValue::from_object(vm, session, obj)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(InputValue::new_object(object_metadata, obj_value))
 }
@@ -2231,10 +2274,13 @@
 </span><span class="kw">fn </span>load_call_arg&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, S: StorageView&gt;(
     vm: <span class="kw-2">&amp;</span><span class="lifetime">&#39;vm </span>MoveVM,
     state_view: <span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S,
-    session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt;,
+    session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;,
     object_owner_map: <span class="kw-2">&amp;mut </span>BTreeMap&lt;ObjectID, Owner&gt;,
     call_arg: CallArg,
-) -&gt; <span class="prelude-ty">Result</span>&lt;InputValue, ExecutionError&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;InputValue, ExecutionError&gt;
+<span class="kw">where
+    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+{
     <span class="prelude-val">Ok</span>(<span class="kw">match </span>call_arg {
         CallArg::Pure(bytes) =&gt; InputValue::new_raw(RawValueType::Any, bytes),
         CallArg::Object(obj_arg) =&gt; {
@@ -2247,10 +2293,13 @@
 </span><span class="kw">fn </span>load_object_arg&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, S: StorageView&gt;(
     vm: <span class="kw-2">&amp;</span><span class="lifetime">&#39;vm </span>MoveVM,
     state_view: <span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S,
-    session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt;,
+    session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;,
     object_owner_map: <span class="kw-2">&amp;mut </span>BTreeMap&lt;ObjectID, Owner&gt;,
     obj_arg: ObjectArg,
-) -&gt; <span class="prelude-ty">Result</span>&lt;InputValue, ExecutionError&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;InputValue, ExecutionError&gt;
+<span class="kw">where
+    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+{
     <span class="kw">match </span>obj_arg {
         ObjectArg::ImmOrOwnedObject((id, <span class="kw">_</span>, <span class="kw">_</span>)) =&gt; load_object(
             vm,
@@ -2332,9 +2381,9 @@
 ///
 /// This function assumes proper generation of has_public_transfer, either from the abilities of
 /// the StructTag, or from the runtime correctly propagating from the inputs
-</span><span class="kw">unsafe fn </span>create_written_object&lt;S: StorageView&gt;(
+</span><span class="kw">unsafe fn </span>create_written_object&lt;<span class="lifetime">&#39;state</span>, S: StorageView&gt;(
     vm: <span class="kw-2">&amp;</span>MoveVM,
-    session: <span class="kw-2">&amp;</span>Session&lt;LinkageView&lt;S&gt;&gt;,
+    session: <span class="kw-2">&amp;</span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;_</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;,
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     input_object_metadata: <span class="kw-2">&amp;</span>BTreeMap&lt;ObjectID, InputObjectMetadata&gt;,
     loaded_child_objects: <span class="kw-2">&amp;</span>BTreeMap&lt;ObjectID, SequenceNumber&gt;,
@@ -2343,7 +2392,10 @@
     has_public_transfer: bool,
     contents: Vec&lt;u8&gt;,
     write_kind: WriteKind,
-) -&gt; <span class="prelude-ty">Result</span>&lt;MoveObject, ExecutionError&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;MoveObject, ExecutionError&gt;
+<span class="kw">where
+    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+{
     <span class="macro">debug_assert_eq!</span>(
         id,
         MoveObject::id_opt(<span class="kw-2">&amp;</span>contents).expect(<span class="string">&quot;object contents should start with an id&quot;</span>)
@@ -2352,7 +2404,7 @@
     <span class="kw">let </span>loaded_child_version_opt = loaded_child_objects.get(<span class="kw-2">&amp;</span>id);
     <span class="macro">assert_invariant!</span>(
         metadata_opt.is_none() || loaded_child_version_opt.is_none(),
-        <span class="macro">format!</span>(<span class="string">&quot;Loaded {id} as a child, but that object was an input object&quot;</span>)
+        <span class="string">&quot;Loaded {id} as a child, but that object was an input object&quot;</span>,
     );
 
     <span class="kw">let </span>old_obj_ver = metadata_opt

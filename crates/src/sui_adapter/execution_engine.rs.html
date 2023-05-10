@@ -832,6 +832,8 @@
 <a href="#832" id="832">832</a>
 <a href="#833" id="833">833</a>
 <a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -856,6 +858,7 @@
 <span class="kw">use </span>tracing::{info, instrument, trace, warn};
 
 <span class="kw">use </span><span class="kw">crate</span>::programmable_transactions;
+<span class="kw">use </span><span class="kw">crate</span>::type_layout_resolver::TypeLayoutResolver;
 <span class="kw">use </span>move_binary_format::access::ModuleAccess;
 <span class="kw">use </span>sui_macros::checked_arithmetic;
 <span class="kw">use </span>sui_protocol_config::{check_limit_by_meter, LimitThresholdCrossed, ProtocolConfig};
@@ -1247,8 +1250,10 @@
         </span>temporary_store.conserve_unmetered_storage_rebate(gas_status.unmetered_storage_rebate());
         <span class="kw">if </span>!is_genesis_tx &amp;&amp; !Mode::allow_arbitrary_values() {
             <span class="comment">// ensure that this transaction did not create or destroy SUI, try to recover if the check fails
-            </span><span class="kw">let </span>conservation_result = temporary_store
-                .check_sui_conserved(advance_epoch_gas_summary, enable_expensive_checks);
+            </span><span class="kw">let </span>conservation_result = {
+                <span class="kw">let </span><span class="kw-2">mut </span>layout_resolver = TypeLayoutResolver::new(move_vm, <span class="kw-2">&amp;*</span>temporary_store);
+                temporary_store.check_sui_conserved(advance_epoch_gas_summary, <span class="kw-2">&amp;mut </span>layout_resolver, enable_expensive_checks)
+            };
             <span class="kw">if let </span><span class="prelude-val">Err</span>(conservation_err) = conservation_result {
                 <span class="comment">// conservation violated. try to avoid panic by dumping all writes, charging for gas, re-checking
                 // conservation, and surfacing an aborted transaction with an invariant violation if all of that works
@@ -1256,9 +1261,8 @@
                 temporary_store.reset(gas, <span class="kw-2">&amp;mut </span>gas_status);
                 temporary_store.charge_gas(gas_object_id, <span class="kw-2">&amp;mut </span>gas_status, <span class="kw-2">&amp;mut </span>result, gas);
                 <span class="comment">// check conservation once more more
-                </span><span class="kw">if let </span><span class="prelude-val">Err</span>(recovery_err) = temporary_store
-                    .check_sui_conserved(advance_epoch_gas_summary, enable_expensive_checks)
-                {
+                </span><span class="kw">let </span><span class="kw-2">mut </span>layout_resolver = TypeLayoutResolver::new(move_vm, <span class="kw-2">&amp;*</span>temporary_store);
+                <span class="kw">if let </span><span class="prelude-val">Err</span>(recovery_err) = temporary_store.check_sui_conserved(advance_epoch_gas_summary, <span class="kw-2">&amp;mut </span>layout_resolver, enable_expensive_checks) {
                     <span class="comment">// if we still fail, it&#39;s a problem with gas
                     // charging that happens even in the &quot;aborted&quot; case--no other option but panic.
                     // we will create or destroy SUI otherwise

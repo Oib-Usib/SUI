@@ -1171,6 +1171,17 @@
 <a href="#1171" id="1171">1171</a>
 <a href="#1172" id="1172">1172</a>
 <a href="#1173" id="1173">1173</a>
+<a href="#1174" id="1174">1174</a>
+<a href="#1175" id="1175">1175</a>
+<a href="#1176" id="1176">1176</a>
+<a href="#1177" id="1177">1177</a>
+<a href="#1178" id="1178">1178</a>
+<a href="#1179" id="1179">1179</a>
+<a href="#1180" id="1180">1180</a>
+<a href="#1181" id="1181">1181</a>
+<a href="#1182" id="1182">1182</a>
+<a href="#1183" id="1183">1183</a>
+<a href="#1184" id="1184">1184</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1196,6 +1207,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::error::{SuiError, SuiResult};
 <span class="kw">use </span><span class="kw">crate</span>::gas_coin::TOTAL_SUPPLY_MIST;
 <span class="kw">use </span><span class="kw">crate</span>::is_system_package;
+<span class="kw">use </span><span class="kw">crate</span>::layout_resolver::LayoutResolver;
 <span class="kw">use </span><span class="kw">crate</span>::move_package::MovePackage;
 <span class="kw">use crate</span>::{
     base_types::{
@@ -1242,6 +1254,10 @@
         ObjectFormatOptions {
             include_types: <span class="bool-val">true</span>,
         }
+    }
+
+    <span class="kw">pub fn </span>include_types(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.include_types
     }
 }
 
@@ -1522,7 +1538,10 @@
     </span>}
 
     <span class="doccomment">/// Get the total amount of SUI embedded in `self`. Intended for testing purposes
-    </span><span class="kw">pub fn </span>get_total_sui(<span class="kw-2">&amp;</span><span class="self">self</span>, resolver: <span class="kw-2">&amp;</span><span class="kw">impl </span>GetModule) -&gt; <span class="prelude-ty">Result</span>&lt;u64, SuiError&gt; {
+    </span><span class="kw">pub fn </span>get_total_sui(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        layout_resolver: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>LayoutResolver,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;u64, SuiError&gt; {
         <span class="kw">if </span><span class="self">self</span>.type_.is_gas_coin() {
             <span class="comment">// Fast path without deserialization.
             </span><span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="self">self</span>.get_coin_value_unsafe());
@@ -1531,7 +1550,7 @@
         </span><span class="kw">if </span><span class="self">self</span>.type_.is_coin() {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
         }
-        <span class="kw">let </span>layout = <span class="self">self</span>.get_layout(ObjectFormatOptions::with_types(), resolver)<span class="question-mark">?</span>;
+        <span class="kw">let </span>layout = layout_resolver.get_layout(<span class="self">self</span>, ObjectFormatOptions::with_types())<span class="question-mark">?</span>;
         <span class="kw">let </span>move_struct = <span class="self">self</span>.to_move_struct(<span class="kw-2">&amp;</span>layout)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="self">Self</span>::get_total_sui_in_struct(<span class="kw-2">&amp;</span>move_struct, <span class="number">0</span>))
     }
@@ -1984,10 +2003,13 @@
 <span class="comment">// Testing-related APIs.
 </span><span class="kw">impl </span>Object {
     <span class="doccomment">/// Get the total amount of SUI embedded in `self`, including both Move objects and the storage rebate
-    </span><span class="kw">pub fn </span>get_total_sui(<span class="kw-2">&amp;</span><span class="self">self</span>, resolver: <span class="kw-2">&amp;</span><span class="kw">impl </span>GetModule) -&gt; <span class="prelude-ty">Result</span>&lt;u64, SuiError&gt; {
+    </span><span class="kw">pub fn </span>get_total_sui(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        layout_resolver: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>LayoutResolver,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;u64, SuiError&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.storage_rebate
             + <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.data {
-                Data::Move(m) =&gt; m.get_total_sui(resolver)<span class="question-mark">?</span>,
+                Data::Move(m) =&gt; m.get_total_sui(layout_resolver)<span class="question-mark">?</span>,
                 Data::Package(<span class="kw">_</span>) =&gt; <span class="number">0</span>,
             })
     }

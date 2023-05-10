@@ -328,6 +328,8 @@
 <a href="#328" id="328">328</a>
 <a href="#329" id="329">329</a>
 <a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -356,26 +358,19 @@
 
 <span class="macro">sui_macros::checked_arithmetic! </span>{
 
-<span class="kw">pub trait </span>StorageView:
-    ResourceResolver&lt;Error = SuiError&gt;
-    + ModuleResolver&lt;Error = SuiError&gt;
-    + BackingPackageStore
-    + Storage
-    + ParentSync
-    + ChildObjectResolver
+<span class="kw">pub trait </span>SuiResolver:
+    ResourceResolver&lt;Error = SuiError&gt; + ModuleResolver&lt;Error = SuiError&gt; + BackingPackageStore
 {
 }
 
 <span class="kw">impl</span>&lt;
-        T: ResourceResolver&lt;Error = SuiError&gt;
-            + ModuleResolver&lt;Error = SuiError&gt;
-            + BackingPackageStore
-            + Storage
-            + ParentSync
-            + ChildObjectResolver,
-    &gt; StorageView <span class="kw">for </span>T
+        T: ResourceResolver&lt;Error = SuiError&gt; + ModuleResolver&lt;Error = SuiError&gt; + BackingPackageStore,
+    &gt; SuiResolver <span class="kw">for </span>T
 {
 }
+
+<span class="kw">pub trait </span>StorageView: Storage + ParentSync + ChildObjectResolver {}
+<span class="kw">impl</span>&lt;T: Storage + ParentSync + ChildObjectResolver&gt; StorageView <span class="kw">for </span>T {}
 
 <span class="kw">pub struct </span>ExecutionResults {
     <span class="kw">pub </span>object_changes: BTreeMap&lt;ObjectID, ObjectChange&gt;,
@@ -522,12 +517,15 @@
 <span class="kw">impl </span>ObjectValue {
     <span class="kw">pub fn </span>new&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, S: StorageView&gt;(
         vm: <span class="kw-2">&amp;</span><span class="lifetime">&#39;vm </span>MoveVM,
-        session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt;,
+        session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;,
         type_: MoveObjectType,
         has_public_transfer: bool,
         used_in_non_entry_move_call: bool,
         contents: <span class="kw-2">&amp;</span>[u8],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ExecutionError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ExecutionError&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+    {
         <span class="kw">let </span>contents = <span class="kw">if </span>type_.is_coin() {
             <span class="kw">let </span><span class="prelude-val">Ok</span>(coin) = Coin::from_bcs_bytes(contents) <span class="kw">else</span>{
                 <span class="macro">invariant_violation!</span>(<span class="string">&quot;Could not deserialize a coin&quot;</span>)
@@ -549,9 +547,12 @@
 
     <span class="kw">pub fn </span>from_object&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, S: StorageView&gt;(
         vm: <span class="kw-2">&amp;</span><span class="lifetime">&#39;vm </span>MoveVM,
-        session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt;,
+        session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;,
         object: <span class="kw-2">&amp;</span>Object,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ExecutionError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ExecutionError&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+    {
         <span class="kw">let </span>Object { data, .. } = object;
         <span class="kw">match </span>data {
             Data::Package(<span class="kw">_</span>) =&gt; <span class="macro">invariant_violation!</span>(<span class="string">&quot;Expected a Move object&quot;</span>),
@@ -561,9 +562,12 @@
 
     <span class="kw">pub fn </span>from_move_object&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, S: StorageView&gt;(
         vm: <span class="kw-2">&amp;</span><span class="lifetime">&#39;vm </span>MoveVM,
-        session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt;&gt;,
+        session: <span class="kw-2">&amp;mut </span>Session&lt;<span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;vm</span>, LinkageView&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S&gt;&gt;,
         object: <span class="kw-2">&amp;</span>MoveObject,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ExecutionError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ExecutionError&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
+    {
         <span class="self">Self</span>::new(
             vm,
             session,

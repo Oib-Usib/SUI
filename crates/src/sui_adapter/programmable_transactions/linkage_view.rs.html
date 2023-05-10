@@ -354,9 +354,6 @@
 <a href="#354" id="354">354</a>
 <a href="#355" id="355">355</a>
 <a href="#356" id="356">356</a>
-<a href="#357" id="357">357</a>
-<a href="#358" id="358">358</a>
-<a href="#359" id="359">359</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -376,15 +373,14 @@
     base_types::ObjectID,
     error::{ExecutionError, SuiError},
     move_package::{MovePackage, TypeOrigin, UpgradeInfo},
+    storage::BackingPackageStore,
 };
-
-<span class="kw">use </span><span class="kw">super</span>::types::StorageView;
 
 <span class="doccomment">/// Exposes module and linkage resolution to the Move runtime.  The first by delegating to
 /// `StorageView` and the second via linkage information that is loaded from a move package.
-</span><span class="kw">pub struct </span>LinkageView&lt;<span class="lifetime">&#39;state</span>, S: StorageView&gt; {
+</span><span class="kw">pub struct </span>LinkageView&lt;S&gt; {
     <span class="doccomment">/// Immutable access to the store for the transaction.
-    </span>state_view: <span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S,
+    </span>state_view: S,
     <span class="doccomment">/// Information used to change module and type identities during linkage.
     </span>linkage_info: LinkageInfo,
     <span class="doccomment">/// Cache containing the type origin information from every package that has been set as the
@@ -421,8 +417,8 @@
 
 <span class="kw">pub struct </span>SavedLinkage(PackageLinkage);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;state</span>, S: StorageView&gt; LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt; {
-    <span class="kw">pub fn </span>new(state_view: <span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S, linkage_info: LinkageInfo) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;S&gt; LinkageView&lt;S&gt; {
+    <span class="kw">pub fn </span>new(state_view: S, linkage_info: LinkageInfo) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             state_view,
             linkage_info,
@@ -471,10 +467,10 @@
             LinkageInfo::Unset =&gt; (),
             LinkageInfo::Universal =&gt; (),
             LinkageInfo::Set(existing) =&gt; {
-                <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+                <span class="macro">invariant_violation!</span>(
                     <span class="string">&quot;Attempt to overwrite linkage by restoring: {saved:#?} \
                      Existing linkage: {existing:#?}&quot;</span>,
-                ))
+                )
             }
         }
 
@@ -493,11 +489,11 @@
             LinkageInfo::Universal =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="kw-2">*</span>context.id()),
 
             LinkageInfo::Set(existing) =&gt; {
-                <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+                <span class="macro">invariant_violation!</span>(
                     <span class="string">&quot;Attempt to overwrite linkage info with context from {}. \
                      Existing linkage: {existing:#?}&quot;</span>,
                     context.id(),
-                ))
+                )
             }
         }
 
@@ -520,15 +516,15 @@
         } <span class="kw">in </span>context.type_origin_table()
         {
             <span class="kw">let </span><span class="prelude-val">Ok</span>(module_name) = Identifier::from_str(module_name) <span class="kw">else </span>{
-                <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+                <span class="macro">invariant_violation!</span>(
                     <span class="string">&quot;Module name isn&#39;t an identifier: {module_name}&quot;
-                </span>));
+                </span>);
             };
 
             <span class="kw">let </span><span class="prelude-val">Ok</span>(struct_name) = Identifier::from_str(struct_name) <span class="kw">else </span>{
-                <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+                <span class="macro">invariant_violation!</span>(
                     <span class="string">&quot;Struct name isn&#39;t an identifier: {struct_name}&quot;
-                </span>));
+                </span>);
             };
 
             <span class="kw">let </span>runtime_id = ModuleId::new(runtime_id, module_name);
@@ -538,8 +534,8 @@
         <span class="prelude-val">Ok</span>(runtime_id)
     }
 
-    <span class="kw">pub fn </span>storage(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S {
-        <span class="self">self</span>.state_view
+    <span class="kw">pub fn </span>storage(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>S {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.state_view
     }
 
     <span class="kw">pub fn </span>original_package_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;AccountAddress&gt; {
@@ -578,13 +574,13 @@
 
             Entry::Occupied(entry) =&gt; {
                 <span class="kw">if </span>entry.get() != <span class="kw-2">&amp;*</span>defining_id {
-                    <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+                    <span class="macro">invariant_violation!</span>(
                         <span class="string">&quot;Conflicting defining ID for {}::{}: {} and {}&quot;</span>,
                         runtime_id,
                         entry.key(),
                         defining_id,
                         entry.get(),
-                    ));
+                    );
                 }
             }
         }
@@ -603,7 +599,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;state</span>, S: StorageView&gt; LinkageResolver <span class="kw">for </span>LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt; {
+<span class="kw">impl</span>&lt;S: BackingPackageStore&gt; LinkageResolver <span class="kw">for </span>LinkageView&lt;S&gt; {
     <span class="kw">type </span>Error = SuiError;
 
     <span class="kw">fn </span>link_context(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; AccountAddress {
@@ -620,9 +616,7 @@
             LinkageInfo::Universal =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(module_id.clone()),
 
             LinkageInfo::Unset =&gt; {
-                <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
-                    <span class="string">&quot;No linkage context set while relocating {module_id}.&quot;
-                </span>))
+                <span class="macro">invariant_violation!</span>(<span class="string">&quot;No linkage context set while relocating {module_id}.&quot;</span>)
             }
         };
 
@@ -637,10 +631,10 @@
 
         <span class="kw">let </span>runtime_id = ObjectID::from_address(<span class="kw-2">*</span>module_id.address());
         <span class="kw">let </span><span class="prelude-val">Some</span>(upgrade) = linkage.link_table.get(<span class="kw-2">&amp;</span>runtime_id) <span class="kw">else </span>{
-            <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+            <span class="macro">invariant_violation!</span>(
                 <span class="string">&quot;Missing linkage for {runtime_id} in context {}, runtime_id is {}&quot;</span>,
                 linkage.storage_id, linkage.runtime_id
-            ));
+            );
         };
 
         <span class="prelude-val">Ok</span>(ModuleId::new(
@@ -659,9 +653,9 @@
             LinkageInfo::Universal =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(runtime_id.clone()),
 
             LinkageInfo::Unset =&gt; {
-                <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+                <span class="macro">invariant_violation!</span>(
                     <span class="string">&quot;No linkage context set for defining module query on {runtime_id}::{struct_}.&quot;
-                </span>))
+                </span>)
             }
         };
 
@@ -671,9 +665,9 @@
 
         <span class="kw">let </span>storage_id = ObjectID::from(<span class="kw-2">*</span><span class="self">self</span>.relocate(runtime_id)<span class="question-mark">?</span>.address());
         <span class="kw">let </span><span class="prelude-val">Some</span>(package) = <span class="self">self</span>.state_view.get_package(<span class="kw-2">&amp;</span>storage_id)<span class="question-mark">? </span><span class="kw">else </span>{
-            <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+            <span class="macro">invariant_violation!</span>(
                 <span class="string">&quot;Missing dependent package in store: {storage_id}&quot;</span>,
-            ))
+            )
         };
 
         <span class="kw">for </span>TypeOrigin {
@@ -688,16 +682,16 @@
             }
         }
 
-        <span class="macro">invariant_violation!</span>(<span class="macro">format!</span>(
+        <span class="macro">invariant_violation!</span>(
             <span class="string">&quot;{runtime_id}::{struct_} not found in type origin table in {storage_id} (v{})&quot;</span>,
             package.version(),
-        ))
+        )
     }
 }
 
-<span class="doccomment">/** Remaining implementations delegated to StorageView ************************/
+<span class="doccomment">/** Remaining implementations delegated to state_view *************************/
 
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;state</span>, S: StorageView&gt; ResourceResolver <span class="kw">for </span>LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt; {
+</span><span class="kw">impl</span>&lt;S: ResourceResolver&gt; ResourceResolver <span class="kw">for </span>LinkageView&lt;S&gt; {
     <span class="kw">type </span>Error = &lt;S <span class="kw">as </span>ResourceResolver&gt;::Error;
 
     <span class="kw">fn </span>get_resource(
@@ -709,7 +703,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;state</span>, S: StorageView&gt; ModuleResolver <span class="kw">for </span>LinkageView&lt;<span class="lifetime">&#39;state</span>, S&gt; {
+<span class="kw">impl</span>&lt;S: ModuleResolver&gt; ModuleResolver <span class="kw">for </span>LinkageView&lt;S&gt; {
     <span class="kw">type </span>Error = &lt;S <span class="kw">as </span>ModuleResolver&gt;::Error;
 
     <span class="kw">fn </span>get_module(<span class="kw-2">&amp;</span><span class="self">self</span>, id: <span class="kw-2">&amp;</span>ModuleId) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, <span class="self">Self</span>::Error&gt; {
