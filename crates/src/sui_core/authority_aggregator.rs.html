@@ -1905,6 +1905,13 @@
 <a href="#1905" id="1905">1905</a>
 <a href="#1906" id="1906">1906</a>
 <a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -2264,6 +2271,13 @@
             <span class="self">Self</span>::Executed(..) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Wrong type&quot;</span>),
         }
     }
+
+    <span class="kw">pub fn </span>into_effects_for_testing(<span class="self">self</span>) -&gt; VerifiedCertifiedTransactionEffects {
+        <span class="kw">match </span><span class="self">self </span>{
+            <span class="self">Self</span>::Certified(..) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Wrong type&quot;</span>),
+            <span class="self">Self</span>::Executed(effects, ..) =&gt; effects,
+        }
+    }
 }
 
 <span class="attr">#[derive(Clone)]
@@ -2491,8 +2505,8 @@
                 <span class="kw">if </span>authority_name.is_err() {
                     <span class="kw">return </span><span class="prelude-val">None</span>;
                 }
-                <span class="kw">let </span>human_readble_name = s.name;
-                <span class="prelude-val">Some</span>((authority_name.unwrap(), human_readble_name))
+                <span class="kw">let </span>human_readable_name = s.name;
+                <span class="prelude-val">Some</span>((authority_name.unwrap(), human_readable_name))
             })
             .collect();
         <span class="self">Self</span>::new_from_committee(
