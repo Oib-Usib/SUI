@@ -768,7 +768,7 @@
 <span class="kw">use </span>sui_types::object::Owner;
 <span class="kw">use </span>sui_types::sui_system_state::SUI_SYSTEM_MODULE_NAME;
 <span class="kw">use </span>sui_types::transaction::TransactionData;
-<span class="kw">use </span>sui_types::{SUI_SYSTEM_ADDRESS, SUI_SYSTEM_OBJECT_ID};
+<span class="kw">use </span>sui_types::{SUI_SYSTEM_ADDRESS, SUI_SYSTEM_PACKAGE_ID};
 
 <span class="kw">use </span><span class="kw">crate</span>::types::{
     AccountIdentifier, Amount, CoinAction, CoinChange, CoinID, CoinIdentifier, InternalOperation,
@@ -1181,13 +1181,13 @@
     }
 
     <span class="kw">fn </span>is_stake_call(tx: <span class="kw-2">&amp;</span>SuiProgrammableMoveCall) -&gt; bool {
-        tx.package == SUI_SYSTEM_OBJECT_ID
+        tx.package == SUI_SYSTEM_PACKAGE_ID
             &amp;&amp; tx.module == SUI_SYSTEM_MODULE_NAME.as_str()
             &amp;&amp; tx.function == ADD_STAKE_FUN_NAME.as_str()
     }
 
     <span class="kw">fn </span>is_unstake_call(tx: <span class="kw-2">&amp;</span>SuiProgrammableMoveCall) -&gt; bool {
-        tx.package == SUI_SYSTEM_OBJECT_ID
+        tx.package == SUI_SYSTEM_PACKAGE_ID
             &amp;&amp; tx.module == SUI_SYSTEM_MODULE_NAME.as_str()
             &amp;&amp; tx.function == WITHDRAW_STAKE_FUN_NAME.as_str()
     }

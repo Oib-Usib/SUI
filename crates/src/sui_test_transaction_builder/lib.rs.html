@@ -257,7 +257,7 @@
     CallArg, ObjectArg, Transaction, TransactionData, VerifiedTransaction,
     TEST_ONLY_GAS_UNIT_FOR_GENERIC, TEST_ONLY_GAS_UNIT_FOR_TRANSFER,
 };
-<span class="kw">use </span>sui_types::{TypeTag, SUI_SYSTEM_OBJECT_ID};
+<span class="kw">use </span>sui_types::{TypeTag, SUI_SYSTEM_PACKAGE_ID};
 
 <span class="kw">pub struct </span>TestTransactionBuilder {
     test_data: TestTransactionData,
@@ -342,7 +342,7 @@
 
     <span class="kw">pub fn </span>call_staking(<span class="self">self</span>, stake_coin: ObjectRef, validator: SuiAddress) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.move_call(
-            SUI_SYSTEM_OBJECT_ID,
+            SUI_SYSTEM_PACKAGE_ID,
             SUI_SYSTEM_MODULE_NAME.as_str(),
             <span class="string">&quot;request_add_stake&quot;</span>,
             <span class="macro">vec!</span>[

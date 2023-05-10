@@ -967,7 +967,7 @@
 <span class="kw">use </span>sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
 <span class="kw">use </span>sui_types::sui_system_state::SUI_SYSTEM_MODULE_NAME;
 <span class="kw">use </span>sui_types::transaction::{Argument, CallArg, Command, ObjectArg, TransactionData};
-<span class="kw">use </span>sui_types::SUI_SYSTEM_OBJECT_ID;
+<span class="kw">use </span>sui_types::SUI_SYSTEM_PACKAGE_ID;
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::{Error, ErrorType};
 <span class="kw">use </span><span class="kw">crate</span>::operations::Operations;
@@ -1840,7 +1840,7 @@
                 <span class="kw">let </span>arguments = <span class="macro">vec!</span>[system_state, coin, validator];
 
                 builder.command(Command::move_call(
-                    SUI_SYSTEM_OBJECT_ID,
+                    SUI_SYSTEM_PACKAGE_ID,
                     SUI_SYSTEM_MODULE_NAME.to_owned(),
                     ADD_STAKE_FUN_NAME.to_owned(),
                     <span class="macro">vec!</span>[],
@@ -1866,7 +1866,7 @@
 
                     <span class="kw">let </span>arguments = <span class="macro">vec!</span>[system_state, id];
                     builder.command(Command::move_call(
-                        SUI_SYSTEM_OBJECT_ID,
+                        SUI_SYSTEM_PACKAGE_ID,
                         SUI_SYSTEM_MODULE_NAME.to_owned(),
                         WITHDRAW_STAKE_FUN_NAME.to_owned(),
                         <span class="macro">vec!</span>[],

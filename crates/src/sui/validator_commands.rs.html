@@ -987,7 +987,7 @@
         sui_system_state_inner_v1::{UnverifiedValidatorOperationCapV1, ValidatorV1},
         sui_system_state_summary::{SuiSystemStateSummary, SuiValidatorSummary},
     },
-    SUI_SYSTEM_OBJECT_ID,
+    SUI_SYSTEM_PACKAGE_ID,
 };
 <span class="kw">use </span>tap::tap::TapOptional;
 
@@ -1527,7 +1527,7 @@
     <span class="kw">let </span>gas_obj_ref = get_gas_obj_ref(sender, <span class="kw-2">&amp;</span>sui_client, gas_budget).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">let </span>tx_data = TransactionData::new_move_call(
         sender,
-        SUI_SYSTEM_OBJECT_ID,
+        SUI_SYSTEM_PACKAGE_ID,
         <span class="macro">ident_str!</span>(<span class="string">&quot;sui_system&quot;</span>).to_owned(),
         <span class="macro">ident_str!</span>(function).to_owned(),
         <span class="macro">vec!</span>[],

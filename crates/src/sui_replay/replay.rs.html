@@ -1871,7 +1871,7 @@
 <span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
 <span class="kw">use </span>sui_types::transaction::{InputObjectKind, InputObjects, TransactionKind};
 <span class="kw">use </span>sui_types::transaction::{SenderSignedData, TransactionDataAPI};
-<span class="kw">use </span>sui_types::DEEPBOOK_OBJECT_ID;
+<span class="kw">use </span>sui_types::DEEPBOOK_PACKAGE_ID;
 <span class="kw">use </span>tracing::{error, warn};
 
 <span class="comment">// TODO: add persistent cache. But perf is good enough already.
@@ -2652,7 +2652,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>ids = BuiltInFramework::all_package_ids();
 
         <span class="kw">if </span>protocol_version &lt; <span class="number">5 </span>{
-            ids.retain(|id| <span class="kw-2">*</span>id != DEEPBOOK_OBJECT_ID)
+            ids.retain(|id| <span class="kw-2">*</span>id != DEEPBOOK_PACKAGE_ID)
         }
         ids
     }

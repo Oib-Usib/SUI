@@ -340,7 +340,7 @@
     transaction::{
         Argument, CallArg, Command, ObjectArg, ProgrammableMoveCall, ProgrammableTransaction,
     },
-    SUI_FRAMEWORK_OBJECT_ID,
+    SUI_FRAMEWORK_PACKAGE_ID,
 };
 
 <span class="attr">#[derive(PartialEq, Eq, Hash)]
@@ -516,7 +516,7 @@
         <span class="kw">let </span>cap = <span class="self">self</span>.publish_upgradeable(modules, dep_ids);
         <span class="self">self</span>.commands
             .push(Command::MoveCall(Box::new(ProgrammableMoveCall {
-                package: SUI_FRAMEWORK_OBJECT_ID,
+                package: SUI_FRAMEWORK_PACKAGE_ID,
                 module: PACKAGE_MODULE_NAME.to_owned(),
                 function: <span class="macro">ident_str!</span>(<span class="string">&quot;make_immutable&quot;</span>).to_owned(),
                 type_arguments: <span class="macro">vec!</span>[],

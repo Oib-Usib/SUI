@@ -800,7 +800,7 @@
 <span class="kw">use </span>sui_types::transaction::{
     Argument, CallArg, Command, InputObjectKind, ObjectArg, TransactionData, TransactionKind,
 };
-<span class="kw">use </span>sui_types::{coin, fp_ensure, SUI_FRAMEWORK_OBJECT_ID, SUI_SYSTEM_OBJECT_ID};
+<span class="kw">use </span>sui_types::{coin, fp_ensure, SUI_FRAMEWORK_PACKAGE_ID, SUI_SYSTEM_PACKAGE_ID};
 
 <span class="attr">#[async_trait]
 </span><span class="kw">pub trait </span>DataReader {
@@ -1268,7 +1268,7 @@
 
         TransactionData::new_move_call(
             signer,
-            SUI_FRAMEWORK_OBJECT_ID,
+            SUI_FRAMEWORK_PACKAGE_ID,
             coin::PAY_MODULE_NAME.to_owned(),
             coin::PAY_SPLIT_VEC_FUNC_NAME.to_owned(),
             type_args,
@@ -1306,7 +1306,7 @@
 
         TransactionData::new_move_call(
             signer,
-            SUI_FRAMEWORK_OBJECT_ID,
+            SUI_FRAMEWORK_PACKAGE_ID,
             coin::PAY_MODULE_NAME.to_owned(),
             coin::PAY_SPLIT_N_FUNC_NAME.to_owned(),
             type_args,
@@ -1351,7 +1351,7 @@
 
         TransactionData::new_move_call(
             signer,
-            SUI_FRAMEWORK_OBJECT_ID,
+            SUI_FRAMEWORK_PACKAGE_ID,
             coin::PAY_MODULE_NAME.to_owned(),
             coin::PAY_JOIN_FUNC_NAME.to_owned(),
             type_args,
@@ -1473,7 +1473,7 @@
                     .unwrap(),
             ];
             builder.command(Command::move_call(
-                SUI_SYSTEM_OBJECT_ID,
+                SUI_SYSTEM_PACKAGE_ID,
                 SUI_SYSTEM_MODULE_NAME.to_owned(),
                 ADD_STAKE_MUL_COIN_FUN_NAME.to_owned(),
                 <span class="macro">vec!</span>[],
@@ -1504,7 +1504,7 @@
             .<span class="kw">await</span><span class="question-mark">?</span>;
         TransactionData::new_move_call(
             signer,
-            SUI_SYSTEM_OBJECT_ID,
+            SUI_SYSTEM_PACKAGE_ID,
             SUI_SYSTEM_MODULE_NAME.to_owned(),
             WITHDRAW_STAKE_FUN_NAME.to_owned(),
             <span class="macro">vec!</span>[],

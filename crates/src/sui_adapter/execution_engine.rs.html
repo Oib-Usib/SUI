@@ -885,7 +885,7 @@
     sui_system_state::{ADVANCE_EPOCH_FUNCTION_NAME, SUI_SYSTEM_MODULE_NAME},
     SUI_FRAMEWORK_ADDRESS,
 };
-<span class="kw">use </span>sui_types::{is_system_package, SUI_FRAMEWORK_OBJECT_ID, SUI_SYSTEM_OBJECT_ID};
+<span class="kw">use </span>sui_types::{is_system_package, SUI_FRAMEWORK_PACKAGE_ID, SUI_SYSTEM_PACKAGE_ID};
 
 <span class="doccomment">/// If a transaction digest shows up in this list, when executing such transaction,
 /// we will always return `ExecutionError::CertificateDenied` without executing it (but still do
@@ -1369,7 +1369,7 @@
         ))
         .unwrap();
     <span class="kw">let </span>storage_rewards = builder.programmable_move_call(
-        SUI_FRAMEWORK_OBJECT_ID,
+        SUI_FRAMEWORK_PACKAGE_ID,
         BALANCE_MODULE_NAME.to_owned(),
         BALANCE_CREATE_REWARDS_FUNCTION_NAME.to_owned(),
         <span class="macro">vec!</span>[GAS::type_tag()],
@@ -1383,7 +1383,7 @@
         ))
         .unwrap();
     <span class="kw">let </span>computation_rewards = builder.programmable_move_call(
-        SUI_FRAMEWORK_OBJECT_ID,
+        SUI_FRAMEWORK_PACKAGE_ID,
         BALANCE_MODULE_NAME.to_owned(),
         BALANCE_CREATE_REWARDS_FUNCTION_NAME.to_owned(),
         <span class="macro">vec!</span>[GAS::type_tag()],
@@ -1425,7 +1425,7 @@
     <span class="macro">info!</span>(<span class="string">&quot;Call arguments to advance_epoch transaction: {:?}&quot;</span>, params);
 
     <span class="kw">let </span>storage_rebates = builder.programmable_move_call(
-        SUI_SYSTEM_OBJECT_ID,
+        SUI_SYSTEM_PACKAGE_ID,
         SUI_SYSTEM_MODULE_NAME.to_owned(),
         ADVANCE_EPOCH_FUNCTION_NAME.to_owned(),
         <span class="macro">vec!</span>[],
@@ -1434,7 +1434,7 @@
 
     <span class="comment">// Step 3: Destroy the storage rebates.
     </span>builder.programmable_move_call(
-        SUI_FRAMEWORK_OBJECT_ID,
+        SUI_FRAMEWORK_PACKAGE_ID,
         BALANCE_MODULE_NAME.to_owned(),
         BALANCE_DESTROY_REBATES_FUNCTION_NAME.to_owned(),
         <span class="macro">vec!</span>[GAS::type_tag()],
@@ -1483,7 +1483,7 @@
     <span class="macro">info!</span>(<span class="string">&quot;Call arguments to advance_epoch transaction: {:?}&quot;</span>, params);
 
     builder.programmable_move_call(
-        SUI_SYSTEM_OBJECT_ID,
+        SUI_SYSTEM_PACKAGE_ID,
         SUI_SYSTEM_MODULE_NAME.to_owned(),
         ADVANCE_EPOCH_SAFE_MODE_FUNCTION_NAME.to_owned(),
         <span class="macro">vec!</span>[],

@@ -410,7 +410,7 @@
 <span class="kw">use </span>sui_types::transaction::{
     CallArg, Transaction, TransactionData, TEST_ONLY_GAS_UNIT_FOR_GENERIC,
 };
-<span class="kw">use </span>sui_types::{committee::EpochId, crypto::get_authority_key_pair, SUI_SYSTEM_OBJECT_ID};
+<span class="kw">use </span>sui_types::{committee::EpochId, crypto::get_authority_key_pair, SUI_SYSTEM_PACKAGE_ID};
 <span class="kw">use </span>tracing::info;
 
 <span class="attr">#[derive(Parser)]
@@ -696,7 +696,7 @@
     args.extend(call_args);
     <span class="kw">let </span>tx_data = TransactionData::new_move_call(
         sui_address,
-        SUI_SYSTEM_OBJECT_ID,
+        SUI_SYSTEM_PACKAGE_ID,
         <span class="macro">ident_str!</span>(<span class="string">&quot;sui_system&quot;</span>).to_owned(),
         <span class="macro">ident_str!</span>(function).to_owned(),
         <span class="macro">vec!</span>[],

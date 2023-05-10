@@ -2159,7 +2159,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::programmable_transaction_builder::ProgrammableTransactionBuilder;
 <span class="kw">use </span><span class="kw">crate</span>::signature::{AuthenticatorTrait, GenericSignature};
 <span class="kw">use crate</span>::{
-    SUI_CLOCK_OBJECT_ID, SUI_CLOCK_OBJECT_SHARED_VERSION, SUI_FRAMEWORK_OBJECT_ID,
+    SUI_CLOCK_OBJECT_ID, SUI_CLOCK_OBJECT_SHARED_VERSION, SUI_FRAMEWORK_PACKAGE_ID,
     SUI_SYSTEM_STATE_OBJECT_ID, SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
 };
 <span class="kw">use </span>enum_dispatch::enum_dispatch;
@@ -3472,7 +3472,7 @@
             <span class="kw">let </span>upgrade_arg = builder.pure(upgrade_policy).unwrap();
             <span class="kw">let </span>digest_arg = builder.pure(digest).unwrap();
             <span class="kw">let </span>upgrade_ticket = builder.programmable_move_call(
-                SUI_FRAMEWORK_OBJECT_ID,
+                SUI_FRAMEWORK_PACKAGE_ID,
                 <span class="macro">ident_str!</span>(<span class="string">&quot;package&quot;</span>).to_owned(),
                 <span class="macro">ident_str!</span>(<span class="string">&quot;authorize_upgrade&quot;</span>).to_owned(),
                 <span class="macro">vec!</span>[],
@@ -3481,7 +3481,7 @@
             <span class="kw">let </span>upgrade_receipt = builder.upgrade(package_id, upgrade_ticket, dep_ids, modules);
 
             builder.programmable_move_call(
-                SUI_FRAMEWORK_OBJECT_ID,
+                SUI_FRAMEWORK_PACKAGE_ID,
                 <span class="macro">ident_str!</span>(<span class="string">&quot;package&quot;</span>).to_owned(),
                 <span class="macro">ident_str!</span>(<span class="string">&quot;commit_upgrade&quot;</span>).to_owned(),
                 <span class="macro">vec!</span>[],

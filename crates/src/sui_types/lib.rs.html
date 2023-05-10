@@ -252,6 +252,9 @@
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
 <a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="attr">#![warn(
@@ -327,22 +330,22 @@
 <span class="doccomment">/// 0x1-- account address where Move stdlib modules are stored
 /// Same as the ObjectID
 </span><span class="kw">pub const </span>MOVE_STDLIB_ADDRESS: AccountAddress = AccountAddress::ONE;
-<span class="kw">pub const </span>MOVE_STDLIB_OBJECT_ID: ObjectID = ObjectID::from_address(MOVE_STDLIB_ADDRESS);
+<span class="kw">pub const </span>MOVE_STDLIB_PACKAGE_ID: ObjectID = ObjectID::from_address(MOVE_STDLIB_ADDRESS);
 
 <span class="doccomment">/// 0x2-- account address where sui framework modules are stored
 /// Same as the ObjectID
 </span><span class="kw">pub const </span>SUI_FRAMEWORK_ADDRESS: AccountAddress = address_from_single_byte(<span class="number">2</span>);
-<span class="kw">pub const </span>SUI_FRAMEWORK_OBJECT_ID: ObjectID = ObjectID::from_address(SUI_FRAMEWORK_ADDRESS);
+<span class="kw">pub const </span>SUI_FRAMEWORK_PACKAGE_ID: ObjectID = ObjectID::from_address(SUI_FRAMEWORK_ADDRESS);
 
 <span class="doccomment">/// 0x3-- account address where sui system modules are stored
 /// Same as the ObjectID
 </span><span class="kw">pub const </span>SUI_SYSTEM_ADDRESS: AccountAddress = address_from_single_byte(<span class="number">3</span>);
-<span class="kw">pub const </span>SUI_SYSTEM_OBJECT_ID: ObjectID = ObjectID::from_address(SUI_SYSTEM_ADDRESS);
+<span class="kw">pub const </span>SUI_SYSTEM_PACKAGE_ID: ObjectID = ObjectID::from_address(SUI_SYSTEM_ADDRESS);
 
 <span class="doccomment">/// 0xdee9-- account address where DeepBook modules are stored
 /// Same as the ObjectID
 </span><span class="kw">pub const </span>DEEPBOOK_ADDRESS: AccountAddress = deepbook_addr();
-<span class="kw">pub const </span>DEEPBOOK_OBJECT_ID: ObjectID = ObjectID::from_address(DEEPBOOK_ADDRESS);
+<span class="kw">pub const </span>DEEPBOOK_PACKAGE_ID: ObjectID = ObjectID::from_address(DEEPBOOK_ADDRESS);
 
 <span class="doccomment">/// 0x5: hardcoded object ID for the singleton sui system state object.
 </span><span class="kw">pub const </span>SUI_SYSTEM_STATE_OBJECT_ID: ObjectID = ObjectID::from_single_byte(<span class="number">5</span>);
@@ -357,7 +360,10 @@
 </span><span class="kw">pub fn </span>is_system_package(id: ObjectID) -&gt; bool {
     <span class="macro">matches!</span>(
         id,
-        MOVE_STDLIB_OBJECT_ID | SUI_FRAMEWORK_OBJECT_ID | SUI_SYSTEM_OBJECT_ID | DEEPBOOK_OBJECT_ID
+        MOVE_STDLIB_PACKAGE_ID
+            | SUI_FRAMEWORK_PACKAGE_ID
+            | SUI_SYSTEM_PACKAGE_ID
+            | DEEPBOOK_PACKAGE_ID
     )
 }
 
