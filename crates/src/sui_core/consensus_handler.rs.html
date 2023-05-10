@@ -651,12 +651,6 @@
 <a href="#651" id="651">651</a>
 <a href="#652" id="652">652</a>
 <a href="#653" id="653">653</a>
-<a href="#654" id="654">654</a>
-<a href="#655" id="655">655</a>
-<a href="#656" id="656">656</a>
-<a href="#657" id="657">657</a>
-<a href="#658" id="658">658</a>
-<a href="#659" id="659">659</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -968,43 +962,37 @@
         <span class="self">self</span>.transaction_scheduler
             .schedule(transactions_to_schedule)
             .<span class="kw">await</span>;
-        <span class="kw">if </span><span class="self">self</span>.epoch_store.in_memory_checkpoint_roots {
-            <span class="comment">// The last block in this function notifies about new checkpoint if needed
-            </span><span class="kw">let </span>final_checkpoint_round = <span class="self">self
-                </span>.epoch_store
-                .final_epoch_checkpoint()
-                .expect(<span class="string">&quot;final_epoch_checkpoint failed&quot;</span>);
-            <span class="kw">let </span>final_checkpoint = <span class="kw">match </span>final_checkpoint_round.map(|r| r.cmp(<span class="kw-2">&amp;</span>round)) {
-                <span class="prelude-val">Some</span>(Ordering::Less) =&gt; {
-                    <span class="macro">debug!</span>(
-                        <span class="string">&quot;Not forming checkpoint for round {} above final checkpoint round {:?}&quot;</span>,
-                        round, final_checkpoint_round
-                    );
-                    <span class="kw">return</span>;
-                }
-                <span class="prelude-val">Some</span>(Ordering::Equal) =&gt; <span class="bool-val">true</span>,
-                <span class="prelude-val">Some</span>(Ordering::Greater) =&gt; <span class="bool-val">false</span>,
-                <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
-            };
-            <span class="kw">let </span>checkpoint = PendingCheckpoint {
-                roots: roots.into_iter().collect(),
-                details: PendingCheckpointInfo {
-                    timestamp_ms: timestamp,
-                    last_of_epoch: final_checkpoint,
-                    commit_height: round,
-                },
-            };
-            <span class="self">self</span>.checkpoint_service
-                .notify_checkpoint(<span class="kw-2">&amp;</span><span class="self">self</span>.epoch_store, checkpoint)
-                .expect(<span class="string">&quot;notify_checkpoint has failed&quot;</span>);
-            <span class="kw">if </span>final_checkpoint {
-                <span class="macro">info!</span>(epoch=<span class="question-mark">?</span><span class="self">self</span>.epoch(), <span class="string">&quot;Received 2f+1 EndOfPublish messages, notifying last checkpoint&quot;</span>);
-                <span class="self">self</span>.epoch_store.record_end_of_message_quorum_time_metric();
+        <span class="comment">// The last block in this function notifies about new checkpoint if needed
+        </span><span class="kw">let </span>final_checkpoint_round = <span class="self">self
+            </span>.epoch_store
+            .final_epoch_checkpoint()
+            .expect(<span class="string">&quot;final_epoch_checkpoint failed&quot;</span>);
+        <span class="kw">let </span>final_checkpoint = <span class="kw">match </span>final_checkpoint_round.map(|r| r.cmp(<span class="kw-2">&amp;</span>round)) {
+            <span class="prelude-val">Some</span>(Ordering::Less) =&gt; {
+                <span class="macro">debug!</span>(
+                    <span class="string">&quot;Not forming checkpoint for round {} above final checkpoint round {:?}&quot;</span>,
+                    round, final_checkpoint_round
+                );
+                <span class="kw">return</span>;
             }
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.epoch_store
-                .handle_commit_boundary(round, timestamp, <span class="kw-2">&amp;</span><span class="self">self</span>.checkpoint_service)
-                .expect(<span class="string">&quot;Unrecoverable error in consensus handler when processing commit boundary&quot;</span>)
+            <span class="prelude-val">Some</span>(Ordering::Equal) =&gt; <span class="bool-val">true</span>,
+            <span class="prelude-val">Some</span>(Ordering::Greater) =&gt; <span class="bool-val">false</span>,
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
+        };
+        <span class="kw">let </span>checkpoint = PendingCheckpoint {
+            roots: roots.into_iter().collect(),
+            details: PendingCheckpointInfo {
+                timestamp_ms: timestamp,
+                last_of_epoch: final_checkpoint,
+                commit_height: round,
+            },
+        };
+        <span class="self">self</span>.checkpoint_service
+            .notify_checkpoint(<span class="kw-2">&amp;</span><span class="self">self</span>.epoch_store, checkpoint)
+            .expect(<span class="string">&quot;notify_checkpoint has failed&quot;</span>);
+        <span class="kw">if </span>final_checkpoint {
+            <span class="macro">info!</span>(epoch=<span class="question-mark">?</span><span class="self">self</span>.epoch(), <span class="string">&quot;Received 2f+1 EndOfPublish messages, notifying last checkpoint&quot;</span>);
+            <span class="self">self</span>.epoch_store.record_end_of_message_quorum_time_metric();
         }
     }
 
