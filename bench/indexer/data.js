@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683751622753,
+  "lastUpdate": 1683751952741,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6119,6 +6119,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 307497,
             "range": "± 35099",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "rvantonder@gmail.com",
+            "name": "Rijnard van Tonder",
+            "username": "rvantonder"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c636b85c941e90a303aaff70c9ce1093a1724fb4",
+          "message": "move: improve upgrade transactional test setup for dependencies (#11128)",
+          "timestamp": "2023-05-10T13:42:07-07:00",
+          "tree_id": "4ad47068da2fe1cdf105610dbb932be1aea5a53d",
+          "url": "https://github.com/MystenLabs/sui/commit/c636b85c941e90a303aaff70c9ce1093a1724fb4"
+        },
+        "date": 1683751943264,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148696695,
+            "range": "± 5765973",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 321215,
+            "range": "± 30148",
             "unit": "ns/iter"
           }
         ]
