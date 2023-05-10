@@ -422,6 +422,8 @@
 <a href="#422" id="422">422</a>
 <a href="#423" id="423">423</a>
 <a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -706,7 +708,9 @@
                 .rates
                 .into_iter()
                 .filter_map(|(epoch, rate)| {
-                    <span class="kw">if </span>epoch &gt;= system_state_summary.stake_subsidy_start_epoch {
+                    <span class="kw">if </span>epoch &gt;= system_state_summary.stake_subsidy_start_epoch
+                        &amp;&amp; (<span class="number">1.0 </span>/ rate.rate()) &lt; <span class="number">1.2
+                    </span>{
                         <span class="prelude-val">Some</span>(rate)
                     } <span class="kw">else </span>{
                         <span class="prelude-val">None
