@@ -1188,6 +1188,26 @@
 <a href="#1188" id="1188">1188</a>
 <a href="#1189" id="1189">1189</a>
 <a href="#1190" id="1190">1190</a>
+<a href="#1191" id="1191">1191</a>
+<a href="#1192" id="1192">1192</a>
+<a href="#1193" id="1193">1193</a>
+<a href="#1194" id="1194">1194</a>
+<a href="#1195" id="1195">1195</a>
+<a href="#1196" id="1196">1196</a>
+<a href="#1197" id="1197">1197</a>
+<a href="#1198" id="1198">1198</a>
+<a href="#1199" id="1199">1199</a>
+<a href="#1200" id="1200">1200</a>
+<a href="#1201" id="1201">1201</a>
+<a href="#1202" id="1202">1202</a>
+<a href="#1203" id="1203">1203</a>
+<a href="#1204" id="1204">1204</a>
+<a href="#1205" id="1205">1205</a>
+<a href="#1206" id="1206">1206</a>
+<a href="#1207" id="1207">1207</a>
+<a href="#1208" id="1208">1208</a>
+<a href="#1209" id="1209">1209</a>
+<a href="#1210" id="1210">1210</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1239,8 +1259,9 @@
 
 </span><span class="kw">use </span>anemo::{types::PeerEvent, PeerId, Request, Response, <span class="prelude-ty">Result</span>};
 <span class="kw">use </span>futures::{stream::FuturesOrdered, FutureExt, StreamExt};
+<span class="kw">use </span>rand::Rng;
 <span class="kw">use </span>std::{
-    collections::HashMap,
+    collections::{HashMap, VecDeque},
     sync::{Arc, RwLock},
     time::Duration,
 };
@@ -1425,6 +1446,55 @@
     <span class="kw">pub fn </span>get_checkpoint_by_digest(<span class="kw-2">&amp;</span><span class="self">self</span>, digest: <span class="kw-2">&amp;</span>CheckpointDigest) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Checkpoint&gt; {
         <span class="self">self</span>.unprocessed_checkpoints.get(digest)
     }
+}
+
+<span class="comment">// PeerBalancer is an Iterator that selects peers based on RTT with some added randomness.
+</span><span class="attr">#[derive(Clone)]
+</span><span class="kw">struct </span>PeerBalancer {
+    peers: VecDeque&lt;(anemo::Peer, PeerStateSyncInfo)&gt;,
+    requested_checkpoint: <span class="prelude-ty">Option</span>&lt;CheckpointSequenceNumber&gt;,
+}
+
+<span class="kw">impl </span>PeerBalancer {
+    <span class="kw">pub fn </span>new(network: <span class="kw-2">&amp;</span>anemo::Network, peer_heights: Arc&lt;RwLock&lt;PeerHeights&gt;&gt;) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>peers: Vec&lt;<span class="kw">_</span>&gt; = peer_heights
+            .read()
+            .unwrap()
+            .peers_on_same_chain()
+            <span class="comment">// Filter out any peers who we aren&#39;t connected with.
+            </span>.filter_map(|(peer_id, info)| network.peer(<span class="kw-2">*</span>peer_id).map(|peer| (peer, <span class="kw-2">*</span>info)))
+            .collect();
+        peers.sort_by(|(peer_a, <span class="kw">_</span>), (peer_b, <span class="kw">_</span>)| {
+            peer_a.connection_rtt().cmp(<span class="kw-2">&amp;</span>peer_b.connection_rtt())
+        });
+        <span class="self">Self </span>{
+            peers: peers.into(),
+            requested_checkpoint: <span class="prelude-val">None</span>,
+        }
+    }
+
+    <span class="kw">pub fn </span>with_checkpoint(<span class="kw-2">mut </span><span class="self">self</span>, checkpoint: CheckpointSequenceNumber) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.requested_checkpoint = <span class="prelude-val">Some</span>(checkpoint);
+        <span class="self">self
+    </span>}
+}
+
+<span class="kw">impl </span>Iterator <span class="kw">for </span>PeerBalancer {
+    <span class="kw">type </span>Item = StateSyncClient&lt;anemo::Peer&gt;;
+
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+        <span class="kw">while </span>!<span class="self">self</span>.peers.is_empty() {
+            <span class="kw">const </span>SELECTION_WINDOW: usize = <span class="number">2</span>;
+            <span class="kw">let </span>idx =
+                rand::thread_rng().gen_range(<span class="number">0</span>..std::cmp::min(SELECTION_WINDOW, <span class="self">self</span>.peers.len()));
+            <span class="kw">let </span>(peer, info) = <span class="self">self</span>.peers.remove(idx).unwrap();
+
+            <span class="kw">if </span>info.height &gt;= <span class="self">self</span>.requested_checkpoint.unwrap_or(<span class="number">0</span>) {
+                <span class="kw">return </span><span class="prelude-val">Some</span>(StateSyncClient::new(peer));
+            }
+        }
+        <span class="prelude-val">None
+    </span>}
 }
 
 <span class="attr">#[derive(Clone, Debug)]
@@ -2002,30 +2072,12 @@
         ));
     }
 
-    <span class="kw">let </span><span class="kw-2">mut </span>rng = &lt;rand::rngs::StdRng <span class="kw">as </span>rand::SeedableRng&gt;::from_entropy();
-    <span class="comment">// get a list of peers that can help
-    </span><span class="kw">let </span>peers = peer_heights
-        .read()
-        .unwrap()
-        .peers_on_same_chain()
-        <span class="comment">// Filter out any peers who can&#39;t help
-        </span>.filter(|(_peer_id, info)| info.height &gt; <span class="kw-2">*</span>current.sequence_number())
-        .map(|(<span class="kw-2">&amp;</span>peer_id, <span class="kw-2">&amp;</span>info)| (peer_id, info))
-        .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-
+    <span class="kw">let </span>peer_balancer = PeerBalancer::new(<span class="kw-2">&amp;</span>network, peer_heights.clone());
     <span class="comment">// range of the next sequence_numbers to fetch
     </span><span class="kw">let </span><span class="kw-2">mut </span>request_stream = (current.sequence_number().saturating_add(<span class="number">1</span>)
         ..=<span class="kw-2">*</span>checkpoint.sequence_number())
         .map(|next| {
-            <span class="kw">let </span><span class="kw-2">mut </span>peers = peers
-                .iter()
-                <span class="comment">// Filter out any peers who can&#39;t help with this particular checkpoint
-                </span>.filter(|(_peer_id, info)| info.height &gt;= next)
-                <span class="comment">// Filter out any peers who we aren&#39;t connected with
-                </span>.flat_map(|(peer_id, _height)| network.peer(<span class="kw-2">*</span>peer_id))
-                .map(StateSyncClient::new)
-                .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-            rand::seq::SliceRandom::shuffle(peers.as_mut_slice(), <span class="kw-2">&amp;mut </span>rng);
+            <span class="kw">let </span>peers = peer_balancer.clone().with_checkpoint(next);
             <span class="kw">let </span>peer_heights = peer_heights.clone();
             <span class="kw">async move </span>{
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(checkpoint) = peer_heights
@@ -2036,7 +2088,7 @@
                     <span class="kw">return </span>(<span class="prelude-val">Some</span>(checkpoint.to_owned()), next, <span class="prelude-val">None</span>);
                 }
 
-                <span class="comment">// Iterate through our selected peers trying each one in turn until we&#39;re able to
+                <span class="comment">// Iterate through peers trying each one in turn until we&#39;re able to
                 // successfully get the target checkpoint
                 </span><span class="kw">for </span><span class="kw-2">mut </span>peer <span class="kw">in </span>peers {
                     <span class="kw">let </span>request = Request::new(GetCheckpointSummaryRequest::BySequenceNumber(next))
@@ -2306,21 +2358,9 @@
     </span>S: WriteStore + Clone,
     &lt;S <span class="kw">as </span>ReadStore&gt;::Error: std::error::Error,
 {
-    <span class="kw">let </span><span class="kw-2">mut </span>rng = &lt;rand::rngs::StdRng <span class="kw">as </span>rand::SeedableRng&gt;::from_entropy();
-    <span class="comment">// get a list of peers that can help
-    </span><span class="kw">let </span><span class="kw-2">mut </span>peers = peer_heights
-        .read()
-        .unwrap()
-        .peers_on_same_chain()
-        <span class="comment">// Filter out any peers who can&#39;t help with this particular checkpoint
-        </span>.filter(|(_peer_id, info)| info.height &gt;= <span class="kw-2">*</span>checkpoint.sequence_number())
-        <span class="comment">// Filter out any peers who we aren&#39;t connected with
-        </span>.flat_map(|(peer_id, _height)| network.peer(<span class="kw-2">*</span>peer_id))
-        .map(StateSyncClient::new)
-        .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-    rand::seq::SliceRandom::shuffle(peers.as_mut_slice(), <span class="kw-2">&amp;mut </span>rng);
-
-    <span class="kw">let </span><span class="prelude-val">Some</span>(contents) = get_full_checkpoint_contents(<span class="kw-2">&amp;mut </span>peers, <span class="kw-2">&amp;</span>store, <span class="kw-2">&amp;</span>checkpoint, timeout).<span class="kw">await else </span>{
+    <span class="kw">let </span>peers = PeerBalancer::new(<span class="kw-2">&amp;</span>network, peer_heights.clone())
+        .with_checkpoint(<span class="kw-2">*</span>checkpoint.sequence_number());
+    <span class="kw">let </span><span class="prelude-val">Some</span>(contents) = get_full_checkpoint_contents(peers, <span class="kw-2">&amp;</span>store, <span class="kw-2">&amp;</span>checkpoint, timeout).<span class="kw">await else </span>{
         <span class="comment">// Delay completion in case of error so we don&#39;t hammer the network with retries.
         </span>tokio::time::sleep(Duration::from_secs(<span class="number">10</span>)).<span class="kw">await</span>;
         <span class="kw">return </span><span class="prelude-val">Err</span>(checkpoint);
@@ -2332,7 +2372,7 @@
 }
 
 <span class="kw">async fn </span>get_full_checkpoint_contents&lt;S&gt;(
-    peers: <span class="kw-2">&amp;mut </span>[StateSyncClient&lt;anemo::Peer&gt;],
+    peers: PeerBalancer,
     store: S,
     checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint,
     timeout: Duration,
@@ -2356,7 +2396,7 @@
 
     <span class="comment">// Iterate through our selected peers trying each one in turn until we&#39;re able to
     // successfully get the target checkpoint
-    </span><span class="kw">for </span>peer <span class="kw">in </span>peers.iter_mut() {
+    </span><span class="kw">for </span><span class="kw-2">mut </span>peer <span class="kw">in </span>peers {
         <span class="kw">let </span>request = Request::new(digest).with_timeout(timeout);
         <span class="kw">if let </span><span class="prelude-val">Some</span>(contents) = peer
             .get_checkpoint_contents(request)
