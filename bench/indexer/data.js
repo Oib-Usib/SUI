@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683737671530,
+  "lastUpdate": 1683740861747,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5939,6 +5939,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 364273,
             "range": "± 54596",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "13f90cf0ef3d81b826cd2e78b56ea9061e28ead2",
+          "message": "Fix cluster test (#11878)\n\nThis is a walk around to lower the gas budget used by publish.\r\nWe need to properly fix tests by using the right constant budget in\r\ngeneral.",
+          "timestamp": "2023-05-10T10:35:18-07:00",
+          "tree_id": "e5ed280cb2e27ded1b4e2355ee244e4541c23aee",
+          "url": "https://github.com/MystenLabs/sui/commit/13f90cf0ef3d81b826cd2e78b56ea9061e28ead2"
+        },
+        "date": 1683740852366,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141656463,
+            "range": "± 4869178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314879,
+            "range": "± 27855",
             "unit": "ns/iter"
           }
         ]
