@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683751952741,
+  "lastUpdate": 1683753975642,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6155,6 +6155,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 321215,
             "range": "± 30148",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "23a212db97f6b8a5395dc8d7bbbf90bc26e8e106",
+          "message": "indexer: address & active address tables (#11864)\n\nFor feature requests of `addresses` and `active_addresses` tables, also\r\nlogging he first and last tx & timestamp for daily active address later.\r\n\r\n## Test\r\n\r\nrun locally to make sure that \r\n- addresses table and active_addresses table can be populated properly\r\n- last_appearance_tx|time is updated but first_appearance_tx|time is\r\nstatic",
+          "timestamp": "2023-05-10T17:17:34-04:00",
+          "tree_id": "54438c76ef31fe0f78f201f5fe049ff1396f075e",
+          "url": "https://github.com/MystenLabs/sui/commit/23a212db97f6b8a5395dc8d7bbbf90bc26e8e106"
+        },
+        "date": 1683753965133,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106615251,
+            "range": "± 4665853",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 345805,
+            "range": "± 27265",
             "unit": "ns/iter"
           }
         ]
