@@ -388,6 +388,19 @@
 <a href="#388" id="388">388</a>
 <a href="#389" id="389">389</a>
 <a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -402,7 +415,6 @@
 <span class="kw">use </span>sui_types::transaction::{SenderSignedData, TransactionDataAPI};
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::IndexerError;
-<span class="kw">use </span><span class="kw">crate</span>::models::addresses::Address;
 <span class="kw">use </span><span class="kw">crate</span>::models::transaction_index::{InputObject, MoveCall, Recipient};
 
 <span class="kw">pub struct </span>FastPathTransactionBlockResponse {
@@ -573,6 +585,12 @@
     }
 }
 
+<span class="kw">pub struct </span>AddressData {
+    <span class="kw">pub </span>account_address: String,
+    <span class="kw">pub </span>transaction_digest: String,
+    <span class="kw">pub </span>timestamp_ms: i64,
+}
+
 <span class="kw">impl </span>CheckpointTransactionBlockResponse {
     <span class="kw">pub fn </span>get_input_objects(<span class="kw-2">&amp;</span><span class="self">self</span>, epoch: u64) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;InputObject&gt;, IndexerError&gt; {
         <span class="kw">let </span>raw_tx = <span class="self">self</span>.raw_transaction.clone();
@@ -656,7 +674,7 @@
             .collect()
     }
 
-    <span class="kw">pub fn </span>get_addresses(<span class="kw-2">&amp;</span><span class="self">self</span>, epoch: u64, checkpoint: u64) -&gt; Vec&lt;Address&gt; {
+    <span class="kw">pub fn </span>get_from_and_to_addresses(<span class="kw-2">&amp;</span><span class="self">self</span>, epoch: u64, checkpoint: u64) -&gt; Vec&lt;AddressData&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>addresses = <span class="self">self
             </span>.get_recipients(epoch, checkpoint)
             .into_iter()
@@ -665,12 +683,20 @@
         addresses.push(<span class="self">self</span>.transaction.data.sender().to_string());
         addresses
             .into_iter()
-            .map(|r| Address {
+            .map(|r| AddressData {
                 account_address: r,
-                first_appearance_tx: <span class="self">self</span>.digest.to_string(),
-                first_appearance_time: <span class="self">self</span>.timestamp_ms <span class="kw">as </span>i64,
+                transaction_digest: <span class="self">self</span>.digest.to_string(),
+                timestamp_ms: <span class="self">self</span>.timestamp_ms <span class="kw">as </span>i64,
             })
-            .collect::&lt;Vec&lt;Address&gt;&gt;()
+            .collect::&lt;Vec&lt;AddressData&gt;&gt;()
+    }
+
+    <span class="kw">pub fn </span>get_from_address(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; AddressData {
+        AddressData {
+            account_address: <span class="self">self</span>.transaction.data.sender().to_string(),
+            transaction_digest: <span class="self">self</span>.digest.to_string(),
+            timestamp_ms: <span class="self">self</span>.timestamp_ms <span class="kw">as </span>i64,
+        }
     }
 }
 

@@ -311,6 +311,19 @@
 <a href="#311" id="311">311</a>
 <a href="#312" id="312">312</a>
 <a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 // @generated automatically by Diesel CLI.
@@ -330,10 +343,22 @@
 }
 
 <span class="macro">diesel::table! </span>{
+    active_addresses (account_address) {
+        account_address -&gt; Varchar,
+        first_appearance_tx -&gt; Varchar,
+        first_appearance_time -&gt; Int8,
+        last_appearance_tx -&gt; Varchar,
+        last_appearance_time -&gt; Int8,
+    }
+}
+
+<span class="macro">diesel::table! </span>{
     addresses (account_address) {
         account_address -&gt; Varchar,
         first_appearance_tx -&gt; Varchar,
         first_appearance_time -&gt; Int8,
+        last_appearance_tx -&gt; Varchar,
+        last_appearance_time -&gt; Int8,
     }
 }
 
@@ -609,6 +634,7 @@
 }
 
 <span class="macro">diesel::allow_tables_to_appear_in_same_query!</span>(
+    active_addresses,
     addresses,
     at_risk_validators,
     checkpoints,

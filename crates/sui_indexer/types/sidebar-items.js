@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["CheckpointTransactionBlockResponse","FastPathTransactionBlockResponse","SuiTransactionBlockResponseWithOptions","TemporaryTransactionBlockResponseStore"]};
+window.SIDEBAR_ITEMS = {"struct":["AddressData","CheckpointTransactionBlockResponse","FastPathTransactionBlockResponse","SuiTransactionBlockResponseWithOptions","TemporaryTransactionBlockResponseStore"]};

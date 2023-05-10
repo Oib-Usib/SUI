@@ -301,6 +301,11 @@
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
 <a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -323,7 +328,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::IndexerError;
 <span class="kw">use </span><span class="kw">crate</span>::metrics::IndexerMetrics;
-<span class="kw">use </span><span class="kw">crate</span>::models::addresses::Address;
+<span class="kw">use </span><span class="kw">crate</span>::models::addresses::{ActiveAddress, Address};
 <span class="kw">use </span><span class="kw">crate</span>::models::checkpoints::Checkpoint;
 <span class="kw">use </span><span class="kw">crate</span>::models::epoch::DBEpochInfo;
 <span class="kw">use </span><span class="kw">crate</span>::models::events::Event;
@@ -510,7 +515,11 @@
         object_deletion_latency: Histogram,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt;;
     <span class="kw">async fn </span>persist_events(<span class="kw-2">&amp;</span><span class="self">self</span>, events: <span class="kw-2">&amp;</span>[Event]) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt;;
-    <span class="kw">async fn </span>persist_addresses(<span class="kw-2">&amp;</span><span class="self">self</span>, addresses: <span class="kw-2">&amp;</span>[Address]) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt;;
+    <span class="kw">async fn </span>persist_addresses(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        addresses: <span class="kw-2">&amp;</span>[Address],
+        active_addresses: <span class="kw-2">&amp;</span>[ActiveAddress],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt;;
     <span class="kw">async fn </span>persist_packages(<span class="kw-2">&amp;</span><span class="self">self</span>, packages: <span class="kw-2">&amp;</span>[Package]) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt;;
     <span class="comment">// NOTE: these tables are for tx query performance optimization
     </span><span class="kw">async fn </span>persist_transaction_index_tables(
@@ -585,6 +594,7 @@
     <span class="kw">pub </span>events: Vec&lt;Event&gt;,
     <span class="kw">pub </span>object_changes: Vec&lt;TransactionObjectChanges&gt;,
     <span class="kw">pub </span>addresses: Vec&lt;Address&gt;,
+    <span class="kw">pub </span>active_addresses: Vec&lt;ActiveAddress&gt;,
     <span class="kw">pub </span>packages: Vec&lt;Package&gt;,
     <span class="kw">pub </span>input_objects: Vec&lt;InputObject&gt;,
     <span class="kw">pub </span>move_calls: Vec&lt;MoveCall&gt;,

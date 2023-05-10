@@ -1813,6 +1813,76 @@
 <a href="#1813" id="1813">1813</a>
 <a href="#1814" id="1814">1814</a>
 <a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
+<a href="#1825" id="1825">1825</a>
+<a href="#1826" id="1826">1826</a>
+<a href="#1827" id="1827">1827</a>
+<a href="#1828" id="1828">1828</a>
+<a href="#1829" id="1829">1829</a>
+<a href="#1830" id="1830">1830</a>
+<a href="#1831" id="1831">1831</a>
+<a href="#1832" id="1832">1832</a>
+<a href="#1833" id="1833">1833</a>
+<a href="#1834" id="1834">1834</a>
+<a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
+<a href="#1838" id="1838">1838</a>
+<a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
+<a href="#1847" id="1847">1847</a>
+<a href="#1848" id="1848">1848</a>
+<a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
+<a href="#1851" id="1851">1851</a>
+<a href="#1852" id="1852">1852</a>
+<a href="#1853" id="1853">1853</a>
+<a href="#1854" id="1854">1854</a>
+<a href="#1855" id="1855">1855</a>
+<a href="#1856" id="1856">1856</a>
+<a href="#1857" id="1857">1857</a>
+<a href="#1858" id="1858">1858</a>
+<a href="#1859" id="1859">1859</a>
+<a href="#1860" id="1860">1860</a>
+<a href="#1861" id="1861">1861</a>
+<a href="#1862" id="1862">1862</a>
+<a href="#1863" id="1863">1863</a>
+<a href="#1864" id="1864">1864</a>
+<a href="#1865" id="1865">1865</a>
+<a href="#1866" id="1866">1866</a>
+<a href="#1867" id="1867">1867</a>
+<a href="#1868" id="1868">1868</a>
+<a href="#1869" id="1869">1869</a>
+<a href="#1870" id="1870">1870</a>
+<a href="#1871" id="1871">1871</a>
+<a href="#1872" id="1872">1872</a>
+<a href="#1873" id="1873">1873</a>
+<a href="#1874" id="1874">1874</a>
+<a href="#1875" id="1875">1875</a>
+<a href="#1876" id="1876">1876</a>
+<a href="#1877" id="1877">1877</a>
+<a href="#1878" id="1878">1878</a>
+<a href="#1879" id="1879">1879</a>
+<a href="#1880" id="1880">1880</a>
+<a href="#1881" id="1881">1881</a>
+<a href="#1882" id="1882">1882</a>
+<a href="#1883" id="1883">1883</a>
+<a href="#1884" id="1884">1884</a>
+<a href="#1885" id="1885">1885</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1860,7 +1930,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::{Context, IndexerError};
 <span class="kw">use </span><span class="kw">crate</span>::metrics::IndexerMetrics;
-<span class="kw">use </span><span class="kw">crate</span>::models::addresses::Address;
+<span class="kw">use </span><span class="kw">crate</span>::models::addresses::{ActiveAddress, Address};
 <span class="kw">use </span><span class="kw">crate</span>::models::checkpoints::Checkpoint;
 <span class="kw">use </span><span class="kw">crate</span>::models::epoch::DBEpochInfo;
 <span class="kw">use </span><span class="kw">crate</span>::models::events::Event;
@@ -1873,11 +1943,11 @@
 <span class="kw">use </span><span class="kw">crate</span>::models::transaction_index::{InputObject, MoveCall, Recipient};
 <span class="kw">use </span><span class="kw">crate</span>::models::transactions::Transaction;
 <span class="kw">use </span><span class="kw">crate</span>::schema::{
-    addresses, checkpoints, checkpoints::dsl <span class="kw">as </span>checkpoints_dsl, epochs, epochs::dsl <span class="kw">as </span>epochs_dsl,
-    events, input_objects, input_objects::dsl <span class="kw">as </span>input_objects_dsl, move_calls,
-    move_calls::dsl <span class="kw">as </span>move_calls_dsl, objects, objects::dsl <span class="kw">as </span>objects_dsl, objects_history,
-    packages, recipients, recipients::dsl <span class="kw">as </span>recipients_dsl, system_states, transactions,
-    transactions::dsl <span class="kw">as </span>transactions_dsl, validators,
+    active_addresses, addresses, checkpoints, checkpoints::dsl <span class="kw">as </span>checkpoints_dsl, epochs,
+    epochs::dsl <span class="kw">as </span>epochs_dsl, events, input_objects, input_objects::dsl <span class="kw">as </span>input_objects_dsl,
+    move_calls, move_calls::dsl <span class="kw">as </span>move_calls_dsl, objects, objects::dsl <span class="kw">as </span>objects_dsl,
+    objects_history, packages, recipients, recipients::dsl <span class="kw">as </span>recipients_dsl, system_states,
+    transactions, transactions::dsl <span class="kw">as </span>transactions_dsl, validators,
 };
 <span class="kw">use </span><span class="kw">crate</span>::store::diesel_marco::{read_only_blocking, transactional_blocking};
 <span class="kw">use </span><span class="kw">crate</span>::store::indexer_store::TemporaryCheckpointStore;
@@ -2964,6 +3034,7 @@ GROUP BY table_name;
             events,
             object_changes: tx_object_changes,
             addresses,
+            active_addresses,
             packages,
             input_objects,
             move_calls,
@@ -3014,15 +3085,48 @@ GROUP BY table_name;
                 .collect();
             persist_transaction_object_changes(conn, mutated_objects, deleted_objects, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
 
-            <span class="comment">// Commit indexed addresses
-            </span><span class="kw">for </span>addresses_chunk <span class="kw">in </span>addresses.chunks(PG_COMMIT_CHUNK_SIZE) {
+            <span class="comment">// TODO(gegaowp): refactor to consolidate commit blocks
+            // Commit indexed addresses &amp; active addresses
+            </span><span class="kw">for </span>address_chunk <span class="kw">in </span>addresses.chunks(PG_COMMIT_CHUNK_SIZE) {
                 diesel::insert_into(addresses::table)
-                    .values(addresses_chunk)
+                    .values(address_chunk)
                     .on_conflict(addresses::account_address)
-                    .do_nothing()
+                    .do_update()
+                    .set((
+                        addresses::last_appearance_time
+                            .eq(excluded(addresses::last_appearance_time)),
+                        addresses::last_appearance_tx.eq(excluded(addresses::last_appearance_tx)),
+                    ))
                     .execute(conn)
                     .map_err(IndexerError::from)
-                    .context(<span class="string">&quot;Failed writing addresses to PostgresDB&quot;</span>)<span class="question-mark">?</span>;
+                    .context(
+                        <span class="macro">format!</span>(
+                            <span class="string">&quot;Failed writing addresses to PostgresDB with tx {}&quot;</span>,
+                            address_chunk[<span class="number">0</span>].last_appearance_tx
+                        )
+                        .as_str(),
+                    )<span class="question-mark">?</span>;
+            }
+            <span class="kw">for </span>active_address_chunk <span class="kw">in </span>active_addresses.chunks(PG_COMMIT_CHUNK_SIZE) {
+                diesel::insert_into(active_addresses::table)
+                    .values(active_address_chunk)
+                    .on_conflict(active_addresses::account_address)
+                    .do_update()
+                    .set((
+                        active_addresses::last_appearance_time
+                            .eq(excluded(active_addresses::last_appearance_time)),
+                        active_addresses::last_appearance_tx
+                            .eq(excluded(active_addresses::last_appearance_tx)),
+                    ))
+                    .execute(conn)
+                    .map_err(IndexerError::from)
+                    .context(
+                        <span class="macro">format!</span>(
+                            <span class="string">&quot;Failed writing active addresses to PostgresDB with tx {}&quot;</span>,
+                            active_address_chunk[<span class="number">0</span>].last_appearance_tx
+                        )
+                        .as_str(),
+                    )<span class="question-mark">?</span>;
             }
 
             <span class="comment">// Commit indexed packages
@@ -3179,16 +3283,52 @@ WHERE e1.epoch = e2.epoch
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">async fn </span>persist_addresses(<span class="kw-2">&amp;</span><span class="self">self</span>, addresses: <span class="kw-2">&amp;</span>[Address]) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt; {
+    <span class="kw">async fn </span>persist_addresses(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        addresses: <span class="kw-2">&amp;</span>[Address],
+        active_addresses: <span class="kw-2">&amp;</span>[ActiveAddress],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt; {
         <span class="macro">transactional_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            <span class="kw">for </span>addresses_chunk <span class="kw">in </span>addresses.chunks(PG_COMMIT_CHUNK_SIZE) {
+            <span class="kw">for </span>address_chunk <span class="kw">in </span>addresses.chunks(PG_COMMIT_CHUNK_SIZE) {
                 diesel::insert_into(addresses::table)
-                    .values(addresses_chunk)
+                    .values(address_chunk)
                     .on_conflict(addresses::account_address)
-                    .do_nothing()
+                    .do_update()
+                    .set((
+                        addresses::last_appearance_time
+                            .eq(excluded(addresses::last_appearance_time)),
+                        addresses::last_appearance_tx.eq(excluded(addresses::last_appearance_tx)),
+                    ))
                     .execute(conn)
                     .map_err(IndexerError::from)
-                    .context(<span class="string">&quot;Failed writing addresses to PostgresDB&quot;</span>)<span class="question-mark">?</span>;
+                    .context(
+                        <span class="macro">format!</span>(
+                            <span class="string">&quot;Failed writing addresses to PostgresDB with tx {}&quot;</span>,
+                            address_chunk[<span class="number">0</span>].last_appearance_tx
+                        )
+                        .as_str(),
+                    )<span class="question-mark">?</span>;
+            }
+            <span class="kw">for </span>active_address_chunk <span class="kw">in </span>active_addresses.chunks(PG_COMMIT_CHUNK_SIZE) {
+                diesel::insert_into(active_addresses::table)
+                    .values(active_address_chunk)
+                    .on_conflict(active_addresses::account_address)
+                    .do_update()
+                    .set((
+                        active_addresses::last_appearance_time
+                            .eq(excluded(active_addresses::last_appearance_time)),
+                        active_addresses::last_appearance_tx
+                            .eq(excluded(active_addresses::last_appearance_tx)),
+                    ))
+                    .execute(conn)
+                    .map_err(IndexerError::from)
+                    .context(
+                        <span class="macro">format!</span>(
+                            <span class="string">&quot;Failed writing active addresses to PostgresDB with tx {}&quot;</span>,
+                            active_address_chunk[<span class="number">0</span>].last_appearance_tx
+                        )
+                        .as_str(),
+                    )<span class="question-mark">?</span>;
             }
             <span class="prelude-val">Ok</span>::&lt;(), IndexerError&gt;(())
         })<span class="question-mark">?</span>;

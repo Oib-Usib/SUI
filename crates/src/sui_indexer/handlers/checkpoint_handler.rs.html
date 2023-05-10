@@ -1163,6 +1163,22 @@
 <a href="#1163" id="1163">1163</a>
 <a href="#1164" id="1164">1164</a>
 <a href="#1165" id="1165">1165</a>
+<a href="#1166" id="1166">1166</a>
+<a href="#1167" id="1167">1167</a>
+<a href="#1168" id="1168">1168</a>
+<a href="#1169" id="1169">1169</a>
+<a href="#1170" id="1170">1170</a>
+<a href="#1171" id="1171">1171</a>
+<a href="#1172" id="1172">1172</a>
+<a href="#1173" id="1173">1173</a>
+<a href="#1174" id="1174">1174</a>
+<a href="#1175" id="1175">1175</a>
+<a href="#1176" id="1176">1176</a>
+<a href="#1177" id="1177">1177</a>
+<a href="#1178" id="1178">1178</a>
+<a href="#1179" id="1179">1179</a>
+<a href="#1180" id="1180">1180</a>
+<a href="#1181" id="1181">1181</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1198,6 +1214,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::IndexerError;
 <span class="kw">use </span><span class="kw">crate</span>::metrics::IndexerMetrics;
+<span class="kw">use </span><span class="kw">crate</span>::models::addresses::{dedup_from_addresses, dedup_from_and_to_addresses};
 <span class="kw">use </span><span class="kw">crate</span>::models::checkpoints::Checkpoint;
 <span class="kw">use </span><span class="kw">crate</span>::models::epoch::{DBEpochInfo, SystemEpochInfoEvent};
 <span class="kw">use </span><span class="kw">crate</span>::models::objects::{DeletedObject, Object, ObjectStatus};
@@ -1595,7 +1612,8 @@
                     transactions,
                     events,
                     object_changes: <span class="kw">_</span>,
-                    addresses: <span class="kw">_</span>,
+                    addresses,
+                    active_addresses,
                     packages: <span class="kw">_</span>,
                     input_objects: <span class="kw">_</span>,
                     move_calls: <span class="kw">_</span>,
@@ -1620,25 +1638,29 @@
                     }
                 });
 
-                <span class="comment">// let addresses_handler = self.clone();
-                // spawn_monitored_task!(async move {
-                //     let mut address_commit_res =
-                //         addresses_handler.state.persist_addresses(&amp;addresses).await;
-                //     while let Err(e) = address_commit_res {
-                //         warn!(
-                //             &quot;Indexer address commit failed with error: {:?}, retrying after {:?} milli-secs...&quot;,
-                //             e, DB_COMMIT_RETRY_INTERVAL_IN_MILLIS
-                //         );
-                //         tokio::time::sleep(std::time::Duration::from_millis(
-                //             DB_COMMIT_RETRY_INTERVAL_IN_MILLIS,
-                //         ))
-                //         .await;
-                //         address_commit_res =
-                //             addresses_handler.state.persist_addresses(&amp;addresses).await;
-                //     }
-                // });
+                <span class="kw">let </span>addresses_handler = <span class="self">self</span>.clone();
+                <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
+                    <span class="kw">let </span><span class="kw-2">mut </span>address_commit_res = addresses_handler
+                        .state
+                        .persist_addresses(<span class="kw-2">&amp;</span>addresses, <span class="kw-2">&amp;</span>active_addresses)
+                        .<span class="kw">await</span>;
+                    <span class="kw">while let </span><span class="prelude-val">Err</span>(e) = address_commit_res {
+                        <span class="macro">warn!</span>(
+                            <span class="string">&quot;Indexer address commit failed with error: {:?}, retrying after {:?} milli-secs...&quot;</span>,
+                            e, DB_COMMIT_RETRY_INTERVAL_IN_MILLIS
+                        );
+                        tokio::time::sleep(std::time::Duration::from_millis(
+                            DB_COMMIT_RETRY_INTERVAL_IN_MILLIS,
+                        ))
+                        .<span class="kw">await</span>;
+                        address_commit_res = addresses_handler
+                            .state
+                            .persist_addresses(<span class="kw-2">&amp;</span>addresses, <span class="kw-2">&amp;</span>active_addresses)
+                            .<span class="kw">await</span>;
+                    }
+                });
 
-                // MUSTFIX(gegaowp): temp. turn off tx index table commit to reduce short-term storage consumption.
+                <span class="comment">// MUSTFIX(gegaowp): temp. turn off tx index table commit to reduce short-term storage consumption.
                 // this include recipients, input_objects and move_calls.
                 // let transactions_handler = self.clone();
                 // spawn_monitored_task!(async move {
@@ -1723,6 +1745,7 @@
                     events: <span class="kw">_</span>,
                     object_changes: tx_object_changes,
                     addresses: <span class="kw">_</span>,
+                    active_addresses: <span class="kw">_</span>,
                     packages,
                     input_objects: <span class="kw">_</span>,
                     move_calls,
@@ -2028,15 +2051,23 @@
             .flat_map(|tx| tx.get_recipients(checkpoint.epoch, checkpoint.sequence_number))
             .collect();
 
-        <span class="comment">// // Index addresses
-        // let addresses = transactions
-        //     .iter()
-        //     .flat_map(|tx| {
-        //         tx.get_addresses(checkpoint.epoch, checkpoint.sequence_number)
-        //     })
-        //     .collect();
+        <span class="comment">// Index addresses
+        // NOTE: dedup is necessary because there are multiple transactions in a checkpoint,
+        // otherwise error of `ON CONFLICT DO UPDATE command cannot affect row a second time` will be thrown.
+        </span><span class="kw">let </span>from_and_to_address_data = transactions
+            .iter()
+            .flat_map(|tx| {
+                tx.get_from_and_to_addresses(checkpoint.epoch, checkpoint.sequence_number)
+            })
+            .collect();
+        <span class="kw">let </span>from_address_data = transactions
+            .iter()
+            .map(|tx| tx.get_from_address())
+            .collect();
+        <span class="kw">let </span>addresses = dedup_from_and_to_addresses(from_and_to_address_data);
+        <span class="kw">let </span>active_addresses = dedup_from_addresses(from_address_data);
 
-        // NOTE: Index epoch when object checkpoint index has reached the same checkpoint,
+        <span class="comment">// NOTE: Index epoch when object checkpoint index has reached the same checkpoint,
         // because epoch info is based on the latest system state object by the current checkpoint.
         </span><span class="kw">let </span><span class="kw-2">mut </span>epoch_index = <span class="prelude-val">None</span>;
         <span class="kw">if </span>index_epoch {
@@ -2177,7 +2208,8 @@
                 transactions: db_transactions,
                 events,
                 object_changes: objects_changes,
-                addresses: <span class="macro">vec!</span>[],
+                addresses,
+                active_addresses,
                 packages,
                 input_objects,
                 move_calls,
