@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683685240307,
+  "lastUpdate": 1683687892400,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5687,6 +5687,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 424955,
             "range": "± 71416",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aschran@mystenlabs.com",
+            "name": "Andrew Schran",
+            "username": "aschran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ff6c213d21f691880bff7514f1a550668c2d4330",
+          "message": "Use RTT-based peer selection for state sync (#11863)",
+          "timestamp": "2023-05-09T19:53:46-07:00",
+          "tree_id": "533b5673b8c483a399a4708591dcd11bfe9990b1",
+          "url": "https://github.com/MystenLabs/sui/commit/ff6c213d21f691880bff7514f1a550668c2d4330"
+        },
+        "date": 1683687881268,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 108248419,
+            "range": "± 3638326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 256237,
+            "range": "± 10797",
             "unit": "ns/iter"
           }
         ]
