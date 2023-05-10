@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683674062567,
+  "lastUpdate": 1683678347692,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5615,6 +5615,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 355404,
             "range": "± 39597",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "caogc@users.noreply.github.com",
+            "name": "caogc",
+            "username": "caogc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d76537d7f1f290eb653b24575a85be50f67a91b7",
+          "message": "Change SUI rosetta from statefull server to stateless (#11855)\n\n## Description \r\nDue to get transactions api has a high latency, rosetta can't sync to\r\ntip.\r\nWe are changing SUI rosetta from statefull server to stateless, this way\r\nwe don't need to sync rosetta anymore.\r\n\r\n## Test Plan \r\nThis has been tested in our testnet and mainnet, works as expected.\r\nwe tested our indexer syncing, it can sync to tip with a good syncing\r\nspeed.\r\nwe tested send/receive, works well.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\n---------\r\n\r\nCo-authored-by: Madhur Shrimal <madhur.shrimal@gmail.com>\r\nCo-authored-by: jacques.cao <jacques.cao@coinbase.com>\r\nCo-authored-by: patrick <patrickkuo@me.com>",
+          "timestamp": "2023-05-10T01:14:19+01:00",
+          "tree_id": "9bb3628ed7136e26101c74c864a213f461d8a79f",
+          "url": "https://github.com/MystenLabs/sui/commit/d76537d7f1f290eb653b24575a85be50f67a91b7"
+        },
+        "date": 1683678336235,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141340001,
+            "range": "± 4674045",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 392268,
+            "range": "± 48387",
             "unit": "ns/iter"
           }
         ]
