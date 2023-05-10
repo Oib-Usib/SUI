@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683753975642,
+  "lastUpdate": 1683754488358,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6191,6 +6191,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 345805,
             "range": "± 27265",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f576a0ea21c90ff2ad58e21e00d31db79f5826c",
+          "message": "Replay from dead/forked node: Introduce `NodeStateDump` (#11880)\n\n## Description \r\n\r\nThis introduces `NodeStateDump` which is the set of objects and info\r\nrequired to reproduce a fork in replay.\r\nThe created state is a few MB, so not too concerning. Json was so the\r\ndata is human readable.\r\n\r\nMost of the logic in this PR is in getting the replay system to load\r\nfrom state dump.\r\n\r\nSample config\r\n```\r\nstate-debug-dump-config:\r\n  dump-file-directory: /tmp/\r\n```\r\n\r\n## Test Plan \r\n\r\nTested by simulating forks and replaying from dumps.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-10T21:23:24Z",
+          "tree_id": "c3864f6eaf45514b48556498ed67564d3edb14f8",
+          "url": "https://github.com/MystenLabs/sui/commit/3f576a0ea21c90ff2ad58e21e00d31db79f5826c"
+        },
+        "date": 1683754478847,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 155622038,
+            "range": "± 6858508",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 522475,
+            "range": "± 40071",
             "unit": "ns/iter"
           }
         ]
