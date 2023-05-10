@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683703539454,
+  "lastUpdate": 1683733479687,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5831,6 +5831,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 313030,
             "range": "± 31517",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zlnju@outlook.com",
+            "name": "wiggins-dev",
+            "username": "wiggins-dev"
+          },
+          "committer": {
+            "email": "sam@mystenlabs.com",
+            "name": "Sam Blackshear",
+            "username": "sblackshear"
+          },
+          "distinct": true,
+          "id": "dc13855aef7744dbc377c117ae29871792ba8d6c",
+          "message": "[Deepbook] Upgrade account_balance #11837\n\n## Description\nUpgrade the logic of query function of account balance\nReturn asset available and locked as (0, 0) when account capacity is absent\n\n## Test Plan\n\ncd to deepbook dir and run \"sui move test\"\n\n---\nIf your changes are not user-facing and not a breaking change, you can\nskip the following section. Otherwise, please indicate what changed, and\nthen add to the Release Notes section as highlighted during the release\nprocess.\n\n### Type of Change (Check all that apply)\n\n- [ ] user-visible impact\n- [ ] breaking change for a client SDKs\n- [ ] breaking change for FNs (FN binary must upgrade)\n- [ ] breaking change for validators or node operators (must upgrade\nbinaries)\n- [ ] breaking change for on-chain data layout\n- [ ] necessitate either a data wipe or data migration\n\n### Release notes\n\n---------",
+          "timestamp": "2023-05-10T08:27:31-07:00",
+          "tree_id": "a9f4258a16f02296ae66e7b4c14e2b3d924580bf",
+          "url": "https://github.com/MystenLabs/sui/commit/dc13855aef7744dbc377c117ae29871792ba8d6c"
+        },
+        "date": 1683733469064,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105936411,
+            "range": "± 4450246",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 255141,
+            "range": "± 19537",
             "unit": "ns/iter"
           }
         ]
