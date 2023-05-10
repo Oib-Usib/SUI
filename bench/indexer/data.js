@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683754488358,
+  "lastUpdate": 1683754514003,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6227,6 +6227,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 522475,
             "range": "± 40071",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrey@mystenlabs.com",
+            "name": "Andrey Chursin",
+            "username": "andll"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fb592035977cefa9efc9f1a9bccf167bfe4d2f47",
+          "message": "[checkpoints] Remove legacy code before InMemoryCheckpointRoots feature (#11894)\n\nLatest mainnet epoch has this flag\r\n[on](https://metrics.sui.io/explore?left=%7B%22datasource%22:%22e6b9ae38-5a18-477b-bd96-c67b655dd4aa%22,%22queries%22:%5B%7B%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22e6b9ae38-5a18-477b-bd96-c67b655dd4aa%22%7D,%22editorMode%22:%22code%22,%22expr%22:%22epoch_flags%7Bnetwork%3D%5C%22mainnet%5C%22%7D%22,%22hide%22:false,%22interval%22:%2260s%22,%22range%22:true,%22refId%22:%22C%22%7D%5D,%22range%22:%7B%22from%22:%22now-6h%22,%22to%22:%22now%22%7D%7D&orgId=1)\r\n(and it has been for a while now)",
+          "timestamp": "2023-05-10T14:26:29-07:00",
+          "tree_id": "0edd684c213e43b25a6c8f06d7c33ee4045870e5",
+          "url": "https://github.com/MystenLabs/sui/commit/fb592035977cefa9efc9f1a9bccf167bfe4d2f47"
+        },
+        "date": 1683754501325,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106545378,
+            "range": "± 10594771",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 313032,
+            "range": "± 25126",
             "unit": "ns/iter"
           }
         ]
