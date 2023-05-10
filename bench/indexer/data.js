@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683696166183,
+  "lastUpdate": 1683700460272,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -5759,6 +5759,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 301884,
             "range": "± 4193",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b134868df506ecd674e032fd01882d50c95163c6",
+          "message": "[Rust] use toml format for toolchain file (#11873)\n\n## Description \r\n\r\nOtherwise, it seems dependabot is unable to parse the file:\r\nhttps://github.com/MystenLabs/sui/network/updates/660546308\r\n\r\n## Test Plan \r\n\r\nCI\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-10T06:22:38Z",
+          "tree_id": "aea4a18de7be7a62b983dab434f8e368b0326b47",
+          "url": "https://github.com/MystenLabs/sui/commit/b134868df506ecd674e032fd01882d50c95163c6"
+        },
+        "date": 1683700450947,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145963533,
+            "range": "± 11909130",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 392868,
+            "range": "± 76511",
             "unit": "ns/iter"
           }
         ]
