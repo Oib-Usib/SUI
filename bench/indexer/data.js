@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683829315130,
+  "lastUpdate": 1683834111344,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6443,6 +6443,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 345790,
             "range": "± 53869",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123408603+healthydeve@users.noreply.github.com",
+            "name": "Jian Lu",
+            "username": "healthydeve"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f8477e811c1f6e1f26814ad16888748e10f0060f",
+          "message": "[Sui-test-validator] adding persisted state option (#11389)\n\n## Description \r\n\r\nAdding a persisted state on the ./sui-test-validator if we choose to\r\npass in a network config\r\n\r\nThe current configuration will save a file in the\r\n.sui/.sui_config/.sui_cluster_test_config/ path of your local directory.\r\nWe are able to run locally and have a saved state with this.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\nLocal runs\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-11T15:27:48-04:00",
+          "tree_id": "ed53a97cc0d9b2271768bf6e0aa7b31b565b4f76",
+          "url": "https://github.com/MystenLabs/sui/commit/f8477e811c1f6e1f26814ad16888748e10f0060f"
+        },
+        "date": 1683834101214,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149155670,
+            "range": "± 5894377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 313994,
+            "range": "± 23696",
             "unit": "ns/iter"
           }
         ]
