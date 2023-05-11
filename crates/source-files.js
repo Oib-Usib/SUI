@@ -23,7 +23,7 @@ var sourcesIndex = JSON.parse('{\
 "shared_crypto":["",[],["intent.rs","lib.rs"]],\
 "stress":["",[],["stress.rs"]],\
 "sui":["",[],["client_commands.rs","console.rs","fire_drill.rs","genesis_ceremony.rs","genesis_inspector.rs","keytool.rs","lib.rs","shell.rs","sui_commands.rs","validator_commands.rs"]],\
-"sui_adapter":["",[["programmable_transactions",[],["context.rs","execution.rs","linkage_view.rs","mod.rs","types.rs"]]],["adapter.rs","error.rs","execution_engine.rs","execution_mode.rs","lib.rs","type_layout_resolver.rs"]],\
+"sui_adapter_latest":["",[["programmable_transactions",[],["context.rs","execution.rs","linkage_view.rs","mod.rs","types.rs"]]],["adapter.rs","error.rs","execution_engine.rs","execution_mode.rs","lib.rs","type_layout_resolver.rs"]],\
 "sui_adapter_transactional_tests":["",[],["lib.rs"]],\
 "sui_benchmark":["",[["drivers",[],["bench_driver.rs","driver.rs","mod.rs"]],["workloads",[],["adversarial.rs","batch_payment.rs","delegation.rs","mod.rs","payload.rs","shared_counter.rs","transfer_object.rs","workload.rs","workload_configuration.rs"]]],["bank.rs","benchmark_setup.rs","embedded_reconfig_observer.rs","fullnode_reconfig_observer.rs","in_memory_wallet.rs","lib.rs","options.rs","system_state_observer.rs","util.rs"]],\
 "sui_cluster_test":["",[["test_case",[],["coin_index_test.rs","coin_merge_split_test.rs","fullnode_build_publish_transaction_test.rs","fullnode_execute_transaction_test.rs","native_transfer_test.rs","shared_object_test.rs"]]],["cluster.rs","config.rs","faucet.rs","helper.rs","lib.rs","test_case.rs","wallet_client.rs"]],\
@@ -42,7 +42,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_macros":["",[],["lib.rs"]],\
 "sui_move":["",[["cost_calib",[],["mod.rs","runner.rs"]]],["build.rs","coverage.rs","disassemble.rs","lib.rs","new.rs","prove.rs","unit_test.rs"]],\
 "sui_move_build":["",[],["lib.rs"]],\
-"sui_move_natives":["",[["crypto",[],["bls12381.rs","ecdsa_k1.rs","ecdsa_r1.rs","ecvrf.rs","ed25519.rs","groth16.rs","hash.rs","hmac.rs","mod.rs"]],["object_runtime",[],["mod.rs","object_store.rs"]]],["address.rs","dynamic_field.rs","event.rs","lib.rs","object.rs","test_scenario.rs","test_utils.rs","transfer.rs","tx_context.rs","types.rs","validator.rs"]],\
+"sui_move_natives_latest":["",[["crypto",[],["bls12381.rs","ecdsa_k1.rs","ecdsa_r1.rs","ecvrf.rs","ed25519.rs","groth16.rs","hash.rs","hmac.rs","mod.rs"]],["object_runtime",[],["mod.rs","object_store.rs"]]],["address.rs","dynamic_field.rs","event.rs","lib.rs","object.rs","test_scenario.rs","test_utils.rs","transfer.rs","tx_context.rs","types.rs","validator.rs"]],\
 "sui_network":["",[["discovery",[],["builder.rs","mod.rs","server.rs"]],["state_sync",[],["builder.rs","metrics.rs","mod.rs","server.rs","test_utils.rs"]]],["api.rs","lib.rs","utils.rs"]],\
 "sui_node":["",[],["admin.rs","handle.rs","lib.rs","metrics.rs"]],\
 "sui_open_rpc":["",[],["lib.rs"]],\
@@ -69,7 +69,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_transactional_test_runner":["",[["programmable_transaction_test_parser",[],["mod.rs","parser.rs","token.rs"]]],["args.rs","lib.rs","test_adapter.rs"]],\
 "sui_types":["",[["gas_model",[],["gas_v1.rs","gas_v2.rs","mod.rs"]],["sui_system_state",[],["epoch_start_sui_system_state.rs","mod.rs","sui_system_state_inner_v1.rs","sui_system_state_inner_v2.rs","sui_system_state_summary.rs"]],["unit_tests",[],["utils.rs"]]],["accumulator.rs","balance.rs","base_types.rs","clock.rs","coin.rs","collection_types.rs","committee.rs","crypto.rs","digests.rs","display.rs","dynamic_field.rs","effects.rs","epoch_data.rs","error.rs","event.rs","executable_transaction.rs","execution_status.rs","gas.rs","gas_coin.rs","governance.rs","id.rs","in_memory_storage.rs","layout_resolver.rs","lib.rs","message_envelope.rs","messages_checkpoint.rs","messages_consensus.rs","messages_grpc.rs","metrics.rs","move_package.rs","multisig.rs","object.rs","programmable_transaction_builder.rs","quorum_driver_types.rs","signature.rs","storage.rs","sui_serde.rs","temporary_store.rs","transaction.rs","versioned.rs"]],\
 "sui_upgrade_compatibility_transactional_tests":["",[],["lib.rs"]],\
-"sui_verifier":["",[],["entry_points_verifier.rs","global_storage_access_verifier.rs","id_leak_verifier.rs","lib.rs","one_time_witness_verifier.rs","private_generics.rs","struct_with_key_verifier.rs","verifier.rs"]],\
+"sui_verifier_latest":["",[],["entry_points_verifier.rs","global_storage_access_verifier.rs","id_leak_verifier.rs","lib.rs","one_time_witness_verifier.rs","private_generics.rs","struct_with_key_verifier.rs","verifier.rs"]],\
 "sui_verifier_transactional_tests":["",[],["lib.rs"]],\
 "telemetry_subscribers":["",[],["lib.rs","span_latency_prom.rs"]],\
 "test_utils":["",[],["authority.rs","lib.rs","network.rs","transaction.rs"]],\
