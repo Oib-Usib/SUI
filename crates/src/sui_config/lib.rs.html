@@ -126,6 +126,26 @@
 <a href="#126" id="126">126</a>
 <a href="#127" id="127">127</a>
 <a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -154,6 +174,7 @@
 
 <span class="kw">const </span>SUI_DIR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;.sui&quot;</span>;
 <span class="kw">pub const </span>SUI_CONFIG_DIR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;sui_config&quot;</span>;
+<span class="kw">pub const </span>SUI_CLUSTER_TEST_CONFIG_DIR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;sui_cluster_test_config&quot;</span>;
 <span class="kw">pub const </span>SUI_NETWORK_CONFIG: <span class="kw-2">&amp;</span>str = <span class="string">&quot;network.yaml&quot;</span>;
 <span class="kw">pub const </span>SUI_FULLNODE_CONFIG: <span class="kw-2">&amp;</span>str = <span class="string">&quot;fullnode.yaml&quot;</span>;
 <span class="kw">pub const </span>SUI_CLIENT_CONFIG: <span class="kw-2">&amp;</span>str = <span class="string">&quot;client.yaml&quot;</span>;
@@ -171,6 +192,25 @@
         <span class="prelude-val">Some</span>(config_env) =&gt; <span class="prelude-val">Ok</span>(config_env.into()),
         <span class="prelude-val">None </span>=&gt; <span class="kw">match </span>dirs::home_dir() {
             <span class="prelude-val">Some</span>(v) =&gt; <span class="prelude-val">Ok</span>(v.join(SUI_DIR).join(SUI_CONFIG_DIR)),
+            <span class="prelude-val">None </span>=&gt; <span class="macro">anyhow::bail!</span>(<span class="string">&quot;Cannot obtain home directory path&quot;</span>),
+        },
+    }
+    .and_then(|dir| {
+        <span class="kw">if </span>!dir.exists() {
+            fs::create_dir_all(dir.clone())<span class="question-mark">?</span>;
+        }
+        <span class="prelude-val">Ok</span>(dir)
+    })
+}
+
+<span class="kw">pub fn </span>sui_cluster_test_config_dir() -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, anyhow::Error&gt; {
+    <span class="kw">match </span>std::env::var_os(<span class="string">&quot;SUI_CONFIG_DIR&quot;</span>) {
+        <span class="prelude-val">Some</span>(config_env) =&gt; <span class="prelude-val">Ok</span>(config_env.into()),
+        <span class="prelude-val">None </span>=&gt; <span class="kw">match </span>dirs::home_dir() {
+            <span class="prelude-val">Some</span>(v) =&gt; <span class="prelude-val">Ok</span>(v
+                .join(SUI_DIR)
+                .join(SUI_CONFIG_DIR)
+                .join(SUI_CLUSTER_TEST_CONFIG_DIR)),
             <span class="prelude-val">None </span>=&gt; <span class="macro">anyhow::bail!</span>(<span class="string">&quot;Cannot obtain home directory path&quot;</span>),
         },
     }

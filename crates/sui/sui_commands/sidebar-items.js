@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["SuiCommand"]};
+window.SIDEBAR_ITEMS = {"enum":["SuiCommand"],"fn":["genesis"]};
