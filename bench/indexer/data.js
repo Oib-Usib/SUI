@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683838412199,
+  "lastUpdate": 1683843376767,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6515,6 +6515,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310039,
             "range": "± 7899",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fe33cf4b58169a2729dfa0734ad99c49eb0e1707",
+          "message": "[sui-execution] Move `sui` execution crates into their own directory (#11192)\n\n## Description\r\n\r\nCreate the sub-directory containing the \"latest\" version of `sui-`\r\ncrates in the execution layer. API to access multiple versions of an\r\nexecution crate to follow. This commit just moves code to its new home,\r\nto minimise the chance for a merge conflict.\r\n\r\n## Test Plan\r\n\r\n```\r\n$ cargo simtest\r\n$ env SUI_SKIP_SIMTESTS=1 cargo nextest run\r\n```",
+          "timestamp": "2023-05-11T15:05:40-07:00",
+          "tree_id": "9958080b14bd3eeafaf9e66358d2ec96e0bb27b2",
+          "url": "https://github.com/MystenLabs/sui/commit/fe33cf4b58169a2729dfa0734ad99c49eb0e1707"
+        },
+        "date": 1683843366854,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141342624,
+            "range": "± 5224702",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 434463,
+            "range": "± 92667",
             "unit": "ns/iter"
           }
         ]
