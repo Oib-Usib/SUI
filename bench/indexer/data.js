@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683823882216,
+  "lastUpdate": 1683829315130,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6407,6 +6407,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312062,
             "range": "± 20252",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1a3420933e88a983a9537318b1027d1d1d73015b",
+          "message": "Fix flaky safe mode reconfig test (#11918)",
+          "timestamp": "2023-05-11T18:09:42Z",
+          "tree_id": "935a8a0a91ea4e88e5f156c05199548c150879c3",
+          "url": "https://github.com/MystenLabs/sui/commit/1a3420933e88a983a9537318b1027d1d1d73015b"
+        },
+        "date": 1683829304427,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 158329858,
+            "range": "± 9700346",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 345790,
+            "range": "± 53869",
             "unit": "ns/iter"
           }
         ]
