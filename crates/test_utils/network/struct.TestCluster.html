@@ -24,7 +24,7 @@ Note that this function does not guarantee that every node is at the target epoc
 epoch. This requires waiting for both the fullnode and all validators to reach the next epoch.</p>
 </div></details><section id="method.wait_for_epoch_all_validators" class="method"><a class="srclink rightside" href="../../src/test_utils/network.rs.html#237-260">source</a><h4 class="code-header">pub async fn <a href="#method.wait_for_epoch_all_validators" class="fn">wait_for_epoch_all_validators</a>(&amp;self, target_epoch: <a class="type" href="../../sui_types/committee/type.EpochId.html" title="type sui_types::committee::EpochId">EpochId</a>)</h4></section><details class="toggle method-toggle" open><summary><section id="method.update_validator_supported_versions" class="method"><a class="srclink rightside" href="../../src/test_utils/network.rs.html#266-281">source</a><h4 class="code-header">pub async fn <a href="#method.update_validator_supported_versions" class="fn">update_validator_supported_versions</a>(
     &amp;mut self,
-    new_supported_versions: SupportedProtocolVersions
+    new_supported_versions: <a class="struct" href="../../sui_protocol_config/struct.SupportedProtocolVersions.html" title="struct sui_protocol_config::SupportedProtocolVersions">SupportedProtocolVersions</a>
 )</h4></section></summary><div class="docblock"><p>Upgrade the network protocol version, by restarting every validator with a new
 supported versions.
 Note that we don’t restart the fullnode here, and it is assumed that the fulnode supports
