@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683834111344,
+  "lastUpdate": 1683838412199,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6479,6 +6479,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 313994,
             "range": "± 23696",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e0e0e7eb52b8463c2dabd1292ee047e532afac3b",
+          "message": "indexer: handle failed tx block in TPS (#11922)\n\n## Description \r\n\r\nWe want to remove failed tx from real-time TPS and peak TPS.\r\nHere is a related thread:\r\nhttps://mysten-labs.slack.com/archives/C051ZP9CBEE/p1683825255033459?thread_ts=1683823673.339839&cid=C051ZP9CBEE\r\n\r\n## Test Plan \r\n\r\nrun indexer locally agains mainnet, starting from checkpoint 2,255,000\r\nand verify.",
+          "timestamp": "2023-05-11T16:44:31-04:00",
+          "tree_id": "8d2283aabf807cfb2af11b4a902d75cf053ea776",
+          "url": "https://github.com/MystenLabs/sui/commit/e0e0e7eb52b8463c2dabd1292ee047e532afac3b"
+        },
+        "date": 1683838401627,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105180632,
+            "range": "± 2985279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310039,
+            "range": "± 7899",
             "unit": "ns/iter"
           }
         ]
