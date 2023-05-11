@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683817519207,
+  "lastUpdate": 1683823882216,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6371,6 +6371,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 316613,
             "range": "± 20711",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "akihidis@gmail.com",
+            "name": "Anastasios Kichidis",
+            "username": "akichidis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3909214ebae213d9fa51325f2abf834b169fa762",
+          "message": "[chore] clippy to run with all features enabled (#11912)\n\n## Description \r\n\r\nclippy seems to be ignoring files when those depend on features that\r\naren't enabled when it runs. This is leading to build failures (ex\r\n[this](https://github.com/MystenLabs/sui/actions/runs/4942463072/jobs/8836005749)\r\nand [this](https://github.com/MystenLabs/sui/actions/runs/4910003494))\r\nfrequently as our rust CI is passing but when it comes to build CI it\r\nfails and mostly goes undetected.\r\n\r\nThe PR is enabling `--all-features` so we align the rust & build CI. It\r\nis also fixing some linter failures.\r\n\r\n\r\n## Test Plan \r\n\r\nDid run locally\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-11T17:40:39+01:00",
+          "tree_id": "82a8ffbc4cce92d24471f20a90cc605aa3476912",
+          "url": "https://github.com/MystenLabs/sui/commit/3909214ebae213d9fa51325f2abf834b169fa762"
+        },
+        "date": 1683823871866,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 143632838,
+            "range": "± 4645758",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312062,
+            "range": "± 20252",
             "unit": "ns/iter"
           }
         ]
