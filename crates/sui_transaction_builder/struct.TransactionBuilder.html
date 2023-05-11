@@ -40,7 +40,7 @@
     module: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,
     function: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,
     type_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../sui_json_rpc_types/sui_transaction/struct.SuiTypeTag.html" title="struct sui_json_rpc_types::sui_transaction::SuiTypeTag">SuiTypeTag</a>&gt;,
-    call_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;SuiJsonValue&gt;,
+    call_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../sui_json/struct.SuiJsonValue.html" title="struct sui_json::SuiJsonValue">SuiJsonValue</a>&gt;,
     gas: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../sui_types/base_types/struct.ObjectID.html" title="struct sui_types::base_types::ObjectID">ObjectID</a>&gt;,
     gas_budget: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>
 ) -&gt; <a class="type" href="https://docs.rs/anyhow/1.0.69/anyhow/type.Result.html" title="type anyhow::Result">Result</a>&lt;<a class="enum" href="../sui_types/transaction/enum.TransactionData.html" title="enum sui_types::transaction::TransactionData">TransactionData</a>&gt;</h4></section><section id="method.single_move_call" class="method"><a class="srclink rightside" href="../src/sui_transaction_builder/lib.rs.html#294-321">source</a><h4 class="code-header">pub async fn <a href="#method.single_move_call" class="fn">single_move_call</a>(
@@ -50,7 +50,7 @@
     module: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,
     function: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,
     type_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../sui_json_rpc_types/sui_transaction/struct.SuiTypeTag.html" title="struct sui_json_rpc_types::sui_transaction::SuiTypeTag">SuiTypeTag</a>&gt;,
-    call_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;SuiJsonValue&gt;
+    call_args: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../sui_json/struct.SuiJsonValue.html" title="struct sui_json::SuiJsonValue">SuiJsonValue</a>&gt;
 ) -&gt; <a class="type" href="https://docs.rs/anyhow/1.0.69/anyhow/type.Result.html" title="type anyhow::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</h4></section><section id="method.publish" class="method"><a class="srclink rightside" href="../src/sui_transaction_builder/lib.rs.html#417-437">source</a><h4 class="code-header">pub async fn <a href="#method.publish" class="fn">publish</a>(
     &amp;self,
     sender: <a class="struct" href="../sui_types/base_types/struct.SuiAddress.html" title="struct sui_types::base_types::SuiAddress">SuiAddress</a>,
