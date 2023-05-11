@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683762714760,
+  "lastUpdate": 1683817519207,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6335,6 +6335,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312581,
             "range": "± 69422",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "95b318b5166670045592f381e85e49fe04509be1",
+          "message": "fn: remove object IDs from transactions_to_addr index (#11314)\n\n## Description \r\n\r\ntransactions_to_addr now includes both address and object IDs.\r\nRelated posts are \r\nhttps://mysten-labs.slack.com/archives/C04FG4Q7YJ3/p1682369162080879\r\nhttps://mysten-labs.slack.com/archives/C04HS54LHUM/p1682039873458439\r\n\r\n## Test Plan \r\n\r\nCI test\r\nrun local FN + Explorer and make sure 0x5 is not showing as address any\r\nmore.",
+          "timestamp": "2023-05-11T10:51:34-04:00",
+          "tree_id": "2ad085f65be8c8666399ae5e4548d7be635f23e0",
+          "url": "https://github.com/MystenLabs/sui/commit/95b318b5166670045592f381e85e49fe04509be1"
+        },
+        "date": 1683817509207,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146491997,
+            "range": "± 4519011",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 316613,
+            "range": "± 20711",
             "unit": "ns/iter"
           }
         ]
