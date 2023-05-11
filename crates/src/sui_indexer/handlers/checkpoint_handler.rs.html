@@ -1179,6 +1179,20 @@
 <a href="#1179" id="1179">1179</a>
 <a href="#1180" id="1180">1180</a>
 <a href="#1181" id="1181">1181</a>
+<a href="#1182" id="1182">1182</a>
+<a href="#1183" id="1183">1183</a>
+<a href="#1184" id="1184">1184</a>
+<a href="#1185" id="1185">1185</a>
+<a href="#1186" id="1186">1186</a>
+<a href="#1187" id="1187">1187</a>
+<a href="#1188" id="1188">1188</a>
+<a href="#1189" id="1189">1189</a>
+<a href="#1190" id="1190">1190</a>
+<a href="#1191" id="1191">1191</a>
+<a href="#1192" id="1192">1192</a>
+<a href="#1193" id="1193">1193</a>
+<a href="#1194" id="1194">1194</a>
+<a href="#1195" id="1195">1195</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2201,10 +2215,24 @@
             </span>};
         }
         <span class="kw">let </span>total_transactions = db_transactions.iter().map(|t| t.transaction_count).sum();
+        <span class="kw">let </span>total_successful_transaction_blocks = db_transactions
+            .iter()
+            .filter(|t| t.execution_success)
+            .count();
+        <span class="kw">let </span>total_successful_transactions = db_transactions
+            .iter()
+            .filter(|t| t.execution_success)
+            .map(|t| t.transaction_count)
+            .sum();
 
         <span class="prelude-val">Ok</span>((
             TemporaryCheckpointStore {
-                checkpoint: Checkpoint::from(checkpoint, total_transactions)<span class="question-mark">?</span>,
+                checkpoint: Checkpoint::from(
+                    checkpoint,
+                    total_transactions,
+                    total_successful_transactions,
+                    total_successful_transaction_blocks <span class="kw">as </span>i64,
+                )<span class="question-mark">?</span>,
                 transactions: db_transactions,
                 events,
                 object_changes: objects_changes,

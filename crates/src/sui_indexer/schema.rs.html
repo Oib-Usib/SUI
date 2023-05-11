@@ -324,6 +324,9 @@
 <a href="#324" id="324">324</a>
 <a href="#325" id="325">325</a>
 <a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 // @generated automatically by Diesel CLI.
@@ -385,6 +388,8 @@
         total_storage_rebate -&gt; Int8,
         total_transaction_blocks -&gt; Int8,
         total_transactions -&gt; Int8,
+        total_successful_transaction_blocks -&gt; Int8,
+        total_successful_transactions -&gt; Int8,
         network_total_transactions -&gt; Int8,
         timestamp_ms -&gt; Int8,
         validator_signature -&gt; Text,
@@ -565,6 +570,7 @@
         timestamp_ms -&gt; Nullable&lt;Int8&gt;,
         transaction_kind -&gt; Text,
         transaction_count -&gt; Int8,
+        execution_success -&gt; Bool,
         created -&gt; Array&lt;Nullable&lt;Text&gt;&gt;,
         mutated -&gt; Array&lt;Nullable&lt;Text&gt;&gt;,
         deleted -&gt; Array&lt;Nullable&lt;Text&gt;&gt;,

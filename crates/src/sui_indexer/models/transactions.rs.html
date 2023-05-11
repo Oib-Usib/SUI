@@ -164,6 +164,8 @@
 <a href="#164" id="164">164</a>
 <a href="#165" id="165">165</a>
 <a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -189,6 +191,7 @@
     <span class="kw">pub </span>timestamp_ms: <span class="prelude-ty">Option</span>&lt;i64&gt;,
     <span class="kw">pub </span>transaction_kind: String,
     <span class="kw">pub </span>transaction_count: i64,
+    <span class="kw">pub </span>execution_success: bool,
     <span class="kw">pub </span>created: Vec&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt;,
     <span class="kw">pub </span>mutated: Vec&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt;,
     <span class="kw">pub </span>deleted: Vec&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt;,
@@ -292,6 +295,7 @@
             checkpoint_sequence_number: checkpoint.map(|seq| seq <span class="kw">as </span>i64),
             transaction_kind: transaction.data.transaction().name().to_string(),
             transaction_count: transaction.data.transaction().transaction_count() <span class="kw">as </span>i64,
+            execution_success: effects.status().is_ok(),
             timestamp_ms: timestamp_ms.map(|ts| ts <span class="kw">as </span>i64),
             created: vec_string_to_vec_opt(created),
             mutated: vec_string_to_vec_opt(mutated),

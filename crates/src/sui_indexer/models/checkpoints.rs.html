@@ -140,6 +140,12 @@
 <a href="#140" id="140">140</a>
 <a href="#141" id="141">141</a>
 <a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -171,6 +177,8 @@
     <span class="kw">pub </span>total_storage_rebate: i64,
     <span class="kw">pub </span>total_transaction_blocks: i64,
     <span class="kw">pub </span>total_transactions: i64,
+    <span class="kw">pub </span>total_successful_transaction_blocks: i64,
+    <span class="kw">pub </span>total_successful_transactions: i64,
     <span class="kw">pub </span>network_total_transactions: i64,
     <span class="kw">pub </span>timestamp_ms: i64,
     <span class="kw">pub </span>validator_signature: String,
@@ -180,6 +188,8 @@
     <span class="kw">pub fn </span>from(
         rpc_checkpoint: <span class="kw-2">&amp;</span>RpcCheckpoint,
         total_transactions: i64,
+        total_successful_transactions: i64,
+        total_successful_transaction_blocks: i64,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, IndexerError&gt; {
         <span class="kw">let </span>total_gas_cost = rpc_checkpoint
             .epoch_rolling_gas_cost_summary
@@ -208,9 +218,11 @@
             total_storage_rebate: rpc_checkpoint.epoch_rolling_gas_cost_summary.storage_rebate
                 <span class="kw">as </span>i64,
             total_transaction_blocks: rpc_checkpoint.transactions.len() <span class="kw">as </span>i64,
+            total_transactions,
+            total_successful_transaction_blocks,
+            total_successful_transactions,
             network_total_transactions: rpc_checkpoint.network_total_transactions <span class="kw">as </span>i64,
             timestamp_ms: rpc_checkpoint.timestamp_ms <span class="kw">as </span>i64,
-            total_transactions,
             validator_signature: rpc_checkpoint.validator_signature.encode_base64(),
         })
     }
