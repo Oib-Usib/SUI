@@ -865,38 +865,11 @@
 <a href="#865" id="865">865</a>
 <a href="#866" id="866">866</a>
 <a href="#867" id="867">867</a>
-<a href="#868" id="868">868</a>
-<a href="#869" id="869">869</a>
-<a href="#870" id="870">870</a>
-<a href="#871" id="871">871</a>
-<a href="#872" id="872">872</a>
-<a href="#873" id="873">873</a>
-<a href="#874" id="874">874</a>
-<a href="#875" id="875">875</a>
-<a href="#876" id="876">876</a>
-<a href="#877" id="877">877</a>
-<a href="#878" id="878">878</a>
-<a href="#879" id="879">879</a>
-<a href="#880" id="880">880</a>
-<a href="#881" id="881">881</a>
-<a href="#882" id="882">882</a>
-<a href="#883" id="883">883</a>
-<a href="#884" id="884">884</a>
-<a href="#885" id="885">885</a>
-<a href="#886" id="886">886</a>
-<a href="#887" id="887">887</a>
-<a href="#888" id="888">888</a>
-<a href="#889" id="889">889</a>
-<a href="#890" id="890">890</a>
-<a href="#891" id="891">891</a>
-<a href="#892" id="892">892</a>
-<a href="#893" id="893">893</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span><span class="kw">crate</span>::certificate_deny_config::CertificateDenyConfig;
 <span class="kw">use </span><span class="kw">crate</span>::genesis;
-<span class="kw">use </span><span class="kw">crate</span>::genesis_config::ValidatorGenesisConfig;
 <span class="kw">use </span><span class="kw">crate</span>::p2p::P2pConfig;
 <span class="kw">use </span><span class="kw">crate</span>::transaction_deny_config::TransactionDenyConfig;
 <span class="kw">use </span><span class="kw">crate</span>::Config;
@@ -915,12 +888,12 @@
 <span class="kw">use </span>sui_protocol_config::SupportedProtocolVersions;
 <span class="kw">use </span>sui_storage::object_store::ObjectStoreConfig;
 <span class="kw">use </span>sui_types::base_types::{ObjectID, SuiAddress};
+<span class="kw">use </span>sui_types::crypto::AuthorityPublicKeyBytes;
 <span class="kw">use </span>sui_types::crypto::KeypairTraits;
 <span class="kw">use </span>sui_types::crypto::NetworkKeyPair;
 <span class="kw">use </span>sui_types::crypto::NetworkPublicKey;
 <span class="kw">use </span>sui_types::crypto::SuiKeyPair;
 <span class="kw">use </span>sui_types::crypto::{get_key_pair_from_rng, AccountKeyPair, AuthorityKeyPair};
-<span class="kw">use </span>sui_types::crypto::{AuthorityPublicKeyBytes, PublicKey};
 <span class="kw">use </span>sui_types::multiaddr::Multiaddr;
 
 <span class="comment">// Default max number of concurrent requests served
@@ -1418,31 +1391,6 @@
 }
 
 <span class="kw">impl </span>ValidatorInfo {
-    <span class="kw">pub fn </span>new(name: String, config: <span class="kw-2">&amp;</span>ValidatorGenesisConfig) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>protocol_key: AuthorityPublicKeyBytes = config.key_pair.public().into();
-        <span class="kw">let </span>account_key: PublicKey = config.account_key_pair.public();
-        <span class="kw">let </span>network_key: NetworkPublicKey = config.network_key_pair.public().clone();
-        <span class="kw">let </span>worker_key: NetworkPublicKey = config.worker_key_pair.public().clone();
-        <span class="kw">let </span>network_address = config.network_address.clone();
-
-        <span class="self">Self </span>{
-            name,
-            protocol_key,
-            worker_key,
-            network_key,
-            account_address: SuiAddress::from(<span class="kw-2">&amp;</span>account_key),
-            gas_price: config.gas_price,
-            commission_rate: config.commission_rate,
-            network_address,
-            p2p_address: config.p2p_address.clone(),
-            narwhal_primary_address: config.narwhal_primary_address.clone(),
-            narwhal_worker_address: config.narwhal_worker_address.clone(),
-            description: String::new(),
-            image_url: String::new(),
-            project_url: String::new(),
-        }
-    }
-
     <span class="kw">pub fn </span>name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
         <span class="kw-2">&amp;</span><span class="self">self</span>.name
     }
