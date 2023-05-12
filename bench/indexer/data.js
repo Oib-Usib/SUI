@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683912745928,
+  "lastUpdate": 1683917474294,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7055,6 +7055,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 331753,
             "range": "± 19617",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0939c055aa916b68e2d75a851710062152a02125",
+          "message": "Update to tokio-1.28.1 (#11957)",
+          "timestamp": "2023-05-12T18:41:19Z",
+          "tree_id": "2e8dadeb050bb463b685526bfa7e02cb68c293d4",
+          "url": "https://github.com/MystenLabs/sui/commit/0939c055aa916b68e2d75a851710062152a02125"
+        },
+        "date": 1683917462262,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 107784062,
+            "range": "± 4316541",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 304519,
+            "range": "± 4163",
             "unit": "ns/iter"
           }
         ]
