@@ -557,7 +557,7 @@
         </span><span class="kw">let </span>genesis_config = <span class="kw">if let </span><span class="prelude-val">Some</span>(config) = genesis_config {
             config
         } <span class="kw">else </span>{
-            GenesisConfig::custom_genesis(<span class="number">4</span>, <span class="number">1</span>, <span class="number">100</span>)
+            GenesisConfig::custom_genesis(<span class="number">1</span>, <span class="number">100</span>)
         };
         <span class="comment">// TODO: options should contain port instead of address
         </span><span class="kw">let </span>fullnode_port = options.fullnode_address.as_ref().map(|addr| {

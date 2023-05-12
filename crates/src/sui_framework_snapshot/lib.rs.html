@@ -61,23 +61,6 @@
 <a href="#61" id="61">61</a>
 <a href="#62" id="62">62</a>
 <a href="#63" id="63">63</a>
-<a href="#64" id="64">64</a>
-<a href="#65" id="65">65</a>
-<a href="#66" id="66">66</a>
-<a href="#67" id="67">67</a>
-<a href="#68" id="68">68</a>
-<a href="#69" id="69">69</a>
-<a href="#70" id="70">70</a>
-<a href="#71" id="71">71</a>
-<a href="#72" id="72">72</a>
-<a href="#73" id="73">73</a>
-<a href="#74" id="74">74</a>
-<a href="#75" id="75">75</a>
-<a href="#76" id="76">76</a>
-<a href="#77" id="77">77</a>
-<a href="#78" id="78">78</a>
-<a href="#79" id="79">79</a>
-<a href="#80" id="80">80</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -87,7 +70,7 @@
 <span class="kw">use </span>sui_framework::SystemPackage;
 <span class="kw">use </span>sui_types::base_types::ObjectID;
 
-<span class="kw">pub type </span>SnapshotManifest = BTreeMap&lt;String, BTreeMap&lt;u64, SingleSnapshot&gt;&gt;;
+<span class="kw">pub type </span>SnapshotManifest = BTreeMap&lt;u64, SingleSnapshot&gt;;
 
 <span class="attr">#[derive(Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>SingleSnapshot {
@@ -105,21 +88,13 @@
         .expect(<span class="string">&quot;Could not deserialize SnapshotManifest&quot;</span>)
 }
 
-<span class="kw">pub fn </span>update_bytecode_snapshot_manifest(
-    network: <span class="kw-2">&amp;</span>str,
-    git_revision: String,
-    version: u64,
-    files: Vec&lt;ObjectID&gt;,
-) {
+<span class="kw">pub fn </span>update_bytecode_snapshot_manifest(git_revision: <span class="kw-2">&amp;</span>str, version: u64, files: Vec&lt;ObjectID&gt;) {
     <span class="kw">let </span><span class="kw-2">mut </span>snapshot = load_bytecode_snapshot_manifest();
 
-    <span class="kw">let </span>entry = snapshot
-        .entry(network.to_owned())
-        .or_insert_with(BTreeMap::new);
-    entry.insert(
+    snapshot.insert(
         version,
         SingleSnapshot {
-            git_revision,
+            git_revision: git_revision.to_string(),
             package_ids: files,
         },
     );
@@ -129,21 +104,14 @@
     fs::write(manifest_path(), json).expect(<span class="string">&quot;Could not update manifest file&quot;</span>);
 }
 
-<span class="kw">pub fn </span>load_bytecode_snapshot(
-    network: <span class="kw-2">&amp;</span>str,
-    protocol_version: u64,
-) -&gt; anyhow::Result&lt;Vec&lt;SystemPackage&gt;&gt; {
+<span class="kw">pub fn </span>load_bytecode_snapshot(protocol_version: u64) -&gt; anyhow::Result&lt;Vec&lt;SystemPackage&gt;&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>snapshot_path = PathBuf::from(<span class="macro">env!</span>(<span class="string">&quot;CARGO_MANIFEST_DIR&quot;</span>));
-    snapshot_path.extend([
-        <span class="string">&quot;bytecode_snapshot&quot;</span>,
-        network,
-        protocol_version.to_string().as_str(),
-    ]);
-    <span class="kw">let </span>snapshot_objects: anyhow::Result&lt;Vec&lt;<span class="kw">_</span>&gt;&gt; = std::fs::read_dir(<span class="kw-2">&amp;</span>snapshot_path)<span class="question-mark">?
+    snapshot_path.extend([<span class="string">&quot;bytecode_snapshot&quot;</span>, protocol_version.to_string().as_str()]);
+    <span class="kw">let </span>snapshot_objects: anyhow::Result&lt;Vec&lt;<span class="kw">_</span>&gt;&gt; = fs::read_dir(<span class="kw-2">&amp;</span>snapshot_path)<span class="question-mark">?
         </span>.flatten()
         .map(|entry| {
             <span class="kw">let </span>file_name = entry.file_name().to_str().unwrap().to_string();
-            <span class="kw">let </span><span class="kw-2">mut </span>file = std::fs::File::open(snapshot_path.clone().join(file_name))<span class="question-mark">?</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>file = fs::File::open(snapshot_path.clone().join(file_name))<span class="question-mark">?</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>buffer = Vec::new();
             file.read_to_end(<span class="kw-2">&amp;mut </span>buffer)<span class="question-mark">?</span>;
             <span class="kw">let </span>package: SystemPackage = bcs::from_bytes(<span class="kw-2">&amp;</span>buffer)<span class="question-mark">?</span>;
@@ -154,8 +122,6 @@
 }
 
 <span class="kw">fn </span>manifest_path() -&gt; PathBuf {
-    PathBuf::from(<span class="macro">env!</span>(<span class="string">&quot;CARGO_MANIFEST_DIR&quot;</span>))
-        .join(<span class="string">&quot;bytecode_snapshot&quot;</span>)
-        .join(<span class="string">&quot;manifest.json&quot;</span>)
+    PathBuf::from(<span class="macro">env!</span>(<span class="string">&quot;CARGO_MANIFEST_DIR&quot;</span>)).join(<span class="string">&quot;manifest.json&quot;</span>)
 }
 </code></pre></div></section></main></body></html>

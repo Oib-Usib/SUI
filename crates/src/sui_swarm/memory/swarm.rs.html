@@ -435,7 +435,7 @@
 <span class="kw">use </span>sui_config::builder::{
     CommitteeConfig, ConfigBuilder, ProtocolVersionsConfig, SupportedProtocolVersionsCallback,
 };
-<span class="kw">use </span>sui_config::genesis_config::{AccountConfig, GenesisConfig, ValidatorConfigInfo};
+<span class="kw">use </span>sui_config::genesis_config::{AccountConfig, GenesisConfig, ValidatorGenesisConfig};
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
 <span class="kw">use </span>sui_config::NetworkConfig;
 <span class="kw">use </span>sui_node::SuiNodeHandle;
@@ -510,7 +510,7 @@
         <span class="self">self
     </span>}
 
-    <span class="kw">pub fn </span>with_validators(<span class="kw-2">mut </span><span class="self">self</span>, validators: Vec&lt;ValidatorConfigInfo&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>with_validators(<span class="kw-2">mut </span><span class="self">self</span>, validators: Vec&lt;ValidatorGenesisConfig&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.committee = CommitteeConfig::Validators(validators);
         <span class="self">self
     </span>}
