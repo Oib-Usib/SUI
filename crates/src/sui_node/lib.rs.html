@@ -1240,6 +1240,7 @@
 <a href="#1240" id="1240">1240</a>
 <a href="#1241" id="1241">1241</a>
 <a href="#1242" id="1242">1242</a>
+<a href="#1243" id="1243">1243</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1587,6 +1588,7 @@
                         .unwrap_or(<span class="bool-val">true</span>),
                     config.indirect_objects_threshold,
                     config.authority_store_pruning_config,
+                    <span class="kw-2">&amp;</span>prometheus_registry,
                 )<span class="question-mark">?</span>;
                 <span class="prelude-val">Some</span>(handler.start())
             }
