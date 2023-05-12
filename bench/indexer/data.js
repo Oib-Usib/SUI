@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683851853925,
+  "lastUpdate": 1683852167082,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6587,6 +6587,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 303131,
             "range": "± 12386",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrey@mystenlabs.com",
+            "name": "Andrey Chursin",
+            "username": "andll"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6dd16a1b94344f049bca0b5dc8445557a40d4c8a",
+          "message": "[checkpoints] do not assert InMemoryCheckpointRoots on full nodes (#11934)\n\nFull node might restore from some old snapshot - this is fine and does\r\nnot need to check for InMemoryCheckpointRoots flags",
+          "timestamp": "2023-05-12T00:31:59Z",
+          "tree_id": "8bb87764dddaf42a1f0a22662e3d3d1861cd9893",
+          "url": "https://github.com/MystenLabs/sui/commit/6dd16a1b94344f049bca0b5dc8445557a40d4c8a"
+        },
+        "date": 1683852156564,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 158115265,
+            "range": "± 4446168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 366868,
+            "range": "± 65043",
             "unit": "ns/iter"
           }
         ]
