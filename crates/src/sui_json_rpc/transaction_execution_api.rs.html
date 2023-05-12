@@ -252,6 +252,12 @@
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
 <a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -282,6 +288,7 @@
 <span class="kw">use </span>sui_types::signature::GenericSignature;
 <span class="kw">use </span>sui_types::sui_serde::BigInt;
 <span class="kw">use </span>sui_types::transaction::{Transaction, TransactionData, TransactionDataAPI, TransactionKind};
+<span class="kw">use </span>tracing::{error_span, Instrument};
 
 <span class="kw">use </span><span class="kw">crate</span>::api::JsonRpcMetrics;
 <span class="kw">use </span><span class="kw">crate</span>::api::WriteApiServer;
@@ -471,6 +478,7 @@
     ) -&gt; RpcResult&lt;SuiTransactionBlockResponse&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.execute_transaction_block(tx_bytes, signatures, opts, request_type)
+            .instrument(<span class="macro">error_span!</span>(<span class="string">&quot;execute_transaction_block&quot;</span>))
             .<span class="kw">await</span><span class="question-mark">?</span>)
     }
 
@@ -486,6 +494,7 @@
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.state
             .dev_inspect_transaction_block(sender_address, tx_kind, gas_price.map(|i| <span class="kw-2">*</span>i))
+            .instrument(<span class="macro">error_span!</span>(<span class="string">&quot;dev_inspect_transaction_block&quot;</span>))
             .<span class="kw">await</span><span class="question-mark">?</span>)
     }
 
@@ -493,7 +502,10 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_bytes: Base64,
     ) -&gt; RpcResult&lt;DryRunTransactionBlockResponse&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.dry_run_transaction_block(tx_bytes).<span class="kw">await</span><span class="question-mark">?</span>)
+        <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.dry_run_transaction_block(tx_bytes)
+            .instrument(<span class="macro">error_span!</span>(<span class="string">&quot;dry_run_transaction_block&quot;</span>))
+            .<span class="kw">await</span><span class="question-mark">?</span>)
     }
 }
 
