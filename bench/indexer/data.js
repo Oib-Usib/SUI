@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683912390649,
+  "lastUpdate": 1683912745928,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7019,6 +7019,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 278217,
             "range": "± 23782",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fefc9f7bfa7b6c54c0fbebd498b3df88bb966550",
+          "message": "Some cleanups in GenesisConfig (#11941)\n\nThis PR makes the following clean ups in genesis configs:\r\n1. Removes grpc related fields from genesis config because they are\r\nnever set differently other than the default value\r\n2. Remove committee_size from genesis config because it's never used.\r\n3. Merge ValidatorConfigInfo and ValidatorGenesisInfo, rename to\r\nValidatorGenesisConfig.\r\n4. Move some initializers into constructors, for clarity",
+          "timestamp": "2023-05-12T10:23:43-07:00",
+          "tree_id": "7c766cb1eae9d86b5dea6b9861d6c24bf81dbbed",
+          "url": "https://github.com/MystenLabs/sui/commit/fefc9f7bfa7b6c54c0fbebd498b3df88bb966550"
+        },
+        "date": 1683912732896,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105621002,
+            "range": "± 6775102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 331753,
+            "range": "± 19617",
             "unit": "ns/iter"
           }
         ]
