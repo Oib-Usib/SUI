@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683928495420,
+  "lastUpdate": 1683929811159,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7163,6 +7163,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311548,
             "range": "± 14728",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f08c87f8b3b2ce60c666628b6580434fd9e9b0a5",
+          "message": "indexer doc: update README (#11970)",
+          "timestamp": "2023-05-12T22:05:53Z",
+          "tree_id": "cab47d5cc3f9445636ccbf2c96c4bc531dd69c97",
+          "url": "https://github.com/MystenLabs/sui/commit/f08c87f8b3b2ce60c666628b6580434fd9e9b0a5"
+        },
+        "date": 1683929800751,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 159982822,
+            "range": "± 4617548",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 365395,
+            "range": "± 52576",
             "unit": "ns/iter"
           }
         ]
