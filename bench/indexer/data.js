@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683904985561,
+  "lastUpdate": 1683909442292,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6875,6 +6875,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310692,
             "range": "± 3136",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ce58ebb9d13e8e99e5e0a5e58dda58cbbf4f79a",
+          "message": "indexer: re-populate input objects & recipients (#11951)\n\n## Description \r\n\r\nThe was turned off temp. in case mainnet traffic went crazily high,\r\nwhich turns out not necessary, also these tables are useful to serve tx\r\nqueries;\r\nAlso requested by partner here\r\nhttps://mysten-labs.slack.com/archives/C047ZSH8KV5/p1683882143957239\r\n\r\n## Test Plan \r\n\r\nlocal run and to make sure that `input_objects` and `recipients`\r\npopulation are back on",
+          "timestamp": "2023-05-12T12:26:41-04:00",
+          "tree_id": "2f53c43fb523f4ee24a19741f2389818f13b02a5",
+          "url": "https://github.com/MystenLabs/sui/commit/7ce58ebb9d13e8e99e5e0a5e58dda58cbbf4f79a"
+        },
+        "date": 1683909431561,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150560931,
+            "range": "± 4679467",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309499,
+            "range": "± 80441",
             "unit": "ns/iter"
           }
         ]
