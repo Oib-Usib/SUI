@@ -857,6 +857,14 @@
 <a href="#857" id="857">857</a>
 <a href="#858" id="858">858</a>
 <a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1278,6 +1286,11 @@
     <span class="doccomment">/// pruner deletion method. If set to `true`, range deletion is utilized (recommended).
     /// Use `false` for point deletes.
     </span><span class="kw">pub </span>use_range_deletion: bool,
+    <span class="doccomment">/// enables periodic background compaction for old SST files whose last modified time is
+    /// older than `periodic_compaction_threshold_days` days.
+    /// That ensures that all sst files eventually go through the compaction process
+    </span><span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
+    </span><span class="kw">pub </span>periodic_compaction_threshold_days: <span class="prelude-ty">Option</span>&lt;usize&gt;,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>AuthorityStorePruningConfig {
@@ -1293,6 +1306,7 @@
             max_checkpoints_in_batch: <span class="number">10</span>,
             max_transactions_in_batch: <span class="number">1000</span>,
             use_range_deletion: <span class="bool-val">true</span>,
+            periodic_compaction_threshold_days: <span class="prelude-val">None</span>,
         }
     }
 }
@@ -1310,6 +1324,7 @@
             max_checkpoints_in_batch: <span class="number">10</span>,
             max_transactions_in_batch: <span class="number">1000</span>,
             use_range_deletion: <span class="bool-val">true</span>,
+            periodic_compaction_threshold_days: <span class="prelude-val">None</span>,
         }
     }
     <span class="kw">pub fn </span>fullnode_config() -&gt; <span class="self">Self </span>{
@@ -1324,6 +1339,7 @@
             max_checkpoints_in_batch: <span class="number">10</span>,
             max_transactions_in_batch: <span class="number">1000</span>,
             use_range_deletion: <span class="bool-val">true</span>,
+            periodic_compaction_threshold_days: <span class="prelude-val">None</span>,
         }
     }
 }
