@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683864360341,
+  "lastUpdate": 1683866387812,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6659,6 +6659,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 364319,
             "range": "± 77210",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "127570466+wlmyng@users.noreply.github.com",
+            "name": "wlmyng",
+            "username": "wlmyng"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b7625b65114d57377d1ad755c2ee22a3f47d0578",
+          "message": "2/n improve sui-json-rpc error codes and handling (#11833)",
+          "timestamp": "2023-05-11T21:29:17-07:00",
+          "tree_id": "bb4ae68f079fc69fc4ff1e0964416ebf843c6c2a",
+          "url": "https://github.com/MystenLabs/sui/commit/b7625b65114d57377d1ad755c2ee22a3f47d0578"
+        },
+        "date": 1683866377794,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146006457,
+            "range": "± 5985495",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310890,
+            "range": "± 16035",
             "unit": "ns/iter"
           }
         ]
