@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683911719049,
+  "lastUpdate": 1683912390649,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6983,6 +6983,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 451043,
             "range": "± 31952",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "13286704966a0f10fbf1f8fb8a625d7f6a1f453c",
+          "message": "Merge bytecode snapshots (#11955)\n\n## Description \r\n\r\nThis PR simplifies the framework snapshot flow:\r\n1. Merges the snapsnot between mainnet and testnet. This will require us\r\nto always ship unique protocol version bytecode globally.\r\n2. Move the GIT_REVISION related code to a shared file in sui-types so\r\nthat all files can use it directly.\r\n3. Remove the need to pass any arguments to sui-framework-snapshot\r\n\r\n## Test Plan \r\nCI\r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-12T10:17:56-07:00",
+          "tree_id": "0edc5f4a04643540c2354d78b174d468f4ed15fd",
+          "url": "https://github.com/MystenLabs/sui/commit/13286704966a0f10fbf1f8fb8a625d7f6a1f453c"
+        },
+        "date": 1683912379710,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105723181,
+            "range": "± 3658404",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 278217,
+            "range": "± 23782",
             "unit": "ns/iter"
           }
         ]
