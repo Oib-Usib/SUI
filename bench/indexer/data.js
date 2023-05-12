@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683929811159,
+  "lastUpdate": 1683935401942,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7199,6 +7199,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 365395,
             "range": "± 52576",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "36045411796dc18a5cc3369d1b03f5698f77fc31",
+          "message": "StateSnapshot writer for writing state snapshot (#11851)\n\n## Description \r\n\r\nThis PR adds the ability to start producing state snapshots in our own\r\nstorage format. Next PR is going to add the ability to read this format.\r\n\r\n## Test Plan \r\n\r\nAdded some basic sanity tests. Next PR adds more tests.",
+          "timestamp": "2023-05-12T16:39:32-07:00",
+          "tree_id": "cadeb18586088c396224b4952d999dd9a2d3c1da",
+          "url": "https://github.com/MystenLabs/sui/commit/36045411796dc18a5cc3369d1b03f5698f77fc31"
+        },
+        "date": 1683935391531,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148314798,
+            "range": "± 4445711",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 306758,
+            "range": "± 18201",
             "unit": "ns/iter"
           }
         ]
