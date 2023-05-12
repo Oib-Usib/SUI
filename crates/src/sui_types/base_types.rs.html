@@ -1193,6 +1193,11 @@
 <a href="#1193" id="1193">1193</a>
 <a href="#1194" id="1194">1194</a>
 <a href="#1195" id="1195">1195</a>
+<a href="#1196" id="1196">1196</a>
+<a href="#1197" id="1197">1197</a>
+<a href="#1198" id="1198">1198</a>
+<a href="#1199" id="1199">1199</a>
+<a href="#1200" id="1200">1200</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1224,8 +1229,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::object::{Object, Owner};
 <span class="kw">use </span><span class="kw">crate</span>::parse_sui_struct_tag;
 <span class="kw">use </span><span class="kw">crate</span>::signature::GenericSignature;
-<span class="kw">use </span><span class="kw">crate</span>::sui_serde::HexAccountAddress;
 <span class="kw">use </span><span class="kw">crate</span>::sui_serde::Readable;
+<span class="kw">use </span><span class="kw">crate</span>::sui_serde::{to_sui_struct_tag_string, HexAccountAddress};
 <span class="kw">use </span><span class="kw">crate</span>::transaction::Transaction;
 <span class="kw">use </span><span class="kw">crate</span>::transaction::VerifiedTransaction;
 <span class="kw">use </span><span class="kw">crate</span>::MOVE_STDLIB_ADDRESS;
@@ -1248,6 +1253,7 @@
 <span class="kw">use </span>move_core_types::language_storage::TypeTag;
 <span class="kw">use </span>rand::Rng;
 <span class="kw">use </span>schemars::JsonSchema;
+<span class="kw">use </span>serde::ser::Error;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>serde_with::serde_as;
 <span class="kw">use </span>shared_crypto::intent::HashingIntentScope;
@@ -2376,7 +2382,11 @@
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>MoveObjectType {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
         <span class="kw">let </span>s: StructTag = <span class="self">self</span>.clone().into();
-        <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, s)
+        <span class="macro">write!</span>(
+            f,
+            <span class="string">&quot;{}&quot;</span>,
+            to_sui_struct_tag_string(<span class="kw-2">&amp;</span>s).map_err(fmt::Error::custom)<span class="question-mark">?
+        </span>)
     }
 }
 

@@ -341,10 +341,26 @@
 <a href="#341" id="341">341</a>
 <a href="#342" id="342">342</a>
 <a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::fmt;
+<span class="kw">use </span>std::fmt::Write;
 <span class="kw">use </span>std::fmt::{Debug, Display, Formatter};
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>std::ops::Deref;
@@ -361,10 +377,13 @@
 <span class="kw">use </span>serde_with::serde_as;
 <span class="kw">use </span>serde_with::DisplayFromStr;
 <span class="kw">use </span>serde_with::{Bytes, DeserializeAs, SerializeAs};
-<span class="kw">use </span>std::fmt::Write;
+
 <span class="kw">use </span>sui_protocol_config::ProtocolVersion;
 
-<span class="kw">use crate</span>::{parse_sui_struct_tag, parse_sui_type_tag};
+<span class="kw">use crate</span>::{
+    parse_sui_struct_tag, parse_sui_type_tag, DEEPBOOK_ADDRESS, SUI_CLOCK_ADDRESS,
+    SUI_FRAMEWORK_ADDRESS, SUI_SYSTEM_ADDRESS, SUI_SYSTEM_STATE_ADDRESS,
+};
 
 <span class="attr">#[inline]
 </span><span class="kw">fn </span>to_custom_error&lt;<span class="lifetime">&#39;de</span>, D, E&gt;(e: E) -&gt; D::Error
@@ -504,15 +523,26 @@
     }
 }
 
-<span class="kw">fn </span>to_sui_struct_tag_string(value: <span class="kw-2">&amp;</span>StructTag) -&gt; <span class="prelude-ty">Result</span>&lt;String, fmt::Error&gt; {
+<span class="kw">const </span>SUI_ADDRESSES: [AccountAddress; <span class="number">7</span>] = [
+    AccountAddress::ZERO,
+    AccountAddress::ONE,
+    SUI_FRAMEWORK_ADDRESS,
+    SUI_SYSTEM_ADDRESS,
+    DEEPBOOK_ADDRESS,
+    SUI_SYSTEM_STATE_ADDRESS,
+    SUI_CLOCK_ADDRESS,
+];
+<span class="doccomment">/// Serialize StructTag as a string, retaining the leading zeros in the address.
+</span><span class="kw">pub fn </span>to_sui_struct_tag_string(value: <span class="kw-2">&amp;</span>StructTag) -&gt; <span class="prelude-ty">Result</span>&lt;String, fmt::Error&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>f = String::new();
-    <span class="macro">write!</span>(
-        f,
-        <span class="string">&quot;0x{}::{}::{}&quot;</span>,
-        value.address.to_canonical_string(),
-        value.module,
-        value.name
-    )<span class="question-mark">?</span>;
+    <span class="comment">// trim leading zeros if address is in SUI_ADDRESSES
+    </span><span class="kw">let </span>address = <span class="kw">if </span>SUI_ADDRESSES.contains(<span class="kw-2">&amp;</span>value.address) {
+        value.address.short_str_lossless()
+    } <span class="kw">else </span>{
+        value.address.to_canonical_string()
+    };
+
+    <span class="macro">write!</span>(f, <span class="string">&quot;0x{}::{}::{}&quot;</span>, address, value.module, value.name)<span class="question-mark">?</span>;
     <span class="kw">if let </span><span class="prelude-val">Some</span>(first_ty) = value.type_params.first() {
         <span class="macro">write!</span>(f, <span class="string">&quot;&lt;&quot;</span>)<span class="question-mark">?</span>;
         <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, to_sui_type_tag_string(first_ty)<span class="question-mark">?</span>)<span class="question-mark">?</span>;

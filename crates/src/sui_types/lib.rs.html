@@ -256,6 +256,8 @@
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="attr">#![warn(
@@ -350,11 +352,13 @@
 <span class="kw">pub const </span>DEEPBOOK_PACKAGE_ID: ObjectID = ObjectID::from_address(DEEPBOOK_ADDRESS);
 
 <span class="doccomment">/// 0x5: hardcoded object ID for the singleton sui system state object.
-</span><span class="kw">pub const </span>SUI_SYSTEM_STATE_OBJECT_ID: ObjectID = ObjectID::from_single_byte(<span class="number">5</span>);
+</span><span class="kw">pub const </span>SUI_SYSTEM_STATE_ADDRESS: AccountAddress = address_from_single_byte(<span class="number">5</span>);
+<span class="kw">pub const </span>SUI_SYSTEM_STATE_OBJECT_ID: ObjectID = ObjectID::from_address(SUI_SYSTEM_STATE_ADDRESS);
 <span class="kw">pub const </span>SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION: SequenceNumber = OBJECT_START_VERSION;
 
 <span class="doccomment">/// 0x6: hardcoded object ID for the singleton clock object.
-</span><span class="kw">pub const </span>SUI_CLOCK_OBJECT_ID: ObjectID = ObjectID::from_single_byte(<span class="number">6</span>);
+</span><span class="kw">pub const </span>SUI_CLOCK_ADDRESS: AccountAddress = address_from_single_byte(<span class="number">6</span>);
+<span class="kw">pub const </span>SUI_CLOCK_OBJECT_ID: ObjectID = ObjectID::from_address(SUI_CLOCK_ADDRESS);
 <span class="kw">pub const </span>SUI_CLOCK_OBJECT_SHARED_VERSION: SequenceNumber = OBJECT_START_VERSION;
 
 <span class="doccomment">/// Return `true` if `id` is a special system package that can be upgraded at epoch boundaries
