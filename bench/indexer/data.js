@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683881096197,
+  "lastUpdate": 1683882907345,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6731,6 +6731,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312845,
             "range": "± 26943",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "51927076+phoenix-o@users.noreply.github.com",
+            "name": "phoenix",
+            "username": "phoenix-o"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b45fade801ca12db9c734ca6fedf6ab3e2b2d327",
+          "message": "periodic compaction of sst files (#11876)\n\nPR adds an option to enable periodic background compactions for the\r\nobjects table, ensuring that all SST files periodically go through the\r\ncompaction process. This feature helps address the issue where we\r\nobserve a large number of L4 SST files consisting mostly of range\r\ndeletes but not undergoing the compaction process due to internal\r\nRocksDB heuristics.\r\n\r\nThis approach is intended to be used as a complement to aggressive\r\npruning and is disabled by default.\r\nIt is somewhat equivalent to RocksDB's `periodic_compaction_seconds`\r\nsetting, but the latter is not very flexible and can cause dramatic\r\nresource consumption once enabled. The approach implemented in the PR\r\nprocesses one SST file at a time",
+          "timestamp": "2023-05-12T11:03:42+02:00",
+          "tree_id": "94610a7ed4cb2f1dda7248843f19192083baa00c",
+          "url": "https://github.com/MystenLabs/sui/commit/b45fade801ca12db9c734ca6fedf6ab3e2b2d327"
+        },
+        "date": 1683882896715,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148824745,
+            "range": "± 4617455",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 403314,
+            "range": "± 65074",
             "unit": "ns/iter"
           }
         ]
