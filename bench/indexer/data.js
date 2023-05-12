@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683843376767,
+  "lastUpdate": 1683851853925,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6551,6 +6551,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 434463,
             "range": "± 92667",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7f3e1bbfb365ff253c5e9c0c95362efe5649447b",
+          "message": "[sui-json] Spans for fullnode write paths (#11930)\n\n## Description\r\n\r\nAdd `error_span!`s to the fullnode write paths to distinguish error\r\nmessages due to execution, dev-inspect and dry-run.\r\n\r\n## Test Plan\r\n\r\nDry run a transaction that would cause an invariant violation, and note\r\nthat the error that is produced by the fullnode mentions\r\n`dev_inspect_transaction_block` in its span:\r\n\r\nTest move package:\r\n\r\n```move\r\nmodule example::example {\r\n    use sui::dynamic_object_field as ofield;\r\n    use sui::object::{Self, UID};\r\n    use sui::transfer;\r\n    use sui::tx_context::TxContext;\r\n\r\n    struct S has key, store { id: UID  }\r\n\r\n    fun init(ctx: &mut TxContext) {\r\n        let parent = S { id: object::new(ctx) };\r\n        let child  = S { id: object::new(ctx) };\r\n\r\n        ofield::add(&mut parent.id, 0, child);\r\n        transfer::share_object(parent);\r\n    }\r\n\r\n    entry fun f(_s: &S) {}\r\n}\r\n```\r\n\r\nJS to dry-run the transaction:\r\n\r\n```js\r\nconst PACKAGE_ID = /* ... */;\r\nconst CHILD = /* ... */;\r\n\r\nconst tx = new TransactionBlock();\r\ntx.moveCall({\r\n    target: `${PACKAGE_ID}::example::f`,\r\n    arguments: [tx.pure(CHILD)],\r\n});\r\n\r\nconst provider = new JsonRpcProvider(localnetConnection);\r\nconst signer = new RawSigner(keyPair, provider);\r\n\r\nconst result = await signer.devInspectTransactionBlock({\r\n    transactionBlock: tx,\r\n    options: {\r\n        showEffects: true,\r\n        showObjectChanges: true,\r\n    }\r\n});\r\n\r\nconsole.log(result)\r\n```\r\n\r\nNote that the error output from the Sui Node contains the expected error\r\nmessage\r\n\r\n```\r\n     # Need to build release because debug builds will panic\r\nsui$ cargo build --bin sui --release\r\nsui$ ~/sui/target/release/sui genesis -f \\\r\n  && ~/sui/target/release sui start      \\\r\n  |  grep 'INVARIANT VIOLATION!'\r\n2023-05-11T23:30:55.916719Z ERROR node{name=k#84343e5b..}:connection{remote_addr=127.0.0.1:56988 conn_id=4}:dev_inspect_transaction_block: sui_adapter::execution_engine: INVARIANT VIOLATION! Source: Some(\"ObjectOwner objects cannot be input\") kind=InvariantViolation tx_digest=TransactionDigest(5rpcPM1TKWYYLzKDgMq8JCxdYngbMV2uLUWKXVchaMC7)\r\n```",
+          "timestamp": "2023-05-11T17:26:49-07:00",
+          "tree_id": "ee0965bf9c4380d0c6d8885259fc294bcb2fbf0a",
+          "url": "https://github.com/MystenLabs/sui/commit/7f3e1bbfb365ff253c5e9c0c95362efe5649447b"
+        },
+        "date": 1683851843604,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 142958506,
+            "range": "± 4708680",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 303131,
+            "range": "± 12386",
             "unit": "ns/iter"
           }
         ]
