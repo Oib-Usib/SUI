@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority.rs`."><title>authority.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (cba14074b 2023-05-10)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority.rs`."><title>authority.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (2a8221dbd 2023-05-11)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -4167,6 +4167,7 @@
 <a href="#4167" id="4167">4167</a>
 <a href="#4168" id="4168">4168</a>
 <a href="#4169" id="4169">4169</a>
+<a href="#4170" id="4170">4170</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -4799,7 +4800,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
         transaction: VerifiedTransaction,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;HandleTransactionResponse, SuiError&gt; {
+    ) -&gt; SuiResult&lt;HandleTransactionResponse&gt; {
         <span class="macro">fp_ensure!</span>(
             !transaction.is_system_tx(),
             SuiError::InvalidSystemTransaction
@@ -5347,25 +5348,26 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         transaction: TransactionData,
         transaction_digest: TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;
-        (
-            DryRunTransactionBlockResponse,
-            BTreeMap&lt;ObjectID, (ObjectRef, Object, WriteKind)&gt;,
-            TransactionEffects,
-            <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
-        ),
-        anyhow::Error,
-    &gt; {
+    ) -&gt; SuiResult&lt;(
+        DryRunTransactionBlockResponse,
+        BTreeMap&lt;ObjectID, (ObjectRef, Object, WriteKind)&gt;,
+        TransactionEffects,
+        <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
+    )&gt; {
         <span class="kw">let </span>epoch_store = <span class="self">self</span>.load_epoch_store_one_call_per_task();
         <span class="kw">if </span>!<span class="self">self</span>.is_fullnode(<span class="kw-2">&amp;</span>epoch_store) {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;dry-exec is only supported on fullnodes&quot;</span>));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
+                error: <span class="string">&quot;dry-exec is only supported on fullnodes&quot;</span>.to_string(),
+            });
         }
         <span class="kw">match </span>transaction.kind() {
             TransactionKind::ProgrammableTransaction(<span class="kw">_</span>) =&gt; (),
             TransactionKind::ChangeEpoch(<span class="kw">_</span>)
             | TransactionKind::Genesis(<span class="kw">_</span>)
             | TransactionKind::ConsensusCommitPrologue(<span class="kw">_</span>) =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;dry-exec does not support system transactions&quot;</span>));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
+                    error: <span class="string">&quot;dry-exec does not support system transactions&quot;</span>.to_string(),
+                });
             }
         }
 
@@ -5460,8 +5462,14 @@
 
         <span class="prelude-val">Ok</span>((
             DryRunTransactionBlockResponse {
-                input: SuiTransactionBlockData::try_from(transaction.clone(), <span class="kw-2">&amp;</span>module_cache)<span class="question-mark">?</span>,
-                effects: effects.clone().try_into()<span class="question-mark">?</span>,
+                input: SuiTransactionBlockData::try_from(transaction.clone(), <span class="kw-2">&amp;</span>module_cache)
+                    .map_err(|e| SuiError::TransactionSerializationError {
+                        error: <span class="macro">format!</span>(
+                            <span class="string">&quot;Failed to convert transaction to SuiTransactionBlockData: {}&quot;</span>,
+                            e
+                        ),
+                    })<span class="question-mark">?</span>, <span class="comment">// TODO: replace the underlying try_from to SuiError. This one goes deep
+                </span>effects: effects.clone().try_into()<span class="question-mark">?</span>,
                 events: SuiTransactionBlockEvents::try_from(
                     inner_temp_store.events.clone(),
                     tx_digest,
@@ -5483,10 +5491,12 @@
         sender: SuiAddress,
         transaction_kind: TransactionKind,
         gas_price: <span class="prelude-ty">Option</span>&lt;u64&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;DevInspectResults, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;DevInspectResults&gt; {
         <span class="kw">let </span>epoch_store = <span class="self">self</span>.load_epoch_store_one_call_per_task();
         <span class="kw">if </span>!<span class="self">self</span>.is_fullnode(<span class="kw-2">&amp;</span>epoch_store) {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;dev-inspect is only supported on fullnodes&quot;</span>));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
+                error: <span class="string">&quot;dev-inspect is only supported on fullnodes&quot;</span>.to_string(),
+            });
         }
 
         transaction_kind.check_version_supported(epoch_store.protocol_config())<span class="question-mark">?</span>;
@@ -5639,7 +5649,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         effects: <span class="kw-2">&amp;</span>TransactionEffects,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectIndexChanges, SuiError&gt; {
+    ) -&gt; SuiResult&lt;ObjectIndexChanges&gt; {
         <span class="kw">let </span>modified_at_version = effects
             .modified_at_versions()
             .iter()
@@ -5879,7 +5889,7 @@
     <span class="kw">pub async fn </span>handle_transaction_info_request(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         request: TransactionInfoRequest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionInfoResponse, SuiError&gt; {
+    ) -&gt; SuiResult&lt;TransactionInfoResponse&gt; {
         <span class="kw">let </span>epoch_store = <span class="self">self</span>.load_epoch_store_one_call_per_task();
         <span class="kw">let </span>(transaction, status) = <span class="self">self
             </span>.get_transaction_status(<span class="kw-2">&amp;</span>request.transaction_digest, <span class="kw-2">&amp;</span>epoch_store)<span class="question-mark">?
@@ -5895,7 +5905,7 @@
     <span class="kw">pub async fn </span>handle_object_info_request(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         request: ObjectInfoRequest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectInfoResponse, SuiError&gt; {
+    ) -&gt; SuiResult&lt;ObjectInfoResponse&gt; {
         <span class="kw">let </span>epoch_store = <span class="self">self</span>.load_epoch_store_one_call_per_task();
 
         <span class="kw">let </span>requested_object_seq = <span class="kw">match </span>request.request_kind {
@@ -5954,7 +5964,7 @@
     <span class="kw">pub fn </span>handle_checkpoint_request(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         request: <span class="kw-2">&amp;</span>CheckpointRequest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;CheckpointResponse, SuiError&gt; {
+    ) -&gt; SuiResult&lt;CheckpointResponse&gt; {
         <span class="kw">let </span>summary = <span class="kw">match </span>request.sequence_number {
             <span class="prelude-val">Some</span>(seq) =&gt; <span class="self">self
                 </span>.checkpoint_store
@@ -5977,7 +5987,7 @@
     <span class="kw">pub fn </span>load_fastpath_input_objects(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         effects: <span class="kw-2">&amp;</span>TransactionEffects,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, SuiError&gt; {
+    ) -&gt; SuiResult&lt;Vec&lt;Object&gt;&gt; {
         <span class="comment">// Note: any future addition to the returned object list needs cautions
         // to make sure not to mess up object pruning.
 
@@ -6345,7 +6355,7 @@
         Committee::clone(<span class="self">self</span>.epoch_store_for_testing().committee())
     }
 
-    <span class="kw">pub async fn </span>get_object(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;, SuiError&gt; {
+    <span class="kw">pub async fn </span>get_object(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt; {
         <span class="self">self</span>.database.get_object(object_id)
     }
 
@@ -6397,7 +6407,7 @@
         <span class="prelude-val">Ok</span>(checkpoint)
     }
 
-    <span class="kw">pub fn </span>get_object_read(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectRead, SuiError&gt; {
+    <span class="kw">pub fn </span>get_object_read(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; SuiResult&lt;ObjectRead&gt; {
         <span class="kw">match </span><span class="self">self</span>.database.get_object_or_tombstone(<span class="kw-2">*</span>object_id)<span class="question-mark">? </span>{
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(ObjectRead::NotExists(<span class="kw-2">*</span>object_id)),
             <span class="prelude-val">Some</span>(obj_ref) =&gt; {
@@ -6499,7 +6509,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         object_id: <span class="kw-2">&amp;</span>ObjectID,
         version: SequenceNumber,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;PastObjectRead, SuiError&gt; {
+    ) -&gt; SuiResult&lt;PastObjectRead&gt; {
         <span class="comment">// Firstly we see if the object ever exists by getting its latest data
         </span><span class="kw">match </span><span class="self">self</span>.database.get_object_or_tombstone(<span class="kw-2">*</span>object_id)<span class="question-mark">? </span>{
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(PastObjectRead::ObjectNotExists(<span class="kw-2">*</span>object_id)),
@@ -6585,7 +6595,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         object_id: <span class="kw-2">&amp;</span>ObjectID,
         version: SequenceNumber,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Owner, SuiError&gt; {
+    ) -&gt; SuiResult&lt;Owner&gt; {
         <span class="self">self</span>.database
             .get_object_by_key(object_id, version)<span class="question-mark">?
             </span>.ok_or_else(|| {
@@ -6720,64 +6730,61 @@
         }
     }
 
-    <span class="kw">pub fn </span>get_total_transaction_blocks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, anyhow::Error&gt; {
+    <span class="kw">pub fn </span>get_total_transaction_blocks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SuiResult&lt;u64&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.get_indexes()<span class="question-mark">?</span>.next_sequence_number())
     }
 
     <span class="kw">pub async fn </span>get_executed_transaction_and_effects(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digest: TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(VerifiedTransaction, TransactionEffects), anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;(VerifiedTransaction, TransactionEffects)&gt; {
         <span class="kw">let </span>transaction = <span class="self">self</span>.database.get_transaction_block(<span class="kw-2">&amp;</span>digest)<span class="question-mark">?</span>;
         <span class="kw">let </span>effects = <span class="self">self</span>.database.get_executed_effects(<span class="kw-2">&amp;</span>digest)<span class="question-mark">?</span>;
         <span class="kw">match </span>(transaction, effects) {
             (<span class="prelude-val">Some</span>(transaction), <span class="prelude-val">Some</span>(effects)) =&gt; <span class="prelude-val">Ok</span>((transaction, effects)),
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(SuiError::TransactionNotFound { digest })),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(SuiError::TransactionNotFound { digest }),
         }
     }
 
     <span class="kw">pub async fn </span>get_transaction_block(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digest: TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;VerifiedTransaction, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;VerifiedTransaction&gt; {
         <span class="kw">let </span>transaction = <span class="self">self</span>.database.get_transaction_block(<span class="kw-2">&amp;</span>digest)<span class="question-mark">?</span>;
-        transaction.ok_or_else(|| <span class="macro">anyhow!</span>(SuiError::TransactionNotFound { digest }))
+        transaction.ok_or(SuiError::TransactionNotFound { digest })
     }
 
-    <span class="kw">pub fn </span>get_executed_effects(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        digest: TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionEffects, anyhow::Error&gt; {
+    <span class="kw">pub fn </span>get_executed_effects(<span class="kw-2">&amp;</span><span class="self">self</span>, digest: TransactionDigest) -&gt; SuiResult&lt;TransactionEffects&gt; {
         <span class="kw">let </span>effects = <span class="self">self</span>.database.get_executed_effects(<span class="kw-2">&amp;</span>digest)<span class="question-mark">?</span>;
-        effects.ok_or_else(|| <span class="macro">anyhow!</span>(SuiError::TransactionNotFound { digest }))
+        effects.ok_or(SuiError::TransactionNotFound { digest })
     }
 
     <span class="kw">pub fn </span>multi_get_executed_transactions(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digests: <span class="kw-2">&amp;</span>[TransactionDigest],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;VerifiedTransaction&gt;&gt;, anyhow::Error&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.database.multi_get_transaction_blocks(digests)<span class="question-mark">?</span>)
+    ) -&gt; SuiResult&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;VerifiedTransaction&gt;&gt;&gt; {
+        <span class="self">self</span>.database.multi_get_transaction_blocks(digests)
     }
 
     <span class="kw">pub fn </span>multi_get_executed_effects(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digests: <span class="kw-2">&amp;</span>[TransactionDigest],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;TransactionEffects&gt;&gt;, anyhow::Error&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.database.multi_get_executed_effects(digests)<span class="question-mark">?</span>)
+    ) -&gt; SuiResult&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;TransactionEffects&gt;&gt;&gt; {
+        <span class="self">self</span>.database.multi_get_executed_effects(digests)
     }
 
     <span class="kw">pub fn </span>multi_get_transaction_checkpoint(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digests: <span class="kw-2">&amp;</span>[TransactionDigest],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;(EpochId, CheckpointSequenceNumber)&gt;&gt;, anyhow::Error&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.database.multi_get_transaction_checkpoint(digests)<span class="question-mark">?</span>)
+    ) -&gt; SuiResult&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;(EpochId, CheckpointSequenceNumber)&gt;&gt;&gt; {
+        <span class="self">self</span>.database.multi_get_transaction_checkpoint(digests)
     }
 
     <span class="kw">pub fn </span>multi_get_events(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digests: <span class="kw-2">&amp;</span>[TransactionEventsDigest],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;TransactionEvents&gt;&gt;, anyhow::Error&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.database.multi_get_events(digests)<span class="question-mark">?</span>)
+    ) -&gt; SuiResult&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;TransactionEvents&gt;&gt;&gt; {
+        <span class="self">self</span>.database.multi_get_events(digests)
     }
 
     <span class="kw">pub fn </span>multi_get_checkpoint_by_sequence_number(
@@ -6822,7 +6829,7 @@
         </span>cursor: <span class="prelude-ty">Option</span>&lt;TransactionDigest&gt;,
         limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
         reverse: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;Vec&lt;TransactionDigest&gt;&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(TransactionFilter::Checkpoint(sequence_number)) = filter {
             <span class="kw">let </span>checkpoint_contents =
                 <span class="self">self</span>.get_checkpoint_contents_by_sequence_number(sequence_number)<span class="question-mark">?</span>;
@@ -6848,50 +6855,45 @@
         <span class="self">self</span>.checkpoint_store.clone()
     }
 
-    <span class="kw">pub fn </span>get_latest_checkpoint_sequence_number(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;CheckpointSequenceNumber, anyhow::Error&gt; {
+    <span class="kw">pub fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SuiResult&lt;CheckpointSequenceNumber&gt; {
         <span class="self">self</span>.get_checkpoint_store()
             .get_highest_executed_checkpoint_seq_number()<span class="question-mark">?
-            </span>.ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Latest checkpoint sequence number not found&quot;</span>))
+            </span>.ok_or(SuiError::UserInputError {
+                error: UserInputError::LatestCheckpointSequenceNumberNotFound,
+            })
     }
 
     <span class="kw">pub fn </span>get_checkpoint_summary_by_sequence_number(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         sequence_number: CheckpointSequenceNumber,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;CheckpointSummary, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;CheckpointSummary&gt; {
         <span class="kw">let </span>verified_checkpoint = <span class="self">self
             </span>.get_checkpoint_store()
             .get_checkpoint_by_sequence_number(sequence_number)<span class="question-mark">?</span>;
         <span class="kw">match </span>verified_checkpoint {
             <span class="prelude-val">Some</span>(verified_checkpoint) =&gt; <span class="prelude-val">Ok</span>(verified_checkpoint.into_inner().into_data()),
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                <span class="string">&quot;Verified checkpoint not found for sequence number {}&quot;</span>,
-                sequence_number
-            )),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(SuiError::UserInputError {
+                error: UserInputError::VerifiedCheckpointNotFound(sequence_number),
+            }),
         }
     }
 
     <span class="kw">pub fn </span>get_checkpoint_summary_by_digest(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digest: CheckpointDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;CheckpointSummary, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;CheckpointSummary&gt; {
         <span class="kw">let </span>verified_checkpoint = <span class="self">self
             </span>.get_checkpoint_store()
             .get_checkpoint_by_digest(<span class="kw-2">&amp;</span>digest)<span class="question-mark">?</span>;
         <span class="kw">match </span>verified_checkpoint {
             <span class="prelude-val">Some</span>(verified_checkpoint) =&gt; <span class="prelude-val">Ok</span>(verified_checkpoint.into_inner().into_data()),
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                <span class="string">&quot;Verified checkpoint not found for digest: {}&quot;</span>,
-                Base58::encode(digest)
-            )),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(SuiError::UserInputError {
+                error: UserInputError::VerifiedCheckpointDigestNotFound(Base58::encode(digest)),
+            }),
         }
     }
 
-    <span class="kw">pub fn </span>find_publish_txn_digest(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        package_id: ObjectID,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, anyhow::Error&gt; {
+    <span class="kw">pub fn </span>find_publish_txn_digest(<span class="kw-2">&amp;</span><span class="self">self</span>, package_id: ObjectID) -&gt; SuiResult&lt;TransactionDigest&gt; {
         <span class="kw">if </span>is_system_package(package_id) {
             <span class="kw">return </span><span class="self">self</span>.find_genesis_txn_digest();
         }
@@ -6901,14 +6903,16 @@
             </span>.previous_transaction)
     }
 
-    <span class="kw">pub fn </span>find_genesis_txn_digest(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, anyhow::Error&gt; {
+    <span class="kw">pub fn </span>find_genesis_txn_digest(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SuiResult&lt;TransactionDigest&gt; {
         <span class="kw">let </span>summary = <span class="self">self
             </span>.get_verified_checkpoint_by_sequence_number(<span class="number">0</span>)<span class="question-mark">?
             </span>.into_message();
         <span class="kw">let </span>content = <span class="self">self</span>.get_checkpoint_contents(summary.content_digest)<span class="question-mark">?</span>;
         <span class="kw">let </span>genesis_transaction = content.enumerate_transactions(<span class="kw-2">&amp;</span>summary).next();
         <span class="prelude-val">Ok</span>(genesis_transaction
-            .ok_or(<span class="macro">anyhow!</span>(<span class="string">&quot;No transactions found in checkpoint content&quot;</span>))<span class="question-mark">?
+            .ok_or(SuiError::UserInputError {
+                error: UserInputError::GenesisTransactionNotFound,
+            })<span class="question-mark">?
             </span>.<span class="number">1
             </span>.transaction)
     }
@@ -6916,48 +6920,48 @@
     <span class="kw">pub fn </span>get_verified_checkpoint_by_sequence_number(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         sequence_number: CheckpointSequenceNumber,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;VerifiedCheckpoint, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;VerifiedCheckpoint&gt; {
         <span class="kw">let </span>verified_checkpoint = <span class="self">self
             </span>.get_checkpoint_store()
             .get_checkpoint_by_sequence_number(sequence_number)<span class="question-mark">?</span>;
         <span class="kw">match </span>verified_checkpoint {
             <span class="prelude-val">Some</span>(verified_checkpoint) =&gt; <span class="prelude-val">Ok</span>(verified_checkpoint),
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                <span class="string">&quot;Verified checkpoint not found for sequence number {}&quot;</span>,
-                sequence_number
-            )),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(SuiError::UserInputError {
+                error: UserInputError::VerifiedCheckpointNotFound(sequence_number),
+            }),
         }
     }
 
     <span class="kw">pub fn </span>get_verified_checkpoint_summary_by_digest(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digest: CheckpointDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;VerifiedCheckpoint, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;VerifiedCheckpoint&gt; {
         <span class="kw">let </span>verified_checkpoint = <span class="self">self
             </span>.get_checkpoint_store()
             .get_checkpoint_by_digest(<span class="kw-2">&amp;</span>digest)<span class="question-mark">?</span>;
         <span class="kw">match </span>verified_checkpoint {
             <span class="prelude-val">Some</span>(verified_checkpoint) =&gt; <span class="prelude-val">Ok</span>(verified_checkpoint),
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                <span class="string">&quot;Verified checkpoint not found for digest: {}&quot;</span>,
-                Base58::encode(digest)
-            )),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(SuiError::UserInputError {
+                error: UserInputError::VerifiedCheckpointDigestNotFound(Base58::encode(digest)),
+            }),
         }
     }
 
     <span class="kw">pub fn </span>get_checkpoint_contents(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digest: CheckpointContentsDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;CheckpointContents, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;CheckpointContents&gt; {
         <span class="self">self</span>.get_checkpoint_store()
             .get_checkpoint_contents(<span class="kw-2">&amp;</span>digest)<span class="question-mark">?
-            </span>.ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Checkpoint contents not found for digest: {:?}&quot;</span>, digest))
+            </span>.ok_or(SuiError::UserInputError {
+                error: UserInputError::CheckpointContentsNotFound(digest),
+            })
     }
 
     <span class="kw">pub fn </span>get_checkpoint_contents_by_sequence_number(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         sequence_number: CheckpointSequenceNumber,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;CheckpointContents, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;CheckpointContents&gt; {
         <span class="kw">let </span>verified_checkpoint = <span class="self">self
             </span>.get_checkpoint_store()
             .get_checkpoint_by_sequence_number(sequence_number)<span class="question-mark">?</span>;
@@ -6966,10 +6970,9 @@
                 <span class="kw">let </span>content_digest = verified_checkpoint.into_inner().content_digest;
                 <span class="self">self</span>.get_checkpoint_contents(content_digest)
             }
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                <span class="string">&quot;Verified checkpoint not found for sequence number {}&quot;</span>,
-                sequence_number
-            )),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(SuiError::UserInputError {
+                error: UserInputError::VerifiedCheckpointNotFound(sequence_number),
+            }),
         }
     }
 
@@ -6979,7 +6982,7 @@
         </span>cursor: <span class="prelude-ty">Option</span>&lt;CheckpointSequenceNumber&gt;,
         limit: u64,
         descending_order: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Checkpoint&gt;, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;Vec&lt;Checkpoint&gt;&gt; {
         <span class="kw">let </span>max_checkpoint = <span class="self">self</span>.get_latest_checkpoint_sequence_number()<span class="question-mark">?</span>;
         <span class="kw">let </span>checkpoint_numbers =
             calculate_checkpoint_numbers(cursor, limit, descending_order, max_checkpoint);
@@ -7028,11 +7031,8 @@
         <span class="prelude-val">Ok</span>(checkpoints)
     }
 
-    <span class="kw">pub async fn </span>get_timestamp_ms(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;u64&gt;, anyhow::Error&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.get_indexes()<span class="question-mark">?</span>.get_timestamp_ms(digest)<span class="question-mark">?</span>)
+    <span class="kw">pub async fn </span>get_timestamp_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, digest: <span class="kw-2">&amp;</span>TransactionDigest) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;u64&gt;&gt; {
+        <span class="self">self</span>.get_indexes()<span class="question-mark">?</span>.get_timestamp_ms(digest)
     }
 
     <span class="kw">pub fn </span>query_events(
@@ -7042,7 +7042,7 @@
         </span>cursor: <span class="prelude-ty">Option</span>&lt;EventID&gt;,
         limit: usize,
         descending: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, anyhow::Error&gt; {
+    ) -&gt; SuiResult&lt;Vec&lt;SuiEvent&gt;&gt; {
         <span class="kw">let </span>index_store = <span class="self">self</span>.get_indexes()<span class="question-mark">?</span>;
 
         <span class="comment">//Get the tx_num from tx_digest
@@ -7065,9 +7065,12 @@
                 <span class="kw">if </span>filters.is_empty() {
                     index_store.all_events(tx_num, event_num, limit, descending)<span class="question-mark">?
                 </span>} <span class="kw">else </span>{
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                        <span class="string">&quot;This query type does not currently support filter combinations.&quot;
-                    </span>));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::UserInputError {
+                        error: UserInputError::Unsupported(
+                            <span class="string">&quot;This query type does not currently support filter combinations&quot;
+                                </span>.to_string(),
+                        ),
+                    });
                 }
             }
             EventFilter::Transaction(digest) =&gt; {
@@ -7094,9 +7097,11 @@
             } =&gt; index_store
                 .event_iterator(start_time, end_time, tx_num, event_num, limit, descending)<span class="question-mark">?</span>,
             <span class="kw">_ </span>=&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                    <span class="string">&quot;This query type is not supported by the full node.&quot;
-                </span>))
+                <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::UserInputError {
+                    error: UserInputError::Unsupported(
+                        <span class="string">&quot;This query type is not supported by the full node.&quot;</span>.to_string(),
+                    ),
+                })
             }
         };
 
@@ -7156,7 +7161,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;VerifiedCertificate&gt;, SuiError&gt; {
+    ) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;VerifiedCertificate&gt;&gt; {
         <span class="kw">let </span><span class="prelude-val">Some</span>(cert_sig) = epoch_store.get_transaction_cert_sig(tx_digest)<span class="question-mark">? </span><span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
         };
@@ -7177,7 +7182,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         transaction_digest: <span class="kw-2">&amp;</span>TransactionDigest,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(SenderSignedData, TransactionStatus)&gt;, SuiError&gt; {
+    ) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;(SenderSignedData, TransactionStatus)&gt;&gt; {
         <span class="comment">// TODO: In the case of read path, we should not have to re-sign the effects.
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(effects) =
             <span class="self">self</span>.get_signed_effects_and_maybe_resign(transaction_digest, epoch_store)<span class="question-mark">?
@@ -7228,7 +7233,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         effects: TransactionEffects,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;VerifiedSignedTransactionEffects, SuiError&gt; {
+    ) -&gt; SuiResult&lt;VerifiedSignedTransactionEffects&gt; {
         <span class="kw">let </span>tx_digest = <span class="kw-2">*</span>effects.transaction_digest();
         <span class="kw">let </span>signed_effects = <span class="kw">match </span>epoch_store.get_effects_signature(<span class="kw-2">&amp;</span>tx_digest)<span class="question-mark">? </span>{
             <span class="prelude-val">Some</span>(sig) <span class="kw">if </span>sig.epoch == epoch_store.epoch() =&gt; {
@@ -7290,7 +7295,7 @@
         mutable_input_objects: <span class="kw-2">&amp;</span>[ObjectRef],
         signed_transaction: VerifiedSignedTransaction,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt; {
+    ) -&gt; SuiResult {
         <span class="self">self</span>.lock_and_write_transaction(mutable_input_objects, signed_transaction, epoch_store)
             .<span class="kw">await
     </span>}
@@ -7303,7 +7308,7 @@
         owned_input_objects: <span class="kw-2">&amp;</span>[ObjectRef],
         transaction: VerifiedSignedTransaction,
         epoch_store: <span class="kw-2">&amp;</span>Arc&lt;AuthorityPerEpochStore&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt; {
+    ) -&gt; SuiResult {
         <span class="kw">let </span>tx_digest = <span class="kw-2">*</span>transaction.digest();
 
         <span class="comment">// Acquire the lock on input objects
@@ -7425,7 +7430,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         object_ref: <span class="kw-2">&amp;</span>ObjectRef,
         epoch_store: <span class="kw-2">&amp;</span>AuthorityPerEpochStore,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;VerifiedSignedTransaction&gt;, SuiError&gt; {
+    ) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;VerifiedSignedTransaction&gt;&gt; {
         <span class="kw">let </span>lock_info = <span class="self">self
             </span>.database
             .get_lock(<span class="kw-2">*</span>object_ref, epoch_store.epoch())
@@ -7467,17 +7472,14 @@
         <span class="prelude-val">Ok</span>(tx_option)
     }
 
-    <span class="kw">pub async fn </span>get_objects(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        _objects: <span class="kw-2">&amp;</span>[ObjectID],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt;, SuiError&gt; {
+    <span class="kw">pub async fn </span>get_objects(<span class="kw-2">&amp;</span><span class="self">self</span>, _objects: <span class="kw-2">&amp;</span>[ObjectID]) -&gt; SuiResult&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;Object&gt;&gt;&gt; {
         <span class="self">self</span>.database.get_objects(_objects)
     }
 
     <span class="kw">pub async fn </span>get_object_or_tombstone(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         object_id: ObjectID,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;ObjectRef&gt;, SuiError&gt; {
+    ) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;ObjectRef&gt;&gt; {
         <span class="self">self</span>.database.get_object_or_tombstone(object_id)
     }
 
