@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683866387812,
+  "lastUpdate": 1683881096197,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6695,6 +6695,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310890,
             "range": "± 16035",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4dc8b91430a1467f198a994808d0cb743277b4de",
+          "message": "add event module id index and new EventFilter for filter by event module id (#11913)\n\n## Description \r\n\r\nadd event module id index and new EventFilter for filter by event module\r\nid\r\n\r\n## Test Plan \r\n\r\nadded integration test",
+          "timestamp": "2023-05-12T08:34:54Z",
+          "tree_id": "5ec5847d0a4ee74eeda367b5c4d6d7799a3e5d9a",
+          "url": "https://github.com/MystenLabs/sui/commit/4dc8b91430a1467f198a994808d0cb743277b4de"
+        },
+        "date": 1683881085345,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145923698,
+            "range": "± 6073564",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312845,
+            "range": "± 26943",
             "unit": "ns/iter"
           }
         ]
