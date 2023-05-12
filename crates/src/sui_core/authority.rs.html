@@ -4168,6 +4168,19 @@
 <a href="#4168" id="4168">4168</a>
 <a href="#4169" id="4169">4169</a>
 <a href="#4170" id="4170">4170</a>
+<a href="#4171" id="4171">4171</a>
+<a href="#4172" id="4172">4172</a>
+<a href="#4173" id="4173">4173</a>
+<a href="#4174" id="4174">4174</a>
+<a href="#4175" id="4175">4175</a>
+<a href="#4176" id="4176">4176</a>
+<a href="#4177" id="4177">4177</a>
+<a href="#4178" id="4178">4178</a>
+<a href="#4179" id="4179">4179</a>
+<a href="#4180" id="4180">4180</a>
+<a href="#4181" id="4181">4181</a>
+<a href="#4182" id="4182">4182</a>
+<a href="#4183" id="4183">4183</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -7096,7 +7109,20 @@
                 end_time,
             } =&gt; index_store
                 .event_iterator(start_time, end_time, tx_num, event_num, limit, descending)<span class="question-mark">?</span>,
-            <span class="kw">_ </span>=&gt; {
+            EventFilter::MoveEventModule { package, module } =&gt; index_store
+                .events_by_move_event_module(
+                    <span class="kw-2">&amp;</span>ModuleId::new(package.into(), module),
+                    tx_num,
+                    event_num,
+                    limit,
+                    descending,
+                )<span class="question-mark">?</span>,
+            <span class="comment">// not using &quot;_ =&gt;&quot; because we want to make sure we remember to add new variants here
+            </span>EventFilter::Package(<span class="kw">_</span>)
+            | EventFilter::MoveEventField { .. }
+            | EventFilter::Any(<span class="kw">_</span>)
+            | EventFilter::And(<span class="kw">_</span>, <span class="kw">_</span>)
+            | EventFilter::Or(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::UserInputError {
                     error: UserInputError::Unsupported(
                         <span class="string">&quot;This query type is not supported by the full node.&quot;</span>.to_string(),
