@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683909442292,
+  "lastUpdate": 1683911398987,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6911,6 +6911,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309499,
             "range": "± 80441",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e4bb7099b5574105068d5008acb67ab27beb1245",
+          "message": "Add tx, package scope. Use Sui meter for verifier (#11937)\n\n## Description \r\n\r\n* Add `Package` and `Transaction` metering scope. Not used yet though to\r\nkeep functionality same. Will iterate on this in subsequent PR.\r\n* Implement our own meter in Sui so we can fine-tune, log, etc as\r\nneeded.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-12T09:59:05-07:00",
+          "tree_id": "b406a3cb69bf2ac13065f33cd0d1a3fa17bfcd69",
+          "url": "https://github.com/MystenLabs/sui/commit/e4bb7099b5574105068d5008acb67ab27beb1245"
+        },
+        "date": 1683911388134,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151788075,
+            "range": "± 4613178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 481751,
+            "range": "± 54180",
             "unit": "ns/iter"
           }
         ]
