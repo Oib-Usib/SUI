@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683917474294,
+  "lastUpdate": 1683924806102,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7091,6 +7091,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 304519,
             "range": "± 4163",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5ec0adc3b669e2e8e4f44f14c86963c2e11db522",
+          "message": "Add metrics for db snapshots (#11963)\n\n## Description \r\n\r\nAdd metrics to track the first epoch with missing db snapshot so we can\r\nalert on it.\r\n## Test Plan \r\n\r\nAdded unit tests",
+          "timestamp": "2023-05-12T13:42:09-07:00",
+          "tree_id": "30e457fb1c3214dc9bc94edf151f5fc0a823d554",
+          "url": "https://github.com/MystenLabs/sui/commit/5ec0adc3b669e2e8e4f44f14c86963c2e11db522"
+        },
+        "date": 1683924794926,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 155048360,
+            "range": "± 6944906",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 335860,
+            "range": "± 36550",
             "unit": "ns/iter"
           }
         ]
