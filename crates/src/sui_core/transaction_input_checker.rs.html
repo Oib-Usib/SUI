@@ -448,7 +448,6 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::authority::authority_per_epoch_store::AuthorityPerEpochStore;
 <span class="kw">use </span><span class="kw">crate</span>::authority::AuthorityStore;
 <span class="kw">use </span><span class="kw">crate</span>::transaction_signing_filter;
-<span class="kw">use </span>move_bytecode_verifier::meter::BoundMeter;
 <span class="kw">use </span>std::collections::{BTreeMap, HashSet};
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>sui_adapter::adapter::default_verifier_config;
@@ -472,6 +471,7 @@
     object::{Object, Owner},
 };
 <span class="kw">use </span>sui_types::{SUI_CLOCK_OBJECT_ID, SUI_CLOCK_OBJECT_SHARED_VERSION};
+<span class="kw">use </span>sui_verifier::meter::SuiVerifierMeter;
 <span class="kw">use </span>tracing::instrument;
 
 <span class="macro">checked_arithmetic! </span>{
@@ -859,7 +859,7 @@
         </span><span class="kw">let </span>metered_verifier_config =
             default_verifier_config(protocol_config, <span class="bool-val">true </span><span class="comment">/* enable metering */</span>);
         <span class="comment">// Use the same meter for all packages
-        </span><span class="kw">let </span><span class="kw-2">mut </span>meter = BoundMeter::new(<span class="kw-2">&amp;</span>metered_verifier_config);
+        </span><span class="kw">let </span><span class="kw-2">mut </span>meter = SuiVerifierMeter::new(<span class="kw-2">&amp;</span>metered_verifier_config);
         <span class="kw">if let </span>TransactionKind::ProgrammableTransaction(pt) = transaction.kind() {
             <span class="comment">// Measure time for verifying all packages in the PTB
             </span><span class="kw">let </span>shared_meter_verifier_timer = metrics.verifier_runtime_per_ptb_success_latency.start_timer();
