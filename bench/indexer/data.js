@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683898008289,
+  "lastUpdate": 1683901508464,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6803,6 +6803,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309365,
             "range": "± 16581",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ed434235139d453ce806f78b7429ab5fecc007c8",
+          "message": "[bugfix] - object type should not trim leading zero (#11887)\n\n## Description \r\n\r\nObject type in get_object api is trimming leading zero. This PR fixes\r\nthat.\r\n\r\n## Test Plan \r\n\r\nAdded unit test",
+          "timestamp": "2023-05-12T10:14:00-04:00",
+          "tree_id": "b31793f223a7ce43199a4893b61d08be7c0405e5",
+          "url": "https://github.com/MystenLabs/sui/commit/ed434235139d453ce806f78b7429ab5fecc007c8"
+        },
+        "date": 1683901494634,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147149932,
+            "range": "± 5215105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 385835,
+            "range": "± 51253",
             "unit": "ns/iter"
           }
         ]
