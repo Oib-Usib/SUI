@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683901508464,
+  "lastUpdate": 1683904985561,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -6839,6 +6839,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 385835,
             "range": "± 51253",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "581bd7ecfcdc5e59392dfdc99e09cfaa6525c30c",
+          "message": "[docker] Add sui-execution top-level directory (#11948)\n\n## Description\r\n\r\nThis directory now contains the execution-specific crates.\r\n\r\n## Test Plan\r\n\r\nRun actions in CI.",
+          "timestamp": "2023-05-12T08:14:27-07:00",
+          "tree_id": "985dfb82ac3835f05533e19419e14d16e0c873f1",
+          "url": "https://github.com/MystenLabs/sui/commit/581bd7ecfcdc5e59392dfdc99e09cfaa6525c30c"
+        },
+        "date": 1683904972844,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 104714440,
+            "range": "± 5167608",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310692,
+            "range": "± 3136",
             "unit": "ns/iter"
           }
         ]
