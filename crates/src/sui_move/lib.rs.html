@@ -83,15 +83,6 @@
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
 <a href="#85" id="85">85</a>
-<a href="#86" id="86">86</a>
-<a href="#87" id="87">87</a>
-<a href="#88" id="88">88</a>
-<a href="#89" id="89">89</a>
-<a href="#90" id="90">90</a>
-<a href="#91" id="91">91</a>
-<a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a>
-<a href="#94" id="94">94</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -105,8 +96,6 @@
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;build&quot;</span>)]
 </span><span class="kw">pub mod </span>build;
-<span class="attr">#[cfg(feature = <span class="string">&quot;calibrate&quot;</span>)]
-</span><span class="kw">mod </span>cost_calib;
 <span class="attr">#[cfg(feature = <span class="string">&quot;coverage&quot;</span>)]
 </span><span class="kw">pub mod </span>coverage;
 <span class="attr">#[cfg(feature = <span class="string">&quot;disassemble&quot;</span>)]
@@ -130,8 +119,6 @@
     </span>Prove(prove::Prove),
     <span class="attr">#[cfg(feature = <span class="string">&quot;unit_test&quot;</span>)]
     </span>Test(unit_test::Test),
-    <span class="attr">#[cfg(feature = <span class="string">&quot;calibrate&quot;</span>)]
-    </span>CalibrateCosts(Calib),
 }
 <span class="attr">#[derive(Parser)]
 </span><span class="kw">pub struct </span>Calib {
@@ -177,11 +164,6 @@
                 std::process::exit(<span class="number">1</span>)
             }
 
-            <span class="prelude-val">Ok</span>(())
-        }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;calibrate&quot;</span>)]
-        </span>Command::CalibrateCosts(c) =&gt; {
-            cost_calib::run_calibration(c.runs, c.summarize);
             <span class="prelude-val">Ok</span>(())
         }
     }
