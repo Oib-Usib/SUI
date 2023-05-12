@@ -2401,6 +2401,7 @@
 <a href="#2401" id="2401">2401</a>
 <a href="#2402" id="2402">2402</a>
 <a href="#2403" id="2403">2403</a>
+<a href="#2404" id="2404">2404</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">pub mod </span>errors;
@@ -4109,7 +4110,8 @@
     }
 
     <span class="doccomment">/// Returns an iterator visiting each key-value pair in the map. By proving bounds of the
-    /// scan range, RocksDB scan avoid unnecessary scans
+    /// scan range, RocksDB scan avoid unnecessary scans.
+    /// Lower bound is inclusive, while upper bound is exclusive.
     </span><span class="kw">fn </span>iter_with_bounds(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
         lower_bound: <span class="prelude-ty">Option</span>&lt;K&gt;,

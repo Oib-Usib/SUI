@@ -1429,7 +1429,7 @@
                         <span class="kw">_ </span>=&gt; typed_store::rocks::open_cf_opts(path, global_db_options_override, metric_conf, <span class="kw-2">&amp;</span>opt_cfs)
                     };
                     db.map(|d| (d, rwopt_cfs))
-                }.expect(<span class="string">&quot;Cannot open DB.&quot;</span>);
+                }.expect(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Cannot open DB at {:?}&quot;</span>, path));
                 <span class="kw">let </span>(
                         #(
                             #field_names
@@ -1801,7 +1801,7 @@
                                 <span class="kw">_ </span>=&gt; typed_store::rocks::open_cf_opts(path, global_db_options_override, metric_conf, <span class="kw-2">&amp;</span>opt_cfs)
                             };
                             db.map(|d| (d, rwopt_cfs))
-                        }.expect(<span class="string">&quot;Cannot open DB.&quot;</span>);
+                        }.expect(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Cannot open DB at {:?}&quot;</span>, path));
                         <span class="kw">let </span>(
                             #(
                                 #field_names

@@ -1666,6 +1666,26 @@
 <a href="#1666" id="1666">1666</a>
 <a href="#1667" id="1667">1667</a>
 <a href="#1668" id="1668">1668</a>
+<a href="#1669" id="1669">1669</a>
+<a href="#1670" id="1670">1670</a>
+<a href="#1671" id="1671">1671</a>
+<a href="#1672" id="1672">1672</a>
+<a href="#1673" id="1673">1673</a>
+<a href="#1674" id="1674">1674</a>
+<a href="#1675" id="1675">1675</a>
+<a href="#1676" id="1676">1676</a>
+<a href="#1677" id="1677">1677</a>
+<a href="#1678" id="1678">1678</a>
+<a href="#1679" id="1679">1679</a>
+<a href="#1680" id="1680">1680</a>
+<a href="#1681" id="1681">1681</a>
+<a href="#1682" id="1682">1682</a>
+<a href="#1683" id="1683">1683</a>
+<a href="#1684" id="1684">1684</a>
+<a href="#1685" id="1685">1685</a>
+<a href="#1686" id="1686">1686</a>
+<a href="#1687" id="1687">1687</a>
+<a href="#1688" id="1688">1688</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2027,13 +2047,33 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TypedStoreError&gt; {
-        <span class="kw">match </span><span class="self">self</span>.get_highest_executed_checkpoint_seq_number()<span class="question-mark">? </span>{
-            <span class="prelude-val">Some</span>(seq_number) <span class="kw">if </span>seq_number &gt; <span class="kw-2">*</span>checkpoint.sequence_number() =&gt; <span class="prelude-val">Ok</span>(()),
-            <span class="kw">_ </span>=&gt; <span class="self">self</span>.watermarks.insert(
-                <span class="kw-2">&amp;</span>CheckpointWatermark::HighestExecuted,
-                <span class="kw-2">&amp;</span>(<span class="kw-2">*</span>checkpoint.sequence_number(), <span class="kw-2">*</span>checkpoint.digest()),
-            ),
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(seq_number) = <span class="self">self</span>.get_highest_executed_checkpoint_seq_number()<span class="question-mark">? </span>{
+            <span class="kw">if </span>seq_number &gt;= <span class="kw-2">*</span>checkpoint.sequence_number() {
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+            }
+            <span class="macro">assert_eq!</span>(seq_number + <span class="number">1</span>, <span class="kw-2">*</span>checkpoint.sequence_number(),
+            <span class="string">&quot;Cannot update highest executed checkpoint to {} when current highest executed checkpoint is {}&quot;</span>,
+            checkpoint.sequence_number(),
+            seq_number);
         }
+        <span class="self">self</span>.watermarks.insert(
+            <span class="kw-2">&amp;</span>CheckpointWatermark::HighestExecuted,
+            <span class="kw-2">&amp;</span>(<span class="kw-2">*</span>checkpoint.sequence_number(), <span class="kw-2">*</span>checkpoint.digest()),
+        )
+    }
+
+    <span class="doccomment">/// Sets highest executed checkpoint to any value.
+    ///
+    /// WARNING: This method is very subtle and can corrupt the database if used incorrectly.
+    /// It should only be used in one-off cases or tests after fully understanding the risk.
+    </span><span class="kw">pub fn </span>set_highest_executed_checkpoint_subtle(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TypedStoreError&gt; {
+        <span class="self">self</span>.watermarks.insert(
+            <span class="kw-2">&amp;</span>CheckpointWatermark::HighestExecuted,
+            <span class="kw-2">&amp;</span>(<span class="kw-2">*</span>checkpoint.sequence_number(), <span class="kw-2">*</span>checkpoint.digest()),
+        )
     }
 
     <span class="kw">pub fn </span>insert_checkpoint_contents(
