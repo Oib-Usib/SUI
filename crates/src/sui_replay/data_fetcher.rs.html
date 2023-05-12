@@ -550,23 +550,6 @@
 <a href="#550" id="550">550</a>
 <a href="#551" id="551">551</a>
 <a href="#552" id="552">552</a>
-<a href="#553" id="553">553</a>
-<a href="#554" id="554">554</a>
-<a href="#555" id="555">555</a>
-<a href="#556" id="556">556</a>
-<a href="#557" id="557">557</a>
-<a href="#558" id="558">558</a>
-<a href="#559" id="559">559</a>
-<a href="#560" id="560">560</a>
-<a href="#561" id="561">561</a>
-<a href="#562" id="562">562</a>
-<a href="#563" id="563">563</a>
-<a href="#564" id="564">564</a>
-<a href="#565" id="565">565</a>
-<a href="#566" id="566">566</a>
-<a href="#567" id="567">567</a>
-<a href="#568" id="568">568</a>
-<a href="#569" id="569">569</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -636,7 +619,6 @@
     <span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_id: u64,
-        is_testnet: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt;;
 
     <span class="kw">async fn </span>get_epoch_change_events(<span class="kw-2">&amp;</span><span class="self">self</span>, reverse: bool)
@@ -739,17 +721,10 @@
     <span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_id: u64,
-        is_testnet: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
-            Fetchers::Remote(q) =&gt; {
-                q.get_epoch_start_timestamp_and_rgp(epoch_id, is_testnet)
-                    .<span class="kw">await
-            </span>}
-            Fetchers::NodeStateDump(q) =&gt; {
-                q.get_epoch_start_timestamp_and_rgp(epoch_id, is_testnet)
-                    .<span class="kw">await
-            </span>}
+            Fetchers::Remote(q) =&gt; q.get_epoch_start_timestamp_and_rgp(epoch_id).<span class="kw">await</span>,
+            Fetchers::NodeStateDump(q) =&gt; q.get_epoch_start_timestamp_and_rgp(epoch_id).<span class="kw">await</span>,
         }
     }
 
@@ -899,18 +874,10 @@
         <span class="prelude-val">Ok</span>(txs[tx_idx])
     }
 
-    <span class="doccomment">/// Very testnet specific
-    /// This function is testnet specific and will be extended for mainnet later
-    </span><span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
+    <span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_id: u64,
-        is_testnet: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
-        <span class="comment">// Hack for testnet: for epoch in range [3, 742), we have no data, but no user TX was executed, so return dummy
-        </span><span class="kw">if </span>(is_testnet) &amp;&amp; (<span class="number">2 </span>&lt; epoch_id) &amp;&amp; (epoch_id &lt; <span class="number">742</span>) {
-            <span class="kw">return </span><span class="prelude-val">Ok</span>((<span class="number">0</span>, <span class="number">1</span>));
-        }
-
         <span class="kw">let </span>event = <span class="self">self
             </span>.get_epoch_change_events(<span class="bool-val">true</span>)
             .<span class="kw">await</span><span class="question-mark">?
@@ -1121,7 +1088,6 @@
     <span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         _epoch_id: u64,
-        _is_testnet: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
         <span class="prelude-val">Ok</span>((
             <span class="self">self</span>.node_state_dump.epoch_start_timestamp_ms,

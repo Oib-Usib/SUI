@@ -1840,68 +1840,6 @@
 <a href="#1840" id="1840">1840</a>
 <a href="#1841" id="1841">1841</a>
 <a href="#1842" id="1842">1842</a>
-<a href="#1843" id="1843">1843</a>
-<a href="#1844" id="1844">1844</a>
-<a href="#1845" id="1845">1845</a>
-<a href="#1846" id="1846">1846</a>
-<a href="#1847" id="1847">1847</a>
-<a href="#1848" id="1848">1848</a>
-<a href="#1849" id="1849">1849</a>
-<a href="#1850" id="1850">1850</a>
-<a href="#1851" id="1851">1851</a>
-<a href="#1852" id="1852">1852</a>
-<a href="#1853" id="1853">1853</a>
-<a href="#1854" id="1854">1854</a>
-<a href="#1855" id="1855">1855</a>
-<a href="#1856" id="1856">1856</a>
-<a href="#1857" id="1857">1857</a>
-<a href="#1858" id="1858">1858</a>
-<a href="#1859" id="1859">1859</a>
-<a href="#1860" id="1860">1860</a>
-<a href="#1861" id="1861">1861</a>
-<a href="#1862" id="1862">1862</a>
-<a href="#1863" id="1863">1863</a>
-<a href="#1864" id="1864">1864</a>
-<a href="#1865" id="1865">1865</a>
-<a href="#1866" id="1866">1866</a>
-<a href="#1867" id="1867">1867</a>
-<a href="#1868" id="1868">1868</a>
-<a href="#1869" id="1869">1869</a>
-<a href="#1870" id="1870">1870</a>
-<a href="#1871" id="1871">1871</a>
-<a href="#1872" id="1872">1872</a>
-<a href="#1873" id="1873">1873</a>
-<a href="#1874" id="1874">1874</a>
-<a href="#1875" id="1875">1875</a>
-<a href="#1876" id="1876">1876</a>
-<a href="#1877" id="1877">1877</a>
-<a href="#1878" id="1878">1878</a>
-<a href="#1879" id="1879">1879</a>
-<a href="#1880" id="1880">1880</a>
-<a href="#1881" id="1881">1881</a>
-<a href="#1882" id="1882">1882</a>
-<a href="#1883" id="1883">1883</a>
-<a href="#1884" id="1884">1884</a>
-<a href="#1885" id="1885">1885</a>
-<a href="#1886" id="1886">1886</a>
-<a href="#1887" id="1887">1887</a>
-<a href="#1888" id="1888">1888</a>
-<a href="#1889" id="1889">1889</a>
-<a href="#1890" id="1890">1890</a>
-<a href="#1891" id="1891">1891</a>
-<a href="#1892" id="1892">1892</a>
-<a href="#1893" id="1893">1893</a>
-<a href="#1894" id="1894">1894</a>
-<a href="#1895" id="1895">1895</a>
-<a href="#1896" id="1896">1896</a>
-<a href="#1897" id="1897">1897</a>
-<a href="#1898" id="1898">1898</a>
-<a href="#1899" id="1899">1899</a>
-<a href="#1900" id="1900">1900</a>
-<a href="#1901" id="1901">1901</a>
-<a href="#1902" id="1902">1902</a>
-<a href="#1903" id="1903">1903</a>
-<a href="#1904" id="1904">1904</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1921,7 +1859,6 @@
 <span class="kw">use </span>similar::{ChangeTag, TextDiff};
 <span class="kw">use </span>std::collections::{BTreeMap, HashSet};
 <span class="kw">use </span>std::path::PathBuf;
-<span class="kw">use </span>std::str::FromStr;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::sync::Mutex;
 <span class="kw">use </span>sui_adapter::adapter;
@@ -1956,21 +1893,14 @@
 <span class="kw">use </span>sui_types::storage::{BackingPackageStore, ChildObjectResolver, ObjectStore, ParentSync};
 <span class="kw">use </span>sui_types::sui_system_state::epoch_start_sui_system_state::EpochStartSystemState;
 <span class="kw">use </span>sui_types::temporary_store::InnerTemporaryStore;
-<span class="kw">use </span>sui_types::transaction::CertifiedTransaction;
-<span class="kw">use </span>sui_types::transaction::Transaction;
-<span class="kw">use </span>sui_types::transaction::TransactionData;
-<span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
-<span class="kw">use </span>sui_types::transaction::{InputObjectKind, InputObjects, TransactionKind};
-<span class="kw">use </span>sui_types::transaction::{SenderSignedData, TransactionDataAPI};
+<span class="kw">use </span>sui_types::transaction::{
+    CertifiedTransaction, InputObjectKind, InputObjects, SenderSignedData, Transaction,
+    TransactionData, TransactionDataAPI, TransactionKind, VerifiedTransaction,
+};
 <span class="kw">use </span>sui_types::DEEPBOOK_PACKAGE_ID;
 <span class="kw">use </span>tracing::{error, warn};
 
 <span class="comment">// TODO: add persistent cache. But perf is good enough already.
-// TODO: handle safe mode
-
-// The logic here is very testnet specific now
-// For testnet, we derive the protocol version map with some nuances due to early safe mode speedrun
-// For other networks it should be much more straightforward
 
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>ExecutionSandboxState {
@@ -2126,8 +2056,6 @@
     </span><span class="kw">pub </span>metrics: Arc&lt;LimitsMetrics&gt;,
     <span class="comment">// Used for fetching data from the network or remote store
     </span><span class="kw">pub </span>fetcher: Fetchers,
-    <span class="doccomment">/// For special casing some logic
-    </span><span class="kw">pub </span>is_testnet: bool,
 
     <span class="comment">// Retry policies due to RPC errors
     </span><span class="kw">pub </span>num_retries_for_timeout: u32,
@@ -2228,12 +2156,6 @@
             rpc_client: client.clone(),
         };
 
-        <span class="kw">let </span>is_testnet = fetcher
-            .get_checkpoint_txs(<span class="number">0</span>)
-            .<span class="kw">await</span><span class="question-mark">?
-            </span>.iter()
-            .any(|tx| tx == <span class="kw-2">&amp;</span>TransactionDigest::from_str(TESTNET_GENESIX_TX_DIGEST).unwrap());
-
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             client: <span class="prelude-val">Some</span>(client),
             protocol_version_epoch_table: BTreeMap::new(),
@@ -2243,7 +2165,6 @@
             metrics,
             storage: Storage::default(),
             fetcher: Fetchers::Remote(fetcher),
-            is_testnet,
             <span class="comment">// TODO: make these configurable
             </span>num_retries_for_timeout: RPC_TIMEOUT_ERR_NUM_RETRIES,
             sleep_period_for_timeout: RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD,
@@ -2259,8 +2180,6 @@
         <span class="kw">let </span>current_protocol_version = state.protocol_version;
         <span class="kw">let </span>fetcher = NodeStateDumpFetcher::from(state);
 
-        <span class="kw">let </span>is_testnet =<span class="bool-val">false</span><span class="comment">/* should not matter */</span>;
-
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             client: <span class="prelude-val">None</span>,
             protocol_version_epoch_table: BTreeMap::new(),
@@ -2270,7 +2189,6 @@
             metrics,
             storage: Storage::default(),
             fetcher: Fetchers::NodeStateDump(fetcher),
-            is_testnet,
             <span class="comment">// TODO: make these configurable
             </span>num_retries_for_timeout: RPC_TIMEOUT_ERR_NUM_RETRIES,
             sleep_period_for_timeout: RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD,
@@ -2517,7 +2435,7 @@
 
         <span class="comment">// Extract the epoch start timestamp
         </span><span class="kw">let </span>(epoch_start_timestamp, <span class="kw">_</span>) = <span class="self">self
-            </span>.get_epoch_start_timestamp_and_rgp(tx_info.executed_epoch, <span class="self">self</span>.is_testnet)
+            </span>.get_epoch_start_timestamp_and_rgp(tx_info.executed_epoch)
             .<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Create the gas status
@@ -2856,28 +2774,21 @@
                 .map(|q| (q.<span class="number">0</span>, q.<span class="number">1</span>))
                 .collect()),
         }
+    }
 
-        <span class="comment">// if self.is_remote_replay() {
-        //     Ok(self
-        //         .protocol_version_system_package_table
-        //         .get(&amp;epoch)
-        //         .ok_or(LocalExecError::FrameworkObjectVersionTableNotPopulated { epoch })?
-        //         .clone()
-        //         .into_iter()
-        //         .collect())
-        // }
-    </span>}
-
-    <span class="doccomment">/// Very testnet specific now
-    /// This function is testnet specific and will be extended for other networs later
-    </span><span class="kw">pub async fn </span>protocol_ver_to_epoch_map(
+    <span class="kw">pub async fn </span>protocol_ver_to_epoch_map(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;BTreeMap&lt;u64, ProtocolVersionSummary&gt;, LocalExecError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>range_map = BTreeMap::new();
         <span class="kw">let </span>epoch_change_events = <span class="self">self</span>.fetcher.get_epoch_change_events(<span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Exception for Genesis: Protocol version 1 at epoch 0
-        </span><span class="kw">let </span><span class="kw-2">mut </span>tx_digest = TransactionDigest::from_str(TESTNET_GENESIX_TX_DIGEST).unwrap();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>tx_digest = <span class="kw-2">*</span><span class="self">self
+            </span>.fetcher
+            .get_checkpoint_txs(<span class="number">0</span>)
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.get(<span class="number">0</span>)
+            .expect(<span class="string">&quot;Genesis TX must be in first checkpoint&quot;</span>);
         <span class="comment">// Somehow the genesis TX did not emit any event, but we know it was the start of version 1
         // So we need to manually add this range
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>start_epoch, <span class="kw-2">mut </span>start_protocol_version, <span class="kw-2">mut </span>start_checkpoint) = (<span class="number">0</span>, <span class="number">1</span>, <span class="number">0u64</span>);
@@ -2885,33 +2796,8 @@
         <span class="kw">let </span>(<span class="kw-2">mut </span>curr_epoch, <span class="kw-2">mut </span>curr_protocol_version, <span class="kw-2">mut </span>curr_checkpoint) =
             (start_epoch, start_protocol_version, start_checkpoint);
 
-        <span class="kw">if </span><span class="self">self</span>.is_testnet {
-            <span class="comment">// Exception for incident: Protocol version 2 started epoch 742
-            // But this was in safe mode so no events emitted
-            // So we need to manually add this range
-            </span>(curr_epoch, curr_protocol_version) = (<span class="number">742</span>, <span class="number">2</span>);
-            curr_checkpoint = <span class="self">self
-                </span>.fetcher
-                .get_transaction(<span class="kw-2">&amp;</span>TransactionDigest::from_str(SAFE_MODE_TX_1_DIGEST).unwrap())
-                .<span class="kw">await</span><span class="question-mark">?
-                </span>.checkpoint
-                .expect(<span class="string">&quot;Checkpoint should be present&quot;</span>);
-            range_map.insert(
-                start_protocol_version,
-                ProtocolVersionSummary {
-                    protocol_version: start_protocol_version,
-                    epoch_start: start_epoch,
-                    epoch_end: curr_epoch - <span class="number">1</span>,
-                    checkpoint_start: start_checkpoint,
-                    checkpoint_end: curr_checkpoint - <span class="number">1</span>,
-                    epoch_change_tx: tx_digest,
-                },
-            );
-        }
-
         (start_epoch, start_protocol_version, start_checkpoint) =
             (curr_epoch, curr_protocol_version, curr_checkpoint);
-        tx_digest = TransactionDigest::from_str(SAFE_MODE_TX_1_DIGEST).unwrap();
 
         <span class="comment">// This is the final tx digest for the epoch change. We need this to track the final checkpoint
         </span><span class="kw">let </span><span class="kw-2">mut </span>end_epoch_tx_digest = tx_digest;
@@ -2919,11 +2805,6 @@
         <span class="kw">for </span>event <span class="kw">in </span>epoch_change_events {
             (curr_epoch, curr_protocol_version) = extract_epoch_and_version(event.clone())<span class="question-mark">?</span>;
             end_epoch_tx_digest = event.id.tx_digest;
-
-            <span class="kw">if </span><span class="self">self</span>.is_testnet &amp;&amp; (curr_protocol_version &lt; <span class="number">3</span>) {
-                <span class="comment">// Ignore protocol versions before 3 as we&#39;ve handled before the loop
-                </span><span class="kw">continue</span>;
-            }
 
             <span class="kw">if </span>start_protocol_version == curr_protocol_version {
                 <span class="comment">// Same range
@@ -3168,15 +3049,12 @@
         <span class="prelude-val">Ok</span>((start_checkpoint, next_epoch_checkpoint - <span class="number">1</span>))
     }
 
-    <span class="doccomment">/// Very testnet specific
-    /// This function is testnet specific and will be extended for mainnet later
-    </span><span class="kw">pub async fn </span>get_epoch_start_timestamp_and_rgp(
+    <span class="kw">pub async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_id: u64,
-        is_testnet: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
         <span class="self">self</span>.fetcher
-            .get_epoch_start_timestamp_and_rgp(epoch_id, is_testnet)
+            .get_epoch_start_timestamp_and_rgp(epoch_id)
             .<span class="kw">await
     </span>}
 
@@ -3216,9 +3094,8 @@
         <span class="kw">let </span>epoch_id = effects.executed_epoch;
 
         <span class="comment">// Extract the epoch start timestamp
-        </span><span class="kw">let </span>(epoch_start_timestamp, reference_gas_price) = <span class="self">self
-            </span>.get_epoch_start_timestamp_and_rgp(epoch_id, <span class="self">self</span>.is_testnet)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>(epoch_start_timestamp, reference_gas_price) =
+            <span class="self">self</span>.get_epoch_start_timestamp_and_rgp(epoch_id).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(OnChainTransactionInfo {
             kind: tx_kind_orig.clone(),
@@ -3280,9 +3157,8 @@
         <span class="kw">let </span>protocol_config =
             ProtocolConfig::get_for_version(dp.node_state_dump.protocol_version.into());
         <span class="comment">// Extract the epoch start timestamp
-        </span><span class="kw">let </span>(epoch_start_timestamp, reference_gas_price) = <span class="self">self
-            </span>.get_epoch_start_timestamp_and_rgp(epoch_id, <span class="self">self</span>.is_testnet)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>(epoch_start_timestamp, reference_gas_price) =
+            <span class="self">self</span>.get_epoch_start_timestamp_and_rgp(epoch_id).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(OnChainTransactionInfo {
             kind: tx_kind_orig.clone(),
