@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683935401942,
+  "lastUpdate": 1683942400881,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7235,6 +7235,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 306758,
             "range": "± 18201",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "934a0557d90e6978f1343108a3a57bc0f4f015b7",
+          "message": "[move/fuzz] Fix up verifier fuzz targets after metering changes (#11950)\n\n## Description\r\n\r\n`verify_module` no longer exists -- fixing the build by using\r\n`verify_module_unmetered`, or supplying a meter for tests\r\nof metering.\r\n\r\n## Test Plan\r\n\r\nThe following would fail before this change, and now does not:\r\n\r\n```\r\nexternal-crates/move/move-bytecode-verifier/fuzz$ cargo build\r\nexternal-crates/move/move-bytecode-verifier/bytecode-verifier-tests$ cargo nextest run\r\nexternal-crates/move/move-vm/integration-tests$ cargo nextest run\r\n```",
+          "timestamp": "2023-05-12T18:36:38-07:00",
+          "tree_id": "9b687e65a2521a866a6e4c02a8d7979eb68fc17e",
+          "url": "https://github.com/MystenLabs/sui/commit/934a0557d90e6978f1343108a3a57bc0f4f015b7"
+        },
+        "date": 1683942390202,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106327464,
+            "range": "± 3310345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 302416,
+            "range": "± 15691",
             "unit": "ns/iter"
           }
         ]
