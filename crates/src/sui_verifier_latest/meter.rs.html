@@ -127,17 +127,17 @@
 
 <span class="kw">impl </span>SuiVerifierMeterBounds {
     <span class="kw">fn </span>add(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ticks: u128) -&gt; PartialVMResult&lt;()&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(max_ticks) = <span class="self">self</span>.max_ticks {
-            <span class="kw">let </span>new_ticks = <span class="self">self</span>.ticks.saturating_add(ticks);
-            <span class="kw">if </span>new_ticks &gt; max_ticks {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(PartialVMError::new(StatusCode::CONSTRAINT_NOT_SATISFIED)
+        <span class="kw">let </span>max_ticks = <span class="self">self</span>.max_ticks.unwrap_or(u128::MAX);
+
+        <span class="kw">let </span>new_ticks = <span class="self">self</span>.ticks.saturating_add(ticks);
+        <span class="kw">if </span>new_ticks &gt;= max_ticks {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(PartialVMError::new(StatusCode::CONSTRAINT_NOT_SATISFIED)
                     .with_message(<span class="macro">format!</span>(
                         <span class="string">&quot;program too complex. Ticks exceeded `{}` will exceed limits: `{} current + {} new &gt; {} max`)&quot;</span>,
                         <span class="self">self</span>.name, <span class="self">self</span>.ticks, ticks, max_ticks
                     )));
-            }
-            <span class="self">self</span>.ticks = new_ticks;
         }
+        <span class="self">self</span>.ticks = new_ticks;
         <span class="prelude-val">Ok</span>(())
     }
 }

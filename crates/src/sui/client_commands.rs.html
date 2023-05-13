@@ -1724,6 +1724,57 @@
 <a href="#1724" id="1724">1724</a>
 <a href="#1725" id="1725">1725</a>
 <a href="#1726" id="1726">1726</a>
+<a href="#1727" id="1727">1727</a>
+<a href="#1728" id="1728">1728</a>
+<a href="#1729" id="1729">1729</a>
+<a href="#1730" id="1730">1730</a>
+<a href="#1731" id="1731">1731</a>
+<a href="#1732" id="1732">1732</a>
+<a href="#1733" id="1733">1733</a>
+<a href="#1734" id="1734">1734</a>
+<a href="#1735" id="1735">1735</a>
+<a href="#1736" id="1736">1736</a>
+<a href="#1737" id="1737">1737</a>
+<a href="#1738" id="1738">1738</a>
+<a href="#1739" id="1739">1739</a>
+<a href="#1740" id="1740">1740</a>
+<a href="#1741" id="1741">1741</a>
+<a href="#1742" id="1742">1742</a>
+<a href="#1743" id="1743">1743</a>
+<a href="#1744" id="1744">1744</a>
+<a href="#1745" id="1745">1745</a>
+<a href="#1746" id="1746">1746</a>
+<a href="#1747" id="1747">1747</a>
+<a href="#1748" id="1748">1748</a>
+<a href="#1749" id="1749">1749</a>
+<a href="#1750" id="1750">1750</a>
+<a href="#1751" id="1751">1751</a>
+<a href="#1752" id="1752">1752</a>
+<a href="#1753" id="1753">1753</a>
+<a href="#1754" id="1754">1754</a>
+<a href="#1755" id="1755">1755</a>
+<a href="#1756" id="1756">1756</a>
+<a href="#1757" id="1757">1757</a>
+<a href="#1758" id="1758">1758</a>
+<a href="#1759" id="1759">1759</a>
+<a href="#1760" id="1760">1760</a>
+<a href="#1761" id="1761">1761</a>
+<a href="#1762" id="1762">1762</a>
+<a href="#1763" id="1763">1763</a>
+<a href="#1764" id="1764">1764</a>
+<a href="#1765" id="1765">1765</a>
+<a href="#1766" id="1766">1766</a>
+<a href="#1767" id="1767">1767</a>
+<a href="#1768" id="1768">1768</a>
+<a href="#1769" id="1769">1769</a>
+<a href="#1770" id="1770">1770</a>
+<a href="#1771" id="1771">1771</a>
+<a href="#1772" id="1772">1772</a>
+<a href="#1773" id="1773">1773</a>
+<a href="#1774" id="1774">1774</a>
+<a href="#1775" id="1775">1775</a>
+<a href="#1776" id="1776">1776</a>
+<a href="#1777" id="1777">1777</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1742,7 +1793,7 @@
     encoding::{Base64, Encoding},
     traits::ToFromBytes,
 };
-<span class="kw">use </span>move_bytecode_verifier::meter::BoundMeter;
+<span class="kw">use </span>move_bytecode_verifier::meter::Scope;
 <span class="kw">use </span>move_core_types::language_storage::TypeTag;
 <span class="kw">use </span>move_package::BuildConfig <span class="kw">as </span>MoveBuildConfig;
 <span class="kw">use </span>prettytable::Table;
@@ -1756,6 +1807,7 @@
 <span class="kw">use </span>sui_source_validation::{BytecodeSourceVerifier, SourceMode};
 <span class="kw">use </span>sui_types::error::SuiError;
 <span class="kw">use </span>sui_types::{digests::TransactionDigest, metrics::BytecodeVerifierMetrics};
+<span class="kw">use </span>sui_verifier::meter::SuiVerifierMeter;
 
 <span class="kw">use </span>shared_crypto::intent::Intent;
 <span class="kw">use </span>sui_json::SuiJsonValue;
@@ -1927,8 +1979,8 @@
     },
 
     <span class="doccomment">/// Run the bytecode verifer on the package
-    </span><span class="attr">#[clap(name = <span class="string">&quot;verify-bytecode&quot;</span>)]
-    </span>VerifyBytecode {
+    </span><span class="attr">#[clap(name = <span class="string">&quot;verify-bytecode-meter&quot;</span>)]
+    </span>VerifyBytecodeMeter {
         <span class="doccomment">/// Path to directory containing a Move package
         </span><span class="attr">#[clap(
             name = <span class="string">&quot;package_path&quot;</span>,
@@ -2475,7 +2527,7 @@
                 )
             }
 
-            SuiClientCommands::VerifyBytecode {
+            SuiClientCommands::VerifyBytecodeMeter {
                 package_path,
                 build_config,
             } =&gt; {
@@ -2485,9 +2537,17 @@
 
                 <span class="kw">let </span>package = compile_package_simple(build_config, package_path)<span class="question-mark">?</span>;
                 <span class="kw">let </span>modules: Vec&lt;<span class="kw">_</span>&gt; = package.get_modules().cloned().collect();
-                <span class="kw">let </span>metered_verifier_config =
+                <span class="kw">let </span><span class="kw-2">mut </span>metered_verifier_config =
                     default_verifier_config(<span class="kw-2">&amp;</span>protocol_config, <span class="bool-val">true </span><span class="comment">/* enable metering */</span>);
-                <span class="kw">let </span><span class="kw-2">mut </span>meter = BoundMeter::new(<span class="kw-2">&amp;</span>metered_verifier_config);
+                <span class="comment">// These are the actual system limits
+                </span><span class="kw">let </span>fun_limits = metered_verifier_config.max_per_fun_meter_units.unwrap();
+                <span class="kw">let </span>mod_limits = metered_verifier_config.max_per_mod_meter_units.unwrap();
+                <span class="comment">// We want the test to run unmetered so we can know the true limit
+                // Unset the limits
+                </span>metered_verifier_config.max_per_fun_meter_units = <span class="prelude-val">None</span>;
+                metered_verifier_config.max_per_mod_meter_units = <span class="prelude-val">None</span>;
+                <span class="kw">let </span><span class="kw-2">mut </span>meter = SuiVerifierMeter::new(<span class="kw-2">&amp;</span>metered_verifier_config);
+                <span class="macro">println!</span>(<span class="string">&quot;Running bytecode verifier for {} modules&quot;</span>, modules.len());
                 run_metered_move_bytecode_verifier_impl(
                     <span class="kw-2">&amp;</span>modules,
                     <span class="kw-2">&amp;</span>protocol_config,
@@ -2495,7 +2555,16 @@
                     <span class="kw-2">&amp;mut </span>meter,
                     <span class="kw-2">&amp;</span>bytecode_verifier_metrics,
                 )<span class="question-mark">?</span>;
-                SuiClientCommandResult::VerifyBytecode
+                <span class="comment">// Get the actual meter ticks used
+                </span><span class="kw">let </span>function = meter.get_usage(Scope::Function);
+                <span class="kw">let </span>module = meter.get_usage(Scope::Module);
+
+                SuiClientCommandResult::VerifyBytecodeMeter {
+                    max_module_ticks: mod_limits,
+                    max_function_ticks: fun_limits,
+                    used_function_ticks: function,
+                    used_module_ticks: module,
+                }
             }
 
             SuiClientCommands::Object { id, bcs } =&gt; {
@@ -3245,8 +3314,36 @@
             SuiClientCommandResult::VerifySource =&gt; {
                 <span class="macro">writeln!</span>(writer, <span class="string">&quot;Source verification succeeded!&quot;</span>)<span class="question-mark">?</span>;
             }
-            SuiClientCommandResult::VerifyBytecode =&gt; {
-                <span class="macro">writeln!</span>(writer, <span class="string">&quot;Bytecode verification succeeded!&quot;</span>)<span class="question-mark">?</span>;
+            SuiClientCommandResult::VerifyBytecodeMeter {
+                max_module_ticks,
+                max_function_ticks,
+                used_function_ticks,
+                used_module_ticks,
+            } =&gt; {
+                <span class="macro">writeln!</span>(
+                    writer,
+                    <span class="string">&quot;{0: ^15} | {1: ^15} | {2: ^15}&quot;</span>,
+                    <span class="string">&quot;&quot;</span>, <span class="string">&quot;Module&quot;</span>, <span class="string">&quot;Function&quot;
+                </span>)<span class="question-mark">?</span>;
+                <span class="macro">writeln!</span>(writer, <span class="string">&quot;------------------------------------------------&quot;</span>)<span class="question-mark">?</span>;
+                <span class="macro">writeln!</span>(
+                    writer,
+                    <span class="string">&quot;{0: ^15} | {1: ^15} | {2: ^15}&quot;</span>,
+                    <span class="string">&quot;Max&quot;</span>, max_module_ticks, max_function_ticks,
+                )<span class="question-mark">?</span>;
+                <span class="macro">writeln!</span>(
+                    writer,
+                    <span class="string">&quot;{0: ^15} | {1: ^15} | {2: ^15}&quot;</span>,
+                    <span class="string">&quot;Used&quot;</span>, used_module_ticks, used_function_ticks,
+                )<span class="question-mark">?</span>;
+
+                <span class="kw">if </span>(used_module_ticks &gt; max_module_ticks)
+                    || (used_function_ticks &gt; max_function_ticks)
+                {
+                    <span class="macro">writeln!</span>(writer, <span class="string">&quot;Module will NOT pass metering check!&quot;</span>)<span class="question-mark">?</span>;
+                } <span class="kw">else </span>{
+                    <span class="macro">writeln!</span>(writer, <span class="string">&quot;Module will pass metering check!&quot;</span>)<span class="question-mark">?</span>;
+                }
             }
         }
         <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, writer.trim_end_matches(<span class="string">&#39;\n&#39;</span>))
@@ -3402,7 +3499,12 @@
 </span><span class="kw">pub enum </span>SuiClientCommandResult {
     Upgrade(SuiTransactionBlockResponse),
     Publish(SuiTransactionBlockResponse),
-    VerifyBytecode,
+    VerifyBytecodeMeter {
+        max_module_ticks: u128,
+        max_function_ticks: u128,
+        used_function_ticks: u128,
+        used_module_ticks: u128,
+    },
     VerifySource,
     Object(SuiObjectResponse),
     RawObject(SuiObjectResponse),
