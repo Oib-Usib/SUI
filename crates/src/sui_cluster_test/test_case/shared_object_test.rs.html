@@ -88,6 +88,13 @@
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
 <a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -96,7 +103,6 @@
 <span class="kw">use </span>sui_json_rpc_types::{SuiExecutionStatus, SuiTransactionBlockEffectsAPI};
 <span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_types::object::Owner;
-<span class="kw">use </span>test_utils::transaction::{increment_counter, publish_basics_package_and_make_counter};
 <span class="kw">use </span>tracing::info;
 
 <span class="kw">pub struct </span>SharedCounterTest;
@@ -119,10 +125,18 @@
 
         <span class="kw">let </span>wallet_context: <span class="kw-2">&amp;</span>WalletContext = ctx.get_wallet();
         <span class="kw">let </span>address = ctx.get_wallet_address();
-        <span class="kw">let </span>(package_ref, (counter_id, initial_counter_version, <span class="kw">_</span>)) =
-            publish_basics_package_and_make_counter(wallet_context, address).<span class="kw">await</span>;
-        <span class="kw">let </span>response =
-            increment_counter(wallet_context, address, <span class="prelude-val">None</span>, package_ref.<span class="number">0</span>, counter_id).<span class="kw">await</span>;
+        <span class="kw">let </span>(package_ref, (counter_id, initial_counter_version, <span class="kw">_</span>)) = wallet_context
+            .publish_basics_package_and_make_counter()
+            .<span class="kw">await</span>;
+        <span class="kw">let </span>response = wallet_context
+            .increment_counter(
+                address,
+                <span class="prelude-val">None</span>,
+                package_ref.<span class="number">0</span>,
+                counter_id,
+                initial_counter_version,
+            )
+            .<span class="kw">await</span>;
         <span class="macro">assert_eq!</span>(
             <span class="kw-2">*</span>response.effects.as_ref().unwrap().status(),
             SuiExecutionStatus::Success,
