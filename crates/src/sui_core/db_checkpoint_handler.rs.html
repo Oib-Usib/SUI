@@ -584,16 +584,6 @@
 <a href="#584" id="584">584</a>
 <a href="#585" id="585">585</a>
 <a href="#586" id="586">586</a>
-<a href="#587" id="587">587</a>
-<a href="#588" id="588">588</a>
-<a href="#589" id="589">589</a>
-<a href="#590" id="590">590</a>
-<a href="#591" id="591">591</a>
-<a href="#592" id="592">592</a>
-<a href="#593" id="593">593</a>
-<a href="#594" id="594">594</a>
-<a href="#595" id="595">595</a>
-<a href="#596" id="596">596</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -618,13 +608,14 @@
 <span class="kw">use </span>std::time::Duration;
 <span class="kw">use </span>sui_config::node::AuthorityStorePruningConfig;
 <span class="kw">use </span>sui_storage::mutex_table::RwLockTable;
-<span class="kw">use </span>sui_storage::object_store::util::{copy_recursively, delete_recursively, put};
+<span class="kw">use </span>sui_storage::object_store::util::{
+    copy_recursively, delete_recursively, path_to_filesystem, put,
+};
 <span class="kw">use </span>sui_storage::object_store::{ObjectStoreConfig, ObjectStoreType};
 <span class="kw">use </span>tokio::sync::oneshot;
 <span class="kw">use </span>tokio::sync::oneshot::Sender;
 <span class="kw">use </span>tracing::{debug, error, info, warn};
 <span class="kw">use </span>typed_store::rocks::MetricConf;
-<span class="kw">use </span>url::Url;
 
 <span class="kw">pub const </span>SUCCESS_MARKER: <span class="kw-2">&amp;</span>str = <span class="string">&quot;_SUCCESS&quot;</span>;
 <span class="kw">pub const </span>TEST_MARKER: <span class="kw-2">&amp;</span>str = <span class="string">&quot;_TEST&quot;</span>;
@@ -837,7 +828,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>((epoch, db_path)) = next_db_checkpoint_to_copy {
             <span class="kw">if </span><span class="self">self</span>.prune_and_compact_before_upload {
                 <span class="comment">// Convert `db_path` to the local filesystem path to where db checkpoint is stored
-                </span><span class="kw">let </span>local_db_path = <span class="self">self</span>.path_to_filesystem(db_path)<span class="question-mark">?</span>;
+                </span><span class="kw">let </span>local_db_path = path_to_filesystem(<span class="self">self</span>.input_root_path.clone(), db_path)<span class="question-mark">?</span>;
                 <span class="comment">// Invoke pruning and compaction on the db checkpoint
                 </span><span class="self">self</span>.prune_and_compact(local_db_path, <span class="kw-2">*</span>epoch).<span class="kw">await</span><span class="question-mark">?</span>;
             }
@@ -898,7 +889,7 @@
                 // upload completed marker
                 </span><span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
                     <span class="macro">info!</span>(<span class="string">&quot;Deleting db checkpoint dir: {path} for epoch: {epoch}&quot;</span>);
-                    <span class="kw">let </span>local_fs_path = <span class="self">self</span>.path_to_filesystem(path)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>local_fs_path = path_to_filesystem(<span class="self">self</span>.input_root_path.clone(), path)<span class="question-mark">?</span>;
                     fs::remove_dir_all(<span class="kw-2">&amp;</span>local_fs_path)<span class="question-mark">?</span>;
                 }
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
@@ -925,20 +916,6 @@
         }
         <span class="prelude-val">Ok</span>(checkpoints_by_epoch)
     }
-    <span class="kw">fn </span>path_to_filesystem(<span class="kw-2">&amp;</span><span class="self">self</span>, location: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf&gt; {
-        <span class="comment">// Convert an `object_store::path::Path` to `std::path::PathBuf`
-        </span><span class="kw">let </span>path = std::fs::canonicalize(<span class="kw-2">&amp;</span><span class="self">self</span>.input_root_path)<span class="question-mark">?</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>url = Url::from_file_path(<span class="kw-2">&amp;</span>path)
-            .map_err(|<span class="kw">_</span>| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to parse input path: {}&quot;</span>, path.display()))<span class="question-mark">?</span>;
-        url.path_segments_mut()
-            .map_err(|<span class="kw">_</span>| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to get path segments: {}&quot;</span>, path.display()))<span class="question-mark">?
-            </span>.pop_if_empty()
-            .extend(location.parts());
-        <span class="kw">let </span>new_path = url
-            .to_file_path()
-            .map_err(|<span class="kw">_</span>| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to convert url to path: {}&quot;</span>, url.as_str()))<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(new_path)
-    }
 }
 
 <span class="attr">#[cfg(test)]
@@ -947,6 +924,7 @@
         DBCheckpointHandler, SUCCESS_MARKER, TEST_MARKER, UPLOAD_COMPLETED_MARKER,
     };
     <span class="kw">use </span>std::fs;
+    <span class="kw">use </span>sui_storage::object_store::util::path_to_filesystem;
     <span class="kw">use </span>sui_storage::object_store::{ObjectStoreConfig, ObjectStoreType};
     <span class="kw">use </span>tempfile::TempDir;
 
@@ -991,9 +969,11 @@
         <span class="macro">assert!</span>(!local_checkpoints_by_epoch.is_empty());
         <span class="macro">assert_eq!</span>(<span class="kw-2">*</span>local_checkpoints_by_epoch.first_key_value().unwrap().<span class="number">0</span>, <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(
-            db_checkpoint_handler
-                .path_to_filesystem(local_checkpoints_by_epoch.first_key_value().unwrap().<span class="number">1</span>)
-                .unwrap(),
+            path_to_filesystem(
+                db_checkpoint_handler.input_root_path.clone(),
+                local_checkpoints_by_epoch.first_key_value().unwrap().<span class="number">1
+            </span>)
+            .unwrap(),
             std::fs::canonicalize(local_epoch0_checkpoint.clone()).unwrap()
         );
         db_checkpoint_handler

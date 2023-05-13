@@ -279,9 +279,6 @@
 <a href="#279" id="279">279</a>
 <a href="#280" id="280">280</a>
 <a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -477,10 +474,7 @@
 
 <span class="kw">pub struct </span>StoreObjectPair(<span class="kw">pub </span>StoreObjectWrapper, <span class="kw">pub </span><span class="prelude-ty">Option</span>&lt;StoreMoveObjectWrapper&gt;);
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_store_object_pair(
-    object: Object,
-    indirect_objects_threshold: usize,
-) -&gt; StoreObjectPair {
+<span class="kw">pub fn </span>get_store_object_pair(object: Object, indirect_objects_threshold: usize) -&gt; StoreObjectPair {
     <span class="kw">let </span><span class="kw-2">mut </span>indirect_object = <span class="prelude-val">None</span>;
 
     <span class="kw">let </span>data = <span class="kw">match </span>object.data {

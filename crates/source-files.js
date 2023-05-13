@@ -56,6 +56,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_rpc_loadgen":["",[["payload",[],["checkpoint_utils.rs","get_all_balances.rs","get_checkpoints.rs","get_object.rs","get_reference_gas_price.rs","mod.rs","multi_get_objects.rs","multi_get_transaction_blocks.rs","pay_sui.rs","query_transactions.rs","rpc_command_processor.rs","validation.rs"]]],["load_test.rs","main.rs"]],\
 "sui_sdk":["",[],["apis.rs","error.rs","lib.rs","sui_client_config.rs","wallet_context.rs"]],\
 "sui_simulator":["",[],["lib.rs"]],\
+"sui_snapshot":["",[],["lib.rs","writer.rs"]],\
 "sui_source_validation":["",[],["lib.rs"]],\
 "sui_storage":["",[["object_store",[],["mod.rs","util.rs"]]],["indexes.rs","lib.rs","mutex_table.rs","package_object_cache.rs","sharded_lru.rs","write_path_pending_tx_log.rs"]],\
 "sui_surfer":["",[],["default_surf_strategy.rs","lib.rs","surf_strategy.rs","surfer_state.rs","surfer_task.rs"]],\
