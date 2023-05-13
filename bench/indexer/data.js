@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683942400881,
+  "lastUpdate": 1683954330592,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7271,6 +7271,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 302416,
             "range": "± 15691",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d0f9a3047879f600bc61c94e519ad91bd6a8f0cd",
+          "message": "verifier: CLI show meter ticks used (#11974)",
+          "timestamp": "2023-05-13T00:55:07-04:00",
+          "tree_id": "33ec43be480cc9171dc4d945f28a689c010c2111",
+          "url": "https://github.com/MystenLabs/sui/commit/d0f9a3047879f600bc61c94e519ad91bd6a8f0cd"
+        },
+        "date": 1683954318757,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 140974189,
+            "range": "± 4387863",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 305866,
+            "range": "± 24891",
             "unit": "ns/iter"
           }
         ]
