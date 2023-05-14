@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684007039651,
+  "lastUpdate": 1684089263088,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7343,6 +7343,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 307139,
             "range": "± 67948",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e53091157d1c913291aecadcaa7e6b04003a78f9",
+          "message": "[sui] Fix version output by CLI (#11984)\n\n## Description\r\n\r\nThe `VERSION` constant that populates the output from `sui -V` was\r\nrecently moved to crate `sui-types` (with fixed version `0.1.0`), from\r\ncrate `sui` which inherited its version from the workspace (which gets\r\nbumped to match the release version).\r\n\r\nHave `sui-types` inherit version from workspace as well, to fix the\r\nversion output.\r\n\r\n## Test Plan\r\n\r\n```\r\nsui$ cargo run --bin sui -- -V\r\nsui 1.2.0-f6494ee216-dirty\r\n```\r\n\r\nWhere previously it was:\r\n\r\n```\r\nsui 0.1.0-f6494ee216\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [X] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nFix the output from `sui -V`, which was incorrectly reporting version\r\n`0.1.0`.",
+          "timestamp": "2023-05-14T18:24:51Z",
+          "tree_id": "485eeb6d973bd0032511403d5045e076ad5575ce",
+          "url": "https://github.com/MystenLabs/sui/commit/e53091157d1c913291aecadcaa7e6b04003a78f9"
+        },
+        "date": 1684089251037,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109381388,
+            "range": "± 4996251",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 307034,
+            "range": "± 25349",
             "unit": "ns/iter"
           }
         ]
