@@ -443,6 +443,7 @@
 <a href="#443" id="443">443</a>
 <a href="#444" id="444">444</a>
 <a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -450,6 +451,7 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::checkpoints::CheckpointServiceNoop;
 <span class="kw">use </span><span class="kw">crate</span>::consensus_handler::SequencedConsensusTransaction;
 <span class="kw">use </span>fastcrypto::hash::MultisetHash;
+<span class="kw">use </span>fastcrypto::traits::KeyPair;
 <span class="kw">use </span>move_core_types::account_address::AccountAddress;
 <span class="kw">use </span>move_symbol_pool::Symbol;
 <span class="kw">use </span>sui_move_build::{BuildConfig, CompiledPackage};
@@ -459,7 +461,7 @@
 <span class="kw">use </span>sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
 <span class="kw">use </span>sui_types::utils::to_sender_signed_transaction;
 <span class="kw">use </span>sui_types::{
-    crypto::{AccountKeyPair, AuthorityKeyPair, KeypairTraits},
+    crypto::{AccountKeyPair, AuthorityKeyPair},
     transaction::VerifiedTransaction,
 };
 
@@ -604,7 +606,7 @@
     objects: I,
 ) -&gt; Arc&lt;AuthorityState&gt; {
     <span class="kw">let </span>dir = tempfile::TempDir::new().unwrap();
-    <span class="kw">let </span>network_config = sui_config::builder::ConfigBuilder::new(<span class="kw-2">&amp;</span>dir).build();
+    <span class="kw">let </span>network_config = sui_swarm_config::network_config_builder::ConfigBuilder::new(<span class="kw-2">&amp;</span>dir).build();
     <span class="kw">let </span>genesis = network_config.genesis;
     <span class="kw">let </span>keypair = network_config.validator_configs[<span class="number">0</span>]
         .protocol_key_pair()

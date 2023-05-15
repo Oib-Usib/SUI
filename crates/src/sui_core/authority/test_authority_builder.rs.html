@@ -250,6 +250,7 @@
 <a href="#250" id="250">250</a>
 <a href="#251" id="251">251</a>
 <a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -273,10 +274,10 @@
     AuthorityStorePruningConfig, DBCheckpointConfig, ExpensiveSafetyCheckConfig,
 };
 <span class="kw">use </span>sui_config::transaction_deny_config::TransactionDenyConfig;
-<span class="kw">use </span>sui_config::NetworkConfig;
 <span class="kw">use </span>sui_macros::nondeterministic;
 <span class="kw">use </span>sui_protocol_config::{ProtocolConfig, SupportedProtocolVersions};
 <span class="kw">use </span>sui_storage::IndexStore;
+<span class="kw">use </span>sui_swarm_config::network_config::NetworkConfig;
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, ObjectID};
 <span class="kw">use </span>sui_types::crypto::AuthorityKeyPair;
 <span class="kw">use </span>sui_types::error::SuiResult;
@@ -379,10 +380,11 @@
     </span>}
 
     <span class="kw">pub async fn </span>build(<span class="self">self</span>) -&gt; Arc&lt;AuthorityState&gt; {
-        <span class="kw">let </span>local_network_config = sui_config::builder::ConfigBuilder::new_with_temp_dir()
-            <span class="comment">// TODO: change the default to 1000 instead after fixing tests.
-            </span>.with_reference_gas_price(<span class="self">self</span>.reference_gas_price.unwrap_or(<span class="number">1</span>))
-            .build();
+        <span class="kw">let </span>local_network_config =
+            sui_swarm_config::network_config_builder::ConfigBuilder::new_with_temp_dir()
+                <span class="comment">// TODO: change the default to 1000 instead after fixing tests.
+                </span>.with_reference_gas_price(<span class="self">self</span>.reference_gas_price.unwrap_or(<span class="number">1</span>))
+                .build();
         <span class="kw">let </span>genesis = <span class="kw-2">&amp;</span><span class="self">self</span>.genesis.unwrap_or(<span class="kw-2">&amp;</span>local_network_config.genesis);
         <span class="kw">let </span>genesis_committee = genesis.committee().unwrap();
         <span class="kw">let </span>path = <span class="self">self</span>.store_base_path.unwrap_or_else(|| {

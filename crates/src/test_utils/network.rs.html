@@ -737,7 +737,6 @@
 <a href="#737" id="737">737</a>
 <a href="#738" id="738">738</a>
 <a href="#739" id="739">739</a>
-<a href="#740" id="740">740</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -758,13 +757,9 @@
 
 <span class="kw">use </span>mysten_metrics::RegistryService;
 
-<span class="kw">use </span>sui_config::builder::{ProtocolVersionsConfig, SupportedProtocolVersionsCallback};
-<span class="kw">use </span>sui_config::genesis_config::{AccountConfig, GenesisConfig};
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
-<span class="kw">use </span>sui_config::{
-    sui_cluster_test_config_dir, Config, NetworkConfig, SUI_CLIENT_CONFIG, SUI_NETWORK_CONFIG,
-};
-<span class="kw">use </span>sui_config::{FullnodeConfigBuilder, NodeConfig, PersistedConfig, SUI_KEYSTORE_FILENAME};
+<span class="kw">use </span>sui_config::{sui_cluster_test_config_dir, Config, SUI_CLIENT_CONFIG, SUI_NETWORK_CONFIG};
+<span class="kw">use </span>sui_config::{NodeConfig, PersistedConfig, SUI_KEYSTORE_FILENAME};
 <span class="kw">use </span>sui_json_rpc_types::{SuiTransactionBlockResponse, SuiTransactionBlockResponseOptions};
 <span class="kw">use </span>sui_keys::keystore::{AccountKeystore, FileBasedKeystore, Keystore};
 <span class="kw">use </span>sui_node::SuiNode;
@@ -775,6 +770,11 @@
 <span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
 <span class="kw">use </span>sui_swarm::memory::{Swarm, SwarmBuilder};
+<span class="kw">use </span>sui_swarm_config::genesis_config::{AccountConfig, GenesisConfig};
+<span class="kw">use </span>sui_swarm_config::network_config::NetworkConfig;
+<span class="kw">use </span>sui_swarm_config::network_config_builder::{
+    FullnodeConfigBuilder, ProtocolVersionsConfig, SupportedProtocolVersionsCallback,
+};
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, ObjectID, SuiAddress};
 <span class="kw">use </span>sui_types::committee::EpochId;
 <span class="kw">use </span>sui_types::crypto::KeypairTraits;
@@ -854,7 +854,7 @@
     }
 
     <span class="kw">pub fn </span>fullnode_config_builder(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; FullnodeConfigBuilder {
-        <span class="self">self</span>.swarm.config().fullnode_config_builder()
+        FullnodeConfigBuilder::new(<span class="self">self</span>.swarm.config())
     }
 
     <span class="doccomment">/// Convenience method to start a new fullnode in the test cluster.
@@ -1274,9 +1274,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>wallet_conf: SuiClientConfig =
             PersistedConfig::read(<span class="kw-2">&amp;</span>working_dir.join(SUI_CLIENT_CONFIG))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>fullnode_config = swarm
-            .config()
-            .fullnode_config_builder()
+        <span class="kw">let </span>fullnode_config = FullnodeConfigBuilder::new(swarm.config())
             .with_supported_protocol_versions_config(
                 <span class="self">self</span>.fullnode_supported_protocol_versions_config
                     .clone()

@@ -417,7 +417,6 @@
 <a href="#417" id="417">417</a>
 <a href="#418" id="418">418</a>
 <a href="#419" id="419">419</a>
-<a href="#420" id="420">420</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -432,14 +431,15 @@
     mem, ops,
     path::{Path, PathBuf},
 };
-<span class="kw">use </span>sui_config::builder::{
-    CommitteeConfig, ConfigBuilder, ProtocolVersionsConfig, SupportedProtocolVersionsCallback,
-};
-<span class="kw">use </span>sui_config::genesis_config::{AccountConfig, GenesisConfig, ValidatorGenesisConfig};
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
-<span class="kw">use </span>sui_config::NetworkConfig;
 <span class="kw">use </span>sui_node::SuiNodeHandle;
 <span class="kw">use </span>sui_protocol_config::{ProtocolVersion, SupportedProtocolVersions};
+<span class="kw">use </span>sui_swarm_config::genesis_config::{AccountConfig, GenesisConfig, ValidatorGenesisConfig};
+<span class="kw">use </span>sui_swarm_config::network_config::NetworkConfig;
+<span class="kw">use </span>sui_swarm_config::network_config_builder::FullnodeConfigBuilder;
+<span class="kw">use </span>sui_swarm_config::network_config_builder::{
+    CommitteeConfig, ConfigBuilder, ProtocolVersionsConfig, SupportedProtocolVersionsCallback,
+};
 <span class="kw">use </span>sui_types::base_types::AuthorityName;
 <span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>tempfile::TempDir;
@@ -623,8 +623,7 @@
             (<span class="number">0</span>..<span class="self">self</span>.fullnode_count).for_each(|<span class="kw">_</span>| {
                 <span class="kw">let </span>spvc = <span class="self">self</span>.supported_protocol_versions_config.clone();
                 <span class="comment">//let spvc = spvc.clone();
-                </span><span class="kw">let </span><span class="kw-2">mut </span>config = network_config
-                    .fullnode_config_builder()
+                </span><span class="kw">let </span><span class="kw-2">mut </span>config = FullnodeConfigBuilder::new(<span class="kw-2">&amp;</span>network_config)
                     .with_supported_protocol_versions_config(spvc)
                     .with_db_checkpoint_config(<span class="self">self</span>.db_checkpoint_config.clone())
                     .with_random_dir()
@@ -660,8 +659,7 @@
             .collect();
 
         <span class="kw">let </span>fullnodes = <span class="kw">if let </span><span class="prelude-val">Some</span>(fullnode_rpc_addr) = <span class="self">self</span>.fullnode_rpc_addr {
-            <span class="kw">let </span><span class="kw-2">mut </span>config = network_config
-                .fullnode_config_builder()
+            <span class="kw">let </span><span class="kw-2">mut </span>config = FullnodeConfigBuilder::new(<span class="kw-2">&amp;</span>network_config)
                 .with_supported_protocol_versions_config(<span class="self">self</span>.supported_protocol_versions_config)
                 .set_event_store(<span class="self">self</span>.with_event_store)
                 .with_random_dir()

@@ -460,8 +460,8 @@
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::time::Duration;
 <span class="kw">use </span>sui_config::genesis::Genesis;
-<span class="kw">use </span>sui_config::ValidatorInfo;
 <span class="kw">use </span>sui_framework::BuiltInFramework;
+<span class="kw">use </span>sui_genesis_builder::validator_info::ValidatorInfo;
 <span class="kw">use </span>sui_move_build::{BuildConfig, CompiledPackage, SuiPackageHooks};
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>sui_types::base_types::{random_object_ref, ObjectID};
@@ -544,7 +544,7 @@
     </span>R: rand::CryptoRng + rand::RngCore,
 {
     <span class="kw">let </span>dir = tempfile::TempDir::new().unwrap();
-    <span class="kw">let </span>network_config = sui_config::builder::ConfigBuilder::new(<span class="kw-2">&amp;</span>dir)
+    <span class="kw">let </span>network_config = sui_swarm_config::network_config_builder::ConfigBuilder::new(<span class="kw-2">&amp;</span>dir)
         .rng(rng)
         .build();
     <span class="kw">let </span>genesis = network_config.genesis;
@@ -659,7 +659,7 @@
     <span class="kw">let </span>pkg_id = pkg.id();
     genesis_objects.push(pkg);
 
-    <span class="kw">let </span><span class="kw-2">mut </span>builder = sui_config::genesis::Builder::new().add_objects(genesis_objects);
+    <span class="kw">let </span><span class="kw-2">mut </span>builder = sui_genesis_builder::Builder::new().add_objects(genesis_objects);
     <span class="kw">let </span><span class="kw-2">mut </span>key_pairs = Vec::new();
     <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..committee_size {
         <span class="kw">let </span>key_pair: AuthorityKeyPair = get_key_pair().<span class="number">1</span>;

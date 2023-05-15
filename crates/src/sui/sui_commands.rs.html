@@ -578,47 +578,42 @@
 <a href="#578" id="578">578</a>
 <a href="#579" id="579">579</a>
 <a href="#580" id="580">580</a>
-<a href="#581" id="581">581</a>
-<a href="#582" id="582">582</a>
-<a href="#583" id="583">583</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>std::io::{stderr, stdout, Write};
-<span class="kw">use </span>std::num::NonZeroUsize;
-<span class="kw">use </span>std::path::{Path, PathBuf};
-<span class="kw">use </span>std::{fs, io};
-
-<span class="kw">use </span>anyhow::{anyhow, bail};
-<span class="kw">use </span>clap::<span class="kw-2">*</span>;
-<span class="kw">use </span>fastcrypto::traits::KeyPair;
-<span class="kw">use </span>move_package::BuildConfig;
-<span class="kw">use </span>sui_config::genesis_config::DEFAULT_NUMBER_OF_AUTHORITIES;
-<span class="kw">use </span>sui_move_build::SuiPackageHooks;
-<span class="kw">use </span>tracing::info;
-
-<span class="kw">use </span>sui_config::{
-    builder::ConfigBuilder, NetworkConfig, SUI_BENCHMARK_GENESIS_GAS_KEYSTORE_FILENAME,
-    SUI_KEYSTORE_FILENAME,
-};
-<span class="kw">use </span>sui_config::{genesis_config::GenesisConfig, SUI_GENESIS_FILENAME};
-<span class="kw">use </span>sui_config::{
-    sui_config_dir, Config, PersistedConfig, FULL_NODE_DB_PATH, SUI_CLIENT_CONFIG,
-    SUI_FULLNODE_CONFIG, SUI_NETWORK_CONFIG,
-};
-<span class="kw">use </span>sui_keys::keystore::{AccountKeystore, FileBasedKeystore, Keystore};
-<span class="kw">use </span>sui_swarm::memory::Swarm;
-<span class="kw">use </span>sui_types::crypto::{SignatureScheme, SuiKeyPair};
-
-<span class="kw">use </span><span class="kw">crate</span>::client_commands::SuiClientCommands;
+</span><span class="kw">use </span><span class="kw">crate</span>::client_commands::SuiClientCommands;
 <span class="kw">use </span><span class="kw">crate</span>::console::start_console;
 <span class="kw">use </span><span class="kw">crate</span>::fire_drill::{run_fire_drill, FireDrill};
 <span class="kw">use </span><span class="kw">crate</span>::genesis_ceremony::{run, Ceremony};
 <span class="kw">use </span><span class="kw">crate</span>::keytool::KeyToolCommand;
 <span class="kw">use </span><span class="kw">crate</span>::validator_commands::SuiValidatorCommand;
+<span class="kw">use </span>anyhow::{anyhow, bail};
+<span class="kw">use </span>clap::<span class="kw-2">*</span>;
+<span class="kw">use </span>fastcrypto::traits::KeyPair;
+<span class="kw">use </span>move_package::BuildConfig;
+<span class="kw">use </span>std::io::{stderr, stdout, Write};
+<span class="kw">use </span>std::num::NonZeroUsize;
+<span class="kw">use </span>std::path::{Path, PathBuf};
+<span class="kw">use </span>std::{fs, io};
+<span class="kw">use </span>sui_config::{
+    sui_config_dir, Config, PersistedConfig, FULL_NODE_DB_PATH, SUI_CLIENT_CONFIG,
+    SUI_FULLNODE_CONFIG, SUI_NETWORK_CONFIG,
+};
+<span class="kw">use </span>sui_config::{
+    SUI_BENCHMARK_GENESIS_GAS_KEYSTORE_FILENAME, SUI_GENESIS_FILENAME, SUI_KEYSTORE_FILENAME,
+};
+<span class="kw">use </span>sui_keys::keystore::{AccountKeystore, FileBasedKeystore, Keystore};
 <span class="kw">use </span>sui_move::{<span class="self">self</span>, execute_move_command};
+<span class="kw">use </span>sui_move_build::SuiPackageHooks;
 <span class="kw">use </span>sui_sdk::sui_client_config::{SuiClientConfig, SuiEnv};
 <span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
+<span class="kw">use </span>sui_swarm::memory::Swarm;
+<span class="kw">use </span>sui_swarm_config::genesis_config::{GenesisConfig, DEFAULT_NUMBER_OF_AUTHORITIES};
+<span class="kw">use </span>sui_swarm_config::network_config::NetworkConfig;
+<span class="kw">use </span>sui_swarm_config::network_config_builder::ConfigBuilder;
+<span class="kw">use </span>sui_swarm_config::network_config_builder::FullnodeConfigBuilder;
+<span class="kw">use </span>sui_types::crypto::{SignatureScheme, SuiKeyPair};
+<span class="kw">use </span>tracing::info;
 
 <span class="attr">#[allow(clippy::large_enum_variant)]
 #[derive(Parser)]
@@ -1024,8 +1019,7 @@
 
     <span class="macro">info!</span>(<span class="string">&quot;Client keystore is stored in {:?}.&quot;</span>, keystore_path);
 
-    <span class="kw">let </span><span class="kw-2">mut </span>fullnode_config = network_config
-        .fullnode_config_builder()
+    <span class="kw">let </span><span class="kw-2">mut </span>fullnode_config = FullnodeConfigBuilder::new(<span class="kw-2">&amp;</span>network_config)
         .with_event_store()
         .with_dir(FULL_NODE_DB_PATH.into())
         .build()<span class="question-mark">?</span>;

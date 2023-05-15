@@ -27,16 +27,17 @@ var sourcesIndex = JSON.parse('{\
 "sui_adapter_transactional_tests":["",[],["lib.rs"]],\
 "sui_benchmark":["",[["drivers",[],["bench_driver.rs","driver.rs","mod.rs"]],["workloads",[],["adversarial.rs","batch_payment.rs","delegation.rs","mod.rs","payload.rs","shared_counter.rs","transfer_object.rs","workload.rs","workload_configuration.rs"]]],["bank.rs","benchmark_setup.rs","embedded_reconfig_observer.rs","fullnode_reconfig_observer.rs","in_memory_wallet.rs","lib.rs","options.rs","system_state_observer.rs","util.rs"]],\
 "sui_cluster_test":["",[["test_case",[],["coin_index_test.rs","coin_merge_split_test.rs","fullnode_build_publish_transaction_test.rs","fullnode_execute_transaction_test.rs","native_transfer_test.rs","shared_object_test.rs"]]],["cluster.rs","config.rs","faucet.rs","helper.rs","lib.rs","test_case.rs","wallet_client.rs"]],\
-"sui_config":["",[],["builder.rs","certificate_deny_config.rs","genesis.rs","genesis_config.rs","lib.rs","node.rs","node_config_metrics.rs","p2p.rs","swarm.rs","transaction_deny_config.rs","utils.rs"]],\
+"sui_config":["",[],["certificate_deny_config.rs","genesis.rs","lib.rs","node.rs","node_config_metrics.rs","p2p.rs","transaction_deny_config.rs","utils.rs"]],\
 "sui_core":["",[["authority",[],["authority_notify_read.rs","authority_per_epoch_store.rs","authority_per_epoch_store_pruner.rs","authority_store.rs","authority_store_pruner.rs","authority_store_tables.rs","authority_store_types.rs","authority_test_utils.rs","epoch_start_configuration.rs","test_authority_builder.rs"]],["checkpoints",[["checkpoint_executor",[],["metrics.rs","mod.rs"]]],["causal_order.rs","checkpoint_output.rs","metrics.rs","mod.rs"]],["epoch",[],["committee_store.rs","data_removal.rs","epoch_metrics.rs","mod.rs","reconfiguration.rs"]],["narwhal_manager",[],["mod.rs"]],["quorum_driver",[],["metrics.rs","mod.rs","reconfig_observer.rs"]]],["authority.rs","authority_aggregator.rs","authority_client.rs","authority_server.rs","consensus_adapter.rs","consensus_handler.rs","consensus_validator.rs","db_checkpoint_handler.rs","event_handler.rs","execution_driver.rs","lib.rs","math.rs","metrics.rs","module_cache_metrics.rs","runtime.rs","safe_client.rs","scoring_decision.rs","signature_verifier.rs","stake_aggregator.rs","state_accumulator.rs","storage.rs","streamer.rs","test_authority_clients.rs","test_utils.rs","transaction_input_checker.rs","transaction_manager.rs","transaction_orchestrator.rs","transaction_signing_filter.rs"]],\
 "sui_cost_tables":["",[["tier_based",[],["mod.rs","tables.rs","units_types.rs"]]],["lib.rs","natives_tables.rs"]],\
 "sui_faucet":["",[["faucet",[],["mod.rs","simple_faucet.rs","write_ahead_log.rs"]]],["errors.rs","lib.rs","metrics.rs","metrics_layer.rs","requests.rs","responses.rs"]],\
 "sui_framework":["",[],["lib.rs"]],\
 "sui_framework_snapshot":["",[],["lib.rs"]],\
 "sui_framework_tests":["",[],["lib.rs"]],\
+"sui_genesis_builder":["",[],["lib.rs","validator_info.rs"]],\
 "sui_indexer":["",[["apis",[],["coin_api.rs","extended_api.rs","governance_api.rs","indexer_api.rs","mod.rs","move_utils.rs","read_api.rs","transaction_builder_api.rs","write_api.rs"]],["handlers",[],["checkpoint_handler.rs","mod.rs"]],["models",[],["addresses.rs","checkpoints.rs","epoch.rs","events.rs","mod.rs","network_metrics.rs","objects.rs","owners.rs","packages.rs","system_state.rs","transaction_index.rs","transactions.rs"]],["processors",[],["mod.rs","object_processor.rs","processor_orchestrator.rs"]],["store",[],["indexer_store.rs","mod.rs","module_resolver.rs","pg_indexer_store.rs","query.rs"]]],["errors.rs","lib.rs","metrics.rs","schema.rs","test_utils.rs","types.rs","utils.rs"]],\
 "sui_json":["",[],["lib.rs"]],\
-"sui_json_rpc":["",[["api",[],["coin.rs","extended.rs","governance.rs","indexer.rs","mod.rs","move_utils.rs","read.rs","transaction_builder.rs","write.rs"]]],["balance_changes.rs","coin_api.rs","error.rs","governance_api.rs","indexer_api.rs","lib.rs","logger.rs","metrics.rs","move_utils.rs","object_changes.rs","read_api.rs","routing_layer.rs","transaction_builder_api.rs","transaction_execution_api.rs"]],\
+"sui_json_rpc":["",[["api",[],["coin.rs","extended.rs","governance.rs","indexer.rs","mod.rs","move_utils.rs","read.rs","transaction_builder.rs","write.rs"]]],["balance_changes.rs","coin_api.rs","error.rs","governance_api.rs","indexer_api.rs","lib.rs","logger.rs","metrics.rs","move_utils.rs","name_service.rs","object_changes.rs","read_api.rs","routing_layer.rs","transaction_builder_api.rs","transaction_execution_api.rs"]],\
 "sui_json_rpc_types":["",[],["balance_changes.rs","lib.rs","object_changes.rs","sui_checkpoint.rs","sui_coin.rs","sui_event.rs","sui_extended.rs","sui_governance.rs","sui_move.rs","sui_object.rs","sui_protocol.rs","sui_transaction.rs"]],\
 "sui_keys":["",[],["key_derive.rs","keypair_file.rs","keystore.rs","lib.rs"]],\
 "sui_macros":["",[],["lib.rs"]],\
@@ -61,6 +62,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_storage":["",[["object_store",[],["mod.rs","util.rs"]]],["indexes.rs","lib.rs","mutex_table.rs","package_object_cache.rs","sharded_lru.rs","write_path_pending_tx_log.rs"]],\
 "sui_surfer":["",[],["default_surf_strategy.rs","lib.rs","surf_strategy.rs","surfer_state.rs","surfer_task.rs"]],\
 "sui_swarm":["",[["memory",[],["container.rs","mod.rs","node.rs","swarm.rs"]]],["lib.rs"]],\
+"sui_swarm_config":["",[],["genesis_config.rs","lib.rs","network_config.rs","network_config_builder.rs"]],\
 "sui_telemetry":["",[],["lib.rs"]],\
 "sui_test_transaction_builder":["",[],["lib.rs"]],\
 "sui_test_validator":["",[],["main.rs"]],\

@@ -976,7 +976,7 @@
     fs,
     path::PathBuf,
 };
-<span class="kw">use </span>sui_config::genesis::GenesisValidatorInfo;
+<span class="kw">use </span>sui_genesis_builder::validator_info::GenesisValidatorInfo;
 
 <span class="kw">use </span>sui_types::{
     base_types::{ObjectID, ObjectRef, SuiAddress},
@@ -1201,7 +1201,7 @@
                 <span class="kw">let </span>pop =
                     generate_proof_of_possession(<span class="kw-2">&amp;</span>keypair, (<span class="kw-2">&amp;</span>account_keypair.public()).into());
                 <span class="kw">let </span>validator_info = GenesisValidatorInfo {
-                    info: sui_config::ValidatorInfo {
+                    info: sui_genesis_builder::validator_info::ValidatorInfo {
                         name,
                         protocol_key: keypair.public().into(),
                         worker_key: worker_keypair.public().clone(),

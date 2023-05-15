@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["generate_genesis_system_object"],"struct":["Builder","Genesis","GenesisCeremonyParameters","GenesisChainParameters","GenesisValidatorInfo","GenesisValidatorMetadata","TokenAllocation","TokenDistributionSchedule","TokenDistributionScheduleBuilder","UnsignedGenesis"]};
+window.SIDEBAR_ITEMS = {"struct":["Genesis","GenesisCeremonyParameters","GenesisChainParameters","TokenAllocation","TokenDistributionSchedule","TokenDistributionScheduleBuilder","UnsignedGenesis"]};

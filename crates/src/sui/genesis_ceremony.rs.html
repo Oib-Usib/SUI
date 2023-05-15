@@ -400,7 +400,6 @@
 <a href="#400" id="400">400</a>
 <a href="#401" id="401">401</a>
 <a href="#402" id="402">402</a>
-<a href="#403" id="403">403</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -409,10 +408,8 @@
 <span class="kw">use </span>clap::Parser;
 <span class="kw">use </span>fastcrypto::encoding::{Encoding, Hex};
 <span class="kw">use </span>std::path::PathBuf;
-<span class="kw">use </span>sui_config::{
-    genesis::{Builder, UnsignedGenesis},
-    SUI_GENESIS_FILENAME,
-};
+<span class="kw">use </span>sui_config::{genesis::UnsignedGenesis, SUI_GENESIS_FILENAME};
+<span class="kw">use </span>sui_genesis_builder::Builder;
 <span class="kw">use </span>sui_types::multiaddr::Multiaddr;
 <span class="kw">use </span>sui_types::{
     base_types::SuiAddress,
@@ -539,7 +536,7 @@
             <span class="kw">let </span>network_keypair: NetworkKeyPair = read_network_keypair_from_file(network_key_file)<span class="question-mark">?</span>;
             <span class="kw">let </span>pop = generate_proof_of_possession(<span class="kw-2">&amp;</span>keypair, (<span class="kw-2">&amp;</span>account_keypair.public()).into());
             builder = builder.add_validator(
-                sui_config::ValidatorInfo {
+                sui_genesis_builder::validator_info::ValidatorInfo {
                     name,
                     protocol_key: keypair.public().into(),
                     worker_key: worker_keypair.public().clone(),
@@ -667,7 +664,8 @@
 </span><span class="kw">mod </span>test {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>anyhow::Result;
-    <span class="kw">use </span>sui_config::{utils, ValidatorInfo};
+    <span class="kw">use </span>sui_config::utils;
+    <span class="kw">use </span>sui_genesis_builder::validator_info::ValidatorInfo;
     <span class="kw">use </span>sui_keys::keypair_file::{write_authority_keypair_to_file, write_keypair_to_file};
     <span class="kw">use </span>sui_types::crypto::{get_key_pair_from_rng, AccountKeyPair, AuthorityKeyPair, SuiKeyPair};
 

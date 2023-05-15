@@ -1930,10 +1930,10 @@
 <span class="kw">use </span>mysten_network::config::Config;
 <span class="kw">use </span>std::convert::AsRef;
 <span class="kw">use </span>sui_config::genesis::Genesis;
-<span class="kw">use </span>sui_config::NetworkConfig;
 <span class="kw">use </span>sui_network::{
     default_mysten_network_config, DEFAULT_CONNECT_TIMEOUT_SEC, DEFAULT_REQUEST_TIMEOUT_SEC,
 };
+<span class="kw">use </span>sui_swarm_config::network_config::NetworkConfig;
 <span class="kw">use </span>sui_types::crypto::{AuthorityPublicKeyBytes, AuthoritySignInfo};
 <span class="kw">use </span>sui_types::error::UserInputError;
 <span class="kw">use </span>sui_types::fp_ensure;

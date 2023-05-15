@@ -376,7 +376,6 @@
 <span class="kw">use </span>clap::<span class="kw-2">*</span>;
 <span class="kw">use </span>std::net::SocketAddr;
 <span class="kw">use </span>std::path::Path;
-<span class="kw">use </span>sui_config::genesis_config::GenesisConfig;
 <span class="kw">use </span>sui_config::Config;
 <span class="kw">use </span>sui_config::{sui_cluster_test_config_dir, SUI_KEYSTORE_FILENAME, SUI_NETWORK_CONFIG};
 <span class="kw">use </span>sui_indexer::test_utils::start_test_indexer;
@@ -385,6 +384,7 @@
 <span class="kw">use </span>sui_sdk::sui_client_config::{SuiClientConfig, SuiEnv};
 <span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_swarm::memory::Swarm;
+<span class="kw">use </span>sui_swarm_config::genesis_config::GenesisConfig;
 <span class="kw">use </span>sui_types::base_types::SuiAddress;
 <span class="kw">use </span>sui_types::crypto::KeypairTraits;
 <span class="kw">use </span>sui_types::crypto::SuiKeyPair;
