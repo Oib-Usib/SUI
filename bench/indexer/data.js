@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684174908137,
+  "lastUpdate": 1684177645067,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7559,6 +7559,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 298509,
             "range": "± 18929",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "127570466+wlmyng@users.noreply.github.com",
+            "name": "wlmyng",
+            "username": "wlmyng"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1e616960b0735cac7a756cffcfabbf0300096808",
+          "message": "for errors that consist of vectors of errors, return all errors as an object array so downstream clients can handle as desired (#11962)",
+          "timestamp": "2023-05-15T11:56:24-07:00",
+          "tree_id": "6604d8be945c6b9f639733bbb5e3a3a9744d7423",
+          "url": "https://github.com/MystenLabs/sui/commit/1e616960b0735cac7a756cffcfabbf0300096808"
+        },
+        "date": 1684177633208,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144842239,
+            "range": "± 4555094",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 326948,
+            "range": "± 27592",
             "unit": "ns/iter"
           }
         ]
