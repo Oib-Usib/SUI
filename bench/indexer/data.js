@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684089263088,
+  "lastUpdate": 1684162161607,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7379,6 +7379,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 307034,
             "range": "± 25349",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "76067158+666lcz@users.noreply.github.com",
+            "name": "Chris Li",
+            "username": "666lcz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3df29ff96350f794294a24916b4d21f9b2252b5b",
+          "message": "[rpc][bugfix] Remove the usage of get_past_object_read from get_coin_metadata (#11971)\n\n## Description \r\n\r\nThe current implementation of `get_coin_metadata` relies on\r\n`get_past_object_read`, which stops working if the fullnode has pruning\r\nenabled. This is unnecessary because we only need the latest version of\r\nthe coinmetada object(if it is wrapped, then it's okay to return null).\r\n\r\n## Test Plan \r\n\r\ntested locally\r\n\r\n```\r\ncurl --location 'https://mainnet.sui.rpcpool.com' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n    \"jsonrpc\":\"2.0\",\r\n    \"id\":1,\r\n    \"method\":\"suix_getCoinMetadata\",\r\n    \"params\":[\"0x2::sui::SUI\"]\r\n}'\r\n```\r\n\r\n```\r\n{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"result\": {\r\n        \"decimals\": 9,\r\n        \"name\": \"Sui\",\r\n        \"symbol\": \"SUI\",\r\n        \"description\": \"\",\r\n        \"iconUrl\": null,\r\n        \"id\": \"0x9258181f5ceac8dbffb7030890243caed69a9599d2886d957a9cb7656af3bdb3\"\r\n    },\r\n    \"id\": 1\r\n}\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nFixed a bug for `get_coin_metadata` which can return null when the\r\nfullnode is pruned",
+          "timestamp": "2023-05-15T14:38:24Z",
+          "tree_id": "240096dd180887522cf22959492a11ed7d19cb8d",
+          "url": "https://github.com/MystenLabs/sui/commit/3df29ff96350f794294a24916b4d21f9b2252b5b"
+        },
+        "date": 1684162148403,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151431109,
+            "range": "± 5051251",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 328643,
+            "range": "± 31777",
             "unit": "ns/iter"
           }
         ]
