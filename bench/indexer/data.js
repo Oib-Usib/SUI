@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684163743606,
+  "lastUpdate": 1684173159134,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7487,6 +7487,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311312,
             "range": "± 12265",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4728caa3d5ea2a7db452c22d800d1719589e3255",
+          "message": "Split sui-config crate (#11968)\n\nsui-config crate started as a crate for the NodeConfig.\r\nHowever it has grown too much and no longer at the bottom of the\r\ndependency chain.\r\nThis PR splits some modules out of it:\r\n1. Split out sui-genesis-builder. This contains all the code to build a\r\ngenesis, which depends on the execution component. After this PR,\r\nsui-config no longer depends on the execution component, which means we\r\ncan now pass NodeConfig around even into the execution component, which\r\nwe have wanted to do for a while.\r\n2. Split out sui-swarm-config. This contains all the configs and\r\nbuilders to create a NetworkConfig for the swarm. It makes it clear now\r\nthat this is used for swarm, not for production.\r\n3. Renamed swarm.rs into network_config.rs for clarity.\r\n4. Renamed builder.rs into network_config_builder.rs for clarity.\r\n5. Moved FullnodeConfigBuilder out of node.rs into\r\nnetwork_config_builder.rs.",
+          "timestamp": "2023-05-15T17:38:30Z",
+          "tree_id": "4eda71df1c097014d44071eeff02a0305ad0731d",
+          "url": "https://github.com/MystenLabs/sui/commit/4728caa3d5ea2a7db452c22d800d1719589e3255"
+        },
+        "date": 1684173147313,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 161587857,
+            "range": "± 7867066",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 448456,
+            "range": "± 26968",
             "unit": "ns/iter"
           }
         ]
