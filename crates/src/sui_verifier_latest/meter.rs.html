@@ -131,7 +131,7 @@
 
         <span class="kw">let </span>new_ticks = <span class="self">self</span>.ticks.saturating_add(ticks);
         <span class="kw">if </span>new_ticks &gt;= max_ticks {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PartialVMError::new(StatusCode::CONSTRAINT_NOT_SATISFIED)
+            <span class="kw">return </span><span class="prelude-val">Err</span>(PartialVMError::new(StatusCode::PROGRAM_TOO_COMPLEX)
                     .with_message(<span class="macro">format!</span>(
                         <span class="string">&quot;program too complex. Ticks exceeded `{}` will exceed limits: `{} current + {} new &gt; {} max`)&quot;</span>,
                         <span class="self">self</span>.name, <span class="self">self</span>.ticks, ticks, max_ticks
