@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684173159134,
+  "lastUpdate": 1684174908137,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7523,6 +7523,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 448456,
             "range": "± 26968",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "141e417d822b62bd7be21211072831302e4b78d1",
+          "message": "Remove test-utils dep from sui-types and sui-move (#12002)\n\nWe have refactored enough code such that we can get rid of the\r\ndependency to test-utils in sui-types.\r\nRemoving it here will significantly speed up our builds, because for\r\narbitrary changes we don't have to always rebuild sui-types and\r\nsui-framework.\r\nThe last bit of the circular dependency is in sui-core, which isn't yet\r\nready to be removed.",
+          "timestamp": "2023-05-15T18:12:37Z",
+          "tree_id": "9a72199f40de7b39681c03571287f514d41ca9ed",
+          "url": "https://github.com/MystenLabs/sui/commit/141e417d822b62bd7be21211072831302e4b78d1"
+        },
+        "date": 1684174890904,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 107303079,
+            "range": "± 3040671",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 298509,
+            "range": "± 18929",
             "unit": "ns/iter"
           }
         ]
