@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684163722034,
+  "lastUpdate": 1684163743606,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7451,6 +7451,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 341351,
             "range": "± 19886",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "patrickkuo@me.com",
+            "name": "Patrick Kuo",
+            "username": "patrickkuo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c3eb2f833db77d80435316012c9e9d3686e15b25",
+          "message": "[bugfix] - fix incorrect string vec json -> bcs conversion (#11990)\n\n## Description \r\n\r\nfix incorrect string vec json -> bcs conversion\r\n\r\n## Test Plan \r\n\r\nadded unit tests",
+          "timestamp": "2023-05-15T16:03:07+01:00",
+          "tree_id": "b199c9ea29337770ae356397499bedf9a1d136fb",
+          "url": "https://github.com/MystenLabs/sui/commit/c3eb2f833db77d80435316012c9e9d3686e15b25"
+        },
+        "date": 1684163730645,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151501854,
+            "range": "± 5239244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311312,
+            "range": "± 12265",
             "unit": "ns/iter"
           }
         ]
