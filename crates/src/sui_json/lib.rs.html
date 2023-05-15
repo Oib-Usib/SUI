@@ -974,9 +974,6 @@
 <a href="#974" id="974">974</a>
 <a href="#975" id="975">975</a>
 <a href="#976" id="976">976</a>
-<a href="#977" id="977">977</a>
-<a href="#978" id="978">978</a>
-<a href="#979" id="979">979</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1252,13 +1249,10 @@
             <span class="comment">// For ascii and utf8 strings
             </span>(
                 JsonValue::String(s),
-                MoveTypeLayout::Struct(MoveStructLayout::WithTypes { type_, fields }),
-            ) <span class="kw">if </span>is_move_string_type(type_) =&gt; <span class="self">Self</span>::handle_inner_struct_layout(
-                <span class="kw-2">&amp;</span>fields.iter().map(|l| l.layout.clone()).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;(),
-                val,
-                ty,
-                s,
-            )<span class="question-mark">?</span>,
+                MoveTypeLayout::Struct(MoveStructLayout::WithTypes { type_, fields: <span class="kw">_ </span>}),
+            ) <span class="kw">if </span>is_move_string_type(type_) =&gt; {
+                MoveValue::Vector(s.as_bytes().iter().copied().map(MoveValue::U8).collect())
+            }
             <span class="comment">// For ID
             </span>(
                 JsonValue::String(s),
