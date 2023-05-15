@@ -71,6 +71,18 @@
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -78,6 +90,7 @@
 <span class="kw">use </span>hyper::header::InvalidHeaderValue;
 <span class="kw">use </span>jsonrpsee::core::Error <span class="kw">as </span>RpcError;
 <span class="kw">use </span>jsonrpsee::types::error::CallError;
+<span class="kw">use </span>jsonrpsee::types::ErrorObject;
 <span class="kw">use </span>sui_types::error::{SuiError, SuiObjectResponseError, UserInputError};
 <span class="kw">use </span>sui_types::quorum_driver_types::QuorumDriverError;
 <span class="kw">use </span>thiserror::Error;
@@ -139,6 +152,17 @@
                     RpcError::Call(CallError::InvalidParams(sui_error.into()))
                 }
                 <span class="kw">_ </span>=&gt; RpcError::Call(CallError::Failed(sui_error.into())),
+            },
+            Error::QuorumDriverError(err) =&gt; <span class="kw">match </span>err {
+                QuorumDriverError::NonRecoverableTransactionError { errors } =&gt; {
+                    <span class="kw">let </span>error_object = ErrorObject::owned(
+                        -<span class="number">32000</span>,
+                        <span class="string">&quot;Transaction has non recoverable errors from at least 1/3 of validators&quot;</span>,
+                        <span class="prelude-val">Some</span>(errors),
+                    );
+                    RpcError::Call(CallError::Custom(error_object))
+                }
+                <span class="kw">_ </span>=&gt; RpcError::Call(CallError::Failed(err.into())),
             },
             <span class="kw">_ </span>=&gt; RpcError::Call(CallError::Failed(<span class="self">self</span>.into())),
         }

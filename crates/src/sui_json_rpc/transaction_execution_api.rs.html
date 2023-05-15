@@ -259,6 +259,7 @@
 <a href="#259" id="259">259</a>
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -370,7 +371,8 @@
                 request_type,
             }
         ))
-        .<span class="kw">await</span><span class="question-mark">??</span>;
+        .<span class="kw">await</span><span class="question-mark">?
+        </span>.map_err(Error::from)<span class="question-mark">?</span>;
         drop(orch_timer);
 
         <span class="kw">let </span>_post_orch_timer = <span class="self">self</span>.metrics.post_orchestrator_latency_ms.start_timer();
