@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684177645067,
+  "lastUpdate": 1684184137669,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7595,6 +7595,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 326948,
             "range": "± 27592",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2aedc50ae589de50303377b8d4d570bdd84794a8",
+          "message": "In verifier metering, use PROGRAM_TOO_COMPLEX status code over CONSTRAINT_NOT_SATISFIED (#11961)\n\n## Description \r\n\r\n`CONSTRAINT_NOT_SATISFIED` is overloaded and not explicit enough for\r\nverifier timeouts.\r\nThere was a previous conversation between Move stakeholders to use\r\n`PROGRAM_TOO_COMPLEX`, which is what this PR adds.\r\n\r\n## Test Plan \r\n\r\nTypical tests\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-15T20:45:03Z",
+          "tree_id": "9a53f2bdcaa3c524c7588d27cb0f4b9f22e16204",
+          "url": "https://github.com/MystenLabs/sui/commit/2aedc50ae589de50303377b8d4d570bdd84794a8"
+        },
+        "date": 1684184125385,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 152311059,
+            "range": "± 5780832",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 466690,
+            "range": "± 27801",
             "unit": "ns/iter"
           }
         ]
