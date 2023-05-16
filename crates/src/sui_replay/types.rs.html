@@ -252,6 +252,9 @@
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
 <a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -274,8 +277,8 @@
 <span class="kw">use </span>tracing::error;
 
 <span class="comment">// TODO: make these configurable
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD: Duration = Duration::from_millis(<span class="number">10_000</span>);
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>RPC_TIMEOUT_ERR_NUM_RETRIES: u32 = <span class="number">3</span>;
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD: Duration = Duration::from_millis(<span class="number">1_000</span>);
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>RPC_TIMEOUT_ERR_NUM_RETRIES: u32 = <span class="number">2</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>MAX_CONCURRENT_REQUESTS: usize = <span class="number">1_000</span>;
 
 <span class="comment">// Struct tag used in system epoch change events
@@ -306,7 +309,7 @@
 
 <span class="attr">#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Error, Clone)]
-</span><span class="kw">pub enum </span>LocalExecError {
+</span><span class="kw">pub enum </span>ReplayEngineError {
     <span class="attr">#[error(<span class="string">&quot;SuiError: {:#?}&quot;</span>, err)]
     </span>SuiError { err: SuiError },
 
@@ -407,61 +410,64 @@
 
     <span class="attr">#[error(<span class="string">&quot;Error getting dynamic fields loaded objects: {}&quot;</span>, rpc_err)]
     </span>UnableToGetDynamicFieldLoadedObjects { rpc_err: String },
+
+    <span class="attr">#[error(<span class="string">&quot;Unsupported epoch in replay engine: {epoch}&quot;</span>)]
+    </span>EpochNotSupported { epoch: u64 },
 }
 
-<span class="kw">impl </span>From&lt;SuiObjectResponseError&gt; <span class="kw">for </span>LocalExecError {
+<span class="kw">impl </span>From&lt;SuiObjectResponseError&gt; <span class="kw">for </span>ReplayEngineError {
     <span class="kw">fn </span>from(err: SuiObjectResponseError) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span>err {
             SuiObjectResponseError::NotExists { object_id } =&gt; {
-                LocalExecError::ObjectNotExist { id: object_id }
+                ReplayEngineError::ObjectNotExist { id: object_id }
             }
             SuiObjectResponseError::Deleted {
                 object_id,
                 digest,
                 version,
-            } =&gt; LocalExecError::ObjectDeleted {
+            } =&gt; ReplayEngineError::ObjectDeleted {
                 id: object_id,
                 version,
                 digest,
             },
-            <span class="kw">_ </span>=&gt; LocalExecError::SuiObjectResponseError { err },
+            <span class="kw">_ </span>=&gt; ReplayEngineError::SuiObjectResponseError { err },
         }
     }
 }
 
-<span class="kw">impl </span>From&lt;LocalExecError&gt; <span class="kw">for </span>SuiError {
-    <span class="kw">fn </span>from(err: LocalExecError) -&gt; <span class="self">Self </span>{
+<span class="kw">impl </span>From&lt;ReplayEngineError&gt; <span class="kw">for </span>SuiError {
+    <span class="kw">fn </span>from(err: ReplayEngineError) -&gt; <span class="self">Self </span>{
         SuiError::Unknown(<span class="macro">format!</span>(<span class="string">&quot;{:#?}&quot;</span>, err))
     }
 }
 
-<span class="kw">impl </span>From&lt;SuiError&gt; <span class="kw">for </span>LocalExecError {
+<span class="kw">impl </span>From&lt;SuiError&gt; <span class="kw">for </span>ReplayEngineError {
     <span class="kw">fn </span>from(err: SuiError) -&gt; <span class="self">Self </span>{
-        LocalExecError::SuiError { err }
+        ReplayEngineError::SuiError { err }
     }
 }
-<span class="kw">impl </span>From&lt;SuiRpcError&gt; <span class="kw">for </span>LocalExecError {
+<span class="kw">impl </span>From&lt;SuiRpcError&gt; <span class="kw">for </span>ReplayEngineError {
     <span class="kw">fn </span>from(err: SuiRpcError) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span>err {
             SuiRpcError::RpcError(JsonRpseeError::RequestTimeout) =&gt; {
-                LocalExecError::SuiRpcRequestTimeout
+                ReplayEngineError::SuiRpcRequestTimeout
             }
-            <span class="kw">_ </span>=&gt; LocalExecError::SuiRpcError {
+            <span class="kw">_ </span>=&gt; ReplayEngineError::SuiRpcError {
                 err: <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, err),
             },
         }
     }
 }
 
-<span class="kw">impl </span>From&lt;UserInputError&gt; <span class="kw">for </span>LocalExecError {
+<span class="kw">impl </span>From&lt;UserInputError&gt; <span class="kw">for </span>ReplayEngineError {
     <span class="kw">fn </span>from(err: UserInputError) -&gt; <span class="self">Self </span>{
-        LocalExecError::UserInputError { err }
+        ReplayEngineError::UserInputError { err }
     }
 }
 
-<span class="kw">impl </span>From&lt;anyhow::Error&gt; <span class="kw">for </span>LocalExecError {
+<span class="kw">impl </span>From&lt;anyhow::Error&gt; <span class="kw">for </span>ReplayEngineError {
     <span class="kw">fn </span>from(err: anyhow::Error) -&gt; <span class="self">Self </span>{
-        LocalExecError::GeneralError {
+        ReplayEngineError::GeneralError {
             err: <span class="macro">format!</span>(<span class="string">&quot;{:#?}&quot;</span>, err),
         }
     }
@@ -486,11 +492,11 @@
     ResourceResolverGetResource {
         address: AccountAddress,
         typ: StructTag,
-        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, LocalExecError&gt;,
+        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, ReplayEngineError&gt;,
     },
     ModuleResolverGetModule {
         module_id: ModuleId,
-        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, LocalExecError&gt;,
+        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, ReplayEngineError&gt;,
     },
     ObjectStoreGetObject {
         object_id: ObjectID,
@@ -503,7 +509,7 @@
     },
     GetModuleGetModuleByModuleId {
         id: ModuleId,
-        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;CompiledModule&gt;, LocalExecError&gt;,
+        result: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;CompiledModule&gt;, ReplayEngineError&gt;,
     },
 }
 </code></pre></div></section></main></body></html>

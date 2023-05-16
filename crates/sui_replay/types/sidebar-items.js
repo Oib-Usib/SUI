@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ExecutionStoreEvent","LocalExecError"],"struct":["OnChainTransactionInfo"]};
+window.SIDEBAR_ITEMS = {"enum":["ExecutionStoreEvent","ReplayEngineError"],"struct":["OnChainTransactionInfo"]};

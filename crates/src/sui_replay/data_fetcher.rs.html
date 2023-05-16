@@ -550,10 +550,36 @@
 <a href="#550" id="550">550</a>
 <a href="#551" id="551">551</a>
 <a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span><span class="kw">crate</span>::types::LocalExecError;
+</span><span class="kw">use </span><span class="kw">crate</span>::types::ReplayEngineError;
 <span class="kw">use </span><span class="kw">crate</span>::types::EPOCH_CHANGE_STRUCT_TAG;
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>futures::future::join_all;
@@ -588,41 +614,49 @@
     </span><span class="kw">async fn </span>multi_get_versioned(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         objects: <span class="kw-2">&amp;</span>[(ObjectID, SequenceNumber)],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt;;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, ReplayEngineError&gt;;
 
     <span class="doccomment">/// Fetch the latest versions of objects
-    </span><span class="kw">async fn </span>multi_get_latest(<span class="kw-2">&amp;</span><span class="self">self</span>, objects: <span class="kw-2">&amp;</span>[ObjectID]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt;;
+    </span><span class="kw">async fn </span>multi_get_latest(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        objects: <span class="kw-2">&amp;</span>[ObjectID],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, ReplayEngineError&gt;;
 
     <span class="doccomment">/// Fetch the TXs for this checkpoint
-    </span><span class="kw">async fn </span>get_checkpoint_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, LocalExecError&gt;;
+    </span><span class="kw">async fn </span>get_checkpoint_txs(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        id: u64,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, ReplayEngineError&gt;;
 
     <span class="doccomment">/// Fetch the transaction info for a given transaction digest
     </span><span class="kw">async fn </span>get_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockResponse, LocalExecError&gt;;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockResponse, ReplayEngineError&gt;;
 
     <span class="kw">async fn </span>get_loaded_child_objects(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, LocalExecError&gt;;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, ReplayEngineError&gt;;
 
-    <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, LocalExecError&gt;;
+    <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, ReplayEngineError&gt;;
 
-    <span class="kw">async fn </span>fetch_random_tx(
+    <span class="kw">async fn </span>fetch_random_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="comment">// TODO: add more params
         </span>checkpoint_id_start: <span class="prelude-ty">Option</span>&lt;u64&gt;,
         checkpoint_id_end: <span class="prelude-ty">Option</span>&lt;u64&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, LocalExecError&gt;;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, ReplayEngineError&gt;;
 
     <span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_id: u64,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt;;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), ReplayEngineError&gt;;
 
-    <span class="kw">async fn </span>get_epoch_change_events(<span class="kw-2">&amp;</span><span class="self">self</span>, reverse: bool)
-        -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, LocalExecError&gt;;
+    <span class="kw">async fn </span>get_epoch_change_events(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        reverse: bool,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, ReplayEngineError&gt;;
 }
 
 <span class="attr">#[derive(Clone)]
@@ -653,21 +687,27 @@
     </span><span class="kw">async fn </span>multi_get_versioned(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         objects: <span class="kw-2">&amp;</span>[(ObjectID, SequenceNumber)],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; q.multi_get_versioned(objects).<span class="kw">await</span>,
             Fetchers::NodeStateDump(q) =&gt; q.multi_get_versioned(objects).<span class="kw">await</span>,
         }
     }
 
-    <span class="kw">async fn </span>multi_get_latest(<span class="kw-2">&amp;</span><span class="self">self</span>, objects: <span class="kw-2">&amp;</span>[ObjectID]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
+    <span class="kw">async fn </span>multi_get_latest(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        objects: <span class="kw-2">&amp;</span>[ObjectID],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; q.multi_get_latest(objects).<span class="kw">await</span>,
             Fetchers::NodeStateDump(q) =&gt; q.multi_get_latest(objects).<span class="kw">await</span>,
         }
     }
 
-    <span class="kw">async fn </span>get_checkpoint_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, LocalExecError&gt; {
+    <span class="kw">async fn </span>get_checkpoint_txs(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        id: u64,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; q.get_checkpoint_txs(id).<span class="kw">await</span>,
             Fetchers::NodeStateDump(q) =&gt; q.get_checkpoint_txs(id).<span class="kw">await</span>,
@@ -677,7 +717,7 @@
     <span class="kw">async fn </span>get_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockResponse, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockResponse, ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; q.get_transaction(tx_digest).<span class="kw">await</span>,
             Fetchers::NodeStateDump(q) =&gt; q.get_transaction(tx_digest).<span class="kw">await</span>,
@@ -687,32 +727,32 @@
     <span class="kw">async fn </span>get_loaded_child_objects(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; q.get_loaded_child_objects(tx_digest).<span class="kw">await</span>,
             Fetchers::NodeStateDump(q) =&gt; q.get_loaded_child_objects(tx_digest).<span class="kw">await</span>,
         }
     }
 
-    <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, LocalExecError&gt; {
+    <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; q.get_latest_checkpoint_sequence_number().<span class="kw">await</span>,
             Fetchers::NodeStateDump(q) =&gt; q.get_latest_checkpoint_sequence_number().<span class="kw">await</span>,
         }
     }
 
-    <span class="kw">async fn </span>fetch_random_tx(
+    <span class="kw">async fn </span>fetch_random_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         checkpoint_id_start: <span class="prelude-ty">Option</span>&lt;u64&gt;,
         checkpoint_id_end: <span class="prelude-ty">Option</span>&lt;u64&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; {
-                q.fetch_random_tx(checkpoint_id_start, checkpoint_id_end)
+                q.fetch_random_transaction(checkpoint_id_start, checkpoint_id_end)
                     .<span class="kw">await
             </span>}
             Fetchers::NodeStateDump(q) =&gt; {
-                q.fetch_random_tx(checkpoint_id_start, checkpoint_id_end)
+                q.fetch_random_transaction(checkpoint_id_start, checkpoint_id_end)
                     .<span class="kw">await
             </span>}
         }
@@ -721,7 +761,7 @@
     <span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_id: u64,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; q.get_epoch_start_timestamp_and_rgp(epoch_id).<span class="kw">await</span>,
             Fetchers::NodeStateDump(q) =&gt; q.get_epoch_start_timestamp_and_rgp(epoch_id).<span class="kw">await</span>,
@@ -731,7 +771,7 @@
     <span class="kw">async fn </span>get_epoch_change_events(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         reverse: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, ReplayEngineError&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Fetchers::Remote(q) =&gt; q.get_epoch_change_events(reverse).<span class="kw">await</span>,
             Fetchers::NodeStateDump(q) =&gt; q.get_epoch_change_events(reverse).<span class="kw">await</span>,
@@ -751,7 +791,7 @@
     </span><span class="kw">async fn </span>multi_get_versioned(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         objects: <span class="kw-2">&amp;</span>[(ObjectID, VersionNumber)],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, ReplayEngineError&gt; {
         <span class="kw">let </span>options = SuiObjectDataOptions::bcs_lossless();
 
         <span class="kw">let </span>objs: Vec&lt;<span class="kw">_</span>&gt; = objects
@@ -772,14 +812,17 @@
             .<span class="kw">await
             </span>.into_iter()
             .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;, <span class="kw">_</span>&gt;&gt;()
-            .map_err(LocalExecError::from)<span class="question-mark">?
+            .map_err(ReplayEngineError::from)<span class="question-mark">?
             </span>.iter()
             .flatten()
             .map(|q| convert_past_obj_response(q.clone()))
             .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()
     }
 
-    <span class="kw">async fn </span>multi_get_latest(<span class="kw-2">&amp;</span><span class="self">self</span>, objects: <span class="kw-2">&amp;</span>[ObjectID]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
+    <span class="kw">async fn </span>multi_get_latest(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        objects: <span class="kw-2">&amp;</span>[ObjectID],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, ReplayEngineError&gt; {
         <span class="kw">let </span>options = SuiObjectDataOptions::bcs_lossless();
 
         <span class="kw">let </span>objectsx = objects.chunks(<span class="kw-2">*</span>QUERY_MAX_RESULT_LIMIT).map(|q| {
@@ -792,40 +835,43 @@
             .<span class="kw">await
             </span>.into_iter()
             .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;, <span class="kw">_</span>&gt;&gt;()
-            .map_err(LocalExecError::from)<span class="question-mark">?
+            .map_err(ReplayEngineError::from)<span class="question-mark">?
             </span>.iter()
             .flatten()
             .map(obj_from_sui_obj_response)
             .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()
     }
 
-    <span class="kw">async fn </span>get_checkpoint_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, LocalExecError&gt; {
+    <span class="kw">async fn </span>get_checkpoint_txs(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        id: u64,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, ReplayEngineError&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.rpc_client
             .read_api()
             .get_checkpoint(id.into())
             .<span class="kw">await
-            </span>.map_err(|q| LocalExecError::SuiRpcError { err: q.to_string() })<span class="question-mark">?
+            </span>.map_err(|q| ReplayEngineError::SuiRpcError { err: q.to_string() })<span class="question-mark">?
             </span>.transactions)
     }
 
     <span class="kw">async fn </span>get_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockResponse, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockResponse, ReplayEngineError&gt; {
         <span class="kw">let </span>tx_fetch_opts = SuiTransactionBlockResponseOptions::full_content();
 
         <span class="self">self</span>.rpc_client
             .read_api()
             .get_transaction_with_options(<span class="kw-2">*</span>tx_digest, tx_fetch_opts)
             .<span class="kw">await
-            </span>.map_err(LocalExecError::from)
+            </span>.map_err(ReplayEngineError::from)
     }
 
     <span class="kw">async fn </span>get_loaded_child_objects(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, ReplayEngineError&gt; {
         <span class="kw">let </span>loaded_child_objs = <span class="kw">match </span><span class="self">self
             </span>.rpc_client
             .read_api()
@@ -835,7 +881,7 @@
             <span class="prelude-val">Ok</span>(objs) =&gt; objs,
             <span class="prelude-val">Err</span>(e) =&gt; {
                 <span class="macro">error!</span>(<span class="string">&quot;Error getting dynamic fields loaded objects: {}. This RPC server might not support this feature yet&quot;</span>, e);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(LocalExecError::UnableToGetDynamicFieldLoadedObjects {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(ReplayEngineError::UnableToGetDynamicFieldLoadedObjects {
                     rpc_err: e.to_string(),
                 });
             }
@@ -849,23 +895,23 @@
             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;())
     }
 
-    <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, LocalExecError&gt; {
+    <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, ReplayEngineError&gt; {
         <span class="self">self</span>.rpc_client
             .read_api()
             .get_latest_checkpoint_sequence_number()
             .<span class="kw">await
-            </span>.map_err(LocalExecError::from)
+            </span>.map_err(ReplayEngineError::from)
     }
 
-    <span class="kw">async fn </span>fetch_random_tx(
+    <span class="kw">async fn </span>fetch_random_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="comment">// TODO: add more params
-        </span>checkpoint_id_start: <span class="prelude-ty">Option</span>&lt;u64&gt;,
-        checkpoint_id_end: <span class="prelude-ty">Option</span>&lt;u64&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, LocalExecError&gt; {
-        <span class="kw">let </span>checkpoint_id_end =
-            checkpoint_id_end.unwrap_or(<span class="self">self</span>.get_latest_checkpoint_sequence_number().<span class="kw">await</span><span class="question-mark">?</span>);
-        <span class="kw">let </span>checkpoint_id_start = checkpoint_id_start.unwrap_or(<span class="number">1</span>);
+        </span>checkpoint_id_start_inclusive: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+        checkpoint_id_end_inclusive: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, ReplayEngineError&gt; {
+        <span class="kw">let </span>checkpoint_id_end = checkpoint_id_end_inclusive
+            .unwrap_or(<span class="self">self</span>.get_latest_checkpoint_sequence_number().<span class="kw">await</span><span class="question-mark">?</span>);
+        <span class="kw">let </span>checkpoint_id_start = checkpoint_id_start_inclusive.unwrap_or(<span class="number">1</span>);
         <span class="kw">let </span>checkpoint_id = rand::thread_rng().gen_range(checkpoint_id_start..=checkpoint_id_end);
 
         <span class="kw">let </span>txs = <span class="self">self</span>.get_checkpoint_txs(checkpoint_id).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -877,7 +923,7 @@
     <span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_id: u64,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), ReplayEngineError&gt; {
         <span class="kw">let </span>event = <span class="self">self
             </span>.get_epoch_change_events(<span class="bool-val">true</span>)
             .<span class="kw">await</span><span class="question-mark">?
@@ -886,12 +932,12 @@
                 <span class="prelude-val">Ok</span>((epoch, <span class="kw">_</span>)) =&gt; epoch == epoch_id,
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
             })
-            .ok_or(LocalExecError::EventNotFound { epoch: epoch_id })<span class="question-mark">?</span>;
+            .ok_or(ReplayEngineError::EventNotFound { epoch: epoch_id })<span class="question-mark">?</span>;
 
         <span class="kw">let </span>reference_gas_price = <span class="kw">if let </span>serde_json::Value::Object(w) = event.parsed_json {
             u64::from_str(<span class="kw-2">&amp;</span>w[<span class="string">&quot;reference_gas_price&quot;</span>].to_string().replace(<span class="string">&#39;\&quot;&#39;</span>, <span class="string">&quot;&quot;</span>)).unwrap()
         } <span class="kw">else </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(LocalExecError::UnexpectedEventFormat {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ReplayEngineError::UnexpectedEventFormat {
                 event: event.clone(),
             });
         };
@@ -907,13 +953,13 @@
         <span class="kw">if let </span>TransactionKind::ChangeEpoch(change) = tx_kind_orig {
             <span class="kw">return </span><span class="prelude-val">Ok</span>((change.epoch_start_timestamp_ms, reference_gas_price));
         }
-        <span class="prelude-val">Err</span>(LocalExecError::InvalidEpochChangeTx { epoch: epoch_id })
+        <span class="prelude-val">Err</span>(ReplayEngineError::InvalidEpochChangeTx { epoch: epoch_id })
     }
 
     <span class="kw">async fn </span>get_epoch_change_events(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         reverse: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, ReplayEngineError&gt; {
         <span class="kw">let </span>struct_tag_str = EPOCH_CHANGE_STRUCT_TAG.to_string();
         <span class="kw">let </span>struct_tag = parse_struct_tag(<span class="kw-2">&amp;</span>struct_tag_str)<span class="question-mark">?</span>;
 
@@ -923,7 +969,7 @@
             .event_api()
             .query_events(EventFilter::MoveEventType(struct_tag), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, reverse)
             .<span class="kw">await
-            </span>.map_err(|e| LocalExecError::UnableToQuerySystemEvents {
+            </span>.map_err(|e| ReplayEngineError::UnableToQuerySystemEvents {
                 rpc_err: e.to_string(),
             })<span class="question-mark">?
             </span>.data
@@ -932,23 +978,23 @@
     }
 }
 
-<span class="kw">fn </span>convert_past_obj_response(resp: SuiPastObjectResponse) -&gt; <span class="prelude-ty">Result</span>&lt;Object, LocalExecError&gt; {
+<span class="kw">fn </span>convert_past_obj_response(resp: SuiPastObjectResponse) -&gt; <span class="prelude-ty">Result</span>&lt;Object, ReplayEngineError&gt; {
     <span class="kw">match </span>resp {
         SuiPastObjectResponse::VersionFound(o) =&gt; obj_from_sui_obj_data(<span class="kw-2">&amp;</span>o),
-        SuiPastObjectResponse::ObjectDeleted(r) =&gt; <span class="prelude-val">Err</span>(LocalExecError::ObjectDeleted {
+        SuiPastObjectResponse::ObjectDeleted(r) =&gt; <span class="prelude-val">Err</span>(ReplayEngineError::ObjectDeleted {
             id: r.object_id,
             version: r.version,
             digest: r.digest,
         }),
-        SuiPastObjectResponse::ObjectNotExists(id) =&gt; <span class="prelude-val">Err</span>(LocalExecError::ObjectNotExist { id }),
+        SuiPastObjectResponse::ObjectNotExists(id) =&gt; <span class="prelude-val">Err</span>(ReplayEngineError::ObjectNotExist { id }),
         SuiPastObjectResponse::VersionNotFound(id, version) =&gt; {
-            <span class="prelude-val">Err</span>(LocalExecError::ObjectVersionNotFound { id, version })
+            <span class="prelude-val">Err</span>(ReplayEngineError::ObjectVersionNotFound { id, version })
         }
         SuiPastObjectResponse::VersionTooHigh {
             object_id,
             asked_version,
             latest_version,
-        } =&gt; <span class="prelude-val">Err</span>(LocalExecError::ObjectVersionTooHigh {
+        } =&gt; <span class="prelude-val">Err</span>(ReplayEngineError::ObjectVersionTooHigh {
             id: object_id,
             asked_version,
             latest_version,
@@ -956,26 +1002,26 @@
     }
 }
 
-<span class="kw">fn </span>obj_from_sui_obj_response(o: <span class="kw-2">&amp;</span>SuiObjectResponse) -&gt; <span class="prelude-ty">Result</span>&lt;Object, LocalExecError&gt; {
-    <span class="kw">let </span>o = o.object().map_err(LocalExecError::from)<span class="question-mark">?</span>.clone();
+<span class="kw">fn </span>obj_from_sui_obj_response(o: <span class="kw-2">&amp;</span>SuiObjectResponse) -&gt; <span class="prelude-ty">Result</span>&lt;Object, ReplayEngineError&gt; {
+    <span class="kw">let </span>o = o.object().map_err(ReplayEngineError::from)<span class="question-mark">?</span>.clone();
     obj_from_sui_obj_data(<span class="kw-2">&amp;</span>o)
 }
 
-<span class="kw">fn </span>obj_from_sui_obj_data(o: <span class="kw-2">&amp;</span>SuiObjectData) -&gt; <span class="prelude-ty">Result</span>&lt;Object, LocalExecError&gt; {
+<span class="kw">fn </span>obj_from_sui_obj_data(o: <span class="kw-2">&amp;</span>SuiObjectData) -&gt; <span class="prelude-ty">Result</span>&lt;Object, ReplayEngineError&gt; {
     <span class="kw">match </span>TryInto::&lt;Object&gt;::try_into(o.clone()) {
         <span class="prelude-val">Ok</span>(obj) =&gt; <span class="prelude-val">Ok</span>(obj),
         <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(e.into()),
     }
 }
 
-<span class="kw">pub fn </span>extract_epoch_and_version(ev: SuiEvent) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
+<span class="kw">pub fn </span>extract_epoch_and_version(ev: SuiEvent) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), ReplayEngineError&gt; {
     <span class="kw">if let </span>serde_json::Value::Object(w) = ev.parsed_json {
         <span class="kw">let </span>epoch = u64::from_str(<span class="kw-2">&amp;</span>w[<span class="string">&quot;epoch&quot;</span>].to_string().replace(<span class="string">&#39;\&quot;&#39;</span>, <span class="string">&quot;&quot;</span>)).unwrap();
         <span class="kw">let </span>version = u64::from_str(<span class="kw-2">&amp;</span>w[<span class="string">&quot;protocol_version&quot;</span>].to_string().replace(<span class="string">&#39;\&quot;&#39;</span>, <span class="string">&quot;&quot;</span>)).unwrap();
         <span class="kw">return </span><span class="prelude-val">Ok</span>((epoch, version));
     }
 
-    <span class="prelude-val">Err</span>(LocalExecError::UnexpectedEventFormat { event: ev })
+    <span class="prelude-val">Err</span>(ReplayEngineError::UnexpectedEventFormat { event: ev })
 }
 
 <span class="attr">#[derive(Debug, Clone)]
@@ -1021,14 +1067,14 @@
     <span class="kw">async fn </span>multi_get_versioned(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         objects: <span class="kw-2">&amp;</span>[(ObjectID, SequenceNumber)],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, ReplayEngineError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>resp = <span class="macro">vec!</span>[];
         objects.iter().try_for_each(|(id, version)| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(obj) = <span class="self">self</span>.object_ref_pool.get(<span class="kw-2">&amp;</span>(<span class="kw-2">*</span>id, <span class="kw-2">*</span>version)) {
                 resp.push(obj.clone());
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(());
             }
-            <span class="prelude-val">Err</span>(LocalExecError::ObjectVersionNotFound {
+            <span class="prelude-val">Err</span>(ReplayEngineError::ObjectVersionNotFound {
                 id: <span class="kw-2">*</span>id,
                 version: <span class="kw-2">*</span>version,
             })
@@ -1036,33 +1082,39 @@
         <span class="prelude-val">Ok</span>(resp)
     }
 
-    <span class="kw">async fn </span>multi_get_latest(<span class="kw-2">&amp;</span><span class="self">self</span>, objects: <span class="kw-2">&amp;</span>[ObjectID]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, LocalExecError&gt; {
+    <span class="kw">async fn </span>multi_get_latest(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        objects: <span class="kw-2">&amp;</span>[ObjectID],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Object&gt;, ReplayEngineError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>resp = <span class="macro">vec!</span>[];
         objects.iter().try_for_each(|id| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(obj) = <span class="self">self</span>.latest_object_version_pool.get(id) {
                 resp.push(obj.clone());
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(());
             }
-            <span class="prelude-val">Err</span>(LocalExecError::ObjectNotExist { id: <span class="kw-2">*</span>id })
+            <span class="prelude-val">Err</span>(ReplayEngineError::ObjectNotExist { id: <span class="kw-2">*</span>id })
         })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(resp)
     }
 
-    <span class="kw">async fn </span>get_checkpoint_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, _id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, LocalExecError&gt; {
+    <span class="kw">async fn </span>get_checkpoint_txs(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        _id: u64,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;TransactionDigest&gt;, ReplayEngineError&gt; {
         <span class="macro">unimplemented!</span>(<span class="string">&quot;get_checkpoint_txs for state dump is not implemented&quot;</span>)
     }
 
     <span class="kw">async fn </span>get_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         _tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockResponse, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockResponse, ReplayEngineError&gt; {
         <span class="macro">unimplemented!</span>(<span class="string">&quot;get_transaction for state dump is not implemented&quot;</span>)
     }
 
     <span class="kw">async fn </span>get_loaded_child_objects(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         _tx_digest: <span class="kw-2">&amp;</span>TransactionDigest,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(ObjectID, SequenceNumber)&gt;, ReplayEngineError&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.node_state_dump
             .loaded_child_objects
@@ -1072,23 +1124,23 @@
             .collect())
     }
 
-    <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, LocalExecError&gt; {
+    <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, ReplayEngineError&gt; {
         <span class="macro">unimplemented!</span>(<span class="string">&quot;get_latest_checkpoint_sequence_number for state dump is not implemented&quot;</span>)
     }
 
-    <span class="kw">async fn </span>fetch_random_tx(
+    <span class="kw">async fn </span>fetch_random_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="comment">// TODO: add more params
         </span>_checkpoint_id_start: <span class="prelude-ty">Option</span>&lt;u64&gt;,
         _checkpoint_id_end: <span class="prelude-ty">Option</span>&lt;u64&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionDigest, ReplayEngineError&gt; {
         <span class="macro">unimplemented!</span>(<span class="string">&quot;fetch_random_tx for state dump is not implemented&quot;</span>)
     }
 
     <span class="kw">async fn </span>get_epoch_start_timestamp_and_rgp(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         _epoch_id: u64,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64), ReplayEngineError&gt; {
         <span class="prelude-val">Ok</span>((
             <span class="self">self</span>.node_state_dump.epoch_start_timestamp_ms,
             <span class="self">self</span>.node_state_dump.reference_gas_price,
@@ -1098,7 +1150,7 @@
     <span class="kw">async fn </span>get_epoch_change_events(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         _reverse: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, LocalExecError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiEvent&gt;, ReplayEngineError&gt; {
         <span class="macro">unimplemented!</span>(<span class="string">&quot;get_epoch_change_events for state dump is not implemented&quot;</span>)
     }
 }
