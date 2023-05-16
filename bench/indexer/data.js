@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684267653797,
+  "lastUpdate": 1684276311690,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7811,6 +7811,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 504266,
             "range": "± 41496",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d932db90bc86d5d811949fac2ef194fa2877b282",
+          "message": "Improve replay fuzzing (#12028)\n\n## Description \r\n\r\nAdds CLI to tail the network in replay fuzzing among other smaller\r\nfeatures.\r\nExample usage: starts at checkpoint 2013829 and runs the fuzzer on 2\r\nmutations for each the next 300 TXs from that point.\r\nIf we want to tail the network, we just have to set b to u64::MAX.\r\n\r\n`./target/debug/sui-tool replay --rpc\r\nhttps://fullnode.mainnet.sui.io:443 fz -s 2013829 -n 2 -b 300`\r\n\r\n## Test Plan \r\n\r\nManual\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-16T18:20:51-04:00",
+          "tree_id": "24bfea67c03fcabd75255abe9f24072f0e56d360",
+          "url": "https://github.com/MystenLabs/sui/commit/d932db90bc86d5d811949fac2ef194fa2877b282"
+        },
+        "date": 1684276299057,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 143198845,
+            "range": "± 5692758",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 343845,
+            "range": "± 84648",
             "unit": "ns/iter"
           }
         ]
