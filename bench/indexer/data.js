@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684243606576,
+  "lastUpdate": 1684254790087,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7667,6 +7667,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 321859,
             "range": "± 28729",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123408603+healthydeve@users.noreply.github.com",
+            "name": "Jian Lu",
+            "username": "healthydeve"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0952f9586aef9e432452f04f8d0652d629c81229",
+          "message": "[faucet] Adding recursive async call so that faucet auto selects next coin (#11923)\n\n## Description \r\n\r\nFix for https://mysten.atlassian.net/browse/SUI-1731\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\nlocally, and will use staging to bake\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-16T12:22:11-04:00",
+          "tree_id": "0539ab3b77dc01932e66fe8a90ac50d3e3b14e5c",
+          "url": "https://github.com/MystenLabs/sui/commit/0952f9586aef9e432452f04f8d0652d629c81229"
+        },
+        "date": 1684254775766,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 154416987,
+            "range": "± 4427394",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 317932,
+            "range": "± 16438",
             "unit": "ns/iter"
           }
         ]
