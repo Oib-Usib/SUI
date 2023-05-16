@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684255223937,
+  "lastUpdate": 1684264242331,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7739,6 +7739,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 259036,
             "range": "± 18280",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "731ed9724145d417f69122177bde44f497c05b41",
+          "message": "[sui-framework/package] `Publisher` checks recognise upgrades (#12026)\n\n## Description\r\n\r\nChange the behaviour of functions like:\r\n\r\n```\r\nsui::package::from_package<T>(self: &Publisher): bool\r\nsui::package::from_module<T>(self: &Publisher): bool\r\n```\r\n\r\nto return `true` when `T` is from an upgraded version of the package\r\nassociated with `Publisher`. Previously it was impossible to check the\r\npackage ownership of a type introduced in an upgraded package (the\r\nupgraded type's type name didn't match the original package's\r\n`Publisher` and it was impossible to create a `Publisher` for the\r\nupgraded package, because it requires an OTW which we can't create for\r\nupgraded packages).\r\n\r\nThis support was added by introducing a new stdlib function:\r\n`std::typename::get_original`, as of protocol version 11, which produces\r\na runtime representation of the type that uses original (aka runtime)\r\npackage IDs instead of defining package IDs (the default behaviour for\r\n`std::typename::get` and any other case where a runtime representation\r\nof the type is converted into an on-chain or storage representation of a\r\ntype).\r\n\r\n## Test Plan\r\n\r\nNew transactional test cases for `std::type_name::get_original` and\r\n`sui::package::from_package`:\r\n\r\n```\r\n$ cargo nextest run -- upgrade/type_names.move\r\n$ cargo nextest run -- upgrade/publisher.move\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nAs of protocol version 11:\r\n\r\n- `sui::package::from_package<T>(self: &Publisher)` and\r\n`sui::package::from_module<T>(self: &Publisher)` return `true` when `T`\r\nis a type introduced at any upgraded version of the package associated\r\nwith `self: &Publisher` (rather than just the types originally present\r\nwhen that package was published).\r\n- `std::type_name::get_original` is introduced as a new stdlib function\r\nto return a representation of the type where package IDs have all been\r\nnormalized to \"original\" IDs (the ID of the first version of a package)\r\nin contrast to the default behaviour of `std::type_name::get` which\r\ndistinguishes types introduced at different versions of a package by\r\nassigning them the ID of the package that introduced them.",
+          "timestamp": "2023-05-16T12:01:58-07:00",
+          "tree_id": "88f0aca9888463779cc950348561f4e262ecb066",
+          "url": "https://github.com/MystenLabs/sui/commit/731ed9724145d417f69122177bde44f497c05b41"
+        },
+        "date": 1684264227920,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105370631,
+            "range": "± 5560703",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 259957,
+            "range": "± 19031",
             "unit": "ns/iter"
           }
         ]
