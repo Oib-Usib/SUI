@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684264242331,
+  "lastUpdate": 1684267653797,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7775,6 +7775,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 259957,
             "range": "± 19031",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "127570466+wlmyng@users.noreply.github.com",
+            "name": "wlmyng",
+            "username": "wlmyng"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c3d9cc87f34fbe4b83a5898eaa1a72b5e9f24f14",
+          "message": "3/n improve sui-json-rpc error codes and handling (#11928)\n\n## Description \r\n\r\nReplace anyhow errors with Error enum on sui-json-rpc where possible\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n[API behavioral changes] - rpc methods that result in errors of variant\r\n`UserInputError`, `SuiRpcInputError`, `SuiError::TransactionNotFound` or\r\n`SuiError::TransactionsNotFound` now return error code `-32602` instead\r\nof `-32000`.",
+          "timestamp": "2023-05-16T15:56:52-04:00",
+          "tree_id": "837a2495ffd5acf2236594a07c3884b14c32d952",
+          "url": "https://github.com/MystenLabs/sui/commit/c3d9cc87f34fbe4b83a5898eaa1a72b5e9f24f14"
+        },
+        "date": 1684267640936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 155817609,
+            "range": "± 4487327",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 504266,
+            "range": "± 41496",
             "unit": "ns/iter"
           }
         ]
