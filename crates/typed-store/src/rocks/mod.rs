@@ -2031,13 +2031,13 @@ pub fn read_size_from_env(var_name: &str) -> Option<usize> {
 
 #[derive(Default, Clone, Debug)]
 pub struct ReadWriteOptions {
-    pub ignore_range_deletions: bool,
+    pub apply_range_deletions: bool,
 }
 
 impl ReadWriteOptions {
     pub fn readopts(&self) -> ReadOptions {
         let mut readopts = ReadOptions::default();
-        readopts.set_ignore_range_deletions(self.ignore_range_deletions);
+        readopts.set_ignore_range_deletions(!self.apply_range_deletions);
         readopts
     }
     pub fn writeopts(&self) -> WriteOptions {

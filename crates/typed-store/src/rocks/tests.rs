@@ -487,7 +487,9 @@ async fn test_delete_range() {
         MetricConf::default(),
         None,
         None,
-        &ReadWriteOptions::default(),
+        &ReadWriteOptions {
+            apply_range_deletions: true,
+        },
     )
     .expect("Failed to open storage");
 
