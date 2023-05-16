@@ -1261,6 +1261,30 @@
 <a href="#1261" id="1261">1261</a>
 <a href="#1262" id="1262">1262</a>
 <a href="#1263" id="1263">1263</a>
+<a href="#1264" id="1264">1264</a>
+<a href="#1265" id="1265">1265</a>
+<a href="#1266" id="1266">1266</a>
+<a href="#1267" id="1267">1267</a>
+<a href="#1268" id="1268">1268</a>
+<a href="#1269" id="1269">1269</a>
+<a href="#1270" id="1270">1270</a>
+<a href="#1271" id="1271">1271</a>
+<a href="#1272" id="1272">1272</a>
+<a href="#1273" id="1273">1273</a>
+<a href="#1274" id="1274">1274</a>
+<a href="#1275" id="1275">1275</a>
+<a href="#1276" id="1276">1276</a>
+<a href="#1277" id="1277">1277</a>
+<a href="#1278" id="1278">1278</a>
+<a href="#1279" id="1279">1279</a>
+<a href="#1280" id="1280">1280</a>
+<a href="#1281" id="1281">1281</a>
+<a href="#1282" id="1282">1282</a>
+<a href="#1283" id="1283">1283</a>
+<a href="#1284" id="1284">1284</a>
+<a href="#1285" id="1285">1285</a>
+<a href="#1286" id="1286">1286</a>
+<a href="#1287" id="1287">1287</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1301,7 +1325,7 @@
 <span class="kw">use </span>sui_types::digests::TransactionEventsDigest;
 <span class="kw">use </span>sui_types::display::DisplayVersionUpdatedEvent;
 <span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI, TransactionEvents};
-<span class="kw">use </span>sui_types::error::{SuiObjectResponseError, UserInputError};
+<span class="kw">use </span>sui_types::error::SuiObjectResponseError;
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointSequenceNumber, CheckpointTimestamp};
 <span class="kw">use </span>sui_types::move_package::normalize_modules;
 <span class="kw">use </span>sui_types::object::{Data, Object, ObjectRead, PastObjectRead};
@@ -1312,7 +1336,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::api::JsonRpcMetrics;
 <span class="kw">use </span><span class="kw">crate</span>::api::{validate_limit, ReadApiServer};
 <span class="kw">use </span><span class="kw">crate</span>::api::{QUERY_MAX_RESULT_LIMIT, QUERY_MAX_RESULT_LIMIT_CHECKPOINTS};
-<span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span><span class="kw">crate</span>::error::{Error, SuiRpcInputError};
 <span class="kw">use </span><span class="kw">crate</span>::with_tracing;
 <span class="kw">use crate</span>::{
     get_balance_changes_from_effect, get_object_changes, ObjectProviderCache, SuiRpcModule,
@@ -1403,10 +1427,9 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SuiTransactionBlockResponse&gt;, Error&gt; {
         <span class="kw">let </span>num_digests = digests.len();
         <span class="kw">if </span>num_digests &gt; <span class="kw-2">*</span>QUERY_MAX_RESULT_LIMIT {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UserInputError(UserInputError::SizeLimitExceeded {
-                limit: <span class="string">&quot;multi get transaction input limit&quot;</span>.to_string(),
-                value: QUERY_MAX_RESULT_LIMIT.to_string(),
-            }));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::SuiRpcInputError(
+                SuiRpcInputError::SizeLimitExceeded(QUERY_MAX_RESULT_LIMIT.to_string()),
+            ));
         }
         <span class="self">self</span>.metrics
             .get_tx_blocks_limit
@@ -1422,15 +1445,17 @@
                     .map(|k| (k, IntermediateTransactionResponse::new(<span class="kw-2">*</span>k))),
             );
         <span class="kw">if </span>temp_response.len() &lt; num_digests {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;The list of digests in the input contain duplicates&quot;</span>).into());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::SuiRpcInputError(
+                SuiRpcInputError::ContainsDuplicates,
+            ));
         }
 
         <span class="kw">if </span>opts.require_input() {
             <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
-            <span class="kw">let </span>digest_clone = digests.clone();
+            <span class="kw">let </span>digests_clone = digests.clone();
             <span class="kw">let </span>transactions =
-                state.multi_get_executed_transactions(<span class="kw-2">&amp;</span>digest_clone).tap_err(
-                    |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digest_clone, <span class="string">&quot;Failed to multi get transaction: {:?}&quot;</span>, err),
+                state.multi_get_executed_transactions(<span class="kw-2">&amp;</span>digests_clone).tap_err(
+                    |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digests_clone, <span class="string">&quot;Failed to multi get transactions: {:?}&quot;</span>, err),
                 )<span class="question-mark">?</span>;
 
             <span class="kw">for </span>((_digest, cache_entry), txn) <span class="kw">in
@@ -1445,7 +1470,7 @@
             <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
             <span class="kw">let </span>digests_clone = digests.clone();
             <span class="kw">let </span>effects_list = state.multi_get_executed_effects(<span class="kw-2">&amp;</span>digests_clone).tap_err(
-                |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digests_clone, <span class="string">&quot;Failed to multi get effects: {:?}&quot;</span>, err),
+                |err| <span class="macro">debug!</span>(digests=<span class="question-mark">?</span>digests_clone, <span class="string">&quot;Failed to multi get effects for transactions: {:?}&quot;</span>, err),
             )<span class="question-mark">?</span>;
             <span class="kw">for </span>((_digest, cache_entry), e) <span class="kw">in
                 </span>temp_response.iter_mut().zip(effects_list.into_iter())
@@ -1481,8 +1506,7 @@
             </span>.state
             .multi_get_checkpoint_by_sequence_number(<span class="kw-2">&amp;</span>unique_checkpoint_numbers)
             .map_err(|e| {
-                <span class="macro">error!</span>(<span class="string">&quot;Failed to fetch checkpoint summarys by these checkpoint ids: {unique_checkpoint_numbers:?} with error: {e:?}&quot;</span>);
-                <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
+                Error::UnexpectedError(<span class="macro">format!</span>(<span class="string">&quot;Failed to fetch checkpoint summaries by these checkpoint ids: {unique_checkpoint_numbers:?} with error: {e:?}&quot;</span>))
             })<span class="question-mark">?
             </span>.into_iter()
             .map(|c| c.map(|checkpoint| checkpoint.timestamp_ms));
@@ -1524,8 +1548,7 @@
                 </span>.state
                 .multi_get_events(<span class="kw-2">&amp;</span>event_digests_list)
                 .map_err(|e| {
-                    <span class="macro">error!</span>(<span class="string">&quot;Failed to call multi_get_events for transactions {digests:?} with event digests {event_digests_list:?}&quot;</span>);
-                    <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
+                    Error::UnexpectedError(<span class="macro">format!</span>(<span class="string">&quot;Failed to call multi_get_events for transactions {digests:?} with event digests {event_digests_list:?}: {e:?}&quot;</span>))
                 })<span class="question-mark">?
                 </span>.into_iter();
 
@@ -1546,7 +1569,7 @@
                 <span class="kw">if </span>event_digest.is_some() {
                     <span class="comment">// safe to unwrap because `is_some` is checked
                     </span><span class="kw">let </span>event_digest = event_digest.as_ref().unwrap();
-                    <span class="kw">let </span>events: <span class="prelude-ty">Option</span>&lt;RpcResult&lt;SuiTransactionBlockEvents&gt;&gt; = event_digest_to_events
+                    <span class="kw">let </span>events= event_digest_to_events
                         .get(event_digest)
                         .cloned()
                         .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Expect event digest {event_digest:?} to be found in cache for transaction {transaction_digest}&quot;</span>))
@@ -1587,7 +1610,9 @@
                 results.push(get_balance_changes_from_effect(
                     <span class="kw-2">&amp;</span>object_cache,
                     resp.effects.as_ref().ok_or_else(|| {
-                        <span class="macro">anyhow!</span>(<span class="string">&quot;unable to derive balance changes because effect is empty&quot;</span>)
+                        Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                            <span class="string">&quot;unable to derive balance changes because effect is empty&quot;</span>.to_string(),
+                        ))
                     })<span class="question-mark">?</span>,
                     input_objects,
                     <span class="prelude-val">None</span>,
@@ -1609,7 +1634,9 @@
             <span class="kw">let </span><span class="kw-2">mut </span>results = <span class="macro">vec!</span>[];
             <span class="kw">for </span>resp <span class="kw">in </span>temp_response.values() {
                 <span class="kw">let </span>effects = resp.effects.as_ref().ok_or_else(|| {
-                    <span class="macro">anyhow!</span>(<span class="string">&quot;unable to derive object changes because effect is empty&quot;</span>)
+                    Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                        <span class="string">&quot;unable to derive object changes because effect is empty&quot;</span>.to_string(),
+                    ))
                 })<span class="question-mark">?</span>;
 
                 results.push(get_object_changes(
@@ -1617,7 +1644,10 @@
                     resp.transaction
                         .as_ref()
                         .ok_or_else(|| {
-                            <span class="macro">anyhow!</span>(<span class="string">&quot;unable to derive object changes because effect is empty&quot;</span>)
+                            Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                                <span class="string">&quot;unable to derive object changes because transaction is empty&quot;
+                                    </span>.to_string(),
+                            ))
                         })<span class="question-mark">?
                         </span>.data()
                         .intent_message()
@@ -1669,11 +1699,11 @@
             <span class="kw">let </span>object_read = <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
                 state.get_object_read(<span class="kw-2">&amp;</span>object_id).map_err(|e| {
                     <span class="macro">warn!</span>(<span class="question-mark">?</span>object_id, <span class="string">&quot;Failed to get object: {:?}&quot;</span>, e);
-                    <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
+                    Error::from(e)
                 })
             })
             .<span class="kw">await
-            </span>.map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">??</span>;
+            </span>.map_err(Error::from)<span class="question-mark">??</span>;
             <span class="kw">let </span>options = options.unwrap_or_default();
 
             <span class="kw">match </span>object_read {
@@ -1750,10 +1780,9 @@
                     .inc_by(objects.len() <span class="kw">as </span>u64);
                 <span class="prelude-val">Ok</span>(objects)
             } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(Error::UserInputError(UserInputError::SizeLimitExceeded {
-                    limit: <span class="string">&quot;input limit&quot;</span>.to_string(),
-                    value: QUERY_MAX_RESULT_LIMIT.to_string(),
-                })
+                <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::SizeLimitExceeded(
+                    QUERY_MAX_RESULT_LIMIT.to_string(),
+                ))
                 .into())
             }
         })
@@ -1772,8 +1801,8 @@
             state.get_past_object_read(<span class="kw-2">&amp;</span>object_id, version)
             .map_err(|e| {
                 <span class="macro">error!</span>(<span class="string">&quot;Failed to call try_get_past_object for object: {object_id:?} version: {version:?} with error: {e:?}&quot;</span>);
-                <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
-            })}).<span class="kw">await</span>.map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">??</span>;
+                Error::from(e)
+            })}).<span class="kw">await</span>.map_err(Error::from)<span class="question-mark">??</span>;
             <span class="kw">let </span>options = options.unwrap_or_default();
             <span class="kw">match </span>past_read {
                 PastObjectRead::ObjectNotExists(id) =&gt; {
@@ -1836,15 +1865,14 @@
                         .map(|e| e.to_string())
                         .collect::&lt;Vec&lt;String&gt;&gt;()
                         .join(<span class="string">&quot;; &quot;</span>);
-                    <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;{error_string}&quot;</span>).into())
-                } <span class="kw">else </span>{
+                    <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;{error_string}&quot;</span>).into()) <span class="comment">// Collects errors not related to SuiPastObjectResponse variants
+                </span>} <span class="kw">else </span>{
                     <span class="prelude-val">Ok</span>(success)
                 }
             } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(Error::UserInputError(UserInputError::SizeLimitExceeded {
-                    limit: <span class="string">&quot;input limit&quot;</span>.to_string(),
-                    value: QUERY_MAX_RESULT_LIMIT.to_string(),
-                })
+                <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::SizeLimitExceeded(
+                    QUERY_MAX_RESULT_LIMIT.to_string(),
+                ))
                 .into())
             }
         })
@@ -1874,13 +1902,13 @@
             <span class="comment">// Fetch transaction to determine existence
             </span><span class="kw">let </span>state = <span class="self">self</span>.state.clone();
             <span class="kw">let </span>transaction = <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-                state.get_transaction_block(digest).<span class="kw">await</span>.tap_err(
-                    |err| <span class="macro">debug!</span>(tx_digest=<span class="question-mark">?</span>digest, <span class="string">&quot;Failed to get transaction: {:?}&quot;</span>, err),
-                )
+                state.get_transaction_block(digest).<span class="kw">await</span>.map_err(|err| {
+                    <span class="macro">debug!</span>(tx_digest=<span class="question-mark">?</span>digest, <span class="string">&quot;Failed to get transaction: {:?}&quot;</span>, err);
+                    Error::from(err)
+                })
             })
             .<span class="kw">await
-            </span>.map_err(Error::from)<span class="question-mark">?
-            </span>.map_err(Error::from)<span class="question-mark">?</span>;
+            </span>.map_err(Error::from)<span class="question-mark">??</span>;
             <span class="kw">let </span>input_objects = transaction
                 .data()
                 .inner()
@@ -1899,13 +1927,13 @@
                 <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
                 temp_response.effects = <span class="prelude-val">Some</span>(
                     <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-                        state.get_executed_effects(digest).tap_err(
-                            |err| <span class="macro">debug!</span>(tx_digest=<span class="question-mark">?</span>digest, <span class="string">&quot;Failed to get effects: {:?}&quot;</span>, err),
-                        )
+                        state.get_executed_effects(digest).map_err(|err| {
+                            <span class="macro">debug!</span>(tx_digest=<span class="question-mark">?</span>digest, <span class="string">&quot;Failed to get effects: {:?}&quot;</span>, err);
+                            Error::from(err)
+                        })
                     })
                     .<span class="kw">await
-                    </span>.map_err(Error::from)<span class="question-mark">?
-                    </span>.map_err(Error::from)<span class="question-mark">?</span>,
+                    </span>.map_err(Error::from)<span class="question-mark">??</span>,
                 );
             }
 
@@ -1914,8 +1942,8 @@
             state.get_transaction_checkpoint_sequence(<span class="kw-2">&amp;</span>digest)
             .map_err(|e| {
                 <span class="macro">error!</span>(<span class="string">&quot;Failed to retrieve checkpoint sequence for transaction {digest:?} with error: {e:?}&quot;</span>);
-                <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
-            })}).<span class="kw">await</span>.map_err(|e|<span class="macro">anyhow!</span>(e))<span class="question-mark">??
+                Error::from(e)
+            })}).<span class="kw">await</span>.map_err(Error::from)<span class="question-mark">??
         </span>{
             temp_response.checkpoint_seq = <span class="prelude-val">Some</span>(seq);
         }
@@ -1929,9 +1957,8 @@
                 </span>.get_checkpoint_by_sequence_number(checkpoint_seq)
                 .map_err(|e| {
                     <span class="macro">error!</span>(<span class="string">&quot;Failed to get checkpoint by sequence number: {checkpoint_seq:?} with error: {e:?}&quot;</span>);
-                    <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;
-                </span>)
-                })}).<span class="kw">await</span>.map_err(|e|<span class="macro">anyhow!</span>(e))<span class="question-mark">??</span>;
+                    Error::from(e)
+                })}).<span class="kw">await</span>.map_err(Error::from)<span class="question-mark">??</span>;
                 <span class="comment">// TODO(chris): we don&#39;t need to fetch the whole checkpoint summary
                 </span>temp_response.timestamp = checkpoint.as_ref().map(|c| c.timestamp_ms);
             }
@@ -1949,7 +1976,7 @@
                         {
                             <span class="macro">error!</span>(<span class="string">&quot;Failed to call get transaction events for events digest: {event_digest:?} with error {e:?}&quot;</span>);
                             Error::from(e)
-                        })}).<span class="kw">await</span>.map_err(|e|<span class="macro">anyhow!</span>(e))<span class="question-mark">??</span>;
+                        })}).<span class="kw">await</span>.map_err(Error::from)<span class="question-mark">??</span>;
                     <span class="kw">match </span>to_sui_transaction_events(<span class="self">self</span>, digest, events) {
                         <span class="prelude-val">Ok</span>(e) =&gt; temp_response.events = <span class="prelude-val">Some</span>(e),
                         <span class="prelude-val">Err</span>(e) =&gt; temp_response.errors.push(e.to_string()),
@@ -2063,7 +2090,7 @@
             <span class="macro">vec!</span>[]
         };
         <span class="prelude-val">Ok</span>(events)
-        }).<span class="kw">await</span>.map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">?
+        }).<span class="kw">await</span>.map_err(Error::from)<span class="question-mark">?
         </span>})
     }
 
@@ -2074,7 +2101,9 @@
                 </span>.state
                 .get_latest_checkpoint_sequence_number()
                 .map_err(|e| {
-                    <span class="macro">anyhow!</span>(<span class="string">&quot;Latest checkpoint sequence number was not found with error :{e}&quot;</span>)
+                    Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(<span class="macro">format!</span>(
+                        <span class="string">&quot;Latest checkpoint sequence number was not found with error :{e}&quot;
+                    </span>)))
                 })<span class="question-mark">?
                 </span>.into())
         })
@@ -2178,11 +2207,12 @@
         <span class="macro">with_tracing!</span>(<span class="kw">async move </span>{
             <span class="prelude-val">Ok</span>(version
                 .map(|v| {
-                    ProtocolConfig::get_for_version_if_supported((<span class="kw-2">*</span>v).into()).ok_or(<span class="macro">anyhow!</span>(
-                    <span class="string">&quot;Unsupported protocol version requested. Min supported: {}, max supported: {}&quot;</span>,
-                    ProtocolVersion::MIN.as_u64(),
-                    ProtocolVersion::MAX.as_u64()
-                ))
+                    ProtocolConfig::get_for_version_if_supported((<span class="kw-2">*</span>v).into()).ok_or(
+                        Error::SuiRpcInputError(SuiRpcInputError::ProtocolVersionUnsupported(
+                            ProtocolVersion::MIN.as_u64(),
+                            ProtocolVersion::MAX.as_u64(),
+                        )),
+                    )
                 })
                 .unwrap_or(<span class="prelude-val">Ok</span>(<span class="self">self
                     </span>.state
@@ -2208,7 +2238,7 @@
     fullnode_api: <span class="kw-2">&amp;</span>ReadApi,
     tx_digest: TransactionDigest,
     events: TransactionEvents,
-) -&gt; RpcResult&lt;SuiTransactionBlockEvents&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;SuiTransactionBlockEvents, Error&gt; {
     <span class="prelude-val">Ok</span>(SuiTransactionBlockEvents::try_from(
         events,
         tx_digest,
@@ -2223,15 +2253,14 @@
             .load_epoch_store_one_call_per_task()
             .module_cache()
             .as_ref(),
-    )
-    .map_err(Error::SuiError)<span class="question-mark">?</span>)
+    )<span class="question-mark">?</span>)
 }
 
 <span class="kw">fn </span>get_display_fields(
     fullnode_api: <span class="kw-2">&amp;</span>ReadApi,
     original_object: <span class="kw-2">&amp;</span>Object,
     original_layout: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;MoveStructLayout&gt;,
-) -&gt; RpcResult&lt;DisplayFieldsResponse&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayFieldsResponse, Error&gt; {
     <span class="kw">let </span><span class="prelude-val">Some</span>((object_type, layout)) = get_object_type_and_struct(original_object, original_layout)<span class="question-mark">? </span><span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">Ok</span>(DisplayFieldsResponse { data: <span class="prelude-val">None</span>, error: <span class="prelude-val">None </span>});
     };
@@ -2248,24 +2277,21 @@
     fullnode_api: <span class="kw-2">&amp;</span>ReadApi,
     object_type: <span class="kw-2">&amp;</span>StructTag,
     <span class="comment">// TODO: add query version support
-</span>) -&gt; RpcResult&lt;<span class="prelude-ty">Option</span>&lt;DisplayVersionUpdatedEvent&gt;&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>events = fullnode_api
-        .state
-        .query_events(
-            EventFilter::MoveEventType(DisplayVersionUpdatedEvent::type_(object_type)),
-            <span class="prelude-val">None</span>,
-            <span class="number">1</span>,
-            <span class="bool-val">true</span>,
-        )
-        .map_err(Error::from)<span class="question-mark">?</span>;
+</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;DisplayVersionUpdatedEvent&gt;, Error&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>events = fullnode_api.state.query_events(
+        EventFilter::MoveEventType(DisplayVersionUpdatedEvent::type_(object_type)),
+        <span class="prelude-val">None</span>,
+        <span class="number">1</span>,
+        <span class="bool-val">true</span>,
+    )<span class="question-mark">?</span>;
 
     <span class="comment">// If there&#39;s any recent version of Display, give it to the client.
     // TODO: add support for version query.
     </span><span class="kw">if let </span><span class="prelude-val">Some</span>(event) = events.pop() {
         <span class="kw">let </span>display: DisplayVersionUpdatedEvent = bcs::from_bytes(<span class="kw-2">&amp;</span>event.bcs[..])
-            .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to deserialize &#39;VersionUpdatedEvent&#39;: {e}&quot;</span>))<span class="question-mark">?</span>;
+            .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to deserialize &#39;VersionUpdatedEvent&#39;: {e}&quot;</span>))<span class="question-mark">?</span>; <span class="comment">// TODO: currently, this is called on a value returned from state. Is this a client or server error?
 
-        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(display))
+        </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(display))
     } <span class="kw">else </span>{
         <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
     }
@@ -2274,7 +2300,7 @@
 <span class="kw">fn </span>get_object_type_and_struct(
     o: <span class="kw-2">&amp;</span>Object,
     layout: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;MoveStructLayout&gt;,
-) -&gt; RpcResult&lt;<span class="prelude-ty">Option</span>&lt;(StructTag, MoveStruct)&gt;&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(StructTag, MoveStruct)&gt;, Error&gt; {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(object_type) = o.type_() {
         <span class="kw">let </span>move_struct = get_move_struct(o, layout)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((object_type.clone().into(), move_struct)))
@@ -2283,39 +2309,46 @@
     }
 }
 
-<span class="kw">fn </span>get_move_struct(o: <span class="kw-2">&amp;</span>Object, layout: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;MoveStructLayout&gt;) -&gt; RpcResult&lt;MoveStruct&gt; {
-    <span class="kw">let </span>layout = layout
-        .as_ref()
-        .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to extract layout&quot;</span>))<span class="question-mark">?</span>;
+<span class="kw">fn </span>get_move_struct(o: <span class="kw-2">&amp;</span>Object, layout: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;MoveStructLayout&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;MoveStruct, Error&gt; {
+    <span class="kw">let </span>layout = layout.as_ref().ok_or_else(|| {
+        Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+            <span class="string">&quot;Failed to extract layout&quot;</span>.to_string(),
+        ))
+    })<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(o.data
         .try_as_move()
-        .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to extract Move object&quot;</span>))<span class="question-mark">?
-        </span>.to_move_struct(layout)
-        .map_err(|err| <span class="macro">anyhow!</span>(<span class="string">&quot;{err}&quot;</span>))<span class="question-mark">?</span>)
+        .ok_or_else(|| {
+            Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                <span class="string">&quot;Failed to extract Move object&quot;</span>.to_string(),
+            ))
+        })<span class="question-mark">?
+        </span>.to_move_struct(layout)<span class="question-mark">?</span>)
 }
 
 <span class="kw">pub async fn </span>get_move_module(
     state: <span class="kw-2">&amp;</span>AuthorityState,
     package: ObjectID,
     module_name: String,
-) -&gt; RpcResult&lt;NormalizedModule&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;NormalizedModule, Error&gt; {
     <span class="kw">let </span>normalized = get_move_modules_by_package(state, package).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(<span class="kw">match </span>normalized.get(<span class="kw-2">&amp;</span>module_name) {
         <span class="prelude-val">Some</span>(module) =&gt; <span class="prelude-val">Ok</span>(module.clone()),
-        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;No module found with module name {}&quot;</span>, module_name)),
+        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(SuiRpcInputError::GenericNotFound(<span class="macro">format!</span>(
+            <span class="string">&quot;No module found with module name {}&quot;</span>,
+            module_name
+        ))),
     }<span class="question-mark">?</span>)
 }
 
 <span class="kw">pub async fn </span>get_move_modules_by_package(
     state: <span class="kw-2">&amp;</span>AuthorityState,
     package: ObjectID,
-) -&gt; RpcResult&lt;BTreeMap&lt;String, NormalizedModule&gt;&gt; {
-    <span class="kw">let </span>object_read = state.get_object_read(<span class="kw-2">&amp;</span>package).map_err(|e| {
+) -&gt; <span class="prelude-ty">Result</span>&lt;BTreeMap&lt;String, NormalizedModule&gt;, Error&gt; {
+    <span class="kw">let </span>object_read = state.get_object_read(<span class="kw-2">&amp;</span>package).tap_err(|<span class="kw">_</span>| {
         <span class="macro">warn!</span>(<span class="string">&quot;Failed to call get_move_modules_by_package for package: {package:?}&quot;</span>);
-        <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
     })<span class="question-mark">?</span>;
 
-    <span class="prelude-val">Ok</span>(<span class="kw">match </span>object_read {
+    <span class="kw">match </span>object_read {
         ObjectRead::Exists(_obj_ref, object, _layout) =&gt; <span class="kw">match </span>object.data {
             Data::Package(p) =&gt; {
                 <span class="comment">// we are on the read path - it&#39;s OK to use VERSION_MAX of the supported Move
@@ -2327,21 +2360,25 @@
                 )
                 .map_err(|e| {
                     <span class="macro">error!</span>(<span class="string">&quot;Failed to call get_move_modules_by_package for package: {package:?}&quot;</span>);
-                    <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
+                    Error::from(e)
                 })
             }
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Object is not a package with ID {}&quot;</span>, package)),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(
+                <span class="macro">format!</span>(<span class="string">&quot;Object is not a package with ID {}&quot;</span>, package),
+            ))),
         },
-        <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Package object does not exist with ID {}&quot;</span>, package)),
-    }<span class="question-mark">?</span>)
+        <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+            <span class="macro">format!</span>(<span class="string">&quot;Package object does not exist with ID {}&quot;</span>, package),
+        ))),
+    }
 }
 
 <span class="kw">pub fn </span>get_transaction_data_and_digest(
     tx_bytes: Base64,
-) -&gt; RpcResult&lt;(TransactionData, TransactionDigest)&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;(TransactionData, TransactionDigest), Error&gt; {
     <span class="kw">let </span>tx_data =
-        bcs::from_bytes(<span class="kw-2">&amp;</span>tx_bytes.to_vec().map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">?</span>).map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">?</span>;
-    <span class="kw">let </span>intent_msg = IntentMessage::new(
+        bcs::from_bytes(<span class="kw-2">&amp;</span>tx_bytes.to_vec().map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">?</span>).map_err(Error::from)<span class="question-mark">?</span>; <span class="comment">// TODO: is this a client or server error? Only used by dry_run_transaction_block
+    </span><span class="kw">let </span>intent_msg = IntentMessage::new(
         Intent {
             version: IntentVersion::V0,
             scope: IntentScope::TransactionData,
@@ -2356,7 +2393,7 @@
 <span class="kw">pub fn </span>get_rendered_fields(
     fields: VecMap&lt;String, String&gt;,
     move_struct: <span class="kw-2">&amp;</span>MoveStruct,
-) -&gt; RpcResult&lt;DisplayFieldsResponse&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayFieldsResponse, Error&gt; {
     <span class="kw">let </span>sui_move_value: SuiMoveValue = MoveValue::Struct(move_struct.clone()).into();
     <span class="kw">if let </span>SuiMoveValue::Struct(move_struct) = sui_move_value {
         <span class="kw">let </span>fields =
@@ -2388,10 +2425,12 @@
             error,
         });
     }
-    <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Failed to parse move struct&quot;</span>))<span class="question-mark">?
+    <span class="prelude-val">Err</span>(SuiRpcInputError::GenericInvalid(
+        <span class="string">&quot;Failed to parse move struct&quot;</span>.to_string(),
+    ))<span class="question-mark">?
 </span>}
 
-<span class="kw">fn </span>parse_template(template: <span class="kw-2">&amp;</span>str, move_struct: <span class="kw-2">&amp;</span>SuiMoveStruct) -&gt; RpcResult&lt;String&gt; {
+<span class="kw">fn </span>parse_template(template: <span class="kw-2">&amp;</span>str, move_struct: <span class="kw-2">&amp;</span>SuiMoveStruct) -&gt; <span class="prelude-ty">Result</span>&lt;String, Error&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>output = template.to_string();
     <span class="kw">let </span><span class="kw-2">mut </span>var_name = String::new();
     <span class="kw">let </span><span class="kw-2">mut </span>in_braces = <span class="bool-val">false</span>;
@@ -2425,7 +2464,10 @@
     <span class="prelude-val">Ok</span>(output.replace(<span class="string">&#39;\\&#39;</span>, <span class="string">&quot;&quot;</span>))
 }
 
-<span class="kw">fn </span>get_value_from_move_struct(move_struct: <span class="kw-2">&amp;</span>SuiMoveStruct, var_name: <span class="kw-2">&amp;</span>str) -&gt; RpcResult&lt;String&gt; {
+<span class="kw">fn </span>get_value_from_move_struct(
+    move_struct: <span class="kw-2">&amp;</span>SuiMoveStruct,
+    var_name: <span class="kw-2">&amp;</span>str,
+) -&gt; <span class="prelude-ty">Result</span>&lt;String, Error&gt; {
     <span class="kw">let </span>parts: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = var_name.split(<span class="string">&#39;.&#39;</span>).collect();
     <span class="kw">if </span>parts.is_empty() {
         <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Display template value cannot be empty&quot;</span>))<span class="question-mark">?</span>;
@@ -2453,13 +2495,18 @@
                         ))<span class="question-mark">?</span>;
                     }
                 } <span class="kw">else </span>{
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UnexpectedError(<span class="macro">format!</span>(
                         <span class="string">&quot;Unexpected move struct type for field {}&quot;</span>,
                         var_name
-                    ))<span class="question-mark">?</span>;
+                    )))<span class="question-mark">?</span>;
                 }
             }
-            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Unexpected move value type for field {}&quot;</span>, var_name))<span class="question-mark">?</span>,
+            <span class="kw">_ </span>=&gt; {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UnexpectedError(<span class="macro">format!</span>(
+                    <span class="string">&quot;Unexpected move value type for field {}&quot;</span>,
+                    var_name
+                )))<span class="question-mark">?
+            </span>}
         }
     }
 
@@ -2488,8 +2535,8 @@
     <span class="kw">if </span>opts.show_raw_input &amp;&amp; cache.transaction.is_some() {
         <span class="kw">let </span>sender_signed_data = cache.transaction.as_ref().unwrap().data();
         <span class="kw">let </span>raw_tx = bcs::to_bytes(sender_signed_data)
-            .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to serialize raw transaction with error: {}&quot;</span>, e))<span class="question-mark">?</span>;
-        response.raw_transaction = raw_tx;
+            .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;Failed to serialize raw transaction with error: {}&quot;</span>, e))<span class="question-mark">?</span>; <span class="comment">// TODO: is this a client or server error?
+        </span>response.raw_transaction = raw_tx;
     }
 
     <span class="kw">if </span>opts.show_input &amp;&amp; cache.transaction.is_some() {
@@ -2501,7 +2548,8 @@
     <span class="kw">if </span>opts.show_effects &amp;&amp; cache.effects.is_some() {
         <span class="kw">let </span>effects = cache.effects.unwrap().try_into().map_err(|e| {
             <span class="macro">anyhow!</span>(
-                <span class="string">&quot;Failed to convert transaction block effects with error: {}&quot;</span>,
+                <span class="comment">// TODO: is this a client or server error?
+                </span><span class="string">&quot;Failed to convert transaction block effects with error: {}&quot;</span>,
                 e
             )
         })<span class="question-mark">?</span>;

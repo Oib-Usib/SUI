@@ -499,12 +499,43 @@
 <a href="#499" id="499">499</a>
 <a href="#500" id="500">500</a>
 <a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::sync::Arc;
 
-<span class="kw">use </span>anyhow::{anyhow, Context};
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>futures::Stream;
 <span class="kw">use </span>jsonrpsee::core::error::SubscriptionClosed;
@@ -537,7 +568,7 @@
     cap_page_limit, validate_limit, IndexerApiServer, JsonRpcMetrics, ReadApiServer,
     QUERY_MAX_RESULT_LIMIT,
 };
-<span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span><span class="kw">crate</span>::error::{Error, SuiRpcInputError};
 <span class="kw">use </span><span class="kw">crate</span>::with_tracing;
 <span class="kw">use </span><span class="kw">crate</span>::SuiRpcModule;
 
@@ -606,7 +637,7 @@
             <span class="kw">let </span><span class="kw-2">mut </span>objects = <span class="self">self
                 </span>.state
                 .get_owner_objects(address, cursor, limit + <span class="number">1</span>, filter)
-                .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>))<span class="question-mark">?</span>;
+                .map_err(Error::from)<span class="question-mark">?</span>;
 
             <span class="comment">// objects here are of size (limit + 1), where the last one is the cursor for the next page
             </span><span class="kw">let </span>has_next_page = objects.len() &gt; limit;
@@ -765,7 +796,7 @@
             <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="self">self
                 </span>.state
                 .get_dynamic_fields(parent_object_id, cursor, limit + <span class="number">1</span>)
-                .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>))<span class="question-mark">?</span>;
+                .map_err(Error::from)<span class="question-mark">?</span>;
             <span class="kw">let </span>has_next_page = data.len() &gt; limit;
             data.truncate(limit);
             <span class="kw">let </span>next_cursor = data.last().cloned().map_or(cursor, |c| <span class="prelude-val">Some</span>(c.<span class="number">0</span>));
@@ -800,7 +831,7 @@
             <span class="kw">let </span>id = <span class="self">self
                 </span>.state
                 .get_dynamic_field_object_id(parent_object_id, name_type, <span class="kw-2">&amp;</span>name_bcs_value)
-                .map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>))<span class="question-mark">?</span>;
+                .map_err(Error::from)<span class="question-mark">?</span>;
             <span class="comment">// TODO(chris): add options to `get_dynamic_field_object` API as well
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(id) = id {
                 <span class="self">self</span>.read_api
@@ -827,7 +858,12 @@
                 name: STD_UTF8_STRUCT_NAME.to_owned(),
                 type_params: <span class="macro">vec!</span>[],
             }));
-            <span class="kw">let </span>name_bcs_value = bcs::to_bytes(<span class="kw-2">&amp;</span>name).context(<span class="string">&quot;Unable to serialize name&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span>name_bcs_value = bcs::to_bytes(<span class="kw-2">&amp;</span>name).map_err(|e| {
+                Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(<span class="macro">format!</span>(
+                    <span class="string">&quot;Unable to serialize name: {:?} with error: {:?}&quot;</span>,
+                    name, e
+                )))
+            })<span class="question-mark">?</span>;
             <span class="comment">// record of the input `name`
             </span><span class="kw">let </span>record_object_id_option = <span class="self">self
                 </span>.state
@@ -837,10 +873,10 @@
                     <span class="kw-2">&amp;</span>name_bcs_value,
                 )
                 .map_err(|e| {
-                    <span class="macro">anyhow!</span>(
+                    Error::UnexpectedError(<span class="macro">format!</span>(
                         <span class="string">&quot;Read name service dynamic field table failed with error: {:?}&quot;</span>,
                         e
-                    )
+                    ))
                 })<span class="question-mark">?</span>;
             <span class="kw">if let </span><span class="prelude-val">Some</span>(record_object_id) = record_object_id_option {
                 <span class="kw">let </span>record_object_read =
@@ -849,33 +885,38 @@
                             <span class="string">&quot;Failed to get object read of name: {:?} with error: {:?}&quot;</span>,
                             record_object_id, e
                         );
-                        <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
+                        Error::from(e)
                     })<span class="question-mark">?</span>;
                 <span class="kw">let </span>record_parsed_move_object =
                     SuiParsedMoveObject::try_from_object_read(record_object_read)<span class="question-mark">?</span>;
                 <span class="comment">// NOTE: &quot;value&quot; is the field name to get the address info
                 </span><span class="kw">let </span>address_info_move_value = record_parsed_move_object
                     .read_dynamic_field_value(NAME_SERVICE_VALUE)
-                    .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Cannot find value field in record Move struct&quot;</span>))<span class="question-mark">?</span>;
+                    .ok_or_else(|| {
+                        Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                            <span class="string">&quot;Cannot find value field in record Move struct&quot;</span>.to_string(),
+                        ))
+                    })<span class="question-mark">?</span>;
                 <span class="kw">let </span>address_info_move_struct = <span class="kw">match </span>address_info_move_value {
                     SuiMoveValue::Struct(a) =&gt; <span class="prelude-val">Ok</span>(a),
-                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;value field is not found.&quot;</span>)),
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                        <span class="string">&quot;value field is not found.&quot;</span>.to_string(),
+                    ))),
                 }<span class="question-mark">?</span>;
                 <span class="comment">// NOTE: &quot;marker&quot; is the field name to get the address
                 </span><span class="kw">let </span>address_str_move_value = address_info_move_struct
                     .read_dynamic_field_value(NAME_SERVICE_MARKER)
                     .ok_or_else(|| {
-                        <span class="macro">anyhow!</span>(
+                        Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(<span class="macro">format!</span>(
                             <span class="string">&quot;Cannot find marker field in address info Move struct: {:?}&quot;</span>,
                             address_info_move_struct
-                        )
+                        )))
                     })<span class="question-mark">?</span>;
                 <span class="kw">let </span>addr = <span class="kw">match </span>address_str_move_value {
                     SuiMoveValue::Address(addr) =&gt; <span class="prelude-val">Ok</span>(addr),
-                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                        <span class="string">&quot;No SuiAddress found in: {:?}&quot;</span>,
-                        address_str_move_value
-                    )),
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                        <span class="macro">format!</span>(<span class="string">&quot;No SuiAddress found in: {:?}&quot;</span>, address_str_move_value),
+                    ))),
                 }<span class="question-mark">?</span>;
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(addr));
             }
@@ -895,7 +936,12 @@
                 </span>.get_name_service_dynamic_field_table_object_id(<span class="comment">/* reverse_lookup */ </span><span class="bool-val">true</span>)
                 .<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">let </span>name_type_tag = TypeTag::Address;
-            <span class="kw">let </span>name_bcs_value = bcs::to_bytes(<span class="kw-2">&amp;</span>address).context(<span class="string">&quot;Unable to serialize address&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span>name_bcs_value = bcs::to_bytes(<span class="kw-2">&amp;</span>address).map_err(|e| {
+                Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(<span class="macro">format!</span>(
+                    <span class="string">&quot;Unable to serialize address: {:?} with error: {:?}&quot;</span>,
+                    address, e
+                )))
+            })<span class="question-mark">?</span>;
             <span class="kw">let </span>addr_object_id = <span class="self">self
                 </span>.state
                 .get_dynamic_field_object_id(
@@ -904,30 +950,41 @@
                     <span class="kw-2">&amp;</span>name_bcs_value,
                 )
                 .map_err(|e| {
-                    <span class="macro">anyhow!</span>(
+                    Error::UnexpectedError(<span class="macro">format!</span>(
                         <span class="string">&quot;Read name service reverse dynamic field table failed with error: {:?}&quot;</span>,
                         e
-                    )
+                    ))
                 })<span class="question-mark">?
-                </span>.ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Record not found for address: {:?}&quot;</span>, address))<span class="question-mark">?</span>;
+                </span>.ok_or_else(|| {
+                    Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(<span class="macro">format!</span>(
+                        <span class="string">&quot;Record not found for address: {:?}&quot;</span>,
+                        address
+                    )))
+                })<span class="question-mark">?</span>;
             <span class="kw">let </span>addr_object_read = <span class="self">self</span>.state.get_object_read(<span class="kw-2">&amp;</span>addr_object_id).map_err(|e| {
                 <span class="macro">warn!</span>(
                     <span class="string">&quot;Failed to get object read of address {:?} with error: {:?}&quot;</span>,
                     addr_object_id, e
                 );
-                <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
+                Error::from(e)
             })<span class="question-mark">?</span>;
             <span class="kw">let </span>addr_parsed_move_object =
                 SuiParsedMoveObject::try_from_object_read(addr_object_read)<span class="question-mark">?</span>;
             <span class="kw">let </span>address_info_move_value = addr_parsed_move_object
                 .read_dynamic_field_value(NAME_SERVICE_VALUE)
-                .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Cannot find value field in record Move struct&quot;</span>))<span class="question-mark">?</span>;
+                .ok_or_else(|| {
+                    Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                        <span class="string">&quot;Cannot find value field in record Move struct&quot;</span>.to_string(),
+                    ))
+                })<span class="question-mark">?</span>;
             <span class="kw">let </span>primary_name = <span class="kw">match </span>address_info_move_value {
                 SuiMoveValue::String(s) =&gt; <span class="prelude-val">Ok</span>(s),
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                    <span class="string">&quot;No string field for primary name is found in {:?}&quot;</span>,
-                    address_info_move_value
-                )),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                    <span class="macro">format!</span>(
+                        <span class="string">&quot;No string field for primary name is found in {:?}&quot;</span>,
+                        address_info_move_value
+                    ),
+                ))),
             }<span class="question-mark">?</span>;
             <span class="prelude-val">Ok</span>(Page {
                 data: <span class="macro">vec!</span>[primary_name],
@@ -952,14 +1009,14 @@
     <span class="kw">async fn </span>get_name_service_dynamic_field_table_object_id(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         reverse_lookup: bool,
-    ) -&gt; RpcResult&lt;ObjectID&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;ObjectID, Error&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(resolver_id) = <span class="self">self</span>.ns_resolver_id {
             <span class="kw">let </span>resolver_object_read = <span class="self">self</span>.state.get_object_read(<span class="kw-2">&amp;</span>resolver_id).map_err(|e| {
                 <span class="macro">warn!</span>(
                     <span class="string">&quot;Failed to get object read of resolver {:?} with error: {:?}&quot;</span>,
                     resolver_id, e
                 );
-                <span class="macro">anyhow!</span>(<span class="string">&quot;{e}&quot;</span>)
+                Error::from(e)
             })<span class="question-mark">?</span>;
 
             <span class="kw">let </span>resolved_parsed_move_object =
@@ -973,30 +1030,37 @@
             };
             <span class="kw">let </span>records_value = resolved_parsed_move_object
                 .read_dynamic_field_value(dynamic_field_table_key)
-                .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Cannot find records field in resolved object&quot;</span>))<span class="question-mark">?</span>;
+                .ok_or_else(|| {
+                    Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(
+                        <span class="string">&quot;Cannot find records field in resolved object&quot;</span>.to_string(),
+                    ))
+                })<span class="question-mark">?</span>;
             <span class="kw">let </span>records_move_struct = <span class="kw">match </span>records_value {
                 SuiMoveValue::Struct(s) =&gt; <span class="prelude-val">Ok</span>(s),
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                    <span class="string">&quot;{} field is not a Move struct&quot;</span>,
-                    dynamic_field_table_key
-                )),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(
+                    <span class="macro">format!</span>(<span class="string">&quot;{} field is not a Move struct&quot;</span>, dynamic_field_table_key),
+                ))),
             }<span class="question-mark">?</span>;
 
             <span class="kw">let </span>dynamic_field_table_object_id_struct = records_move_struct
                 .read_dynamic_field_value(NAME_SERVICE_ID)
                 .ok_or_else(|| {
-                    <span class="macro">anyhow!</span>(
+                    Error::SuiRpcInputError(SuiRpcInputError::GenericNotFound(<span class="macro">format!</span>(
                         <span class="string">&quot;Cannot find id field in {} Move struct&quot;</span>,
                         dynamic_field_table_key
-                    )
+                    )))
                 })<span class="question-mark">?</span>;
             <span class="kw">let </span>dynamic_field_table_object_id = <span class="kw">match </span>dynamic_field_table_object_id_struct {
                 SuiMoveValue::UID { id } =&gt; <span class="prelude-val">Ok</span>(id),
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;id field is not a UID&quot;</span>)),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(
+                    <span class="string">&quot;id field is not a UID&quot;</span>.to_string(),
+                ))),
             }<span class="question-mark">?</span>;
             <span class="prelude-val">Ok</span>(dynamic_field_table_object_id)
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Name service resolver is not set&quot;</span>))<span class="question-mark">?
+            <span class="prelude-val">Err</span>(Error::UnexpectedError(
+                <span class="string">&quot;Name service resolver is not set&quot;</span>.to_string(),
+            ))<span class="question-mark">?
         </span>}
     }
 }

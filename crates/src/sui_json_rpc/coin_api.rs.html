@@ -326,13 +326,10 @@
 <a href="#326" id="326">326</a>
 <a href="#327" id="327">327</a>
 <a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::sync::Arc;
-
-<span class="kw">use </span>anyhow::anyhow;
 
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>cached::proc_macro::cached;
@@ -357,7 +354,7 @@
 <span class="kw">use </span>sui_types::parse_sui_struct_tag;
 
 <span class="kw">use </span><span class="kw">crate</span>::api::{cap_page_limit, CoinReadApiServer, JsonRpcMetrics};
-<span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span><span class="kw">crate</span>::error::{Error, SuiRpcInputError};
 <span class="kw">use crate</span>::{with_tracing, SuiRpcModule};
 
 <span class="kw">pub struct </span>CoinReadApi {
@@ -376,7 +373,7 @@
         cursor: (String, ObjectID),
         limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
         one_coin_type_only: bool,
-    ) -&gt; anyhow::Result&lt;CoinPage&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;CoinPage, Error&gt; {
         <span class="kw">let </span>limit = cap_page_limit(limit);
         <span class="self">self</span>.metrics.get_coins_limit.report(limit <span class="kw">as </span>u64);
         <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
@@ -527,15 +524,16 @@
                         <span class="prelude-val">Some</span>(obj) =&gt; {
                             <span class="kw">let </span>coin_type = obj.coin_type_maybe();
                             <span class="kw">if </span>coin_type.is_none() {
-                                <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                                    <span class="string">&quot;Invalid Cursor {:?}, Object is not a coin&quot;</span>,
-                                    object_id
-                                ))
+                                <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(
+                                    <span class="macro">format!</span>(<span class="string">&quot;Invalid Cursor {:?}, Object is not a coin&quot;</span>, object_id),
+                                )))
                             } <span class="kw">else </span>{
                                 <span class="prelude-val">Ok</span>((coin_type.unwrap().to_string(), object_id))
                             }
                         }
-                        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Invalid Cursor {:?}, Object not found&quot;</span>, object_id)),
+                        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(
+                            <span class="macro">format!</span>(<span class="string">&quot;Invalid Cursor {:?}, Object not found&quot;</span>, object_id),
+                        ))),
                     }
                 }
                 <span class="prelude-val">None </span>=&gt; {

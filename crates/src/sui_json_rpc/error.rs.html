@@ -83,6 +83,36 @@
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
 <a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -133,6 +163,9 @@
 
     <span class="attr">#[error(transparent)]
     </span>SuiObjectResponseError(<span class="attr">#[from] </span>SuiObjectResponseError),
+
+    <span class="attr">#[error(transparent)]
+    </span>SuiRpcInputError(<span class="attr">#[from] </span>SuiRpcInputError),
 }
 
 <span class="kw">impl </span>From&lt;Error&gt; <span class="kw">for </span>RpcError {
@@ -146,6 +179,9 @@
         <span class="kw">match </span><span class="self">self </span>{
             Error::UserInputError(user_input_error) =&gt; {
                 RpcError::Call(CallError::InvalidParams(user_input_error.into()))
+            }
+            Error::SuiRpcInputError(sui_json_rpc_input_error) =&gt; {
+                RpcError::Call(CallError::InvalidParams(sui_json_rpc_input_error.into()))
             }
             Error::SuiError(sui_error) =&gt; <span class="kw">match </span>sui_error {
                 SuiError::TransactionNotFound { .. } | SuiError::TransactionsNotFound { .. } =&gt; {
@@ -167,5 +203,29 @@
             <span class="kw">_ </span>=&gt; RpcError::Call(CallError::Failed(<span class="self">self</span>.into())),
         }
     }
+}
+
+<span class="attr">#[derive(Debug, Error)]
+</span><span class="kw">pub enum </span>SuiRpcInputError {
+    <span class="attr">#[error(<span class="string">&quot;Input contains duplicates&quot;</span>)]
+    </span>ContainsDuplicates,
+
+    <span class="attr">#[error(<span class="string">&quot;Input exceeds limit of {0}&quot;</span>)]
+    </span>SizeLimitExceeded(String),
+
+    <span class="attr">#[error(<span class="string">&quot;{0}&quot;</span>)]
+    </span>GenericNotFound(String),
+
+    <span class="attr">#[error(<span class="string">&quot;{0}&quot;</span>)]
+    </span>GenericInvalid(String),
+
+    <span class="attr">#[error(<span class="string">&quot;request_type` must set to `None` or `WaitForLocalExecution` if effects is required in the response&quot;</span>)]
+    </span>InvalidExecuteTransactionRequestType,
+
+    <span class="attr">#[error(<span class="string">&quot;Unsupported protocol version requested. Min supported: {0}, max supported: {1}&quot;</span>)]
+    </span>ProtocolVersionUnsupported(u64, u64),
+
+    <span class="attr">#[error(<span class="string">&quot;Unable to serialize: {0}&quot;</span>)]
+    </span>CannotSerialize(<span class="attr">#[from] </span>bcs::Error),
 }
 </code></pre></div></section></main></body></html>

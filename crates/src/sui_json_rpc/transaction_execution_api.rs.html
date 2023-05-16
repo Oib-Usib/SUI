@@ -260,15 +260,11 @@
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
 <a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::sync::Arc;
 
-<span class="kw">use </span>anyhow::anyhow;
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>fastcrypto::encoding::Base64;
 <span class="kw">use </span>fastcrypto::traits::ToFromBytes;
@@ -297,7 +293,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::api::JsonRpcMetrics;
 <span class="kw">use </span><span class="kw">crate</span>::api::WriteApiServer;
-<span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span><span class="kw">crate</span>::error::{Error, SuiRpcInputError};
 <span class="kw">use </span><span class="kw">crate</span>::read_api::get_transaction_data_and_digest;
 <span class="kw">use crate</span>::{
     get_balance_changes_from_effect, get_object_changes, with_tracing, ObjectProviderCache,
@@ -334,11 +330,9 @@
 
         <span class="kw">let </span>request_type = <span class="kw">match </span>(request_type, opts.require_local_execution()) {
             (<span class="prelude-val">Some</span>(ExecuteTransactionRequestType::WaitForEffectsCert), <span class="bool-val">true</span>) =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-                    <span class="string">&quot;`request_type` must set to `None` or `WaitForLocalExecution`\
-                         if effects is required in the response&quot;
-                </span>)
-                .into());
+                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::SuiRpcInputError(
+                    SuiRpcInputError::InvalidExecuteTransactionRequestType,
+                ));
             }
             (t, <span class="kw">_</span>) =&gt; t.unwrap_or_else(|| opts.default_execution_request_type()),
         };
@@ -499,9 +493,9 @@
         gas_price: <span class="prelude-ty">Option</span>&lt;BigInt&lt;u64&gt;&gt;,
         _epoch: <span class="prelude-ty">Option</span>&lt;BigInt&lt;u64&gt;&gt;,
     ) -&gt; RpcResult&lt;DevInspectResults&gt; {
-        <span class="kw">let </span>tx_kind: TransactionKind =
-            bcs::from_bytes(<span class="kw-2">&amp;</span>tx_bytes.to_vec().map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">?</span>).map_err(|e| <span class="macro">anyhow!</span>(e))<span class="question-mark">?</span>;
         <span class="macro">with_tracing!</span>(<span class="kw">async move </span>{
+            <span class="kw">let </span>tx_kind: TransactionKind =
+                bcs::from_bytes(<span class="kw-2">&amp;</span>tx_bytes.to_vec().map_err(Error::from)<span class="question-mark">?</span>).map_err(Error::from)<span class="question-mark">?</span>;
             <span class="prelude-val">Ok</span>(<span class="self">self
                 </span>.state
                 .dev_inspect_transaction_block(sender_address, tx_kind, gas_price.map(|i| <span class="kw-2">*</span>i))

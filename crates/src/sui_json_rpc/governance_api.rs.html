@@ -419,6 +419,7 @@
 <a href="#419" id="419">419</a>
 <a href="#420" id="420">420</a>
 <a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -426,7 +427,6 @@
 <span class="kw">use </span>std::collections::BTreeMap;
 <span class="kw">use </span>std::sync::Arc;
 
-<span class="kw">use </span>anyhow::anyhow;
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>cached::proc_macro::cached;
 <span class="kw">use </span>cached::SizedCache;
@@ -453,7 +453,7 @@
 <span class="kw">use </span>sui_types::sui_system_state::{get_validator_from_table, SuiSystemState};
 
 <span class="kw">use </span><span class="kw">crate</span>::api::{GovernanceReadApiServer, JsonRpcMetrics};
-<span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span><span class="kw">crate</span>::error::{Error, SuiRpcInputError};
 <span class="kw">use crate</span>::{with_tracing, ObjectProvider, SuiRpcModule};
 
 <span class="attr">#[derive(Clone)]
@@ -578,9 +578,11 @@
         <span class="kw">let </span><span class="kw-2">mut </span>delegated_stakes = <span class="macro">vec!</span>[];
         <span class="kw">for </span>(pool_id, stakes) <span class="kw">in </span>pools {
             <span class="comment">// Rate table and rate can be null when the pool is not active
-            </span><span class="kw">let </span>rate_table = rates
-                .get(<span class="kw-2">&amp;</span>pool_id)
-                .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">&quot;Cannot find rates for staking pool {pool_id}&quot;</span>))<span class="question-mark">?</span>;
+            </span><span class="kw">let </span>rate_table = rates.get(<span class="kw-2">&amp;</span>pool_id).ok_or_else(|| {
+                SuiRpcInputError::GenericNotFound(
+                    <span class="string">&quot;Cannot find rates for staking pool {pool_id}&quot;</span>.to_string(),
+                )
+            })<span class="question-mark">?</span>;
             <span class="kw">let </span>current_rate = rate_table.rates.first().map(|(<span class="kw">_</span>, rate)| rate);
 
             <span class="kw">let </span><span class="kw-2">mut </span>delegations = <span class="macro">vec!</span>[];
