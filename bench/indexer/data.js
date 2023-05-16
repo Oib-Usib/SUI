@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684254790087,
+  "lastUpdate": 1684255223937,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7703,6 +7703,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 317932,
             "range": "± 16438",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c9feb2c5055712bc2f2e2165e2adff2a2a5e0bc7",
+          "message": "[sui-json-rpc] fix getter for move object bcs (#12010)\n\n## Description \r\n\r\nRight now `move_object_bcs` ignores the bcs bytes and just always\r\nreturns `None`. This PR fixes that.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-16T09:31:09-07:00",
+          "tree_id": "02ca89e3977fd05482ed47073a6faf2ce98c3f1e",
+          "url": "https://github.com/MystenLabs/sui/commit/c9feb2c5055712bc2f2e2165e2adff2a2a5e0bc7"
+        },
+        "date": 1684255210169,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106372756,
+            "range": "± 4156676",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 259036,
+            "range": "± 18280",
             "unit": "ns/iter"
           }
         ]
