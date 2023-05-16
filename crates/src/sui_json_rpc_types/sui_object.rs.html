@@ -1219,6 +1219,7 @@
 <a href="#1219" id="1219">1219</a>
 <a href="#1220" id="1220">1220</a>
 <a href="#1221" id="1221">1221</a>
+<a href="#1222" id="1222">1222</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1314,14 +1315,15 @@
 
 <span class="kw">impl </span>SuiObjectResponse {
     <span class="kw">pub fn </span>move_object_bcs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Vec&lt;u8&gt;&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(data) = <span class="kw-2">&amp;</span><span class="self">self</span>.data {
-            <span class="kw">match </span><span class="kw-2">&amp;</span>data.bcs {
-                <span class="prelude-val">Some</span>(SuiRawData::MoveObject(obj)) =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>obj.bcs_bytes),
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-            };
+        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.data {
+            <span class="prelude-val">Some</span>(SuiObjectData {
+                bcs: <span class="prelude-val">Some</span>(SuiRawData::MoveObject(obj)),
+                ..
+            }) =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>obj.bcs_bytes),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
-        <span class="prelude-val">None
-    </span>}
+    }
+
     <span class="kw">pub fn </span>owner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Owner&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(data) = <span class="kw-2">&amp;</span><span class="self">self</span>.data {
             <span class="kw">return </span>data.owner;
