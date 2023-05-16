@@ -1426,6 +1426,8 @@
 <a href="#1426" id="1426">1426</a>
 <a href="#1427" id="1427">1427</a>
 <a href="#1428" id="1428">1428</a>
+<a href="#1429" id="1429">1429</a>
+<a href="#1430" id="1430">1430</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1438,7 +1440,7 @@
 
 <span class="doccomment">/// The minimum and maximum protocol versions supported by this build.
 </span><span class="kw">const </span>MIN_PROTOCOL_VERSION: u64 = <span class="number">1</span>;
-<span class="kw">const </span>MAX_PROTOCOL_VERSION: u64 = <span class="number">10</span>;
+<span class="kw">const </span>MAX_PROTOCOL_VERSION: u64 = <span class="number">11</span>;
 
 <span class="comment">// Record history of protocol version allocations here:
 //
@@ -1464,6 +1466,7 @@
 // Version 10:increase bytecode verifier `max_verifier_meter_ticks_per_function` and
 //            `max_meter_ticks_per_module` limits each from 6_000_000 to 16_000_000. sui-system
 //            framework changes.
+// Version 11: Introduce `std::type_name::get_original` to the system frameworks.
 
 </span><span class="attr">#[derive(Copy, Clone, Debug, Hash, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 </span><span class="kw">pub struct </span>ProtocolVersion(u64);
@@ -2578,6 +2581,7 @@
                 cfg.max_meter_ticks_per_module = <span class="prelude-val">Some</span>(<span class="number">16_000_000</span>);
                 cfg
             }
+            <span class="number">11 </span>=&gt; <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>),
             <span class="comment">// Use this template when making changes:
             //
             //     // modify an existing constant.
