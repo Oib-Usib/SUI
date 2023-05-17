@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684339540488,
+  "lastUpdate": 1684342776812,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8027,6 +8027,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312243,
             "range": "± 17751",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba5d6b1c4e146110065ff05196233f0386a231c9",
+          "message": "[sui cli] add validator command to print out raw gas price setting txn (#12034)\n\n## Description \r\n\r\nThis PR adds a validator command that prints out the base64\r\nrepresentation of a transaction that updates a validator's gas price\r\nquote to a new value. I considered making this part of the original\r\n`UpdateGasPrice` command but decided it's different enough to be its own\r\ncommand, primarily because the active address of the wallet context can\r\nbe someone other than the transaction sender in the case of the new\r\ncommand.\r\n \r\n## Test Plan \r\n\r\nAdded a test.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-17T09:50:38-07:00",
+          "tree_id": "8bd8e914bdf20d942e41b6730cfda16abfb5eb5a",
+          "url": "https://github.com/MystenLabs/sui/commit/ba5d6b1c4e146110065ff05196233f0386a231c9"
+        },
+        "date": 1684342764288,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 107180104,
+            "range": "± 4780414",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 305653,
+            "range": "± 23135",
             "unit": "ns/iter"
           }
         ]
