@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684358352398,
+  "lastUpdate": 1684363247503,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8279,6 +8279,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 341459,
             "range": "± 22163",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2597a813338a9b4bcb483c557091b3c495e5630c",
+          "message": "sui ns: rpc with updated spec (#12006)\n\n## Description \r\n\r\nUpdate JSON RPC with new spec\r\n\r\n## Test Plan \r\n\r\nlocal testing, similar to \r\nhttps://github.com/MystenLabs/sui/pull/10684",
+          "timestamp": "2023-05-17T22:30:25Z",
+          "tree_id": "2ecde526b2d2b4be5271725e04210a2a025c048e",
+          "url": "https://github.com/MystenLabs/sui/commit/2597a813338a9b4bcb483c557091b3c495e5630c"
+        },
+        "date": 1684363235733,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145742250,
+            "range": "± 4948761",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309599,
+            "range": "± 22416",
             "unit": "ns/iter"
           }
         ]
