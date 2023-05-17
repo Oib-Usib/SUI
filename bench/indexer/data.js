@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684363247503,
+  "lastUpdate": 1684365131620,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8315,6 +8315,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309599,
             "range": "± 22416",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10fc5691cf0da32e9c742043d62e005c168bb0a8",
+          "message": "Revert git revision refactoring (#12025)\n\nMoves the git revision/version back to each main.rs",
+          "timestamp": "2023-05-17T16:01:31-07:00",
+          "tree_id": "69126d600a1780ff552f60c4b083a689b55def9f",
+          "url": "https://github.com/MystenLabs/sui/commit/10fc5691cf0da32e9c742043d62e005c168bb0a8"
+        },
+        "date": 1684365119840,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144409457,
+            "range": "± 4712895",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 503203,
+            "range": "± 104315",
             "unit": "ns/iter"
           }
         ]
