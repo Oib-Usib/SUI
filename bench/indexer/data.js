@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684284181690,
+  "lastUpdate": 1684330877241,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7919,6 +7919,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311566,
             "range": "± 13022",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "73e9fc28f1915ce85f76d83170ddebaab24ffc88",
+          "message": "[sui-framework] Add deepbook tests (#12046)\n\n## Description\r\n\r\nRun deepbook test among other `sui-framework-tests`. Also separate\r\nframework tests each into their own test so that it's possible to run\r\nthe tests for just one package.\r\n\r\n## Test Plan\r\n\r\n```\r\nsui/crates/sui-framework-tests$ cargo nextest run -- run_deepbook_tests\r\n```",
+          "timestamp": "2023-05-17T13:29:07Z",
+          "tree_id": "bd0989c8c273fe2362661118b9ddcd0a46ea8798",
+          "url": "https://github.com/MystenLabs/sui/commit/73e9fc28f1915ce85f76d83170ddebaab24ffc88"
+        },
+        "date": 1684330865490,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148630757,
+            "range": "± 4422891",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 554714,
+            "range": "± 47199",
             "unit": "ns/iter"
           }
         ]
