@@ -753,12 +753,6 @@
 <a href="#753" id="753">753</a>
 <a href="#754" id="754">754</a>
 <a href="#755" id="755">755</a>
-<a href="#756" id="756">756</a>
-<a href="#757" id="757">757</a>
-<a href="#758" id="758">758</a>
-<a href="#759" id="759">759</a>
-<a href="#760" id="760">760</a>
-<a href="#761" id="761">761</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -781,7 +775,7 @@
 <span class="kw">use </span>sui_keys::keypair_file::{read_authority_keypair_from_file, read_keypair_from_file};
 <span class="kw">use </span>sui_protocol_config::SupportedProtocolVersions;
 <span class="kw">use </span>sui_storage::object_store::ObjectStoreConfig;
-<span class="kw">use </span>sui_types::base_types::{ObjectID, SuiAddress};
+<span class="kw">use </span>sui_types::base_types::ObjectID;
 <span class="kw">use </span>sui_types::crypto::AuthorityPublicKeyBytes;
 <span class="kw">use </span>sui_types::crypto::KeypairTraits;
 <span class="kw">use </span>sui_types::crypto::NetworkKeyPair;
@@ -874,13 +868,7 @@
     </span><span class="kw">pub </span>expensive_safety_check_config: ExpensiveSafetyCheckConfig,
 
     <span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
-    </span><span class="kw">pub </span>name_service_package_address: <span class="prelude-ty">Option</span>&lt;SuiAddress&gt;,
-
-    <span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
-    </span><span class="kw">pub </span>name_service_registry_id: <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
-
-    <span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;Option::is_none&quot;</span>)]
-    </span><span class="kw">pub </span>name_service_reverse_registry_id: <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
+    </span><span class="kw">pub </span>name_service_resolver_object_id: <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
 
     <span class="attr">#[serde(default)]
     </span><span class="kw">pub </span>transaction_deny_config: TransactionDenyConfig,

@@ -1241,8 +1241,6 @@
 <a href="#1241" id="1241">1241</a>
 <a href="#1242" id="1242">1242</a>
 <a href="#1243" id="1243">1243</a>
-<a href="#1244" id="1244">1244</a>
-<a href="#1245" id="1245">1245</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2465,9 +2463,7 @@
     server.register_module(IndexerApi::new(
         state.clone(),
         ReadApi::new(state.clone(), metrics.clone()),
-        config.name_service_package_address,
-        config.name_service_registry_id,
-        config.name_service_reverse_registry_id,
+        config.name_service_resolver_object_id,
         metrics.clone(),
     ))<span class="question-mark">?</span>;
     server.register_module(MoveUtils::new(state.clone()))<span class="question-mark">?</span>;
