@@ -1883,6 +1883,59 @@
 <a href="#1883" id="1883">1883</a>
 <a href="#1884" id="1884">1884</a>
 <a href="#1885" id="1885">1885</a>
+<a href="#1886" id="1886">1886</a>
+<a href="#1887" id="1887">1887</a>
+<a href="#1888" id="1888">1888</a>
+<a href="#1889" id="1889">1889</a>
+<a href="#1890" id="1890">1890</a>
+<a href="#1891" id="1891">1891</a>
+<a href="#1892" id="1892">1892</a>
+<a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
+<a href="#1919" id="1919">1919</a>
+<a href="#1920" id="1920">1920</a>
+<a href="#1921" id="1921">1921</a>
+<a href="#1922" id="1922">1922</a>
+<a href="#1923" id="1923">1923</a>
+<a href="#1924" id="1924">1924</a>
+<a href="#1925" id="1925">1925</a>
+<a href="#1926" id="1926">1926</a>
+<a href="#1927" id="1927">1927</a>
+<a href="#1928" id="1928">1928</a>
+<a href="#1929" id="1929">1929</a>
+<a href="#1930" id="1930">1930</a>
+<a href="#1931" id="1931">1931</a>
+<a href="#1932" id="1932">1932</a>
+<a href="#1933" id="1933">1933</a>
+<a href="#1934" id="1934">1934</a>
+<a href="#1935" id="1935">1935</a>
+<a href="#1936" id="1936">1936</a>
+<a href="#1937" id="1937">1937</a>
+<a href="#1938" id="1938">1938</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1893,7 +1946,7 @@
 <span class="kw">use </span>anyhow::anyhow;
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>cached::proc_macro::once;
-<span class="kw">use </span>diesel::dsl::max;
+<span class="kw">use </span>diesel::dsl::{count, max};
 <span class="kw">use </span>diesel::pg::PgConnection;
 <span class="kw">use </span>diesel::query_builder::AsQuery;
 <span class="kw">use </span>diesel::sql_types::{BigInt, VarChar};
@@ -1930,7 +1983,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::{Context, IndexerError};
 <span class="kw">use </span><span class="kw">crate</span>::metrics::IndexerMetrics;
-<span class="kw">use </span><span class="kw">crate</span>::models::addresses::{ActiveAddress, Address};
+<span class="kw">use </span><span class="kw">crate</span>::models::addresses::{ActiveAddress, Address, AddressStats};
 <span class="kw">use </span><span class="kw">crate</span>::models::checkpoints::Checkpoint;
 <span class="kw">use </span><span class="kw">crate</span>::models::epoch::DBEpochInfo;
 <span class="kw">use </span><span class="kw">crate</span>::models::events::Event;
@@ -1943,11 +1996,9 @@
 <span class="kw">use </span><span class="kw">crate</span>::models::transaction_index::{InputObject, MoveCall, Recipient};
 <span class="kw">use </span><span class="kw">crate</span>::models::transactions::Transaction;
 <span class="kw">use </span><span class="kw">crate</span>::schema::{
-    active_addresses, addresses, checkpoints, checkpoints::dsl <span class="kw">as </span>checkpoints_dsl, epochs,
-    epochs::dsl <span class="kw">as </span>epochs_dsl, events, input_objects, input_objects::dsl <span class="kw">as </span>input_objects_dsl,
-    move_calls, move_calls::dsl <span class="kw">as </span>move_calls_dsl, objects, objects::dsl <span class="kw">as </span>objects_dsl,
-    objects_history, packages, recipients, recipients::dsl <span class="kw">as </span>recipients_dsl, system_states,
-    transactions, transactions::dsl <span class="kw">as </span>transactions_dsl, validators,
+    active_addresses, address_stats, addresses, checkpoints, epochs, events, input_objects,
+    move_calls, objects, objects_history, packages, recipients, system_states, transactions,
+    validators,
 };
 <span class="kw">use </span><span class="kw">crate</span>::store::diesel_marco::{read_only_blocking, transactional_blocking};
 <span class="kw">use </span><span class="kw">crate</span>::store::indexer_store::TemporaryCheckpointStore;
@@ -2097,7 +2148,7 @@ GROUP BY table_name;
 
     <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i64, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            checkpoints_dsl::checkpoints
+            checkpoints::dsl::checkpoints
                 .select(max(checkpoints::sequence_number))
                 .first::&lt;<span class="prelude-ty">Option</span>&lt;i64&gt;&gt;(conn)
                 <span class="comment">// -1 to differentiate between no checkpoints and the first checkpoint
@@ -2123,11 +2174,11 @@ GROUP BY table_name;
     ) -&gt; <span class="prelude-ty">Result</span>&lt;sui_json_rpc_types::Checkpoint, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
             <span class="kw">let </span>cp: Checkpoint = <span class="kw">match </span>id {
-                CheckpointId::SequenceNumber(seq) =&gt; checkpoints_dsl::checkpoints
+                CheckpointId::SequenceNumber(seq) =&gt; checkpoints::dsl::checkpoints
                     .filter(checkpoints::sequence_number.eq(seq <span class="kw">as </span>i64))
                     .limit(<span class="number">1</span>)
                     .first(conn),
-                CheckpointId::Digest(digest) =&gt; checkpoints_dsl::checkpoints
+                CheckpointId::Digest(digest) =&gt; checkpoints::dsl::checkpoints
                     .filter(checkpoints::checkpoint_digest.eq(digest.base58_encode()))
                     .limit(<span class="number">1</span>)
                     .first(conn),
@@ -2202,7 +2253,7 @@ GROUP BY table_name;
         digest: CheckpointDigest,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;CheckpointSequenceNumber, IndexerError&gt; {
         <span class="prelude-val">Ok</span>(
-            <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| checkpoints_dsl::checkpoints
+            <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| checkpoints::dsl::checkpoints
                 .select(checkpoints::sequence_number)
                 .filter(checkpoints::checkpoint_digest.eq(digest.base58_encode()))
                 .first::&lt;i64&gt;(conn))
@@ -2314,8 +2365,8 @@ GROUP BY table_name;
 
     <span class="kw">async fn </span>get_total_transaction_number_from_checkpoints(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i64, IndexerError&gt; {
         <span class="kw">let </span>checkpoint: Checkpoint = <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            checkpoints_dsl::checkpoints
-                .order(checkpoints_dsl::network_total_transactions.desc())
+            checkpoints::dsl::checkpoints
+                .order(checkpoints::dsl::network_total_transactions.desc())
                 .first::&lt;Checkpoint&gt;(conn)
         })
         .context(<span class="string">&quot;Failed reading total transaction number&quot;</span>)<span class="question-mark">?</span>;
@@ -2327,8 +2378,8 @@ GROUP BY table_name;
         tx_digest: <span class="kw-2">&amp;</span>str,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Transaction, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            transactions_dsl::transactions
-                .filter(transactions_dsl::transaction_digest.eq(tx_digest))
+            transactions::dsl::transactions
+                .filter(transactions::dsl::transaction_digest.eq(tx_digest))
                 .first::&lt;Transaction&gt;(conn)
         })
         .context(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
@@ -2428,8 +2479,8 @@ GROUP BY table_name;
         tx_digests: <span class="kw-2">&amp;</span>[String],
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            transactions_dsl::transactions
-                .filter(transactions_dsl::transaction_digest.eq_any(tx_digests))
+            transactions::dsl::transactions
+                .filter(transactions::dsl::transaction_digest.eq_any(tx_digests))
                 .load::&lt;Transaction&gt;(conn)
         })
         .context(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
@@ -2444,14 +2495,14 @@ GROUP BY table_name;
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;i64&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(digest) = <span class="kw-2">&amp;</span>tx_digest {
-                <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions_dsl::transactions
-                    .filter(transactions_dsl::transaction_digest.eq(digest))
-                    .select(transactions_dsl::id)
+                <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions::dsl::transactions
+                    .filter(transactions::dsl::transaction_digest.eq(digest))
+                    .select(transactions::dsl::id)
                     .into_boxed();
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.order(transactions_dsl::id.desc());
+                    boxed_query = boxed_query.order(transactions::dsl::id.desc());
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.order(transactions_dsl::id.asc());
+                    boxed_query = boxed_query.order(transactions::dsl::id.asc());
                 }
                 <span class="prelude-val">Some</span>(boxed_query.first::&lt;i64&gt;(conn))
             } <span class="kw">else </span>{
@@ -2494,8 +2545,8 @@ GROUP BY table_name;
                     .get_result::&lt;Object&gt;(conn)
                     .optional()
             } <span class="kw">else </span>{
-                objects_dsl::objects
-                    .filter(objects_dsl::object_id.eq(object_id.to_string()))
+                objects::dsl::objects
+                    .filter(objects::dsl::object_id.eq(object_id.to_string()))
                     .first::&lt;Object&gt;(conn)
                     .optional()
             }
@@ -2585,14 +2636,14 @@ GROUP BY table_name;
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;i64&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(digest) = <span class="kw-2">&amp;</span>tx_digest {
-                <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = move_calls_dsl::move_calls
-                    .filter(move_calls_dsl::transaction_digest.eq(digest))
-                    .select(move_calls_dsl::id)
+                <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = move_calls::dsl::move_calls
+                    .filter(move_calls::dsl::transaction_digest.eq(digest))
+                    .select(move_calls::dsl::id)
                     .into_boxed();
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.order(move_calls_dsl::id.desc());
+                    boxed_query = boxed_query.order(move_calls::dsl::id.desc());
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.order(move_calls_dsl::id.asc());
+                    boxed_query = boxed_query.order(move_calls::dsl::id.asc());
                 }
                 <span class="prelude-val">Some</span>(boxed_query.first::&lt;i64&gt;(conn))
             } <span class="kw">else </span>{
@@ -2612,14 +2663,14 @@ GROUP BY table_name;
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;i64&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(digest) = <span class="kw-2">&amp;</span>tx_digest {
-                <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = input_objects_dsl::input_objects
-                    .filter(input_objects_dsl::transaction_digest.eq(digest))
-                    .select(input_objects_dsl::id)
+                <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = input_objects::dsl::input_objects
+                    .filter(input_objects::dsl::transaction_digest.eq(digest))
+                    .select(input_objects::dsl::id)
                     .into_boxed();
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.order(input_objects_dsl::id.desc());
+                    boxed_query = boxed_query.order(input_objects::dsl::id.desc());
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.order(input_objects_dsl::id.asc());
+                    boxed_query = boxed_query.order(input_objects::dsl::id.asc());
                 }
                 <span class="prelude-val">Some</span>(boxed_query.first::&lt;i64&gt;(conn))
             } <span class="kw">else </span>{
@@ -2639,14 +2690,14 @@ GROUP BY table_name;
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;i64&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(digest) = <span class="kw-2">&amp;</span>tx_digest {
-                <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = recipients_dsl::recipients
-                    .filter(recipients_dsl::transaction_digest.eq(digest))
-                    .select(recipients_dsl::id)
+                <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = recipients::dsl::recipients
+                    .filter(recipients::dsl::transaction_digest.eq(digest))
+                    .select(recipients::dsl::id)
                     .into_boxed();
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.order(recipients_dsl::id.desc());
+                    boxed_query = boxed_query.order(recipients::dsl::id.desc());
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.order(recipients_dsl::id.asc());
+                    boxed_query = boxed_query.order(recipients::dsl::id.asc());
                 }
                 <span class="prelude-val">Some</span>(boxed_query.first::&lt;i64&gt;(conn))
             } <span class="kw">else </span>{
@@ -2666,23 +2717,23 @@ GROUP BY table_name;
         is_descending: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions_dsl::transactions.into_boxed();
+            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions::dsl::transactions.into_boxed();
             <span class="kw">if let </span><span class="prelude-val">Some</span>(start_sequence) = start_sequence {
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.filter(transactions_dsl::id.lt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.lt(start_sequence));
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.filter(transactions_dsl::id.gt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.gt(start_sequence));
                 }
             }
 
             <span class="kw">if </span>is_descending {
                 boxed_query
-                    .order(transactions_dsl::id.desc())
+                    .order(transactions::dsl::id.desc())
                     .limit((limit) <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             } <span class="kw">else </span>{
                 boxed_query
-                    .order(transactions_dsl::id.asc())
+                    .order(transactions::dsl::id.asc())
                     .limit((limit) <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             }
@@ -2697,24 +2748,24 @@ GROUP BY table_name;
         is_descending: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions_dsl::transactions
-                .filter(transactions_dsl::checkpoint_sequence_number.eq(checkpoint_sequence_number))
+            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions::dsl::transactions
+                .filter(transactions::dsl::checkpoint_sequence_number.eq(checkpoint_sequence_number))
                 .into_boxed();
             <span class="kw">if let </span><span class="prelude-val">Some</span>(start_sequence) = start_sequence {
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.filter(transactions_dsl::id.lt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.lt(start_sequence));
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.filter(transactions_dsl::id.gt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.gt(start_sequence));
                 }
             }
             <span class="kw">if </span>is_descending {
                 boxed_query
-                    .order(transactions_dsl::id.desc())
+                    .order(transactions::dsl::id.desc())
                     .limit((limit) <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             } <span class="kw">else </span>{
                 boxed_query
-                    .order(transactions_dsl::id.asc())
+                    .order(transactions::dsl::id.asc())
                     .limit((limit) <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             }
@@ -2729,25 +2780,25 @@ GROUP BY table_name;
         is_descending: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions_dsl::transactions
-                .filter(transactions_dsl::transaction_kind.eq(kind.clone()))
+            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions::dsl::transactions
+                .filter(transactions::dsl::transaction_kind.eq(kind.clone()))
                 .into_boxed();
             <span class="kw">if let </span><span class="prelude-val">Some</span>(start_sequence) = start_sequence {
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.filter(transactions_dsl::id.lt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.lt(start_sequence));
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.filter(transactions_dsl::id.gt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.gt(start_sequence));
                 }
             }
 
             <span class="kw">if </span>is_descending {
                 boxed_query
-                    .order(transactions_dsl::id.desc())
+                    .order(transactions::dsl::id.desc())
                     .limit((limit) <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             } <span class="kw">else </span>{
                boxed_query
-                    .order(transactions_dsl::id.asc())
+                    .order(transactions::dsl::id.asc())
                     .limit((limit) <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             }
@@ -2762,26 +2813,26 @@ GROUP BY table_name;
         is_descending: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions_dsl::transactions
-                .filter(transactions_dsl::mutated.contains(<span class="macro">vec!</span>[<span class="prelude-val">Some</span>(object_id.clone())]))
-                .or_filter(transactions_dsl::created.contains(<span class="macro">vec!</span>[<span class="prelude-val">Some</span>(object_id.clone())]))
-                .or_filter(transactions_dsl::unwrapped.contains(<span class="macro">vec!</span>[<span class="prelude-val">Some</span>(object_id.clone())]))
+            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions::dsl::transactions
+                .filter(transactions::dsl::mutated.contains(<span class="macro">vec!</span>[<span class="prelude-val">Some</span>(object_id.clone())]))
+                .or_filter(transactions::dsl::created.contains(<span class="macro">vec!</span>[<span class="prelude-val">Some</span>(object_id.clone())]))
+                .or_filter(transactions::dsl::unwrapped.contains(<span class="macro">vec!</span>[<span class="prelude-val">Some</span>(object_id.clone())]))
                 .into_boxed();
             <span class="kw">if let </span><span class="prelude-val">Some</span>(start_sequence) = start_sequence {
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.filter(transactions_dsl::id.lt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.lt(start_sequence));
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.filter(transactions_dsl::id.gt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.gt(start_sequence));
                 }
             }
             <span class="kw">if </span>is_descending {
                boxed_query
-                    .order(transactions_dsl::id.desc())
+                    .order(transactions::dsl::id.desc())
                     .limit(limit <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             } <span class="kw">else </span>{
                 boxed_query
-                    .order(transactions_dsl::id.asc())
+                    .order(transactions::dsl::id.asc())
                     .limit(limit <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             }
@@ -2796,25 +2847,25 @@ GROUP BY table_name;
         is_descending: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;, IndexerError&gt; {
         <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions_dsl::transactions
-                .filter(transactions_dsl::sender.eq(sender_address.clone()))
+            <span class="kw">let </span><span class="kw-2">mut </span>boxed_query = transactions::dsl::transactions
+                .filter(transactions::dsl::sender.eq(sender_address.clone()))
                 .into_boxed();
             <span class="kw">if let </span><span class="prelude-val">Some</span>(start_sequence) = start_sequence {
                 <span class="kw">if </span>is_descending {
-                    boxed_query = boxed_query.filter(transactions_dsl::id.lt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.lt(start_sequence));
                 } <span class="kw">else </span>{
-                    boxed_query = boxed_query.filter(transactions_dsl::id.gt(start_sequence));
+                    boxed_query = boxed_query.filter(transactions::dsl::id.gt(start_sequence));
                 }
             }
 
             <span class="kw">if </span>is_descending {
                 boxed_query
-                    .order(transactions_dsl::id.desc())
+                    .order(transactions::dsl::id.desc())
                     .limit(limit <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             } <span class="kw">else </span>{
                boxed_query
-                    .order(transactions_dsl::id.asc())
+                    .order(transactions::dsl::id.asc())
                     .limit(limit <span class="kw">as </span>i64)
                     .load::&lt;Transaction&gt;(conn)
             }
@@ -3474,7 +3525,7 @@ WHERE e1.epoch = e2.epoch
         <span class="kw">let </span>id = cursor
             .map(|id| id <span class="kw">as </span>i64)
             .unwrap_or(<span class="kw">if </span>is_descending { i64::MAX } <span class="kw">else </span>{ -<span class="number">1 </span>});
-        <span class="kw">let </span><span class="kw-2">mut </span>query = epochs_dsl::epochs.into_boxed();
+        <span class="kw">let </span><span class="kw-2">mut </span>query = epochs::dsl::epochs.into_boxed();
         <span class="kw">if </span>is_descending {
             query = query
                 .filter(epochs::epoch.lt(id))
@@ -3539,6 +3590,61 @@ WHERE e1.epoch = e2.epoch
         .context(<span class="string">&quot;Failed reading latest validator summary&quot;</span>)<span class="question-mark">?</span>;
 
         epoch_info.to_epoch_info(validators)
+    }
+
+    <span class="doccomment">/// address stats methods
+    </span><span class="kw">async fn </span>get_last_address_processed_checkpoint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i64, IndexerError&gt; {
+        <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            address_stats::dsl::address_stats
+                .select(max(address_stats::checkpoint))
+                .first::&lt;<span class="prelude-ty">Option</span>&lt;i64&gt;&gt;(conn)
+                <span class="comment">// -1 to differentiate between no checkpoints and the first checkpoint
+                </span>.map(|o| o.unwrap_or(-<span class="number">1</span>))
+        })
+        .context(<span class="string">&quot;Failed reading latest object checkpoint from PostgresDB&quot;</span>)
+    }
+
+    <span class="kw">async fn </span>calculate_address_stats(<span class="kw-2">&amp;</span><span class="self">self</span>, checkpoint: i64) -&gt; <span class="prelude-ty">Result</span>&lt;AddressStats, IndexerError&gt; {
+        <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            <span class="kw">let </span>cp: Checkpoint = checkpoints::dsl::checkpoints
+                .filter(checkpoints::sequence_number.eq(checkpoint))
+                .limit(<span class="number">1</span>)
+                .first(conn)<span class="question-mark">?</span>;
+            <span class="kw">let </span>cp_timestamp_ms = cp.timestamp_ms;
+            <span class="kw">let </span>cumulative_addresses = addresses::dsl::addresses
+                .filter(addresses::first_appearance_time.le(cp_timestamp_ms))
+                .select(count(addresses::account_address))
+                .first(conn)<span class="question-mark">?</span>;
+            <span class="kw">let </span>cumulative_active_addresses = active_addresses::dsl::active_addresses
+                .filter(active_addresses::first_appearance_time.le(cp_timestamp_ms))
+                .select(count(active_addresses::account_address))
+                .first(conn)<span class="question-mark">?</span>;
+            <span class="kw">let </span>time_one_day_ago = cp_timestamp_ms - <span class="number">1000 </span>* <span class="number">60 </span>* <span class="number">60 </span>* <span class="number">24</span>;
+            <span class="kw">let </span>daily_active_addresses = active_addresses::dsl::active_addresses
+                .filter(active_addresses::first_appearance_time.le(cp_timestamp_ms))
+                .filter(active_addresses::last_appearance_time.gt(time_one_day_ago))
+                .select(count(active_addresses::account_address))
+                .first(conn)<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>::&lt;AddressStats, IndexerError&gt;(AddressStats {
+                checkpoint: cp.sequence_number,
+                epoch: cp.epoch,
+                timestamp_ms: cp_timestamp_ms,
+                cumulative_addresses,
+                cumulative_active_addresses,
+                daily_active_addresses,
+            })
+        })
+        .context(<span class="string">&quot;Failed reading latest object checkpoint sequence number from PostgresDB&quot;</span>)
+    }
+
+    <span class="kw">async fn </span>persist_address_stats(<span class="kw-2">&amp;</span><span class="self">self</span>, addr_stats: <span class="kw-2">&amp;</span>AddressStats) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt; {
+        <span class="macro">transactional_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            diesel::insert_into(address_stats::dsl::address_stats)
+                .values(addr_stats)
+                .execute(conn)
+        })
+        .context(<span class="string">&quot;Failed persisting address stats to PostgresDB&quot;</span>)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(())
     }
 }
 

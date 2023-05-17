@@ -1184,8 +1184,6 @@
 <a href="#1184" id="1184">1184</a>
 <a href="#1185" id="1185">1185</a>
 <a href="#1186" id="1186">1186</a>
-<a href="#1187" id="1187">1187</a>
-<a href="#1188" id="1188">1188</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1769,11 +1767,9 @@
 
                 <span class="kw">let </span>transactions_handler = <span class="self">self</span>.clone();
                 <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-                    <span class="comment">// NOTE: only index move_calls for Explorer metrics for now,
-                    // will re-enable others later.
-                    </span><span class="kw">let </span><span class="kw-2">mut </span>transaction_index_tables_commit_res = transactions_handler
+                    <span class="kw">let </span><span class="kw-2">mut </span>transaction_index_tables_commit_res = transactions_handler
                         .state
-                        .persist_transaction_index_tables(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span>move_calls, <span class="kw-2">&amp;</span>[])
+                        .persist_transaction_index_tables(<span class="kw-2">&amp;</span>input_objects, <span class="kw-2">&amp;</span>move_calls, <span class="kw-2">&amp;</span>recipients)
                         .<span class="kw">await</span>;
                     <span class="kw">while let </span><span class="prelude-val">Err</span>(e) = transaction_index_tables_commit_res {
                         <span class="macro">warn!</span>(
