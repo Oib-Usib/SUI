@@ -161,6 +161,24 @@
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
 <a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>fastcrypto::{
@@ -192,7 +210,16 @@
     <span class="doccomment">/// Cost per block of `msg`, where a block is 64 bytes
     </span><span class="kw">pub </span>bls12381_bls12381_min_sig_verify_msg_cost_per_block: InternalGas,
 }
-<span class="kw">pub fn </span>bls12381_min_sig_verify(
+<span class="comment">/***************************************************************************************************
+ * native fun bls12381_min_sig_verify
+ * Implementation of the Move native function `bls12381_min_sig_verify(signature: &amp;vector&lt;u8&gt;, public_key: &amp;vector&lt;u8&gt;, msg: &amp;vector&lt;u8&gt;): bool`
+ *   gas cost: bls12381_bls12381_min_sig_verify_cost_base                    | covers various fixed costs in the oper
+ *              + bls12381_bls12381_min_sig_verify_msg_cost_per_byte    * size_of(msg)        | covers cost of operating on each byte of `msg`
+ *              + bls12381_bls12381_min_sig_verify_msg_cost_per_block   * num_blocks(msg)     | covers cost of operating on each block in `msg`
+ * Note: each block is of size `BLS12381_BLOCK_SIZE` bytes, and we round up.
+ *       `signature` and `public_key` are fixed size, so their costs are included in the base cost.
+ **************************************************************************************************/
+</span><span class="kw">pub fn </span>bls12381_min_sig_verify(
     context: <span class="kw-2">&amp;mut </span>NativeContext,
     ty_args: Vec&lt;Type&gt;,
     <span class="kw-2">mut </span>args: VecDeque&lt;Value&gt;,
@@ -262,7 +289,16 @@
     <span class="doccomment">/// Cost per block of `msg`, where a block is 64 bytes
     </span><span class="kw">pub </span>bls12381_bls12381_min_pk_verify_msg_cost_per_block: InternalGas,
 }
-<span class="kw">pub fn </span>bls12381_min_pk_verify(
+<span class="comment">/***************************************************************************************************
+ * native fun bls12381_min_pk_verify
+ * Implementation of the Move native function `bls12381_min_pk_verify(signature: &amp;vector&lt;u8&gt;, public_key: &amp;vector&lt;u8&gt;, msg: &amp;vector&lt;u8&gt;): bool`
+ *   gas cost: bls12381_bls12381_min_pk_verify_cost_base                    | covers various fixed costs in the oper
+ *              + bls12381_bls12381_min_pk_verify_msg_cost_per_byte    * size_of(msg)        | covers cost of operating on each byte of `msg`
+ *              + bls12381_bls12381_min_pk_verify_msg_cost_per_block   * num_blocks(msg)     | covers cost of operating on each block in `msg`
+ * Note: each block is of size `BLS12381_BLOCK_SIZE` bytes, and we round up.
+ *       `signature` and `public_key` are fixed size, so their costs are included in the base cost.
+ **************************************************************************************************/
+</span><span class="kw">pub fn </span>bls12381_min_pk_verify(
     context: <span class="kw-2">&amp;mut </span>NativeContext,
     ty_args: Vec&lt;Type&gt;,
     <span class="kw-2">mut </span>args: VecDeque&lt;Value&gt;,

@@ -212,6 +212,29 @@
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
 <a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span><span class="kw">crate</span>::NativesCostTable;
@@ -243,7 +266,15 @@
     <span class="kw">pub </span>groth16_prepare_verifying_key_bls12381_cost_base: InternalGas,
     <span class="kw">pub </span>groth16_prepare_verifying_key_bn254_cost_base: InternalGas,
 }
-<span class="kw">pub fn </span>prepare_verifying_key_internal(
+<span class="comment">/***************************************************************************************************
+ * native fun prepare_verifying_key_internal
+ * Implementation of the Move native function `prepare_verifying_key_internal(curve: u8, verifying_key: &amp;vector&lt;u8&gt;): PreparedVerifyingKey`
+ * This function has two cost modes depending on the curve being set to `BLS12381` or `BN254`. The core formula is same but constants differ.
+ * If curve = 0, we use the `bls12381` cost constants, otherwise we use the `bn254` cost constants.
+ *   gas cost: groth16_prepare_verifying_key_cost_base                    | covers various fixed costs in the oper
+ * Note: `curve` and `verifying_key` are fixed size, so their costs are included in the base cost.
+ **************************************************************************************************/
+</span><span class="kw">pub fn </span>prepare_verifying_key_internal(
     context: <span class="kw-2">&amp;mut </span>NativeContext,
     ty_args: Vec&lt;Type&gt;,
     <span class="kw-2">mut </span>args: VecDeque&lt;Value&gt;,
@@ -316,7 +347,22 @@
 
     <span class="kw">pub </span>groth16_verify_groth16_proof_internal_public_input_cost_per_byte: InternalGas,
 }
-<span class="kw">pub fn </span>verify_groth16_proof_internal(
+<span class="comment">/***************************************************************************************************
+ * native fun verify_groth16_proof_internal
+ * Implementation of the Move native function `verify_groth16_proof_internal(curve: u8, vk_gamma_abc_g1_bytes: &amp;vector&lt;u8&gt;,
+ *                          alpha_g1_beta_g2_bytes: &amp;vector&lt;u8&gt;, gamma_g2_neg_pc_bytes: &amp;vector&lt;u8&gt;, delta_g2_neg_pc_bytes: &amp;vector&lt;u8&gt;,
+ *                          public_proof_inputs: &amp;vector&lt;u8&gt;, proof_points: &amp;vector&lt;u8&gt;): bool`
+ *
+ * This function has two cost modes depending on the curve being set to `BLS12381` or `BN254`. The core formula is same but constants differ.
+ * If curve = 0, we use the `bls12381` cost constants, otherwise we use the `bn254` cost constants.
+ *   gas cost: groth16_prepare_verifying_key_cost_base                    | covers various fixed costs in the oper
+ *              + groth16_verify_groth16_proof_internal_public_input_cost_per_byte
+ *                                                   * size_of(public_proof_inputs) | covers the cost of verifying each public input per byte
+ *              + groth16_verify_groth16_proof_internal_cost_per_public_input
+ *                                                   * num_public_inputs) | covers the cost of verifying each public input per input
+ * Note: every other arg is fixed size, so their costs are included in the base cost.
+ **************************************************************************************************/
+</span><span class="kw">pub fn </span>verify_groth16_proof_internal(
     context: <span class="kw-2">&amp;mut </span>NativeContext,
     ty_args: Vec&lt;Type&gt;,
     <span class="kw-2">mut </span>args: VecDeque&lt;Value&gt;,

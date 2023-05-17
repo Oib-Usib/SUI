@@ -74,6 +74,15 @@
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
 <a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span><span class="kw">crate</span>::NativesCostTable;
@@ -101,7 +110,16 @@
     <span class="doccomment">///  Cost per block of `msg` and `key`, with block size = 136
     </span><span class="kw">pub </span>hmac_hmac_sha3_256_input_cost_per_block: InternalGas,
 }
-<span class="kw">pub fn </span>hmac_sha3_256(
+<span class="comment">/***************************************************************************************************
+ * native fun ed25519_verify
+ * Implementation of the Move native function `hmac_sha3_256(key: &amp;vector&lt;u8&gt;, msg: &amp;vector&lt;u8&gt;): vector&lt;u8&gt;;`
+ *   gas cost: hmac_hmac_sha3_256_cost_base                          | base cost for function call and fixed opers
+ *              + hmac_hmac_sha3_256_input_cost_per_byte * msg.len()   | cost depends on length of message
+ *              + hmac_hmac_sha3_256_input_cost_per_block * num_blocks(msg) | cost depends on number of blocks in message
+ * Note: each block is of size `HMAC_SHA3_256_BLOCK_SIZE` bytes, and we round up.
+ *       `key` is fixed size, so the cost is included in the base cost.
+ **************************************************************************************************/
+</span><span class="kw">pub fn </span>hmac_sha3_256(
     context: <span class="kw-2">&amp;mut </span>NativeContext,
     ty_args: Vec&lt;Type&gt;,
     <span class="kw-2">mut </span>args: VecDeque&lt;Value&gt;,

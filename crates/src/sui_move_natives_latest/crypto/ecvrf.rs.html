@@ -87,6 +87,15 @@
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span><span class="kw">crate</span>::NativesCostTable;
@@ -119,7 +128,16 @@
     <span class="doccomment">///  Cost per block of `alpha_string` with block size = 128
     </span><span class="kw">pub </span>ecvrf_ecvrf_verify_alpha_string_cost_per_block: InternalGas,
 }
-<span class="kw">pub fn </span>ecvrf_verify(
+<span class="comment">/***************************************************************************************************
+ * native fun ecvrf_verify
+ * Implementation of the Move native function `ecvrf_verify(hash: &amp;vector&lt;u8&gt;, alpha_string: &amp;vector&lt;u8&gt;, public_key: &amp;vector&lt;u8&gt;, proof: &amp;vector&lt;u8&gt;): bool`
+ *   gas cost: ecvrf_ecvrf_verify_cost_base                    | covers various fixed costs in the oper
+ *              + ecvrf_ecvrf_verify_alpha_string_cost_per_byte    * size_of(alpha_string)        | covers cost of operating on each byte of `alpha_string`
+ *              + ecvrf_ecvrf_verify_alpha_string_cost_per_block   * num_blocks(alpha_string)     | covers cost of operating on each block in `alpha_string`
+ * Note: each block is of size `ECVRF_SHA512_BLOCK_SIZE` bytes, and we round up.
+ *       `hash`, `proof`, and `public_key` are fixed size, so their costs are included in the base cost.
+ **************************************************************************************************/
+</span><span class="kw">pub fn </span>ecvrf_verify(
     context: <span class="kw-2">&amp;mut </span>NativeContext,
     ty_args: Vec&lt;Type&gt;,
     <span class="kw-2">mut </span>args: VecDeque&lt;Value&gt;,
