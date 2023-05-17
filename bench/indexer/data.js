@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684352462702,
+  "lastUpdate": 1684358352398,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8243,6 +8243,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 285067,
             "range": "± 18919",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "127570466+wlmyng@users.noreply.github.com",
+            "name": "wlmyng",
+            "username": "wlmyng"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bd75bebae6d30174a92824e589ae678ce41bc802",
+          "message": "[1/n] [sui-json-rpc] unit testing (#12053)\n\n## Description \r\n\r\nGiven the recent changes to error handling and error response codes on\r\nrpc, adding some unit tests so we can expect behavior without having to\r\nreproduce potentially difficult error states through integration/ e2e\r\ntests.\r\n\r\n1. `MoveUtils` previously took `AuthorityState`, now has field\r\n`MoveUtilsInternalTrait` trait object. Moved most implementation of\r\nMoveUtils input the trait object so we can mock various states and\r\nexpect the correct success or error response.\r\n2. Two unit tests for `get_normalized_move_module` for success and error\r\nresponses.\r\n\r\n## Test Plan \r\nExisting tests + new unit tests\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-17T17:10:13-04:00",
+          "tree_id": "cae9b7613ddacc919f50513e9f3e19d02a834922",
+          "url": "https://github.com/MystenLabs/sui/commit/bd75bebae6d30174a92824e589ae678ce41bc802"
+        },
+        "date": 1684358338919,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109707301,
+            "range": "± 3183114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 341459,
+            "range": "± 22163",
             "unit": "ns/iter"
           }
         ]
