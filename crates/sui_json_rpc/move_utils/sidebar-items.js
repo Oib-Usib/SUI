@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["MoveUtils"]};
+window.SIDEBAR_ITEMS = {"struct":["MoveUtils","MoveUtilsInternal"],"trait":["MoveUtilsInternalTrait"]};
