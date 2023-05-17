@@ -965,6 +965,79 @@
 <a href="#965" id="965">965</a>
 <a href="#966" id="966">966</a>
 <a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
+<a href="#974" id="974">974</a>
+<a href="#975" id="975">975</a>
+<a href="#976" id="976">976</a>
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
+<a href="#985" id="985">985</a>
+<a href="#986" id="986">986</a>
+<a href="#987" id="987">987</a>
+<a href="#988" id="988">988</a>
+<a href="#989" id="989">989</a>
+<a href="#990" id="990">990</a>
+<a href="#991" id="991">991</a>
+<a href="#992" id="992">992</a>
+<a href="#993" id="993">993</a>
+<a href="#994" id="994">994</a>
+<a href="#995" id="995">995</a>
+<a href="#996" id="996">996</a>
+<a href="#997" id="997">997</a>
+<a href="#998" id="998">998</a>
+<a href="#999" id="999">999</a>
+<a href="#1000" id="1000">1000</a>
+<a href="#1001" id="1001">1001</a>
+<a href="#1002" id="1002">1002</a>
+<a href="#1003" id="1003">1003</a>
+<a href="#1004" id="1004">1004</a>
+<a href="#1005" id="1005">1005</a>
+<a href="#1006" id="1006">1006</a>
+<a href="#1007" id="1007">1007</a>
+<a href="#1008" id="1008">1008</a>
+<a href="#1009" id="1009">1009</a>
+<a href="#1010" id="1010">1010</a>
+<a href="#1011" id="1011">1011</a>
+<a href="#1012" id="1012">1012</a>
+<a href="#1013" id="1013">1013</a>
+<a href="#1014" id="1014">1014</a>
+<a href="#1015" id="1015">1015</a>
+<a href="#1016" id="1016">1016</a>
+<a href="#1017" id="1017">1017</a>
+<a href="#1018" id="1018">1018</a>
+<a href="#1019" id="1019">1019</a>
+<a href="#1020" id="1020">1020</a>
+<a href="#1021" id="1021">1021</a>
+<a href="#1022" id="1022">1022</a>
+<a href="#1023" id="1023">1023</a>
+<a href="#1024" id="1024">1024</a>
+<a href="#1025" id="1025">1025</a>
+<a href="#1026" id="1026">1026</a>
+<a href="#1027" id="1027">1027</a>
+<a href="#1028" id="1028">1028</a>
+<a href="#1029" id="1029">1029</a>
+<a href="#1030" id="1030">1030</a>
+<a href="#1031" id="1031">1031</a>
+<a href="#1032" id="1032">1032</a>
+<a href="#1033" id="1033">1033</a>
+<a href="#1034" id="1034">1034</a>
+<a href="#1035" id="1035">1035</a>
+<a href="#1036" id="1036">1036</a>
+<a href="#1037" id="1037">1037</a>
+<a href="#1038" id="1038">1038</a>
+<a href="#1039" id="1039">1039</a>
+<a href="#1040" id="1040">1040</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1019,6 +1092,10 @@
 };
 <span class="kw">use </span>sui_types::crypto::{AuthorityKeyPair, NetworkKeyPair, SignatureScheme, SuiKeyPair};
 <span class="kw">use </span>sui_types::transaction::{CallArg, ObjectArg, Transaction, TransactionData};
+
+<span class="attr">#[path = <span class="string">&quot;unit_tests/validator_tests.rs&quot;</span>]
+#[cfg(test)]
+</span><span class="kw">mod </span>validator_tests;
 
 <span class="kw">const </span>DEFAULT_GAS_BUDGET: u64 = <span class="number">200_000_000</span>; <span class="comment">// 0.2 SUI
 
@@ -1111,6 +1188,21 @@
         </span><span class="attr">#[clap(name = <span class="string">&quot;protocol-public-key&quot;</span>, long)]
         </span>protocol_public_key: AuthorityPublicKeyBytes,
     },
+    <span class="doccomment">/// Print out the serialized data of a transaction that sets the gas price quote for a validator.
+    </span>DisplayGasPriceUpdateRawTxn {
+        <span class="doccomment">/// Address of the transaction sender.
+        </span><span class="attr">#[clap(name = <span class="string">&quot;sender-address&quot;</span>, long)]
+        </span>sender_address: SuiAddress,
+        <span class="doccomment">/// Object ID of a validator&#39;s OperationCap, used for setting gas price and reportng validators.
+        </span><span class="attr">#[clap(name = <span class="string">&quot;operation-cap-id&quot;</span>, long)]
+        </span>operation_cap_id: ObjectID,
+        <span class="doccomment">/// Gas price to be set to.
+        </span><span class="attr">#[clap(name = <span class="string">&quot;new-gas-price&quot;</span>, long)]
+        </span>new_gas_price: u64,
+        <span class="doccomment">/// Gas budget for this transaction.
+        </span><span class="attr">#[clap(name = <span class="string">&quot;gas-budget&quot;</span>, long)]
+        </span>gas_budget: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+    },
 }
 
 <span class="attr">#[derive(Serialize)]
@@ -1125,6 +1217,10 @@
     UpdateGasPrice(SuiTransactionBlockResponse),
     ReportValidator(SuiTransactionBlockResponse),
     SerializedPayload(String),
+    DisplayGasPriceUpdateRawTxn {
+        data: TransactionData,
+        serialized_data: String,
+    },
 }
 
 <span class="kw">fn </span>make_key_files(
@@ -1369,6 +1465,35 @@
                 DEFAULT_EPOCH_ID.write(<span class="kw-2">&amp;mut </span>intent_msg_bytes);
                 SuiValidatorCommandResponse::SerializedPayload(Base64::encode(<span class="kw-2">&amp;</span>intent_msg_bytes))
             }
+
+            SuiValidatorCommand::DisplayGasPriceUpdateRawTxn {
+                sender_address,
+                operation_cap_id,
+                new_gas_price,
+                gas_budget,
+            } =&gt; {
+                <span class="kw">let </span>gas_budget = gas_budget.unwrap_or(DEFAULT_GAS_BUDGET);
+                <span class="kw">let </span>(_status, _summary, cap_obj_ref) =
+                    get_cap_object_ref(context, <span class="prelude-val">Some</span>(operation_cap_id)).<span class="kw">await</span><span class="question-mark">?</span>;
+
+                <span class="kw">let </span>args = <span class="macro">vec!</span>[
+                    CallArg::Object(ObjectArg::ImmOrOwnedObject(cap_obj_ref)),
+                    CallArg::Pure(bcs::to_bytes(<span class="kw-2">&amp;</span>new_gas_price).unwrap()),
+                ];
+                <span class="kw">let </span>data = construct_unsigned_0x5_txn(
+                    context,
+                    sender_address,
+                    <span class="string">&quot;request_set_gas_price&quot;</span>,
+                    args,
+                    gas_budget,
+                )
+                .<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>serialized_data = Base64::encode(bcs::to_bytes(<span class="kw-2">&amp;</span>data)<span class="question-mark">?</span>);
+                SuiValidatorCommandResponse::DisplayGasPriceUpdateRawTxn {
+                    data,
+                    serialized_data,
+                }
+            }
         });
         ret
     }
@@ -1509,13 +1634,13 @@
     <span class="prelude-val">Ok</span>((status, summary))
 }
 
-<span class="kw">async fn </span>call_0x5(
+<span class="kw">async fn </span>construct_unsigned_0x5_txn(
     context: <span class="kw-2">&amp;mut </span>WalletContext,
+    sender: SuiAddress,
     function: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
     call_args: Vec&lt;CallArg&gt;,
     gas_budget: u64,
-) -&gt; anyhow::Result&lt;SuiTransactionBlockResponse&gt; {
-    <span class="kw">let </span>sender = context.active_address()<span class="question-mark">?</span>;
+) -&gt; anyhow::Result&lt;TransactionData&gt; {
     <span class="kw">let </span>sui_client = context.get_client().<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>args = <span class="macro">vec!</span>[CallArg::SUI_SYSTEM_MUT];
     args.extend(call_args);
@@ -1525,7 +1650,7 @@
         .<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">let </span>gas_obj_ref = get_gas_obj_ref(sender, <span class="kw-2">&amp;</span>sui_client, gas_budget).<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span>tx_data = TransactionData::new_move_call(
+    TransactionData::new_move_call(
         sender,
         SUI_SYSTEM_PACKAGE_ID,
         <span class="macro">ident_str!</span>(<span class="string">&quot;sui_system&quot;</span>).to_owned(),
@@ -1536,7 +1661,17 @@
         gas_budget,
         rgp,
     )
-    .unwrap();
+}
+
+<span class="kw">async fn </span>call_0x5(
+    context: <span class="kw-2">&amp;mut </span>WalletContext,
+    function: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+    call_args: Vec&lt;CallArg&gt;,
+    gas_budget: u64,
+) -&gt; anyhow::Result&lt;SuiTransactionBlockResponse&gt; {
+    <span class="kw">let </span>sender = context.active_address()<span class="question-mark">?</span>;
+    <span class="kw">let </span>tx_data =
+        construct_unsigned_0x5_txn(context, sender, function, call_args, gas_budget).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">let </span>signature =
         context
             .config
@@ -1544,6 +1679,7 @@
             .sign_secure(<span class="kw-2">&amp;</span>sender, <span class="kw-2">&amp;</span>tx_data, Intent::sui_transaction())<span class="question-mark">?</span>;
     <span class="kw">let </span>transaction =
         Transaction::from_data(tx_data, Intent::sui_transaction(), <span class="macro">vec!</span>[signature]).verify()<span class="question-mark">?</span>;
+    <span class="kw">let </span>sui_client = context.get_client().<span class="kw">await</span><span class="question-mark">?</span>;
     sui_client
         .quorum_driver_api()
         .execute_transaction_block(
@@ -1583,6 +1719,16 @@
             }
             SuiValidatorCommandResponse::SerializedPayload(response) =&gt; {
                 <span class="macro">write!</span>(writer, <span class="string">&quot;Serialized payload: {}&quot;</span>, response)<span class="question-mark">?</span>;
+            }
+            SuiValidatorCommandResponse::DisplayGasPriceUpdateRawTxn {
+                data,
+                serialized_data,
+            } =&gt; {
+                <span class="macro">write!</span>(
+                    writer,
+                    <span class="string">&quot;Transaction: {:?}, \nSerialized transaction: {:?}&quot;</span>,
+                    data, serialized_data
+                )<span class="question-mark">?</span>;
             }
         }
         <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, writer.trim_end_matches(<span class="string">&#39;\n&#39;</span>))
@@ -1648,7 +1794,7 @@
     Pending,
 }
 
-<span class="kw">async fn </span>get_validator_summary(
+<span class="kw">pub async fn </span>get_validator_summary(
     client: <span class="kw-2">&amp;</span>SuiClient,
     validator_address: SuiAddress,
 ) -&gt; anyhow::Result&lt;<span class="prelude-ty">Option</span>&lt;(ValidatorStatus, SuiValidatorSummary)&gt;&gt; {

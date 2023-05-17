@@ -810,10 +810,17 @@
 <a href="#810" id="810">810</a>
 <a href="#811" id="811">811</a>
 <a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span><span class="kw">crate</span>::genesis_config::AccountConfig;
+</span><span class="kw">use </span><span class="kw">crate</span>::genesis_config::{AccountConfig, DEFAULT_GAS_AMOUNT};
 <span class="kw">use </span><span class="kw">crate</span>::genesis_config::{GenesisConfig, ValidatorGenesisConfig};
 <span class="kw">use </span><span class="kw">crate</span>::network_config::NetworkConfig;
 <span class="kw">use </span>fastcrypto::encoding::{Encoding, Hex};
@@ -1126,11 +1133,18 @@
             </span><span class="kw">for </span>validator <span class="kw">in </span><span class="kw-2">&amp;</span>validators {
                 <span class="kw">let </span>account_key: PublicKey = validator.account_key_pair.public();
                 <span class="kw">let </span>address = SuiAddress::from(<span class="kw-2">&amp;</span>account_key);
+                <span class="comment">// Give each validator some gas so they can pay for their transactions.
+                </span><span class="kw">let </span>gas_coin = TokenAllocation {
+                    recipient_address: address,
+                    amount_mist: DEFAULT_GAS_AMOUNT,
+                    staked_with_validator: <span class="prelude-val">None</span>,
+                };
                 <span class="kw">let </span>stake = TokenAllocation {
                     recipient_address: address,
                     amount_mist: validator.stake,
                     staked_with_validator: <span class="prelude-val">Some</span>(address),
                 };
+                builder.add_allocation(gas_coin);
                 builder.add_allocation(stake);
             }
             builder.build()
