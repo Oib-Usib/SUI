@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684342776812,
+  "lastUpdate": 1684343446662,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8063,6 +8063,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 305653,
             "range": "± 23135",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2633885b0889d1e3dc5796c837b7adca0ef51924",
+          "message": "[hardening] enforce enum order for `ExecutionFailureStatus` for SDK backward compat (#12036)\n\n## Description \r\n\r\nFor some enums we require that variants are appended to the end of an\r\nenum to ensure backward compat for SDK etc.\r\nWe currently use comments like\r\n[this](https://github.com/MystenLabs/sui/blob/25678de7f57438f7b9a6af8f908e3051d1505205/crates/sui-types/src/execution_status.rs#L180-L181)\r\n```\r\n    // NOTE: if you want to add a new enum,\r\n    // please add it at the end for Rust SDK backward compatibility.\r\n```\r\n to inform folks to append but we dont actually enforce it.\r\n\r\nThis PR adds enforcement test on `ExecutionFailureStatus` and will add\r\nfor other types as I discover them.\r\nExample test failure from swapping variants\r\n```\r\npanicked at 'Enum variant SuiMoveVerificationTimedout has been swapped with SuiMoveVerificationTimedoutNew at position 30. Not allowed: enum must be backward compatible.', crates/sui-types/src/execution_status.rs:380:17\r\n```\r\n\r\n\r\n\r\n## Test Plan \r\n\r\nManual testing of adding, swapping, removing variants.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-17T12:59:54-04:00",
+          "tree_id": "a070e2725ccf9b982fb2c0a159ff1586e0f68fc6",
+          "url": "https://github.com/MystenLabs/sui/commit/2633885b0889d1e3dc5796c837b7adca0ef51924"
+        },
+        "date": 1684343435611,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151534919,
+            "range": "± 4263948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 352747,
+            "range": "± 78381",
             "unit": "ns/iter"
           }
         ]
