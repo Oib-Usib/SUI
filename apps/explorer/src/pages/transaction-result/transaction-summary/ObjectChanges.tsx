@@ -3,16 +3,17 @@
 
 import { Disclosure } from '@headlessui/react';
 import {
-    getGroupByOwner,
-    LocationIdType,
+    getOwnerType,
+    ObjectChangeLabels,
     type ObjectChangeSummary,
+    type SuiObjectChangeWithDisplay,
 } from '@mysten/core';
 import { ChevronRight12 } from '@mysten/icons';
 import {
+    type SuiObjectChangeTypes,
     type SuiObjectChangeCreated,
     type SuiObjectChangeMutated,
     type SuiObjectChangePublished,
-    type SuiObjectChangeTransferred,
 } from '@mysten/sui.js';
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
@@ -29,29 +30,13 @@ import {
     TransactionBlockCardSection,
 } from '~/ui/TransactionBlockCard';
 
-enum Labels {
-    created = 'Created',
-    mutated = 'Updated',
-    transferred = 'Transfer',
-    published = 'Publish',
-}
-
 enum ItemLabels {
     package = 'Package',
     module = 'Module',
     type = 'Type',
 }
 
-type ObjectChangeEntryData<T> = Record<
-    string,
-    (T & { locationIdType: LocationIdType })[]
->;
-
 const DEFAULT_ITEMS_TO_SHOW = 5;
-
-interface ObjectChangeEntryBaseProps {
-    type: keyof typeof Labels;
-}
 
 function Item({
     label,
@@ -180,20 +165,16 @@ function ObjectDetail({
     );
 }
 
-interface ObjectChangeEntriesProps extends ObjectChangeEntryBaseProps {
-    changeEntries: (
-        | SuiObjectChangeMutated
-        | SuiObjectChangeCreated
-        | SuiObjectChangePublished
-    )[];
+interface ObjectChangeEntriesProps {
+    type: SuiObjectChangeTypes;
+    changeEntries: SuiObjectChangeWithDisplay[];
 }
 
 function ObjectChangeEntries({
     changeEntries,
     type,
 }: ObjectChangeEntriesProps) {
-    const title = Labels[type];
-
+    const title = ObjectChangeLabels[type];
     let expandableItems = [];
 
     if (type === 'published') {
@@ -238,7 +219,7 @@ function ObjectChangeEntries({
                 <Text
                     variant="body/semibold"
                     color={
-                        title === Labels.created
+                        title === ObjectChangeLabels.created
                             ? 'success-dark'
                             : 'steel-darker'
                     }
@@ -266,31 +247,26 @@ function ObjectChangeEntries({
     );
 }
 
-interface ObjectChangeEntriesCardsProps extends ObjectChangeEntryBaseProps {
-    data:
-        | ObjectChangeEntryData<SuiObjectChangeMutated>
-        | ObjectChangeEntryData<SuiObjectChangeTransferred>
-        | ObjectChangeEntryData<SuiObjectChangeCreated>;
+interface ObjectChangeEntriesCardsProps {
+    data: Record<string, SuiObjectChangeWithDisplay[]>;
+    type: SuiObjectChangeTypes;
 }
 
 export function ObjectChangeEntriesCards({
     data,
     type,
 }: ObjectChangeEntriesCardsProps) {
-    if (!data) {
-        return null;
-    }
+    if (!data) return null;
 
     return (
         <>
             {Object.entries(data).map(([ownerAddress, changes]) => {
-                const locationIdType = changes[0].locationIdType;
-
-                const renderFooter =
-                    locationIdType === LocationIdType.AddressOwner ||
-                    locationIdType === LocationIdType.ObjectOwner ||
-                    locationIdType === LocationIdType.Shared;
-
+                const ownerType = getOwnerType(changes[0]);
+                const renderFooter = [
+                    'AddressOwner',
+                    'ObjectOwner',
+                    'Shared',
+                ].includes(ownerType);
                 return (
                     <TransactionBlockCard
                         key={ownerAddress}
@@ -306,16 +282,16 @@ export function ObjectChangeEntriesCards({
                                     >
                                         Owner
                                     </Text>
-                                    {locationIdType ===
-                                        LocationIdType.AddressOwner && (
+
+                                    {ownerType === 'AddressOwner' && (
                                         <AddressLink address={ownerAddress} />
                                     )}
-                                    {locationIdType ===
-                                        LocationIdType.ObjectOwner && (
+
+                                    {ownerType === 'ObjectOwner' && (
                                         <ObjectLink objectId={ownerAddress} />
                                     )}
-                                    {locationIdType ===
-                                        LocationIdType.Shared && (
+
+                                    {ownerType === 'Shared' && (
                                         <ObjectLink
                                             objectId={ownerAddress}
                                             label="Shared"
@@ -341,53 +317,17 @@ interface ObjectChangesProps {
 }
 
 export function ObjectChanges({ objectSummary }: ObjectChangesProps) {
-    if (!objectSummary) {
-        return null;
-    }
-
-    const createdChangesByOwner = getGroupByOwner(objectSummary?.created);
-    const updatedChangesByOwner = getGroupByOwner(objectSummary?.mutated);
-    const transferredChangesByOwner = getGroupByOwner(
-        objectSummary?.transferred
-    );
+    if (!objectSummary) return null;
 
     return (
         <>
-            {objectSummary?.created?.length ? (
+            {Object.entries(objectSummary).map(([type, changes]) => (
                 <ObjectChangeEntriesCards
-                    type="created"
-                    data={
-                        createdChangesByOwner as unknown as ObjectChangeEntryData<SuiObjectChangeCreated>
-                    }
+                    key={type}
+                    type={type as SuiObjectChangeTypes}
+                    data={changes}
                 />
-            ) : null}
-
-            {objectSummary.mutated?.length ? (
-                <ObjectChangeEntriesCards
-                    type="mutated"
-                    data={
-                        updatedChangesByOwner as unknown as ObjectChangeEntryData<SuiObjectChangeMutated>
-                    }
-                />
-            ) : null}
-
-            {objectSummary.transferred?.length ? (
-                <ObjectChangeEntriesCards
-                    type="transferred"
-                    data={
-                        transferredChangesByOwner as unknown as ObjectChangeEntryData<SuiObjectChangeTransferred>
-                    }
-                />
-            ) : null}
-
-            {objectSummary.published?.length ? (
-                <TransactionBlockCard title="Changes" size="sm" shadow>
-                    <ObjectChangeEntries
-                        changeEntries={objectSummary.published}
-                        type="published"
-                    />
-                </TransactionBlockCard>
-            ) : null}
+            ))}
         </>
     );
 }
