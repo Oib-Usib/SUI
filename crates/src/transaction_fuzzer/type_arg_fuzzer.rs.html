@@ -159,6 +159,20 @@
 <a href="#159" id="159">159</a>
 <a href="#160" id="160">160</a>
 <a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -167,7 +181,10 @@
 <span class="kw">use </span>proptest::arbitrary::<span class="kw-2">*</span>;
 <span class="kw">use </span>proptest::prelude::<span class="kw-2">*</span>;
 
+<span class="kw">use </span>sui_core::test_utils::send_and_confirm_transaction;
 <span class="kw">use </span>sui_types::base_types::ObjectID;
+<span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI};
+<span class="kw">use </span>sui_types::error::SuiError;
 <span class="kw">use </span>sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
 <span class="kw">use </span>sui_types::transaction::{ProgrammableTransaction, TransactionData, TransactionKind};
 <span class="kw">use </span>sui_types::utils::to_sender_signed_transaction;
@@ -306,6 +323,16 @@
 }
 
 <span class="kw">pub fn </span>run_pt(account: <span class="kw-2">&amp;mut </span>AccountCurrent, exec: <span class="kw-2">&amp;mut </span>Executor, pt: ProgrammableTransaction) {
+    <span class="kw">let </span>result = run_pt_effects(account, exec, pt);
+    <span class="kw">let </span>status = result.map(|effects| effects.status().clone());
+    assert_is_acceptable_result(<span class="kw-2">&amp;</span>status);
+}
+
+<span class="kw">pub fn </span>run_pt_effects(
+    account: <span class="kw-2">&amp;mut </span>AccountCurrent,
+    exec: <span class="kw-2">&amp;mut </span>Executor,
+    pt: ProgrammableTransaction,
+) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionEffects, SuiError&gt; {
     <span class="kw">let </span>gas_object = account.new_gas_object(exec);
     <span class="kw">let </span>gas_object_ref = gas_object.compute_object_reference();
     <span class="kw">let </span>kind = TransactionKind::ProgrammableTransaction(pt);
@@ -317,7 +344,8 @@
         GAS_PRICE,
     );
     <span class="kw">let </span>signed_txn = to_sender_signed_transaction(tx_data, <span class="kw-2">&amp;</span>account.initial_data.account.key);
-    <span class="kw">let </span>result = exec.execute_transaction(signed_txn);
-    assert_is_acceptable_result(<span class="kw-2">&amp;</span>result);
+    exec.rt
+        .block_on(send_and_confirm_transaction(<span class="kw-2">&amp;</span>exec.state, <span class="prelude-val">None</span>, signed_txn))
+        .map(|(<span class="kw">_</span>, effects)| effects.into_data())
 }
 </code></pre></div></section></main></body></html>

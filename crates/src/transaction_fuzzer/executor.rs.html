@@ -152,39 +152,27 @@
 <a href="#152" id="152">152</a>
 <a href="#153" id="153">153</a>
 <a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
-<a href="#156" id="156">156</a>
-<a href="#157" id="157">157</a>
-<a href="#158" id="158">158</a>
-<a href="#159" id="159">159</a>
-<a href="#160" id="160">160</a>
-<a href="#161" id="161">161</a>
-<a href="#162" id="162">162</a>
-<a href="#163" id="163">163</a>
-<a href="#164" id="164">164</a>
-<a href="#165" id="165">165</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 // Copyright (c) The Diem Core Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>std::{fmt::Debug, sync::Arc};
+</span><span class="kw">use </span>std::{fmt::Debug, path::PathBuf, sync::Arc};
+
 <span class="kw">use </span>sui_core::authority::test_authority_builder::TestAuthorityBuilder;
 <span class="kw">use </span>sui_core::{authority::AuthorityState, test_utils::send_and_confirm_transaction};
-<span class="kw">use </span>sui_types::base_types::ObjectRef;
-<span class="kw">use </span>sui_types::object::Owner;
-<span class="kw">use </span>sui_types::transaction::TransactionData;
+<span class="kw">use </span>sui_move_build::BuildConfig;
+<span class="kw">use </span>sui_types::base_types::ObjectID;
+<span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEffectsAPI};
+<span class="kw">use </span>sui_types::error::SuiError;
+<span class="kw">use </span>sui_types::execution_status::{ExecutionFailureStatus, ExecutionStatus};
+<span class="kw">use </span>sui_types::object::Object;
+<span class="kw">use </span>sui_types::transaction::{TransactionData, VerifiedTransaction};
 <span class="kw">use </span>sui_types::utils::to_sender_signed_transaction;
-<span class="kw">use </span>sui_types::{error::SuiError, object::Object, transaction::VerifiedTransaction};
 <span class="kw">use </span>tokio::runtime::Runtime;
 
 <span class="kw">use </span><span class="kw">crate</span>::account_universe::{AccountCurrent, INITIAL_BALANCE};
-
-<span class="kw">use </span>std::path::PathBuf;
-<span class="kw">use </span>sui_move_build::BuildConfig;
-<span class="kw">use </span>sui_types::effects::TransactionEffectsAPI;
-<span class="kw">use </span>sui_types::execution_status::{ExecutionFailureStatus, ExecutionStatus};
 
 <span class="kw">pub type </span>ExecutionResult = <span class="prelude-ty">Result</span>&lt;ExecutionStatus, SuiError&gt;;
 
@@ -193,7 +181,8 @@
     path.extend([<span class="string">&quot;data&quot;</span>, test_dir]);
     <span class="kw">let </span>with_unpublished_deps = <span class="bool-val">false</span>;
     <span class="kw">let </span>hash_modules = <span class="bool-val">true</span>;
-    <span class="kw">let </span>package = BuildConfig::new_for_testing().build(path).unwrap();
+    <span class="kw">let </span>config = BuildConfig::new_for_testing();
+    <span class="kw">let </span>package = config.build(path).unwrap();
     (
         package
             .get_package_digest(with_unpublished_deps, hash_modules)
@@ -278,8 +267,9 @@
     <span class="kw">pub fn </span>publish(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         package_name: <span class="kw-2">&amp;</span>str,
+        dep_ids: Vec&lt;ObjectID&gt;,
         account: <span class="kw-2">&amp;mut </span>AccountCurrent,
-    ) -&gt; (ObjectRef, ObjectRef) {
+    ) -&gt; TransactionEffects {
         <span class="kw">let </span>(<span class="kw">_</span>, modules) = build_test_modules(package_name);
         <span class="comment">// let gas_obj_ref = account.current_coins.last().unwrap().compute_object_reference();
         </span><span class="kw">let </span>gas_object = account.new_gas_object(<span class="self">self</span>);
@@ -287,7 +277,7 @@
             account.initial_data.account.address,
             gas_object.compute_object_reference(),
             modules,
-            <span class="macro">vec!</span>[],
+            dep_ids,
             INITIAL_BALANCE,
             <span class="number">1</span>,
         );
@@ -304,19 +294,7 @@
             <span class="string">&quot;{:?}&quot;</span>,
             effects.status()
         );
-
-        <span class="kw">let </span>package = effects
-            .created()
-            .iter()
-            .find(|(<span class="kw">_</span>, owner)| <span class="macro">matches!</span>(owner, Owner::Immutable))
-            .unwrap();
-        <span class="kw">let </span>upgrade_cap = effects
-            .created()
-            .iter()
-            .find(|(<span class="kw">_</span>, owner)| <span class="macro">matches!</span>(owner, Owner::AddressOwner(<span class="kw">_</span>)))
-            .unwrap();
-
-        (package.<span class="number">0</span>, upgrade_cap.<span class="number">0</span>)
+        effects
     }
 
     <span class="kw">pub fn </span>execute_transactions(
