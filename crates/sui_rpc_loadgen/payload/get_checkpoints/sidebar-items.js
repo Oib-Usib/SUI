@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"static":["CALLSITE"]};
+window.SIDEBAR_ITEMS = {};

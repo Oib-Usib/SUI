@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["get_tps"],"static":["CALLSITE"],"struct":["LoadTest","LoadTestConfig","WorkerThread"]};
+window.SIDEBAR_ITEMS = {"fn":["get_tps"],"struct":["LoadTest","LoadTestConfig","WorkerThread"]};

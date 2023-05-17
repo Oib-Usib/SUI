@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["GetCollectionsSvc","ReadCausalSvc","RemoveCollectionsSvc","ValidatorServer","_Inner"],"trait":["Validator"]};
+window.SIDEBAR_ITEMS = {"struct":["ValidatorServer","_Inner"],"trait":["Validator"]};
