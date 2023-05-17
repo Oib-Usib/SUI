@@ -146,6 +146,8 @@
 <a href="#146" id="146">146</a>
 <a href="#147" id="147">147</a>
 <a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -171,7 +173,9 @@
     <span class="kw">pub </span>transactions: Vec&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt;,
     <span class="kw">pub </span>previous_checkpoint_digest: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>end_of_epoch: bool,
-    <span class="kw">pub </span>total_gas_cost: i64,
+    <span class="comment">// total_gas_cost can be negative,
+    // which means that overall rebate is greater than overall cost.
+    </span><span class="kw">pub </span>total_gas_cost: i64,
     <span class="kw">pub </span>total_computation_cost: i64,
     <span class="kw">pub </span>total_storage_cost: i64,
     <span class="kw">pub </span>total_storage_rebate: i64,
@@ -193,9 +197,9 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, IndexerError&gt; {
         <span class="kw">let </span>total_gas_cost = rpc_checkpoint
             .epoch_rolling_gas_cost_summary
-            .computation_cost
-            + rpc_checkpoint.epoch_rolling_gas_cost_summary.storage_cost
-            - rpc_checkpoint.epoch_rolling_gas_cost_summary.storage_rebate;
+            .computation_cost <span class="kw">as </span>i64
+            + rpc_checkpoint.epoch_rolling_gas_cost_summary.storage_cost <span class="kw">as </span>i64
+            - rpc_checkpoint.epoch_rolling_gas_cost_summary.storage_rebate <span class="kw">as </span>i64;
 
         <span class="kw">let </span>checkpoint_transactions: Vec&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt; = rpc_checkpoint
             .transactions
@@ -210,7 +214,7 @@
             transactions: checkpoint_transactions,
             previous_checkpoint_digest: rpc_checkpoint.previous_digest.map(|d| d.base58_encode()),
             end_of_epoch: rpc_checkpoint.end_of_epoch_data.is_some(),
-            total_gas_cost: total_gas_cost <span class="kw">as </span>i64,
+            total_gas_cost,
             total_computation_cost: rpc_checkpoint
                 .epoch_rolling_gas_cost_summary
                 .computation_cost <span class="kw">as </span>i64,
