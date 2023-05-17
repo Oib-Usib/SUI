@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684350028502,
+  "lastUpdate": 1684352462702,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8207,6 +8207,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308459,
             "range": "± 7839",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "adam@mystenlabs.com",
+            "name": "Adam Welc",
+            "username": "awelc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1c604c2b574a7b76141681692e5a27617c32232c",
+          "message": "[tests] Added additional programmable transactions fuzz tests (#12011)\n\n## Description \r\n\r\nThe idea here is to move the needle in terms of fuzz-testing\r\nprogrammable transactions - exercise at least some logic throughout the\r\nentire transaction block. Currently we measure \"success\" as getting to\r\nthe end of transaction block and hitting the error message about\r\n\"un-droppable\" values being present at the end of the block.\r\n\r\n## Test Plan \r\n\r\nThis is the actual test.",
+          "timestamp": "2023-05-17T12:28:44-07:00",
+          "tree_id": "b696c66f5e98fee37b5d39e3586a8af1be3ab040",
+          "url": "https://github.com/MystenLabs/sui/commit/1c604c2b574a7b76141681692e5a27617c32232c"
+        },
+        "date": 1684352443654,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105294801,
+            "range": "± 2919392",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 285067,
+            "range": "± 18919",
             "unit": "ns/iter"
           }
         ]
