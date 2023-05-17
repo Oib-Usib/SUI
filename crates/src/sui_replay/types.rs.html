@@ -277,7 +277,7 @@
 <span class="kw">use </span>tracing::error;
 
 <span class="comment">// TODO: make these configurable
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD: Duration = Duration::from_millis(<span class="number">1_000</span>);
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>RPC_TIMEOUT_ERR_SLEEP_RETRY_PERIOD: Duration = Duration::from_millis(<span class="number">10_000</span>);
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>RPC_TIMEOUT_ERR_NUM_RETRIES: u32 = <span class="number">2</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>MAX_CONCURRENT_REQUESTS: usize = <span class="number">1_000</span>;
 

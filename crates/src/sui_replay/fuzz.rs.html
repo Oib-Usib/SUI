@@ -377,8 +377,8 @@
 
         <span class="kw">while </span>num_base_tx &gt; <span class="number">0 </span>{
             <span class="macro">info!</span>(
-                <span class="string">&quot;Starting fuzz with new base TX {}&quot;</span>,
-                <span class="self">self</span>.sandbox_state.transaction_info.tx_digest
+                <span class="string">&quot;Starting fuzz with new base TX {}, with at most {} mutations&quot;</span>,
+                <span class="self">self</span>.sandbox_state.transaction_info.tx_digest, <span class="self">self</span>.config.num_mutations_per_base
             );
             <span class="kw">while let </span><span class="prelude-val">Some</span>(mutation) = <span class="self">self</span>.next_mutation(<span class="kw-2">&amp;</span>tx_kind) {
                 <span class="macro">info!</span>(

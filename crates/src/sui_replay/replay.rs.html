@@ -1847,6 +1847,11 @@
 <a href="#1847" id="1847">1847</a>
 <a href="#1848" id="1848">1848</a>
 <a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
+<a href="#1851" id="1851">1851</a>
+<a href="#1852" id="1852">1852</a>
+<a href="#1853" id="1853">1853</a>
+<a href="#1854" id="1854">1854</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2134,6 +2139,7 @@
                 .max_concurrent_requests(MAX_CONCURRENT_REQUESTS)
                 .build(http_url)
                 .<span class="kw">await</span><span class="question-mark">?</span>,
+            <span class="prelude-val">None</span>,
         )
         .<span class="kw">await
     </span>}
@@ -2148,20 +2154,24 @@
     }
 
     <span class="kw">pub async fn </span>reset_for_new_execution_with_client(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ReplayEngineError&gt; {
-        <span class="self">Self</span>::new_for_remote(<span class="self">self</span>.client.expect(<span class="string">&quot;Remote client not initialized&quot;</span>))
-            .<span class="kw">await</span><span class="question-mark">?
-            </span>.init_for_execution()
-            .<span class="kw">await
+        <span class="self">Self</span>::new_for_remote(
+            <span class="self">self</span>.client.expect(<span class="string">&quot;Remote client not initialized&quot;</span>),
+            <span class="prelude-val">Some</span>(<span class="self">self</span>.fetcher.into_remote()),
+        )
+        .<span class="kw">await</span><span class="question-mark">?
+        </span>.init_for_execution()
+        .<span class="kw">await
     </span>}
 
-    <span class="kw">pub async fn </span>new_for_remote(client: SuiClient) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ReplayEngineError&gt; {
+    <span class="kw">pub async fn </span>new_for_remote(
+        client: SuiClient,
+        remote_fetcher: <span class="prelude-ty">Option</span>&lt;RemoteFetcher&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ReplayEngineError&gt; {
         <span class="comment">// Use a throwaway metrics registry for local execution.
         </span><span class="kw">let </span>registry = prometheus::Registry::new();
         <span class="kw">let </span>metrics = Arc::new(LimitsMetrics::new(<span class="kw-2">&amp;</span>registry));
 
-        <span class="kw">let </span>fetcher = RemoteFetcher {
-            rpc_client: client.clone(),
-        };
+        <span class="kw">let </span>fetcher = remote_fetcher.unwrap_or(RemoteFetcher::new(client.clone()));
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             client: <span class="prelude-val">Some</span>(client),
@@ -2414,7 +2424,7 @@
         </span><span class="kw">if </span><span class="kw-2">*</span>tx_digest == TransactionDigest::genesis() || tx_info.sender == SuiAddress::ZERO {
             <span class="comment">// Genesis.
             </span><span class="macro">warn!</span>(
-                <span class="string">&quot;Genesis replay not supported: {}, skipping transaction&quot;</span>,
+                <span class="string">&quot;Genesis/system TX replay not supported: {}, skipping transaction&quot;</span>,
                 tx_digest
             );
             <span class="comment">// Return the same data from onchain since we dont want to fail nor do we want to recompute
