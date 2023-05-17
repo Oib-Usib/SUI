@@ -329,6 +329,12 @@
 <a href="#329" id="329">329</a>
 <a href="#330" id="330">330</a>
 <a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -502,6 +508,12 @@
 
     <span class="attr">#[error(<span class="string">&quot;Certificate is on the deny list&quot;</span>)]
     </span>CertificateDenied,
+
+    <span class="attr">#[error(
+        <span class="string">&quot;Sui Move Bytecode Verification Timeout. \
+        Please run the Sui Move Verifier for more information.&quot;
+    </span>)]
+    </span>SuiMoveVerificationTimedout,
     <span class="comment">// NOTE: if you want to add a new enum,
     // please add it at the end for Rust SDK backward compatibility.
 </span>}

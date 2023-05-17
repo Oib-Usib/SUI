@@ -236,10 +236,6 @@
 <a href="#236" id="236">236</a>
 <a href="#237" id="237">237</a>
 <a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
-<a href="#242" id="242">242</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -249,7 +245,7 @@
 <span class="kw">use </span>move_binary_format::{access::ModuleAccess, file_format::CompiledModule};
 <span class="kw">use </span>move_bytecode_verifier::meter::Meter;
 <span class="kw">use </span>move_bytecode_verifier::{verify_module_with_config_metered, VerifierConfig};
-<span class="kw">use </span>move_core_types::{account_address::AccountAddress, vm_status::StatusCode};
+<span class="kw">use </span>move_core_types::account_address::AccountAddress;
 <span class="kw">pub use </span>move_vm_runtime::move_vm::MoveVM;
 <span class="kw">use </span>move_vm_runtime::{
     config::{VMConfig, VMRuntimeLimitsConfig},
@@ -257,6 +253,7 @@
     native_functions::NativeFunctionTable,
 };
 <span class="kw">use </span>sui_types::metrics::BytecodeVerifierMetrics;
+<span class="kw">use </span>sui_verifier::check_for_verifier_timeout;
 <span class="kw">use </span>tracing::instrument;
 
 <span class="kw">use </span>sui_move_natives::{object_runtime::ObjectRuntime, NativesCostTable};
@@ -269,7 +266,7 @@
     object::Owner,
     storage::ChildObjectResolver,
 };
-<span class="kw">use </span>sui_verifier::verifier::sui_verify_module_metered;
+<span class="kw">use </span>sui_verifier::verifier::sui_verify_module_metered_check_timeout_only;
 
 <span class="macro">sui_macros::checked_arithmetic! </span>{
 
@@ -454,29 +451,24 @@
 
         <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = verify_module_with_config_metered(verifier_config, module, meter) {
             <span class="comment">// Check that the status indicates mtering timeout
-            </span><span class="kw">if </span>[
-                StatusCode::PROGRAM_TOO_COMPLEX,
-                StatusCode::TOO_MANY_BACK_EDGES,
-            ]
-            .contains(<span class="kw-2">&amp;</span>e.major_status())
-            {
+            </span><span class="kw">if </span>check_for_verifier_timeout(<span class="kw-2">&amp;</span>e.major_status()) {
                 <span class="comment">// Discard success timer, but record timeout/failure timer
                 </span>metrics.verifier_runtime_per_module_timeout_latency.observe(per_module_meter_verifier_timer.stop_and_discard());
                 metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[BytecodeVerifierMetrics::MOVE_VERIFIER_TAG, BytecodeVerifierMetrics::TIMEOUT_TAG]).inc();
                 <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::ModuleVerificationFailure {
-                    error: <span class="string">&quot;Verification timedout&quot;</span>.to_string(),
+                    error: <span class="macro">format!</span>(<span class="string">&quot;Verification timedout: {}&quot;</span>, e),
                 });
             };
-        } <span class="kw">else if let </span><span class="prelude-val">Err</span>(err) = sui_verify_module_metered(protocol_config, module, <span class="kw-2">&amp;</span>BTreeMap::new(), meter) {
-                <span class="comment">// Discard success timer, but record timeout/failure timer
-                </span>metrics.verifier_runtime_per_module_timeout_latency.observe(per_module_meter_verifier_timer.stop_and_discard());
-                metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[ BytecodeVerifierMetrics::SUI_VERIFIER_TAG, BytecodeVerifierMetrics::TIMEOUT_TAG]).inc();
-                <span class="kw">return </span><span class="prelude-val">Err</span>(err.into());
-        } <span class="kw">else </span>{
-            <span class="comment">// Save the success timer
-            </span>per_module_meter_verifier_timer.stop_and_record();
-            metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[BytecodeVerifierMetrics::OVERALL_TAG, BytecodeVerifierMetrics::SUCCESS_TAG]).inc();
+        } <span class="kw">else if let </span><span class="prelude-val">Err</span>(err) = sui_verify_module_metered_check_timeout_only(protocol_config, module, <span class="kw-2">&amp;</span>BTreeMap::new(), meter) {
+            <span class="comment">// We only checked that the failure was due to timeout
+            // Discard success timer, but record timeout/failure timer
+            </span>metrics.verifier_runtime_per_module_timeout_latency.observe(per_module_meter_verifier_timer.stop_and_discard());
+            metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[ BytecodeVerifierMetrics::SUI_VERIFIER_TAG, BytecodeVerifierMetrics::TIMEOUT_TAG]).inc();
+            <span class="kw">return </span><span class="prelude-val">Err</span>(err.into());
         }
+        <span class="comment">// Save the success timer
+        </span>per_module_meter_verifier_timer.stop_and_record();
+        metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[BytecodeVerifierMetrics::OVERALL_TAG, BytecodeVerifierMetrics::SUCCESS_TAG]).inc();
     }
     <span class="prelude-val">Ok</span>(())
 }

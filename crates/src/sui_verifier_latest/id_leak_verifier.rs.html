@@ -508,6 +508,12 @@
 <a href="#508" id="508">508</a>
 <a href="#509" id="509">509</a>
 <a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -546,7 +552,10 @@
     SUI_FRAMEWORK_ADDRESS, SUI_SYSTEM_ADDRESS,
 };
 
-<span class="kw">use crate</span>::{verification_failure, TEST_SCENARIO_MODULE_NAME};
+<span class="kw">use crate</span>::{
+    check_for_verifier_timeout, to_verification_timeout_error, verification_failure,
+    TEST_SCENARIO_MODULE_NAME,
+};
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>JOIN_BASE_COST: u128 = <span class="number">10</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>JOIN_PER_LOCAL_COST: u128 = <span class="number">5</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>STEP_BASE_COST: u128 = <span class="number">15</span>;
@@ -625,7 +634,10 @@
         verifier
             .analyze_function(initial_state, <span class="kw-2">&amp;</span>func_view, meter)
             .map_err(|err| {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(message) = err.source().as_ref() {
+                <span class="comment">// Handle verifificaiton timeout specially
+                </span><span class="kw">if </span>check_for_verifier_timeout(<span class="kw-2">&amp;</span>err.major_status()) {
+                    to_verification_timeout_error(err.to_string())
+                } <span class="kw">else if let </span><span class="prelude-val">Some</span>(message) = err.source().as_ref() {
                     <span class="kw">let </span>function_name = binary_view
                         .identifier_at(binary_view.function_handle_at(func_def.function).name);
                     <span class="kw">let </span>module_name = module.self_id();
