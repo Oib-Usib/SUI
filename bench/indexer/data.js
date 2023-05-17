@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684276311690,
+  "lastUpdate": 1684283850679,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7847,6 +7847,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 343845,
             "range": "± 84648",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5955553635c4961b26718afbb1e0334ccd3e595e",
+          "message": "add explicit iter range specifications (#12012)\n\n## Description \r\n\r\nSpecify iter range keys with `std::ops::RangeBounds`\r\nNext PR cleans up parts of the code that could use more constrained\r\nbounds\r\n\r\n## Test Plan \r\n\r\nUnit tests\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-16T20:26:33-04:00",
+          "tree_id": "8e4b566577bde2bf07eb3c75a2573d97505a79e5",
+          "url": "https://github.com/MystenLabs/sui/commit/5955553635c4961b26718afbb1e0334ccd3e595e"
+        },
+        "date": 1684283837936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 143698469,
+            "range": "± 5020711",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308331,
+            "range": "± 23634",
             "unit": "ns/iter"
           }
         ]
