@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684283850679,
+  "lastUpdate": 1684284181690,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7883,6 +7883,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308331,
             "range": "± 23634",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "807d2b00645d6c7b12867c319515595427a4c59d",
+          "message": "only block sui verifier on timeouts (#12030)",
+          "timestamp": "2023-05-17T00:32:42Z",
+          "tree_id": "b08ff9684d66072dae966c39744e193a771e7c58",
+          "url": "https://github.com/MystenLabs/sui/commit/807d2b00645d6c7b12867c319515595427a4c59d"
+        },
+        "date": 1684284169148,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145329710,
+            "range": "± 4123580",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311566,
+            "range": "± 13022",
             "unit": "ns/iter"
           }
         ]
