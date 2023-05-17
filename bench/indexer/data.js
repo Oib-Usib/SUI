@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684330877241,
+  "lastUpdate": 1684335265047,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -7955,6 +7955,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 554714,
             "range": "± 47199",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "113150618+dariorussi@users.noreply.github.com",
+            "name": "Dario Russi",
+            "username": "dariorussi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c1d4218ba3114533d1e782ff0a6c7e61c8c5e6bd",
+          "message": "Push types to type stack when calling a native (#12013)\n\n## Description \r\n\r\nMake paranoid mode for native calls work correctly.\r\nWe may or may not enable paranoid mode but the change seems safe\r\n\r\n## Test Plan \r\nAdded test\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-17T09:40:51-05:00",
+          "tree_id": "d17915945a5e671ecc185adc4be138c778cc4d1e",
+          "url": "https://github.com/MystenLabs/sui/commit/c1d4218ba3114533d1e782ff0a6c7e61c8c5e6bd"
+        },
+        "date": 1684335254512,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 142681735,
+            "range": "± 5338668",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310281,
+            "range": "± 17309",
             "unit": "ns/iter"
           }
         ]
