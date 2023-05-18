@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684428381875,
+  "lastUpdate": 1684434505534,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8423,6 +8423,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 318239,
             "range": "± 14136",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2530be799092fe135f71e6f7056ce24bc0e392fa",
+          "message": "rpc: address metrics (#12071)\n\n## Description \r\n\r\nAdd address metrics to extended RPC\r\n\r\n## Test Plan \r\n\r\nlocal run indexer as rpc server and verify that the new endpoints can\r\nreturn expected response\r\n```\r\ncargo run --bin sui-indexer -- --db-url \"postgres://postgres:postgres@localhost/gegao\" --rpc-client-url   http://ord-exp-val-01.experiments.sui.io:9000 --rpc-server-worker --rpc-server-url 127.0.0.1 --rpc-server-port 3030\r\n\r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_getLatestAddressMetrics\",\r\n\"params\": []\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":{\"checkpoint\":9199,\"epoch\":1,\"timestampMs\":1683821111335,\"cumulativeAddresses\":16086,\"cumulativeActiveAddresses\":104,\"dailyActiveAddresses\":104},\"id\":1}% \r\n\r\n\r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_getCheckpointAddressMetrics\",\r\n\"params\": [4999]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":{\"checkpoint\":4999,\"epoch\":0,\"timestampMs\":1683816628422,\"cumulativeAddresses\":604,\"cumulativeActiveAddresses\":5,\"dailyActiveAddresses\":5},\"id\":1}%     \r\n\r\n```\r\n\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-18T14:16:24-04:00",
+          "tree_id": "cf13429829b35f78bb67c8e5895002980705db77",
+          "url": "https://github.com/MystenLabs/sui/commit/2530be799092fe135f71e6f7056ce24bc0e392fa"
+        },
+        "date": 1684434492623,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147215154,
+            "range": "± 5634477",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311900,
+            "range": "± 13692",
             "unit": "ns/iter"
           }
         ]
