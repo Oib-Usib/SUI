@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684434505534,
+  "lastUpdate": 1684446152051,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8459,6 +8459,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311900,
             "range": "± 13692",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "113150618+dariorussi@users.noreply.github.com",
+            "name": "Dario Russi",
+            "username": "dariorussi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "de22ef1d5ccf63ec3d1720aa4bc86e543ada7df3",
+          "message": "Make checks for RPG more consistent (#12073)\n\n## Description \r\n\r\nMake dev inspect honor RGP and gas price to be more consistent and also\r\nremove as much as possible `RGP = 1` in testing\r\n\r\n## Test Plan \r\n\r\nAdded a test for gas price and see what tests fail\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [x] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-18T16:29:04-05:00",
+          "tree_id": "fc65a4c5c0ac4e4fb5894185ca60cacd6d95582d",
+          "url": "https://github.com/MystenLabs/sui/commit/de22ef1d5ccf63ec3d1720aa4bc86e543ada7df3"
+        },
+        "date": 1684446139692,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 142949230,
+            "range": "± 4893265",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308774,
+            "range": "± 29223",
             "unit": "ns/iter"
           }
         ]
