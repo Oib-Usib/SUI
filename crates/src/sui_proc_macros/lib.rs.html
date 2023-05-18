@@ -1102,14 +1102,14 @@
             .map(|(index, variant)| {
                 <span class="kw">let </span>variant_name = variant.ident.to_string();
                 <span class="macro">quote! </span>{
-                    map.insert( #index, (#variant_name).to_string());
+                    map.insert( #index <span class="kw">as </span>u64, (#variant_name).to_string());
                 }
             })
             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
 
         <span class="kw">let </span>deriv = <span class="macro">quote! </span>{
-            <span class="kw">impl </span>#name {
-                <span class="kw">pub fn </span>order_to_variant_map() -&gt; std::collections::BTreeMap&lt;usize, String &gt; {
+            <span class="kw">impl </span>sui_enum_compat_util::EnumOrderMap <span class="kw">for </span>#name {
+                <span class="kw">fn </span>order_to_variant_map() -&gt; std::collections::BTreeMap&lt;u64, String &gt; {
                     <span class="kw">let </span><span class="kw-2">mut </span>map = std::collections::BTreeMap::new();
                     #(#variant_entries)*
                     map
