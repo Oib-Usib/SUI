@@ -121,6 +121,7 @@
 <a href="#121" id="121">121</a>
 <a href="#122" id="122">122</a>
 <a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -138,7 +139,8 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::executor::Executor;
 
-<span class="kw">pub const </span>INITIAL_BALANCE: u64 = <span class="number">10_000_000_000</span>;
+<span class="kw">pub const </span>INITIAL_BALANCE: u64 = <span class="number">100_000_000_000_000</span>;
+<span class="kw">pub const </span>PUBLISH_BUDGET: u64 = <span class="number">1_000_000_000</span>;
 <span class="kw">pub const </span>NUM_GAS_OBJECTS: usize = <span class="number">1</span>;
 
 <span class="attr">#[derive(Debug)]

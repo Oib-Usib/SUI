@@ -4181,6 +4181,21 @@
 <a href="#4181" id="4181">4181</a>
 <a href="#4182" id="4182">4182</a>
 <a href="#4183" id="4183">4183</a>
+<a href="#4184" id="4184">4184</a>
+<a href="#4185" id="4185">4185</a>
+<a href="#4186" id="4186">4186</a>
+<a href="#4187" id="4187">4187</a>
+<a href="#4188" id="4188">4188</a>
+<a href="#4189" id="4189">4189</a>
+<a href="#4190" id="4190">4190</a>
+<a href="#4191" id="4191">4191</a>
+<a href="#4192" id="4192">4192</a>
+<a href="#4193" id="4193">4193</a>
+<a href="#4194" id="4194">4194</a>
+<a href="#4195" id="4195">4195</a>
+<a href="#4196" id="4196">4196</a>
+<a href="#4197" id="4197">4197</a>
+<a href="#4198" id="4198">4198</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -5514,8 +5529,10 @@
 
         transaction_kind.check_version_supported(epoch_store.protocol_config())<span class="question-mark">?</span>;
 
+        <span class="kw">let </span>reference_gas_price = epoch_store.reference_gas_price();
+        <span class="kw">let </span>protocol_config = epoch_store.protocol_config();
         <span class="kw">let </span>gas_price = <span class="kw">match </span>gas_price {
-            <span class="prelude-val">None </span>=&gt; epoch_store.reference_gas_price(),
+            <span class="prelude-val">None </span>=&gt; reference_gas_price,
             <span class="prelude-val">Some</span>(gas) =&gt; {
                 <span class="kw">if </span>gas == <span class="number">0 </span>{
                     epoch_store.reference_gas_price()
@@ -5524,7 +5541,20 @@
                 }
             }
         };
-        <span class="kw">let </span>protocol_config = epoch_store.protocol_config();
+        <span class="kw">if </span>gas_price &lt; reference_gas_price {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(UserInputError::GasPriceUnderRGP {
+                gas_price,
+                reference_gas_price,
+            }
+            .into());
+        }
+        <span class="kw">if </span>protocol_config.gas_model_version() &gt;= <span class="number">4 </span>&amp;&amp; gas_price &gt;= protocol_config.max_gas_price()
+        {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(UserInputError::GasPriceTooHigh {
+                max_gas_price: protocol_config.max_gas_price(),
+            }
+            .into());
+        }
         <span class="kw">let </span>max_tx_gas = protocol_config.max_tx_gas();
 
         <span class="kw">let </span>gas_object_id = ObjectID::random();

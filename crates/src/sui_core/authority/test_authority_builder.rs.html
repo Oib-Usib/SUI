@@ -260,7 +260,6 @@
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
 <a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -398,8 +397,7 @@
     <span class="kw">pub async fn </span>build(<span class="self">self</span>) -&gt; Arc&lt;AuthorityState&gt; {
         <span class="kw">let </span>local_network_config =
             sui_swarm_config::network_config_builder::ConfigBuilder::new_with_temp_dir()
-                <span class="comment">// TODO: change the default to 1000 instead after fixing tests.
-                </span>.with_reference_gas_price(<span class="self">self</span>.reference_gas_price.unwrap_or(<span class="number">1</span>))
+                .with_reference_gas_price(<span class="self">self</span>.reference_gas_price.unwrap_or(<span class="number">500</span>))
                 .build();
         <span class="kw">let </span>genesis = <span class="kw-2">&amp;</span><span class="self">self</span>.genesis.unwrap_or(<span class="kw-2">&amp;</span>local_network_config.genesis);
         <span class="kw">let </span>genesis_committee = genesis.committee().unwrap();

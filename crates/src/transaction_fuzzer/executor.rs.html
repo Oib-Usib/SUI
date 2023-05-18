@@ -172,7 +172,7 @@
 <span class="kw">use </span>sui_types::utils::to_sender_signed_transaction;
 <span class="kw">use </span>tokio::runtime::Runtime;
 
-<span class="kw">use </span><span class="kw">crate</span>::account_universe::{AccountCurrent, INITIAL_BALANCE};
+<span class="kw">use </span><span class="kw">crate</span>::account_universe::{AccountCurrent, PUBLISH_BUDGET};
 
 <span class="kw">pub type </span>ExecutionResult = <span class="prelude-ty">Result</span>&lt;ExecutionStatus, SuiError&gt;;
 
@@ -278,8 +278,8 @@
             gas_object.compute_object_reference(),
             modules,
             dep_ids,
-            INITIAL_BALANCE,
-            <span class="number">1</span>,
+            PUBLISH_BUDGET,
+            <span class="number">1000</span>,
         );
         <span class="kw">let </span>txn = to_sender_signed_transaction(data, <span class="kw-2">&amp;</span>account.initial_data.account.key);
         <span class="kw">let </span>effects = <span class="self">self

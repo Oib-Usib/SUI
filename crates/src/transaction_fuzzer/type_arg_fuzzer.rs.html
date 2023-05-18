@@ -193,8 +193,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::account_universe::AccountCurrent;
 <span class="kw">use </span><span class="kw">crate</span>::executor::{assert_is_acceptable_result, Executor};
 
-<span class="kw">const </span>GAS: u64 = <span class="number">1_000_000</span>;
-<span class="kw">const </span>GAS_PRICE: u64 = <span class="number">1</span>;
+<span class="kw">const </span>GAS_PRICE: u64 = <span class="number">700</span>;
+<span class="kw">const </span>GAS: u64 = <span class="number">1_000_000 </span>* GAS_PRICE;
 
 <span class="kw">pub fn </span>gen_type_tag() -&gt; <span class="kw">impl </span>Strategy&lt;Value = TypeTag&gt; {
     <span class="macro">prop_oneof!</span>[
