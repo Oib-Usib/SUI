@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684365131620,
+  "lastUpdate": 1684406242203,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8351,6 +8351,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 503203,
             "range": "± 104315",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df35c084ed7399e18450adee2b6d1f8c2910b750",
+          "message": "[move-stdlib/type_name] rename get_original to get_with_original_ids (#12047)\n\n## Description\r\n\r\nAddress follow-ups from #12026, related to a typo in a doc comment, and\r\nan improvement to the function name.\r\n\r\n## Test Plan:\r\n\r\n```\r\nsui$ cargo simtest\r\nsui$ env SUI_SKIP_SIMTESTS=1 cargo nextest run\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nRenaming `std::type_name::get_original` (introduced to the framework as\r\nprotocol version 11) to `std::type_name::get_with_original_ids`.",
+          "timestamp": "2023-05-18T03:28:27-07:00",
+          "tree_id": "fb07de56e4254fb03fb9522693bb04fe40190e52",
+          "url": "https://github.com/MystenLabs/sui/commit/df35c084ed7399e18450adee2b6d1f8c2910b750"
+        },
+        "date": 1684406226626,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 108122720,
+            "range": "± 6561450",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 261642,
+            "range": "± 30742",
             "unit": "ns/iter"
           }
         ]
