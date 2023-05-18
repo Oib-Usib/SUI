@@ -373,9 +373,9 @@
     }
 
     <span class="kw">pub async fn </span>run(<span class="kw-2">mut </span><span class="self">self</span>, <span class="kw-2">mut </span>num_base_tx: u64) -&gt; <span class="prelude-ty">Result</span>&lt;(), ReplayFuzzError&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>tx_kind = <span class="self">self</span>.sandbox_state.transaction_info.kind.clone();
-
         <span class="kw">while </span>num_base_tx &gt; <span class="number">0 </span>{
+            <span class="kw">let </span><span class="kw-2">mut </span>tx_kind = <span class="self">self</span>.sandbox_state.transaction_info.kind.clone();
+
             <span class="macro">info!</span>(
                 <span class="string">&quot;Starting fuzz with new base TX {}, with at most {} mutations&quot;</span>,
                 <span class="self">self</span>.sandbox_state.transaction_info.tx_digest, <span class="self">self</span>.config.num_mutations_per_base
