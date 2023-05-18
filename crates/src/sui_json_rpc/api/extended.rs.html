@@ -50,6 +50,12 @@
 <a href="#50" id="50">50</a>
 <a href="#51" id="51">51</a>
 <a href="#52" id="52">52</a>
+<a href="#53" id="53">53</a>
+<a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -57,8 +63,8 @@
 <span class="kw">use </span>jsonrpsee_proc_macros::rpc;
 
 <span class="kw">use </span>sui_json_rpc_types::{
-    CheckpointedObjectID, EpochInfo, EpochPage, MoveCallMetrics, NetworkMetrics, QueryObjectsPage,
-    SuiObjectResponseQuery,
+    AddressMetrics, CheckpointedObjectID, EpochInfo, EpochPage, MoveCallMetrics, NetworkMetrics,
+    QueryObjectsPage, SuiObjectResponseQuery,
 };
 <span class="kw">use </span>sui_open_rpc_macros::open_rpc;
 <span class="kw">use </span>sui_types::sui_serde::BigInt;
@@ -101,5 +107,11 @@
     <span class="doccomment">/// Return Network metrics
     </span><span class="attr">#[method(name = <span class="string">&quot;getMoveCallMetrics&quot;</span>)]
     </span><span class="kw">async fn </span>get_move_call_metrics(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;MoveCallMetrics&gt;;
+
+    <span class="doccomment">/// Address related metrics
+    </span><span class="attr">#[method(name = <span class="string">&quot;getLatestAddressMetrics&quot;</span>)]
+    </span><span class="kw">async fn </span>get_latest_address_metrics(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;AddressMetrics&gt;;
+    <span class="attr">#[method(name = <span class="string">&quot;getCheckpointAddressMetrics&quot;</span>)]
+    </span><span class="kw">async fn </span>get_checkpoint_address_metrics(<span class="kw-2">&amp;</span><span class="self">self</span>, checkpoint: u64) -&gt; RpcResult&lt;AddressMetrics&gt;;
 }
 </code></pre></div></section></main></body></html>

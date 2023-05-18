@@ -1936,6 +1936,34 @@
 <a href="#1936" id="1936">1936</a>
 <a href="#1937" id="1937">1937</a>
 <a href="#1938" id="1938">1938</a>
+<a href="#1939" id="1939">1939</a>
+<a href="#1940" id="1940">1940</a>
+<a href="#1941" id="1941">1941</a>
+<a href="#1942" id="1942">1942</a>
+<a href="#1943" id="1943">1943</a>
+<a href="#1944" id="1944">1944</a>
+<a href="#1945" id="1945">1945</a>
+<a href="#1946" id="1946">1946</a>
+<a href="#1947" id="1947">1947</a>
+<a href="#1948" id="1948">1948</a>
+<a href="#1949" id="1949">1949</a>
+<a href="#1950" id="1950">1950</a>
+<a href="#1951" id="1951">1951</a>
+<a href="#1952" id="1952">1952</a>
+<a href="#1953" id="1953">1953</a>
+<a href="#1954" id="1954">1954</a>
+<a href="#1955" id="1955">1955</a>
+<a href="#1956" id="1956">1956</a>
+<a href="#1957" id="1957">1957</a>
+<a href="#1958" id="1958">1958</a>
+<a href="#1959" id="1959">1959</a>
+<a href="#1960" id="1960">1960</a>
+<a href="#1961" id="1961">1961</a>
+<a href="#1962" id="1962">1962</a>
+<a href="#1963" id="1963">1963</a>
+<a href="#1964" id="1964">1964</a>
+<a href="#1965" id="1965">1965</a>
+<a href="#1966" id="1966">1966</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -3645,6 +3673,34 @@ WHERE e1.epoch = e2.epoch
         })
         .context(<span class="string">&quot;Failed persisting address stats to PostgresDB&quot;</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">async fn </span>get_latest_address_stats(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;AddressStats, IndexerError&gt; {
+        <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            address_stats::dsl::address_stats
+                .order_by(address_stats::checkpoint.desc())
+                .first(conn)
+        })
+        .context(<span class="string">&quot;Failed reading latest address stats from PostgresDB&quot;</span>)
+    }
+
+    <span class="kw">async fn </span>get_checkpoint_address_stats(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        checkpoint: i64,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;AddressStats, IndexerError&gt; {
+        <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            address_stats::dsl::address_stats
+                .filter(address_stats::checkpoint.eq(checkpoint))
+                .order_by(address_stats::epoch.asc())
+                .first(conn)
+        })
+        .context(
+            <span class="macro">format!</span>(
+                <span class="string">&quot;Failed reading address stats of checkpoint {} from PostgresDB&quot;</span>,
+                checkpoint
+            )
+            .as_str(),
+        )
     }
 }
 

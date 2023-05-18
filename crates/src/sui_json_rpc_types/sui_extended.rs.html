@@ -145,6 +145,18 @@
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
 <a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -291,5 +303,17 @@
     <span class="attr">#[schemars(with = <span class="string">&quot;String&quot;</span>)]
     #[serde_as(<span class="kw">as </span>= <span class="string">&quot;DisplayFromStr&quot;</span>)]
     </span><span class="kw">pub </span>function: Identifier,
+}
+
+<span class="attr">#[serde_as]
+#[derive(Serialize, Deserialize, Debug, JsonSchema)]
+#[serde(rename_all = <span class="string">&quot;camelCase&quot;</span>)]
+</span><span class="kw">pub struct </span>AddressMetrics {
+    <span class="kw">pub </span>checkpoint: u64,
+    <span class="kw">pub </span>epoch: u64,
+    <span class="kw">pub </span>timestamp_ms: u64,
+    <span class="kw">pub </span>cumulative_addresses: u64,
+    <span class="kw">pub </span>cumulative_active_addresses: u64,
+    <span class="kw">pub </span>daily_active_addresses: u64,
 }
 </code></pre></div></section></main></body></html>
