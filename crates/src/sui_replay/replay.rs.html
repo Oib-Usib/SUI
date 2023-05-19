@@ -2754,7 +2754,7 @@
         <span class="kw">let </span>res = authority_state
             .try_execute_immediately(certificate, <span class="prelude-val">None</span>, <span class="kw-2">&amp;</span>epoch_store)
             .<span class="kw">await
-            </span>.unwrap();
+            </span>.map_err(ReplayEngineError::from)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>exec_res = <span class="kw">match </span>res.<span class="number">1 </span>{
             <span class="prelude-val">Some</span>(q) =&gt; <span class="prelude-val">Err</span>(q),

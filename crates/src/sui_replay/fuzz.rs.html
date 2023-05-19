@@ -202,6 +202,10 @@
 <a href="#202" id="202">202</a>
 <a href="#203" id="203">203</a>
 <a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -371,7 +375,11 @@
                 <span class="string">&quot;Ended fuzz with for base TX {}\n&quot;</span>,
                 <span class="self">self</span>.sandbox_state.transaction_info.tx_digest
             );
-            <span class="self">self </span>= <span class="self">self</span>.re_init().<span class="kw">await</span>.unwrap();
+            <span class="self">self </span>= <span class="self">self
+                </span>.re_init()
+                .<span class="kw">await
+                </span>.map_err(ReplayEngineError::from)
+                .map_err(ReplayFuzzError::from)<span class="question-mark">?</span>;
             num_base_tx -= <span class="number">1</span>;
         }
 
