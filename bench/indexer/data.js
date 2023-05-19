@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684477918261,
+  "lastUpdate": 1684511162082,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8567,6 +8567,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 364068,
             "range": "± 78106",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "03d202cfa20e9a5cdac2dc45d7b256e892a4f49f",
+          "message": "Fix transaction filter check ordering (#12072)\n\nRuns tx filter before verifier.",
+          "timestamp": "2023-05-19T08:33:58-07:00",
+          "tree_id": "27590cfae59c0e3bbd9a549fc87eff58757b8cc3",
+          "url": "https://github.com/MystenLabs/sui/commit/03d202cfa20e9a5cdac2dc45d7b256e892a4f49f"
+        },
+        "date": 1684511148042,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 156526732,
+            "range": "± 7800084",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 323940,
+            "range": "± 72877",
             "unit": "ns/iter"
           }
         ]
