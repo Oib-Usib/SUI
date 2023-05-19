@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684511162082,
+  "lastUpdate": 1684516745266,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8603,6 +8603,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 323940,
             "range": "± 72877",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "alberto@sonnino.com",
+            "name": "Alberto Sonnino",
+            "username": "asonnino"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e4126658642914b610f600104243c0eff2bf2f18",
+          "message": "Remove Tusk (#12093)\n\nRemove support for tusk and support for an asynchronous Narwhal\r\nproposer.",
+          "timestamp": "2023-05-19T17:08:46Z",
+          "tree_id": "f2478938e4a50bc9d4422f06560adea1ce145d2e",
+          "url": "https://github.com/MystenLabs/sui/commit/e4126658642914b610f600104243c0eff2bf2f18"
+        },
+        "date": 1684516731362,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 136777726,
+            "range": "± 4084355",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309976,
+            "range": "± 16898",
             "unit": "ns/iter"
           }
         ]
