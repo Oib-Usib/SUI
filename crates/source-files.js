@@ -53,7 +53,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_protocol_config":["",[],["lib.rs"]],\
 "sui_protocol_config_macros":["",[],["lib.rs"]],\
 "sui_proxy":["",[],["admin.rs","config.rs","consumer.rs","handlers.rs","histogram_relay.rs","lib.rs","metrics.rs","middleware.rs","peers.rs","prom_to_mimir.rs","remote_write.rs"]],\
-"sui_replay":["",[],["data_fetcher.rs","db_rider.rs","fuzz.rs","lib.rs","replay.rs","transaction_provider.rs","types.rs"]],\
+"sui_replay":["",[["fuzz_mutations",[],["drop_random_command_suffix.rs","drop_random_commands.rs","shuffle_command_inputs.rs","shuffle_commands.rs","shuffle_transaction_inputs.rs","shuffle_types.rs"]]],["data_fetcher.rs","db_rider.rs","fuzz.rs","fuzz_mutations.rs","lib.rs","replay.rs","transaction_provider.rs","types.rs"]],\
 "sui_rosetta":["",[],["account.rs","block.rs","construction.rs","errors.rs","lib.rs","network.rs","operations.rs","state.rs","types.rs"]],\
 "sui_rpc_loadgen":["",[["payload",[],["checkpoint_utils.rs","get_all_balances.rs","get_checkpoints.rs","get_object.rs","get_reference_gas_price.rs","mod.rs","multi_get_objects.rs","multi_get_transaction_blocks.rs","pay_sui.rs","query_transactions.rs","rpc_command_processor.rs","validation.rs"]]],["load_test.rs","main.rs"]],\
 "sui_sdk":["",[],["apis.rs","error.rs","lib.rs","sui_client_config.rs","wallet_context.rs"]],\
