@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684517272237,
+  "lastUpdate": 1684517303525,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8675,6 +8675,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310418,
             "range": "± 20857",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "71b540195167c3e33cf92ab3715b5d396ecd6c3a",
+          "message": "add sticky network config for replay system (#12082)\n\n## Description \r\n\r\nAllows for loading and writing default configs for replay to\r\n`~/.sui-replay/network-config.yaml`\r\nThis way we can omit specifying the RPC endpoint on each operation.\r\nAlso adds a command for generating a default file\r\n\r\nExample\r\n```\r\n./target/debug/sui-tool replay  tx -t jgE26bo5ZWhGJbEq8brC8TrmFu8W4d2UDvyhdATvFwq\r\n2023-05-18T22:45:26.858972Z  INFO sui_replay: Executing tx: jgE26bo5ZWhGJbEq8brC8TrmFu8W4d2UDvyhdATvFwq\r\n2023-05-18T22:45:26.859350Z  INFO sui_replay::replay: Attempting to replay with network rpc:  https://fullnode.testnet.sui.io:443/\r\n2023-05-18T22:45:28.992366Z  INFO sui_replay: Execution finished successfully. Local and on-chain effects match.\r\n```\r\n\r\nFile generated\r\n```\r\nbase-network-configs:\r\n  - name: testnet\r\n    epoch-zero-start-timestamp: 0\r\n    epoch-zero-rgp: 0\r\n    public-full-node: \"https://fullnode.testnet.sui.io:443/\"\r\n  - name: devnet\r\n    epoch-zero-start-timestamp: 0\r\n    epoch-zero-rgp: 0\r\n    public-full-node: \"https://fullnode.devnet.sui.io:443/\"\r\n  - name: mainnet\r\n    epoch-zero-start-timestamp: 0\r\n    epoch-zero-rgp: 0\r\n    public-full-node: \"https://fullnode.mainnet.sui.io:443/\"\r\n```\r\n\r\n## Test Plan \r\n\r\nManual, unit test.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-19T13:17:15-04:00",
+          "tree_id": "27a9bdf52682872df98bc48403b2c870fcbcd952",
+          "url": "https://github.com/MystenLabs/sui/commit/71b540195167c3e33cf92ab3715b5d396ecd6c3a"
+        },
+        "date": 1684517289467,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145246534,
+            "range": "± 5894952",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312613,
+            "range": "± 86385",
             "unit": "ns/iter"
           }
         ]
