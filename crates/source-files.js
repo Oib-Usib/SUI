@@ -8,7 +8,7 @@ var sourcesIndex = JSON.parse('{\
 "mysten_util_mem":["",[],["allocators.rs","external_impls.rs","lib.rs","malloc_size.rs","memory_stats_noop.rs","sizeof.rs"]],\
 "mysten_util_mem_derive":["",[],["lib.rs"]],\
 "narwhal_config":["",[],["committee.rs","duration_format.rs","lib.rs","utils.rs"]],\
-"narwhal_consensus":["",[],["bullshark.rs","consensus.rs","dag.rs","lib.rs","metrics.rs","tusk.rs","utils.rs"]],\
+"narwhal_consensus":["",[],["bullshark.rs","consensus.rs","dag.rs","lib.rs","metrics.rs","utils.rs"]],\
 "narwhal_crypto":["",[],["lib.rs"]],\
 "narwhal_dag":["",[],["bft.rs","lib.rs","node_dag.rs"]],\
 "narwhal_executor":["",[],["errors.rs","lib.rs","metrics.rs","state.rs","subscriber.rs"]],\
