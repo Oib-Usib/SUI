@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684520041147,
+  "lastUpdate": 1684524732071,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8747,6 +8747,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308418,
             "range": "± 13058",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123408603+healthydeve@users.noreply.github.com",
+            "name": "Jian Lu",
+            "username": "healthydeve"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2c4774c5fd4ee5268ab88ff8ef802ccecaa74bc1",
+          "message": "[faucet] Adding Retry Logic for WAL (#11964)\n\n## Description \r\n\r\nTurning back on WAL retry logic with a flag that checks that its already\r\nan in_flight request. This way the separate worker thread will never\r\nattempt to try the same requests that are already inflight and resulting\r\nin a corrupted WAL.\r\n\r\nProof: \r\n<img width=\"1128\" alt=\"image\"\r\nsrc=\"https://github.com/MystenLabs/sui/assets/123408603/57f6a2ba-daca-4ff4-80d3-7366d679aa91\">\r\n\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\nUnit testing + CI/CD\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-19T15:17:05-04:00",
+          "tree_id": "3d0daf86a1e229826ad187e4bc1d795c55e07bf6",
+          "url": "https://github.com/MystenLabs/sui/commit/2c4774c5fd4ee5268ab88ff8ef802ccecaa74bc1"
+        },
+        "date": 1684524719499,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 139951976,
+            "range": "± 4091960",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315705,
+            "range": "± 13842",
             "unit": "ns/iter"
           }
         ]
