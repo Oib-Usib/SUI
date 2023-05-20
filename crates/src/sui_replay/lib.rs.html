@@ -347,7 +347,7 @@
 <span class="kw">use </span>fuzz_mutations::base_fuzzers;
 <span class="kw">use </span>sui_types::message_envelope::Message;
 <span class="kw">use </span>tracing::warn;
-<span class="kw">use </span>transaction_provider::TransactionSource;
+<span class="kw">use </span>transaction_provider::{FuzzStartPoint, TransactionSource};
 
 <span class="kw">use </span><span class="kw">crate</span>::replay::LocalExec;
 <span class="kw">use </span><span class="kw">crate</span>::replay::ProtocolVersionSummary;
@@ -418,7 +418,7 @@
     </span><span class="attr">#[clap(name = <span class="string">&quot;fz&quot;</span>)]
     </span>Fuzz {
         <span class="attr">#[clap(long, short)]
-        </span>start_checkpoint: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+        </span>start: <span class="prelude-ty">Option</span>&lt;FuzzStartPoint&gt;,
         <span class="attr">#[clap(long, short)]
         </span>num_mutations_per_base: u64,
         <span class="attr">#[clap(long, short = <span class="string">&#39;b&#39;</span>, default_value = <span class="string">&quot;18446744073709551614&quot;</span>)]
@@ -451,14 +451,14 @@
             <span class="prelude-val">None
         </span>}
         ReplayToolCommand::Fuzz {
-            start_checkpoint,
+            start,
             num_mutations_per_base,
             num_base_transactions,
         } =&gt; {
             <span class="kw">let </span>config = ReplayFuzzerConfig {
                 num_mutations_per_base,
                 mutator: Box::new(base_fuzzers(num_mutations_per_base)),
-                tx_source: TransactionSource::TailLatest { start_checkpoint },
+                tx_source: TransactionSource::TailLatest { start },
                 fail_over_on_err: <span class="bool-val">false</span>,
                 expensive_safety_check_config: Default::default(),
             };
