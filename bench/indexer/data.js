@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684539897465,
+  "lastUpdate": 1684548238828,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8855,6 +8855,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 617821,
             "range": "± 82045",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "97870774+arun-koshy@users.noreply.github.com",
+            "name": "Arun Koshy",
+            "username": "arun-koshy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a6f4ddaeb2d6cda659e7e8ef54aebd99c28f39a",
+          "message": "Pipe Protocol Config into NW & Update protocol version to 11 for new NW VersionedMetadata field (#11519)\n\n## Description \r\n\r\nEnsure all latencies of steps in NW are logged from batch creation to\r\nbatch being fetched for execution, so we can spot check some digests\r\nfrom start to finish. Additionally update how batch execution latency is\r\ncalculated. Whenever we receive a batch from other workers we update the\r\nmetadata to the current time signifying the time we received the batch.\r\nWe will now have two metrics one calculating the overall latency using\r\nthe original created at timestamp from a remote worker and one that only\r\ncalculate latency from the time a batch was created/received locally.\r\n\r\nTo do this the protocol config also had to be passed in from Sui and\r\npiped through NW. The decision was made that all NW tests will be\r\ncompatible with the latest protocol version and any previous versions\r\nwould need to be explicitly tested. Also this PR adds protocol version\r\n11 so that the new `VersionedMetadata` field can be used in NW code.\r\n\r\n## Test Plan \r\n\r\nExisting Unit Tests\r\n\r\n---------\r\n\r\nCo-authored-by: Mingwei Tian <mingwei@mystenlabs.com>",
+          "timestamp": "2023-05-19T18:50:13-07:00",
+          "tree_id": "fcc2560922ed05793748bca7cdd2b4aa5bf0e647",
+          "url": "https://github.com/MystenLabs/sui/commit/0a6f4ddaeb2d6cda659e7e8ef54aebd99c28f39a"
+        },
+        "date": 1684548225325,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145520439,
+            "range": "± 4245019",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 319330,
+            "range": "± 31204",
             "unit": "ns/iter"
           }
         ]
