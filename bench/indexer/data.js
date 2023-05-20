@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684548238828,
+  "lastUpdate": 1684554018061,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8891,6 +8891,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 319330,
             "range": "± 31204",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "eugene@mystenlabs.com",
+            "name": "Eugene Boguslavsky",
+            "username": "ebmifa"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9b150efbe18f5d9759f4bd5819ad4fd164564dcd",
+          "message": "Framework Snapshot v1.2.0 (#12104)\n\n## Description \r\nFramework Snapshot v1.2.0\r\n`cargo run --bin sui-framework-snapshot`\r\n\r\n## Test Plan \r\n👀",
+          "timestamp": "2023-05-20T03:26:18Z",
+          "tree_id": "005c95cdb54672572b3e46aa1cb4c4321ccc36ec",
+          "url": "https://github.com/MystenLabs/sui/commit/9b150efbe18f5d9759f4bd5819ad4fd164564dcd"
+        },
+        "date": 1684554004694,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149184326,
+            "range": "± 8084983",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 451120,
+            "range": "± 25227",
             "unit": "ns/iter"
           }
         ]
