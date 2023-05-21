@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684596228838,
+  "lastUpdate": 1684693119176,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8963,6 +8963,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 318896,
             "range": "± 102558",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "127570466+wlmyng@users.noreply.github.com",
+            "name": "wlmyng",
+            "username": "wlmyng"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16ce98552ef47412624abbddd2f263c4eba6600d",
+          "message": "Point jsonrpsee to forked version to support error metrics by error code (#12106)",
+          "timestamp": "2023-05-21T14:07:53-04:00",
+          "tree_id": "2fd59abb0e4c60413319414ecca71bf099a1839a",
+          "url": "https://github.com/MystenLabs/sui/commit/16ce98552ef47412624abbddd2f263c4eba6600d"
+        },
+        "date": 1684693106377,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151008426,
+            "range": "± 5032942",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309345,
+            "range": "± 69827",
             "unit": "ns/iter"
           }
         ]
