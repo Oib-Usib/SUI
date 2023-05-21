@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684693119176,
+  "lastUpdate": 1684704365551,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -8999,6 +8999,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309345,
             "range": "± 69827",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zlnju@outlook.com",
+            "name": "wiggins-dev",
+            "username": "wiggins-dev"
+          },
+          "committer": {
+            "email": "sam@mystenlabs.com",
+            "name": "Sam Blackshear",
+            "username": "sblackshear"
+          },
+          "distinct": true,
+          "id": "485a8981bc472a35a84851791dadb83578b33944",
+          "message": "[Deepbook] Add api for query market price #12088\n## Description\n\nAdd api for query market price of the order book\n\n## Test Plan\n\ncd to deepbook dir and run \"sui move test\"\n\n---\nIf your changes are not user-facing and not a breaking change, you can\nskip the following section. Otherwise, please indicate what changed, and\nthen add to the Release Notes section as highlighted during the release\nprocess.\n\n### Type of Change (Check all that apply)\n\n- [ ] user-visible impact\n- [ ] breaking change for a client SDKs\n- [ ] breaking change for FNs (FN binary must upgrade)\n- [ ] breaking change for validators or node operators (must upgrade\nbinaries)\n- [ ] breaking change for on-chain data layout\n- [ ] necessitate either a data wipe or data migration",
+          "timestamp": "2023-05-21T14:15:47-07:00",
+          "tree_id": "d19e732b60c377d13cb8222afb8a91573ecb5ccc",
+          "url": "https://github.com/MystenLabs/sui/commit/485a8981bc472a35a84851791dadb83578b33944"
+        },
+        "date": 1684704349161,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141043385,
+            "range": "± 4498398",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308108,
+            "range": "± 74052",
             "unit": "ns/iter"
           }
         ]
