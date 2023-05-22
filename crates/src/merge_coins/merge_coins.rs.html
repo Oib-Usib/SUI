@@ -131,6 +131,7 @@
 <a href="#131" id="131">131</a>
 <a href="#132" id="132">132</a>
 <a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>shared_crypto::intent::Intent;
@@ -210,7 +211,8 @@
         .active_address()
         .map_err(|err| FaucetError::Wallet(err.to_string()))<span class="question-mark">?</span>;
     <span class="kw">let </span>client = wallet.get_client().<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span>small_coins = wallet
+    <span class="comment">// Pick a gas coin here that isn&#39;t in use by the faucet otherwise there will be some contention.
+    </span><span class="kw">let </span>small_coins = wallet
         .gas_objects(active_address)
         .<span class="kw">await
         </span>.map_err(|e| FaucetError::Wallet(e.to_string()))<span class="question-mark">?
