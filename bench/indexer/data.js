@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684791963921,
+  "lastUpdate": 1684792781725,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9143,6 +9143,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 318898,
             "range": "± 76178",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123408603+healthydeve@users.noreply.github.com",
+            "name": "Jian Lu",
+            "username": "healthydeve"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5490fee04ce7f8f29a71500cb728efcdea84130a",
+          "message": "Revert \"[Sui-test-validator] adding persisted state option (#11389)\" (#12100)\n\nThis reverts commit f8477e811c1f6e1f26814ad16888748e10f0060f.\r\n\r\n## Description \r\n\r\nDescribe the changes or additions included in this PR.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-22T21:49:14Z",
+          "tree_id": "8090bec07a26cb3290767e3cc4926219943323c5",
+          "url": "https://github.com/MystenLabs/sui/commit/5490fee04ce7f8f29a71500cb728efcdea84130a"
+        },
+        "date": 1684792764559,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 140409199,
+            "range": "± 5651193",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 544215,
+            "range": "± 70391",
             "unit": "ns/iter"
           }
         ]
