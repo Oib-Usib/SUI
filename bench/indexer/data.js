@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684785621108,
+  "lastUpdate": 1684789765840,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9071,6 +9071,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 259562,
             "range": "± 21750",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e4eb1756e52c14b07047ff00646784cf96a1b3a8",
+          "message": "[protocol-config] Bump protocol version to 12 (#12142)\n\n## Description\r\n\r\nTo fix protocol config snapshot test which is (correctly) complaining\r\nthat the framework bytes being packaged in the binary no longer matches\r\nthe snapshot for the max protocol version, after #12088.\r\n\r\n## Test Plan\r\n\r\n```\r\ncargo nextest run -- check_framework_change_with_protocol_upgrade\r\n```",
+          "timestamp": "2023-05-22T20:55:27Z",
+          "tree_id": "238143b3af352468b552c50b0e52c3ad4da527d4",
+          "url": "https://github.com/MystenLabs/sui/commit/e4eb1756e52c14b07047ff00646784cf96a1b3a8"
+        },
+        "date": 1684789750496,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 137730529,
+            "range": "± 6074658",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311209,
+            "range": "± 13926",
             "unit": "ns/iter"
           }
         ]
