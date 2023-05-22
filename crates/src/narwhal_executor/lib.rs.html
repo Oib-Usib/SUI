@@ -137,9 +137,6 @@
 <a href="#137" id="137">137</a>
 <a href="#138" id="138">138</a>
 <a href="#139" id="139">139</a>
-<a href="#140" id="140">140</a>
-<a href="#141" id="141">141</a>
-<a href="#142" id="142">142</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">mod </span>errors;
@@ -150,7 +147,6 @@
 
 <span class="kw">pub use </span>errors::{SubscriberError, SubscriberResult};
 <span class="kw">pub use </span>state::ExecutionIndices;
-<span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 
 <span class="kw">use </span><span class="kw">crate</span>::metrics::ExecutorMetrics;
 <span class="kw">use </span><span class="kw">crate</span>::subscriber::spawn_subscriber;
@@ -201,7 +197,6 @@
         rx_sequence: metered_channel::Receiver&lt;CommittedSubDag&gt;,
         registry: <span class="kw-2">&amp;</span>Registry,
         restored_consensus_output: Vec&lt;CommittedSubDag&gt;,
-        protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     ) -&gt; SubscriberResult&lt;Vec&lt;JoinHandle&lt;()&gt;&gt;&gt;
     <span class="kw">where
         </span>State: ExecutionState + Send + Sync + <span class="lifetime">&#39;static</span>,
@@ -222,7 +217,6 @@
             arc_metrics,
             restored_consensus_output,
             execution_state,
-            protocol_config.clone(),
         );
 
         <span class="comment">// Return the handle.

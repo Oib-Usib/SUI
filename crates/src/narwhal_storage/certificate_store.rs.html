@@ -1839,7 +1839,7 @@
         reopen,
         rocks::{open_cf, DBMap, ReadWriteOptions},
     };
-    <span class="kw">use </span>test_utils::{latest_protocol_version, temp_dir, CommitteeFixture};
+    <span class="kw">use </span>test_utils::{temp_dir, CommitteeFixture};
     <span class="kw">use </span>types::{Certificate, CertificateAPI, CertificateDigest, HeaderAPI, Round};
 
     <span class="kw">fn </span>new_store(path: std::path::PathBuf) -&gt; CertificateStore {
@@ -1914,7 +1914,7 @@
                 .iter()
                 .map(|header| fixture.certificate(header).digest())
                 .collect();
-            (<span class="kw">_</span>, current_round) = fixture.headers_round(i, <span class="kw-2">&amp;</span>parents, <span class="kw-2">&amp;</span>latest_protocol_version());
+            (<span class="kw">_</span>, current_round) = fixture.headers_round(i, <span class="kw-2">&amp;</span>parents);
 
             result.extend(
                 current_round

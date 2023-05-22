@@ -1243,15 +1243,6 @@
 <a href="#1243" id="1243">1243</a>
 <a href="#1244" id="1244">1244</a>
 <a href="#1245" id="1245">1245</a>
-<a href="#1246" id="1246">1246</a>
-<a href="#1247" id="1247">1247</a>
-<a href="#1248" id="1248">1248</a>
-<a href="#1249" id="1249">1249</a>
-<a href="#1250" id="1250">1250</a>
-<a href="#1251" id="1251">1251</a>
-<a href="#1252" id="1252">1252</a>
-<a href="#1253" id="1253">1253</a>
-<a href="#1254" id="1254">1254</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1913,12 +1904,8 @@
             connection_monitor_status.clone(),
             <span class="kw-2">&amp;</span>registry_service.default_registry(),
         ));
-        <span class="kw">let </span>narwhal_manager = <span class="self">Self</span>::construct_narwhal_manager(
-            config,
-            consensus_config,
-            registry_service,
-            epoch_store.protocol_config().clone(),
-        )<span class="question-mark">?</span>;
+        <span class="kw">let </span>narwhal_manager =
+            <span class="self">Self</span>::construct_narwhal_manager(config, consensus_config, registry_service)<span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>narwhal_epoch_data_remover =
             EpochDataRemover::new(narwhal_manager.get_storage_base_path());
@@ -2086,7 +2073,6 @@
         config: <span class="kw-2">&amp;</span>NodeConfig,
         consensus_config: <span class="kw-2">&amp;</span>ConsensusConfig,
         registry_service: <span class="kw-2">&amp;</span>RegistryService,
-        protocol_config: ProtocolConfig,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;NarwhalManager&gt; {
         <span class="kw">let </span>narwhal_config = NarwhalConfiguration {
             primary_keypair: config.protocol_key_pair().copy(),
@@ -2099,11 +2085,7 @@
 
         <span class="kw">let </span>metrics = NarwhalManagerMetrics::new(<span class="kw-2">&amp;</span>registry_service.default_registry());
 
-        <span class="prelude-val">Ok</span>(NarwhalManager::new(
-            narwhal_config,
-            metrics,
-            protocol_config,
-        ))
+        <span class="prelude-val">Ok</span>(NarwhalManager::new(narwhal_config, metrics))
     }
 
     <span class="kw">fn </span>construct_consensus_adapter(

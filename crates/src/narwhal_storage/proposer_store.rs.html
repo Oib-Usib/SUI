@@ -110,10 +110,6 @@
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
 <a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -173,7 +169,7 @@
 </span><span class="kw">mod </span>test {
     <span class="kw">use crate</span>::{ProposerStore, LAST_PROPOSAL_KEY};
     <span class="kw">use </span>store::Map;
-    <span class="kw">use </span>test_utils::{fixture_batch_with_transactions, latest_protocol_version, CommitteeFixture};
+    <span class="kw">use </span>test_utils::{fixture_batch_with_transactions, CommitteeFixture};
     <span class="kw">use </span>types::{CertificateDigest, Header, Round};
 
     <span class="kw">pub fn </span>create_header_for_round(round: Round) -&gt; Header {
@@ -186,11 +182,7 @@
             .round(round)
             .epoch(<span class="number">0</span>)
             .parents([CertificateDigest::default()].iter().cloned().collect())
-            .with_payload_batch(
-                fixture_batch_with_transactions(<span class="number">10</span>, <span class="kw-2">&amp;</span>latest_protocol_version()),
-                <span class="number">0</span>,
-                <span class="number">0</span>,
-            )
+            .with_payload_batch(fixture_batch_with_transactions(<span class="number">10</span>), <span class="number">0</span>, <span class="number">0</span>)
             .build()
             .unwrap();
         Header::V1(header)

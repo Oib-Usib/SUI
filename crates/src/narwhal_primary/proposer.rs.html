@@ -657,6 +657,10 @@
 <a href="#657" id="657">657</a>
 <a href="#658" id="658">658</a>
 <a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright(C) Facebook, Inc. and its affiliates.
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -927,13 +931,17 @@
                 Duration::from_millis(<span class="kw-2">*</span>header.created_at() - digest.timestamp).as_secs_f64();
             total_inclusion_secs += batch_inclusion_secs;
 
-            <span class="comment">// NOTE: This log entry is used to compute performance.
-            </span><span class="macro">tracing::debug!</span>(
+            <span class="attr">#[cfg(feature = <span class="string">&quot;benchmark&quot;</span>)]
+            </span>{
+                <span class="comment">// NOTE: This log entry is used to compute performance.
+                </span><span class="macro">tracing::info!</span>(
                     <span class="string">&quot;Batch {:?} from worker {} took {} seconds from creation to be included in a proposed header&quot;</span>,
                     digest.digest,
                     digest.worker_id,
                     batch_inclusion_secs
                 );
+            }
+
             <span class="self">self</span>.metrics
                 .proposer_batch_latency
                 .observe(batch_inclusion_secs);

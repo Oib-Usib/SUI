@@ -841,13 +841,6 @@
 <a href="#841" id="841">841</a>
 <a href="#842" id="842">842</a>
 <a href="#843" id="843">843</a>
-<a href="#844" id="844">844</a>
-<a href="#845" id="845">845</a>
-<a href="#846" id="846">846</a>
-<a href="#847" id="847">847</a>
-<a href="#848" id="848">848</a>
-<a href="#849" id="849">849</a>
-<a href="#850" id="850">850</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use crate</span>::{temp_dir, CommitteeFixture};
@@ -865,7 +858,6 @@
 <span class="kw">use </span>prometheus::{proto::Metric, Registry};
 <span class="kw">use </span>std::{cell::RefCell, collections::HashMap, path::PathBuf, rc::Rc, sync::Arc, time::Duration};
 <span class="kw">use </span>storage::NodeStorage;
-<span class="kw">use </span>sui_protocol_config::{ProtocolConfig, ProtocolVersion};
 <span class="kw">use </span>telemetry_subscribers::TelemetryGuards;
 <span class="kw">use </span>tokio::{
     sync::{broadcast::Sender, mpsc::channel, RwLock},
@@ -1158,7 +1150,6 @@
             parameters.clone(),
             internal_consensus_enabled,
             registry_service,
-            ProtocolConfig::get_for_version(ProtocolVersion::max()),
         );
 
         <span class="self">Self </span>{
@@ -1281,12 +1272,7 @@
         worker_cache: WorkerCache,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>registry_service = RegistryService::new(Registry::new());
-        <span class="kw">let </span>node = WorkerNode::new(
-            id,
-            parameters,
-            registry_service,
-            ProtocolConfig::get_for_version(ProtocolVersion::max()),
-        );
+        <span class="kw">let </span>node = WorkerNode::new(id, parameters, registry_service);
 
         <span class="self">Self </span>{
             id,

@@ -311,72 +311,19 @@
 <a href="#311" id="311">311</a>
 <a href="#312" id="312">312</a>
 <a href="#313" id="313">313</a>
-<a href="#314" id="314">314</a>
-<a href="#315" id="315">315</a>
-<a href="#316" id="316">316</a>
-<a href="#317" id="317">317</a>
-<a href="#318" id="318">318</a>
-<a href="#319" id="319">319</a>
-<a href="#320" id="320">320</a>
-<a href="#321" id="321">321</a>
-<a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
-<a href="#324" id="324">324</a>
-<a href="#325" id="325">325</a>
-<a href="#326" id="326">326</a>
-<a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
-<a href="#342" id="342">342</a>
-<a href="#343" id="343">343</a>
-<a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
-<a href="#348" id="348">348</a>
-<a href="#349" id="349">349</a>
-<a href="#350" id="350">350</a>
-<a href="#351" id="351">351</a>
-<a href="#352" id="352">352</a>
-<a href="#353" id="353">353</a>
-<a href="#354" id="354">354</a>
-<a href="#355" id="355">355</a>
-<a href="#356" id="356">356</a>
-<a href="#357" id="357">357</a>
-<a href="#358" id="358">358</a>
-<a href="#359" id="359">359</a>
-<a href="#360" id="360">360</a>
-<a href="#361" id="361">361</a>
-<a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a>
-<a href="#364" id="364">364</a>
-<a href="#365" id="365">365</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>config::WorkerId;
+</span><span class="kw">use </span>std::sync::Arc;
+
+<span class="kw">use </span>config::WorkerId;
 <span class="kw">use </span>fastcrypto::hash::Hash;
-<span class="kw">use </span>futures::future::BoxFuture;
 <span class="kw">use </span>futures::stream::FuturesUnordered;
-<span class="kw">use </span>futures::StreamExt;
+<span class="kw">use </span>futures::{Future, StreamExt};
 <span class="kw">use </span>mysten_metrics::{monitored_scope, spawn_logged_monitored_task};
 <span class="kw">use </span>network::{client::NetworkClient, WorkerToPrimaryClient};
-<span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>store::{rocks::DBMap, Map};
-<span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>tokio::{
     task::JoinHandle,
     time::{sleep, Duration, Instant},
@@ -385,8 +332,8 @@
 <span class="kw">use </span>types::{
     error::DagError,
     metered_channel::{Receiver, Sender},
-    now, Batch, BatchAPI, BatchDigest, ConditionalBroadcastReceiver, MetadataAPI, Transaction,
-    TxResponse, WorkerOurBatchMessage, WorkerOurBatchMessageV2,
+    now, Batch, BatchAPI, BatchDigest, ConditionalBroadcastReceiver, Transaction, TxResponse,
+    WorkerOurBatchMessage,
 };
 
 <span class="kw">use </span><span class="kw">crate</span>::metrics::WorkerMetrics;
@@ -426,8 +373,6 @@
     </span>client: NetworkClient,
     <span class="doccomment">/// The batch store to store our own batches.
     </span>store: DBMap&lt;BatchDigest, Batch&gt;,
-    <span class="comment">// The protocol configuration.
-    </span>protocol_config: ProtocolConfig,
 }
 
 <span class="kw">impl </span>BatchMaker {
@@ -442,7 +387,6 @@
         node_metrics: Arc&lt;WorkerMetrics&gt;,
         client: NetworkClient,
         store: DBMap&lt;BatchDigest, Batch&gt;,
-        protocol_config: ProtocolConfig,
     ) -&gt; JoinHandle&lt;()&gt; {
         <span class="macro">spawn_logged_monitored_task!</span>(
             <span class="kw">async move </span>{
@@ -457,7 +401,6 @@
                     node_metrics,
                     client,
                     store,
-                    protocol_config,
                 }
                 .run()
                 .<span class="kw">await</span>;
@@ -471,7 +414,7 @@
         <span class="kw">let </span>timer = sleep(<span class="self">self</span>.max_batch_delay);
         <span class="macro">tokio::pin!</span>(timer);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>current_batch = Batch::new(<span class="macro">vec!</span>[], <span class="kw-2">&amp;</span><span class="self">self</span>.protocol_config);
+        <span class="kw">let </span><span class="kw-2">mut </span>current_batch = Batch::default();
         <span class="kw">let </span><span class="kw-2">mut </span>current_responses = Vec::new();
         <span class="kw">let </span><span class="kw-2">mut </span>current_batch_size = <span class="number">0</span>;
 
@@ -494,7 +437,7 @@
                         }
                         <span class="self">self</span>.node_metrics.parallel_worker_batches.set(batch_pipeline.len() <span class="kw">as </span>i64);
 
-                        current_batch = Batch::new(<span class="macro">vec!</span>[], <span class="kw-2">&amp;</span><span class="self">self</span>.protocol_config);
+                        current_batch = Batch::default();
                         current_responses = Vec::new();
                         current_batch_size = <span class="number">0</span>;
 
@@ -515,7 +458,7 @@
                         }
                         <span class="self">self</span>.node_metrics.parallel_worker_batches.set(batch_pipeline.len() <span class="kw">as </span>i64);
 
-                        current_batch = Batch::new(<span class="macro">vec!</span>[], <span class="kw-2">&amp;</span><span class="self">self</span>.protocol_config);
+                        current_batch = Batch::default();
                         current_responses = Vec::new();
                         current_batch_size = <span class="number">0</span>;
                     }
@@ -539,13 +482,13 @@
     }
 
     <span class="doccomment">/// Seal and broadcast the current batch.
-    </span><span class="kw">async fn </span>seal&lt;<span class="lifetime">&#39;a</span>&gt;(
+    </span><span class="kw">async fn </span>seal(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         timeout: bool,
         <span class="kw-2">mut </span>batch: Batch,
         size: usize,
         responses: Vec&lt;TxResponse&gt;,
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;BoxFuture&lt;<span class="lifetime">&#39;a</span>, ()&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">impl </span>Future&lt;Output = ()&gt;&gt; {
         <span class="attr">#[cfg(feature = <span class="string">&quot;benchmark&quot;</span>)]
         </span>{
             <span class="kw">let </span>digest = batch.digest();
@@ -636,96 +579,49 @@
         <span class="kw">let </span>store = <span class="self">self</span>.store.clone();
         <span class="kw">let </span>worker_id = <span class="self">self</span>.id;
 
-        <span class="comment">// TODO: Remove once we have upgraded to protocol version 11.
-        </span><span class="kw">if </span><span class="self">self</span>.protocol_config.narwhal_versioned_metadata() {
-            <span class="comment">// The batch has been sealed so we can officially set its creation time
-            // for latency calculations.
-            </span>batch.versioned_metadata_mut().set_created_at(now());
-            <span class="kw">let </span>metadata = batch.versioned_metadata().clone();
+        <span class="comment">// The batch has been sealed so we can officially set its creation time
+        // for latency calculations.
+        </span>batch.metadata_mut().created_at = now();
+        <span class="kw">let </span>metadata = batch.metadata().clone();
 
-            <span class="prelude-val">Some</span>(Box::pin(<span class="kw">async move </span>{
-                <span class="comment">// Now save it to disk
-                </span><span class="kw">let </span>digest = batch.digest();
+        <span class="prelude-val">Some</span>(<span class="kw">async move </span>{
+            <span class="comment">// Now save it to disk
+            </span><span class="kw">let </span>digest = batch.digest();
 
-                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = store.insert(<span class="kw-2">&amp;</span>digest, <span class="kw-2">&amp;</span>batch) {
-                    <span class="macro">error!</span>(<span class="string">&quot;Store failed with error: {:?}&quot;</span>, e);
-                    <span class="kw">return</span>;
-                }
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = store.insert(<span class="kw-2">&amp;</span>digest, <span class="kw-2">&amp;</span>batch) {
+                <span class="macro">error!</span>(<span class="string">&quot;Store failed with error: {:?}&quot;</span>, e);
+                <span class="kw">return</span>;
+            }
 
-                <span class="comment">// Also wait for sending to be done here
-                //
-                // TODO: Here if we get back Err it means that potentially this was not send
-                //       to a quorum. However, if that happens we can still proceed on the basis
-                //       that an other authority will request the batch from us, and we will deliver
-                //       it since it is now stored. So ignore the error for the moment.
-                </span><span class="kw">let _ </span>= done_sending.<span class="kw">await</span>;
+            <span class="comment">// Also wait for sending to be done here
+            //
+            // TODO: Here if we get back Err it means that potentially this was not send
+            //       to a quorum. However, if that happens we can still proceed on the basis
+            //       that an other authority will request the batch from us, and we will deliver
+            //       it since it is now stored. So ignore the error for the moment.
+            </span><span class="kw">let _ </span>= done_sending.<span class="kw">await</span>;
 
-                <span class="comment">// Send the batch to the primary.
-                </span><span class="kw">let </span>message = WorkerOurBatchMessageV2 {
-                    digest,
-                    worker_id,
-                    metadata,
-                };
-                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = client.report_our_batch_v2(message).<span class="kw">await </span>{
-                    <span class="macro">warn!</span>(<span class="string">&quot;Failed to report our batch: {}&quot;</span>, e);
-                    <span class="comment">// Drop all response handers to signal error, since we
-                    // cannot ensure the primary has actually signaled the
-                    // batch will eventually be sent.
-                    // The transaction submitter will see the error and retry.
-                    </span><span class="kw">return</span>;
-                }
+            <span class="comment">// Send the batch to the primary.
+            </span><span class="kw">let </span>message = WorkerOurBatchMessage {
+                digest,
+                worker_id,
+                metadata,
+            };
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = client.report_our_batch(message).<span class="kw">await </span>{
+                <span class="macro">warn!</span>(<span class="string">&quot;Failed to report our batch: {}&quot;</span>, e);
+                <span class="comment">// Drop all response handers to signal error, since we
+                // cannot ensure the primary has actually signaled the
+                // batch will eventually be sent.
+                // The transaction submitter will see the error and retry.
+                </span><span class="kw">return</span>;
+            }
 
-                <span class="comment">// We now signal back to the transaction sender that the transaction is in a
-                // batch and also the digest of the batch.
-                </span><span class="kw">for </span>response <span class="kw">in </span>responses {
-                    <span class="kw">let _ </span>= response.send(digest);
-                }
-            }))
-        } <span class="kw">else </span>{
-            <span class="comment">// The batch has been sealed so we can officially set its creation time
-            // for latency calculations.
-            </span>batch.metadata_mut().created_at = now();
-            <span class="kw">let </span>metadata = batch.metadata().clone();
-
-            <span class="prelude-val">Some</span>(Box::pin(<span class="kw">async move </span>{
-                <span class="comment">// Now save it to disk
-                </span><span class="kw">let </span>digest = batch.digest();
-
-                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = store.insert(<span class="kw-2">&amp;</span>digest, <span class="kw-2">&amp;</span>batch) {
-                    <span class="macro">error!</span>(<span class="string">&quot;Store failed with error: {:?}&quot;</span>, e);
-                    <span class="kw">return</span>;
-                }
-
-                <span class="comment">// Also wait for sending to be done here
-                //
-                // TODO: Here if we get back Err it means that potentially this was not send
-                //       to a quorum. However, if that happens we can still proceed on the basis
-                //       that an other authority will request the batch from us, and we will deliver
-                //       it since it is now stored. So ignore the error for the moment.
-                </span><span class="kw">let _ </span>= done_sending.<span class="kw">await</span>;
-
-                <span class="comment">// Send the batch to the primary.
-                </span><span class="kw">let </span>message = WorkerOurBatchMessage {
-                    digest,
-                    worker_id,
-                    metadata,
-                };
-                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = client.report_our_batch(message).<span class="kw">await </span>{
-                    <span class="macro">warn!</span>(<span class="string">&quot;Failed to report our batch: {}&quot;</span>, e);
-                    <span class="comment">// Drop all response handers to signal error, since we
-                    // cannot ensure the primary has actually signaled the
-                    // batch will eventually be sent.
-                    // The transaction submitter will see the error and retry.
-                    </span><span class="kw">return</span>;
-                }
-
-                <span class="comment">// We now signal back to the transaction sender that the transaction is in a
-                // batch and also the digest of the batch.
-                </span><span class="kw">for </span>response <span class="kw">in </span>responses {
-                    <span class="kw">let _ </span>= response.send(digest);
-                }
-            }))
-        }
+            <span class="comment">// We now signal back to the transaction sender that the transaction is in a
+            // batch and also the digest of the batch.
+            </span><span class="kw">for </span>response <span class="kw">in </span>responses {
+                <span class="kw">let _ </span>= response.send(digest);
+            }
+        })
     }
 }
 </code></pre></div></section></main></body></html>
