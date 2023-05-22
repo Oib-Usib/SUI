@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684797334443,
+  "lastUpdate": 1684799212791,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9251,6 +9251,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 260239,
             "range": "± 21254",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "80852846d2da457725512c907296d481dc2908b0",
+          "message": "use miliescond to avoid underflow when setting up pruner (#12149)\n\n## Description \r\n\r\nwhen `epoch_duration_ms` < 2000, `tick_duration` may be `0` which makes\r\n`tokio::time::interval_at` panic. The fix is to use\r\n`Duration::from_millis(`\r\n\r\n## Test Plan \r\n\r\n`cargo nextest run test_passive_reconfig` passes now which fails\r\notherwise\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-22T23:32:54Z",
+          "tree_id": "d054107e2dcb432fe0834f33125df5f41922c6bb",
+          "url": "https://github.com/MystenLabs/sui/commit/80852846d2da457725512c907296d481dc2908b0"
+        },
+        "date": 1684799195650,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 140549575,
+            "range": "± 4638535",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 316914,
+            "range": "± 21647",
             "unit": "ns/iter"
           }
         ]
