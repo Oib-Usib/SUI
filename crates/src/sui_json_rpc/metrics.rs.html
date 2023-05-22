@@ -253,10 +253,6 @@
 <a href="#253" id="253">253</a>
 <a href="#254" id="254">254</a>
 <a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -463,7 +459,7 @@
     <span class="kw">fn </span>on_result(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         method_name: <span class="kw-2">&amp;</span>str,
-        success: bool,
+        _success: bool,
         error_code: <span class="prelude-ty">Option</span>&lt;i32&gt;,
         started_at: <span class="self">Self</span>::Instant,
         _transport: TransportProtocol,
@@ -480,10 +476,6 @@
             .observe(req_latency_secs);
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(code) = error_code {
-            <span class="macro">println!</span>(
-                <span class="string">&quot;RPC call failed: method={}, code={}, success={}, latency={:.3}s&quot;</span>,
-                method_name, code, success, req_latency_secs
-            );
             <span class="kw">if </span>code == -<span class="number">32000 </span>{
                 <span class="self">self</span>.metrics
                     .server_errors_by_route
