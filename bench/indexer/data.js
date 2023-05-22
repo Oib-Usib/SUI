@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684789765840,
+  "lastUpdate": 1684791963921,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9107,6 +9107,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311209,
             "range": "± 13926",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f661640c73d3a3cb48338eceef343f6a88dd8548",
+          "message": "Remove sampling for batch write size (#12144)",
+          "timestamp": "2023-05-22T21:35:31Z",
+          "tree_id": "aebf3ff7cd4d335e5702bae5968486c8c611d450",
+          "url": "https://github.com/MystenLabs/sui/commit/f661640c73d3a3cb48338eceef343f6a88dd8548"
+        },
+        "date": 1684791946721,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151827658,
+            "range": "± 4613742",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 318898,
+            "range": "± 76178",
             "unit": "ns/iter"
           }
         ]
