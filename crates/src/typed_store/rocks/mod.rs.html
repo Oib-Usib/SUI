@@ -2535,6 +2535,8 @@
 <a href="#2535" id="2535">2535</a>
 <a href="#2536" id="2536">2536</a>
 <a href="#2537" id="2537">2537</a>
+<a href="#2538" id="2538">2538</a>
+<a href="#2539" id="2539">2539</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">pub mod </span>errors;
@@ -3627,26 +3629,28 @@
     <span class="doccomment">/// Consume the batch and write its operations to the database
     </span><span class="attr">#[instrument(level = <span class="string">&quot;trace&quot;</span>, skip_all, err)]
     </span><span class="kw">pub fn </span>write(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), TypedStoreError&gt; {
-        <span class="kw">let </span>report_metrics = <span class="kw">if </span><span class="self">self</span>.write_sample_interval.sample() {
-            <span class="kw">let </span>db_name = <span class="self">self</span>.rocksdb.db_name();
-            <span class="kw">let </span>timer = <span class="self">self
-                </span>.db_metrics
-                .op_metrics
-                .rocksdb_batch_commit_latency_seconds
-                .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>db_name])
-                .start_timer();
-            <span class="kw">let </span>size = <span class="self">self</span>.batch.size_in_bytes();
-            <span class="prelude-val">Some</span>((db_name, size, timer, RocksDBPerfContext::default()))
+        <span class="kw">let </span>db_name = <span class="self">self</span>.rocksdb.db_name();
+        <span class="kw">let </span>_timer = <span class="self">self
+            </span>.db_metrics
+            .op_metrics
+            .rocksdb_batch_commit_latency_seconds
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>db_name])
+            .start_timer();
+        <span class="kw">let </span>batch_size = <span class="self">self</span>.batch.size_in_bytes();
+
+        <span class="kw">let </span>perf_ctx = <span class="kw">if </span><span class="self">self</span>.write_sample_interval.sample() {
+            <span class="prelude-val">Some</span>(RocksDBPerfContext::default())
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>};
         <span class="self">self</span>.rocksdb.write(<span class="self">self</span>.batch)<span class="question-mark">?</span>;
-        <span class="kw">if let </span><span class="prelude-val">Some</span>((db_name, batch_size, _timer, _perf_ctx)) = report_metrics {
-            <span class="self">self</span>.db_metrics
-                .op_metrics
-                .rocksdb_batch_commit_bytes
-                .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>db_name])
-                .observe(batch_size <span class="kw">as </span>f64);
+        <span class="self">self</span>.db_metrics
+            .op_metrics
+            .rocksdb_batch_commit_bytes
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>db_name])
+            .observe(batch_size <span class="kw">as </span>f64);
+
+        <span class="kw">if </span>perf_ctx.is_some() {
             <span class="self">self</span>.db_metrics
                 .write_perf_ctx_metrics
                 .report_metrics(<span class="kw-2">&amp;</span>db_name);
