@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684792781725,
+  "lastUpdate": 1684792857209,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9179,6 +9179,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 544215,
             "range": "± 70391",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "97870774+arun-koshy@users.noreply.github.com",
+            "name": "Arun Koshy",
+            "username": "arun-koshy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "63e51d17baf02a26dc3ac2ee8124ccf6aba87720",
+          "message": "Revert \"Pipe Protocol Config into NW & Update protocol version to 11 for new NW VersionedMetadata field\" (#12146)\n\nThere is an issue where previous Batch versions can be fetched despite\r\nthe protocol version upgrade. Will need to add some additional checks +\r\ntests before submitting this change.",
+          "timestamp": "2023-05-22T21:52:07Z",
+          "tree_id": "c19a9a3001af4898fa9daed1fa5e6d1cc2abf3e5",
+          "url": "https://github.com/MystenLabs/sui/commit/63e51d17baf02a26dc3ac2ee8124ccf6aba87720"
+        },
+        "date": 1684792839761,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 108101691,
+            "range": "± 4161421",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 300655,
+            "range": "± 11437",
             "unit": "ns/iter"
           }
         ]
