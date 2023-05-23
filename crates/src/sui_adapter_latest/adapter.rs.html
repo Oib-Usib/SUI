@@ -236,6 +236,8 @@
 <a href="#236" id="236">236</a>
 <a href="#237" id="237">237</a>
 <a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -244,13 +246,15 @@
 <span class="kw">use </span>anyhow::Result;
 <span class="kw">use </span>move_binary_format::{access::ModuleAccess, file_format::CompiledModule};
 <span class="kw">use </span>move_bytecode_verifier::meter::Meter;
-<span class="kw">use </span>move_bytecode_verifier::{verify_module_with_config_metered, VerifierConfig};
+<span class="kw">use </span>move_bytecode_verifier::verify_module_with_config_metered;
 <span class="kw">use </span>move_core_types::account_address::AccountAddress;
+<span class="kw">use </span>move_vm_config::{
+    runtime::{VMConfig, VMRuntimeLimitsConfig},
+    verifier::VerifierConfig,
+};
 <span class="kw">pub use </span>move_vm_runtime::move_vm::MoveVM;
 <span class="kw">use </span>move_vm_runtime::{
-    config::{VMConfig, VMRuntimeLimitsConfig},
-    native_extensions::NativeContextExtensions,
-    native_functions::NativeFunctionTable,
+    native_extensions::NativeContextExtensions, native_functions::NativeFunctionTable,
 };
 <span class="kw">use </span>sui_types::metrics::BytecodeVerifierMetrics;
 <span class="kw">use </span>sui_verifier::check_for_verifier_timeout;

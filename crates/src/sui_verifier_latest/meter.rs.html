@@ -107,17 +107,13 @@
 <a href="#107" id="107">107</a>
 <a href="#108" id="108">108</a>
 <a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>move_binary_format::errors::{PartialVMError, PartialVMResult};
-<span class="kw">use </span>move_bytecode_verifier::{
-    meter::{Meter, Scope},
-    VerifierConfig,
-};
+<span class="kw">use </span>move_bytecode_verifier::meter::{Meter, Scope};
 <span class="kw">use </span>move_core_types::vm_status::StatusCode;
+<span class="kw">use </span>move_vm_config::verifier::VerifierConfig;
 
 <span class="kw">struct </span>SuiVerifierMeterBounds {
     name: String,
