@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684816019731,
+  "lastUpdate": 1684855716767,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9359,6 +9359,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 325977,
             "range": "± 19434",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "95379755+losman0s@users.noreply.github.com",
+            "name": "man0s",
+            "username": "losman0s"
+          },
+          "committer": {
+            "email": "sam@mystenlabs.com",
+            "name": "Sam Blackshear",
+            "username": "sblackshear"
+          },
+          "distinct": true,
+          "id": "f340fc129948944014a82688aa20b233b634aa53",
+          "message": "fix(move-cli): ignore_compile_warnings test flag ignored",
+          "timestamp": "2023-05-23T08:17:57-07:00",
+          "tree_id": "3ec4310579205f43440ed737ac851521b65d2afe",
+          "url": "https://github.com/MystenLabs/sui/commit/f340fc129948944014a82688aa20b233b634aa53"
+        },
+        "date": 1684855700354,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144207590,
+            "range": "± 5142790",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 352957,
+            "range": "± 34823",
             "unit": "ns/iter"
           }
         ]
