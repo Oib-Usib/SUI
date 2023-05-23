@@ -154,7 +154,7 @@
                 report_storage_on_error: c.test.report_storage_on_error,
                 check_stackless_vm: c.test.check_stackless_vm,
                 verbose: c.test.verbose_mode,
-
+                ignore_compile_warnings: c.test.ignore_compile_warnings,
                 ..UnitTestingConfig::default_with_bound(<span class="prelude-val">None</span>)
             };
             <span class="kw">let </span>result = c.execute(package_path, build_config, unit_test_config)<span class="question-mark">?</span>;
