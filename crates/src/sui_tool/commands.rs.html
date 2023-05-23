@@ -685,10 +685,10 @@
                     <span class="kw">for </span>(i, val_info) <span class="kw">in </span>genesis.validator_set_for_tooling().iter().enumerate() {
                         <span class="kw">let </span>metadata = val_info.verified_metadata();
                         <span class="macro">println!</span>(
-                            <span class="string">&quot;#{:&lt;2} {:&lt;20} {:?&lt;66} {:?} {}&quot;</span>,
+                            <span class="string">&quot;#{:&lt;2} {:&lt;20} {:?} {:?} {}&quot;</span>,
                             i,
                             metadata.name,
-                            metadata.protocol_pubkey,
+                            metadata.sui_pubkey_bytes().concise(),
                             metadata.net_address,
                             anemo::PeerId(metadata.network_pubkey.<span class="number">0</span>.to_bytes()),
                         )
