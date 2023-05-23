@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684855716767,
+  "lastUpdate": 1684878285959,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9395,6 +9395,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 352957,
             "range": "± 34823",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c27aad16f02992178916b7d972343f943b530bd3",
+          "message": "[ci] reduce test time: run external-crates tests concurrently with Sui tests (#12159)\n\n## Description \r\n\r\nSince external crates tests + prover tests and Sui tests are\r\nindependent, we can run them in parallel and save time.\r\nThis reduces test time from ~27 mins to ~22 mins\r\n\r\nOnce this goes in I'll work with @ebmifa to make the new tests required\r\nin CI\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-23T17:33:01-04:00",
+          "tree_id": "359c5f7681b9427b324abb1da5816c723b1818f8",
+          "url": "https://github.com/MystenLabs/sui/commit/c27aad16f02992178916b7d972343f943b530bd3"
+        },
+        "date": 1684878268954,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 139941655,
+            "range": "± 4589894",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 387344,
+            "range": "± 32176",
             "unit": "ns/iter"
           }
         ]
