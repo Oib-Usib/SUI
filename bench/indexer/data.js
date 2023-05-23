@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684799212791,
+  "lastUpdate": 1684800272177,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9287,6 +9287,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 316914,
             "range": "± 21647",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "76f9491f703690e058c8bf69155f6d8f49b471d7",
+          "message": "print concise pubkey bytes for dump-validators (#12075)",
+          "timestamp": "2023-05-22T16:53:55-07:00",
+          "tree_id": "c556e9a7bc20fc82e7069d9916b720e2e8bbc2df",
+          "url": "https://github.com/MystenLabs/sui/commit/76f9491f703690e058c8bf69155f6d8f49b471d7"
+        },
+        "date": 1684800256148,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149349199,
+            "range": "± 4645428",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 307746,
+            "range": "± 19695",
             "unit": "ns/iter"
           }
         ]
