@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684878285959,
+  "lastUpdate": 1684934384892,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9431,6 +9431,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 387344,
             "range": "± 32176",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "akihidis@gmail.com",
+            "name": "Anastasios Kichidis",
+            "username": "akichidis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d2ee08baa533dfd0d94854152499dc4bcb074166",
+          "message": "[narwhal] synchronizer avoid joinset leaks (#12094)\n\n## Description \r\n\r\ntokio::JoinSet should be consumed to ensure that the list is not keep\r\nbuilding up leading to a potential \"leak\". In the Synchronizer we use\r\nthem both for the `batch_tasks` and the `certificate_senders` . For the\r\n`certificate_senders` is less of a concern as we only spawn a specific\r\nnumber of tasks which is the number of validators. It's more of a\r\nconcern for the `batch_tasks` where we constantly spawn new tasks. Every\r\nwork around that I thought with the current approach would require some\r\nadditional locking and timeout as `batch_tasks` are behind a mutex.\r\nInstead I used an internal channel to avoid this. The end goal is still\r\nserved - abording any inflight tasks when shutting down the component,\r\nas this will happen when the `tx_batch_tasks` closes.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-24T14:08:38+01:00",
+          "tree_id": "c3471ce20363ea60651d6bef5d6d6d366224c020",
+          "url": "https://github.com/MystenLabs/sui/commit/d2ee08baa533dfd0d94854152499dc4bcb074166"
+        },
+        "date": 1684934367105,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141546022,
+            "range": "± 5281136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 394773,
+            "range": "± 59318",
             "unit": "ns/iter"
           }
         ]
