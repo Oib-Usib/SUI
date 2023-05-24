@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+use move_core_types::language_storage::TypeTag;
 use std::collections::HashMap;
 
 use schemars::JsonSchema;
@@ -16,14 +17,16 @@ use sui_types::error::SuiError;
 use sui_types::object::Object;
 use sui_types::sui_serde::BigInt;
 use sui_types::sui_serde::SequenceNumber as AsSequenceNumber;
-
+use sui_types::sui_serde::SuiTypeTag;
 pub type CoinPage = Page<Coin, ObjectID>;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, JsonSchema, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Balance {
-    pub coin_type: String,
+    #[schemars(with = "String")]
+    #[serde_as(as = "SuiTypeTag")]
+    pub coin_type: TypeTag,
     pub coin_object_count: usize,
     #[schemars(with = "BigInt<u128>")]
     #[serde_as(as = "BigInt<u128>")]
@@ -38,7 +41,9 @@ pub struct Balance {
 #[derive(Serialize, Deserialize, Debug, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Coin {
-    pub coin_type: String,
+    #[schemars(with = "String")]
+    #[serde_as(as = "SuiTypeTag")]
+    pub coin_type: TypeTag,
     pub coin_object_id: ObjectID,
     #[schemars(with = "AsSequenceNumber")]
     #[serde_as(as = "AsSequenceNumber")]

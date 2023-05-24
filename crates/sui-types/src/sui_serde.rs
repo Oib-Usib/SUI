@@ -196,7 +196,7 @@ pub fn to_sui_struct_tag_string(value: &StructTag) -> Result<String, fmt::Error>
     Ok(f)
 }
 
-fn to_sui_type_tag_string(value: &TypeTag) -> Result<String, fmt::Error> {
+pub fn to_sui_type_tag_string(value: &TypeTag) -> Result<String, fmt::Error> {
     match value {
         TypeTag::Vector(t) => Ok(format!("vector<{}>", to_sui_type_tag_string(t)?)),
         TypeTag::Struct(s) => to_sui_struct_tag_string(s),

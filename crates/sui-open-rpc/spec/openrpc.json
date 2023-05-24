@@ -2971,13 +2971,13 @@
             },
             {
               "name": "coin_type",
-              "value": "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC"
+              "value": "0x000000000000000000000000168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC"
             }
           ],
           "result": {
             "name": "Result",
             "value": {
-              "coinType": "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
+              "coinType": "0x000000000000000000000000168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
               "coinObjectCount": 15,
               "totalBalance": "15",
               "lockedBalance": {}

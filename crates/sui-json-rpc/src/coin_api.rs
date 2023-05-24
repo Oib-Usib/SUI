@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+use anyhow::anyhow;
 use std::sync::Arc;
 
 use async_trait::async_trait;
@@ -23,7 +24,7 @@ use sui_types::effects::TransactionEffectsAPI;
 use sui_types::error::SuiError;
 use sui_types::gas_coin::GAS;
 use sui_types::object::Object;
-use sui_types::parse_sui_struct_tag;
+use sui_types::{parse_sui_struct_tag, parse_sui_type_tag};
 
 use crate::api::{cap_page_limit, CoinReadApiServer, JsonRpcMetrics};
 use crate::error::{Error, SuiRpcInputError};
@@ -51,24 +52,19 @@ impl CoinReadApi {
         let state = self.state.clone();
 
         let mut data = spawn_monitored_task!(async move {
-            Ok::<_, SuiError>(
-                state
-                    .get_owned_coins_iterator_with_cursor(
-                        owner,
-                        cursor,
-                        limit + 1,
-                        one_coin_type_only,
-                    )?
-                    .map(|(coin_type, coin_object_id, coin)| SuiCoin {
-                        coin_type,
+            state
+                .get_owned_coins_iterator_with_cursor(owner, cursor, limit + 1, one_coin_type_only)?
+                .map(|(coin_type, coin_object_id, coin)| {
+                    Ok(SuiCoin {
+                        coin_type: parse_sui_type_tag(&coin_type).map_err(|e| anyhow!(e))?,
                         coin_object_id,
                         version: coin.version,
                         digest: coin.digest,
                         balance: coin.balance,
                         previous_transaction: coin.previous_transaction,
                     })
-                    .collect::<Vec<_>>(),
-            )
+                })
+                .collect::<Result<Vec<_>, Error>>()
         })
         .await??;
 
@@ -247,7 +243,7 @@ impl CoinReadApiServer for CoinReadApi {
                     Error::from(e)
                 })?;
             Ok(Balance {
-                coin_type: coin_type.to_string(),
+                coin_type,
                 coin_object_count: balance.num_coins as usize,
                 total_balance: balance.balance as u128,
                 // note: LockedCoin is deprecated
@@ -274,7 +270,7 @@ impl CoinReadApiServer for CoinReadApi {
                 .iter()
                 .map(|(coin_type, balance)| {
                     Balance {
-                        coin_type: coin_type.to_string(),
+                        coin_type: coin_type.clone(),
                         coin_object_count: balance.num_coins as usize,
                         total_balance: balance.balance as u128,
                         // note: LockedCoin is deprecated

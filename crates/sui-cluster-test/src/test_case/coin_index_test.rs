@@ -4,7 +4,7 @@
 use crate::{TestCaseImpl, TestContext};
 use async_trait::async_trait;
 use jsonrpsee::rpc_params;
-use move_core_types::language_storage::StructTag;
+use move_core_types::language_storage::{StructTag, TypeTag};
 use serde_json::json;
 use std::collections::HashMap;
 use sui_core::test_utils::compile_managed_coin_package;
@@ -15,7 +15,9 @@ use sui_json_rpc_types::{Balance, SuiTransactionBlockResponseOptions};
 use sui_types::base_types::{ObjectID, ObjectRef};
 use sui_types::gas_coin::GAS;
 use sui_types::object::Owner;
+use sui_types::parse_sui_type_tag;
 use sui_types::quorum_driver_types::ExecuteTransactionRequestType;
+use sui_types::sui_serde::to_sui_type_tag_string;
 use tracing::info;
 
 pub struct CoinIndexTest;
@@ -73,7 +75,7 @@ impl TestCaseImpl for CoinIndexTest {
             coin_type,
             ..
         } = client.coin_read_api().get_balance(account, None).await?;
-        assert_eq!(coin_type, GAS::type_().to_string());
+        assert_eq!(coin_type, TypeTag::Struct(Box::new(GAS::type_())));
 
         assert_eq!(coin_object_count, old_coin_object_count);
         assert_eq!(
@@ -204,7 +206,7 @@ impl TestCaseImpl for CoinIndexTest {
             coin_object_count: managed_coin_object_count,
             total_balance: managed_total_balance,
             // Important: update coin_type_str here because the leading 0s are truncated!
-            coin_type: coin_type_str,
+            coin_type,
             ..
         } = client
             .coin_read_api()
@@ -216,16 +218,18 @@ impl TestCaseImpl for CoinIndexTest {
             10000, // mint amount
         );
 
+        let coin_type_str = to_sui_type_tag_string(&coin_type)?;
+
         let mut balances = client.coin_read_api().get_all_balances(account).await?;
         let mut expected_balances = vec![
             Balance {
-                coin_type: sui_type_str.into(),
+                coin_type: parse_sui_type_tag(sui_type_str).unwrap(),
                 coin_object_count: old_coin_object_count,
                 total_balance,
                 locked_balance: HashMap::new(),
             },
             Balance {
-                coin_type: coin_type_str.clone(),
+                coin_type,
                 coin_object_count: 1,
                 total_balance: 10000,
                 locked_balance: HashMap::new(),

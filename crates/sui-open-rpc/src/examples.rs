@@ -53,7 +53,7 @@ use sui_types::digests::TransactionEventsDigest;
 use sui_types::dynamic_field::{DynamicFieldInfo, DynamicFieldName, DynamicFieldType};
 use sui_types::event::EventID;
 use sui_types::gas::GasCostSummary;
-use sui_types::gas_coin::GasCoin;
+use sui_types::gas_coin::{GasCoin, GAS};
 use sui_types::id::UID;
 use sui_types::messages_checkpoint::CheckpointDigest;
 use sui_types::object::MoveObject;
@@ -61,11 +61,12 @@ use sui_types::object::Owner;
 use sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
 use sui_types::quorum_driver_types::ExecuteTransactionRequestType;
 use sui_types::signature::GenericSignature;
+use sui_types::sui_serde::to_sui_type_tag_string;
 use sui_types::transaction::ObjectArg;
 use sui_types::transaction::TEST_ONLY_GAS_UNIT_FOR_TRANSFER;
 use sui_types::transaction::{CallArg, TransactionData};
 use sui_types::utils::to_sender_signed_transaction;
-use sui_types::{parse_sui_struct_tag, SUI_FRAMEWORK_PACKAGE_ID};
+use sui_types::{parse_sui_struct_tag, parse_sui_type_tag, SUI_FRAMEWORK_PACKAGE_ID};
 
 struct Examples {
     function_name: String,
@@ -834,7 +835,7 @@ impl RpcExampleProvider {
         let address = SuiAddress::from(ObjectID::new(self.rng.gen()));
 
         let result = Balance {
-            coin_type: "0x2::sui::SUI".to_string(),
+            coin_type: GAS::type_tag(),
             coin_object_count: 15,
             total_balance: 3000000000,
             locked_balance: HashMap::new(),
@@ -856,7 +857,7 @@ impl RpcExampleProvider {
         let next = ObjectID::new(self.rng.gen());
         let coins = (0..3)
             .map(|_| Coin {
-                coin_type: "0x2::sui::SUI".to_string(),
+                coin_type: GAS::type_tag(),
                 coin_object_id: ObjectID::new(self.rng.gen()),
                 version: SequenceNumber::from_u64(103626),
                 digest: ObjectDigest::new(self.rng.gen()),
@@ -887,7 +888,8 @@ impl RpcExampleProvider {
 
     fn suix_get_balance(&mut self) -> Examples {
         let owner = SuiAddress::from(ObjectID::new(self.rng.gen()));
-        let coin_type = "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC".to_string();
+        let coin_type =
+            parse_sui_type_tag("0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC").unwrap();
         let result = Balance {
             coin_type: coin_type.clone(),
             coin_object_count: 15,
@@ -899,7 +901,13 @@ impl RpcExampleProvider {
             "suix_getBalance",
             vec![ExamplePairing::new(
                 "Gets the balance of the specified type of coin for the address in the request.",
-                vec![("owner", json!(owner)), ("coin_type", json!(coin_type))],
+                vec![
+                    ("owner", json!(owner)),
+                    (
+                        "coin_type",
+                        json!(to_sui_type_tag_string(&coin_type).unwrap()),
+                    ),
+                ],
                 json!(result),
             )],
         )
@@ -943,7 +951,7 @@ impl RpcExampleProvider {
     }
 
     fn suix_get_coins(&mut self) -> Examples {
-        let coin_type = "0x2::sui::SUI".to_string();
+        let coin_type = GAS::type_tag();
         let owner = SuiAddress::from(ObjectID::new(self.rng.gen()));
         let coins = (0..3)
             .map(|_| Coin {
@@ -971,7 +979,7 @@ impl RpcExampleProvider {
                 "Gets all SUI coins owned by the address provided. Return a paginated list of `limit` results per page. Similar to `suix_getAllCoins`, but provides a way to filter by coin type.",
                 vec![
                     ("owner", json!(owner)),
-                    ("coin_type", json!(coin_type)),
+                    ("coin_type", json!(to_sui_type_tag_string(&coin_type).unwrap())),
                     ("cursor", json!(ObjectID::new(self.rng.gen()))),
                     ("limit", json!(3)),
                 ],
