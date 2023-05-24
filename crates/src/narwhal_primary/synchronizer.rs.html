@@ -1284,6 +1284,12 @@
 <a href="#1284" id="1284">1284</a>
 <a href="#1285" id="1285">1285</a>
 <a href="#1286" id="1286">1286</a>
+<a href="#1287" id="1287">1287</a>
+<a href="#1288" id="1288">1288</a>
+<a href="#1289" id="1289">1289</a>
+<a href="#1290" id="1290">1290</a>
+<a href="#1291" id="1291">1291</a>
+<a href="#1292" id="1292">1292</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -2054,6 +2060,14 @@
         early_suspend: bool,
     ) -&gt; DagResult&lt;()&gt; {
         <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::process_certificate_with_lock&quot;</span>);
+        <span class="kw">let </span>digest = certificate.digest();
+
+        <span class="comment">// We re-check here in case we already have in pipeline the same certificate for processing
+        // more that once.
+        </span><span class="kw">if </span>inner.certificate_store.contains(<span class="kw-2">&amp;</span>digest)<span class="question-mark">? </span>{
+            <span class="macro">debug!</span>(<span class="string">&quot;Skip processing certificate {:?}&quot;</span>, certificate);
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+        }
 
         <span class="macro">debug!</span>(<span class="string">&quot;Processing certificate {:?}&quot;</span>, certificate);
 
@@ -2063,8 +2077,6 @@
         // and certificates are sent to consensus in causal order.
         // It is possible to reduce the critical section below, but it seems unnecessary for now.
         </span><span class="kw">let </span><span class="kw-2">mut </span>state = inner.state.lock().<span class="kw">await</span>;
-
-        <span class="kw">let </span>digest = certificate.digest();
 
         <span class="comment">// Ensure parents are checked if !early_suspend.
         // See comments above `try_accept_fetched_certificate()` for details.
