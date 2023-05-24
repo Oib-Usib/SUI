@@ -1217,6 +1217,73 @@
 <a href="#1217" id="1217">1217</a>
 <a href="#1218" id="1218">1218</a>
 <a href="#1219" id="1219">1219</a>
+<a href="#1220" id="1220">1220</a>
+<a href="#1221" id="1221">1221</a>
+<a href="#1222" id="1222">1222</a>
+<a href="#1223" id="1223">1223</a>
+<a href="#1224" id="1224">1224</a>
+<a href="#1225" id="1225">1225</a>
+<a href="#1226" id="1226">1226</a>
+<a href="#1227" id="1227">1227</a>
+<a href="#1228" id="1228">1228</a>
+<a href="#1229" id="1229">1229</a>
+<a href="#1230" id="1230">1230</a>
+<a href="#1231" id="1231">1231</a>
+<a href="#1232" id="1232">1232</a>
+<a href="#1233" id="1233">1233</a>
+<a href="#1234" id="1234">1234</a>
+<a href="#1235" id="1235">1235</a>
+<a href="#1236" id="1236">1236</a>
+<a href="#1237" id="1237">1237</a>
+<a href="#1238" id="1238">1238</a>
+<a href="#1239" id="1239">1239</a>
+<a href="#1240" id="1240">1240</a>
+<a href="#1241" id="1241">1241</a>
+<a href="#1242" id="1242">1242</a>
+<a href="#1243" id="1243">1243</a>
+<a href="#1244" id="1244">1244</a>
+<a href="#1245" id="1245">1245</a>
+<a href="#1246" id="1246">1246</a>
+<a href="#1247" id="1247">1247</a>
+<a href="#1248" id="1248">1248</a>
+<a href="#1249" id="1249">1249</a>
+<a href="#1250" id="1250">1250</a>
+<a href="#1251" id="1251">1251</a>
+<a href="#1252" id="1252">1252</a>
+<a href="#1253" id="1253">1253</a>
+<a href="#1254" id="1254">1254</a>
+<a href="#1255" id="1255">1255</a>
+<a href="#1256" id="1256">1256</a>
+<a href="#1257" id="1257">1257</a>
+<a href="#1258" id="1258">1258</a>
+<a href="#1259" id="1259">1259</a>
+<a href="#1260" id="1260">1260</a>
+<a href="#1261" id="1261">1261</a>
+<a href="#1262" id="1262">1262</a>
+<a href="#1263" id="1263">1263</a>
+<a href="#1264" id="1264">1264</a>
+<a href="#1265" id="1265">1265</a>
+<a href="#1266" id="1266">1266</a>
+<a href="#1267" id="1267">1267</a>
+<a href="#1268" id="1268">1268</a>
+<a href="#1269" id="1269">1269</a>
+<a href="#1270" id="1270">1270</a>
+<a href="#1271" id="1271">1271</a>
+<a href="#1272" id="1272">1272</a>
+<a href="#1273" id="1273">1273</a>
+<a href="#1274" id="1274">1274</a>
+<a href="#1275" id="1275">1275</a>
+<a href="#1276" id="1276">1276</a>
+<a href="#1277" id="1277">1277</a>
+<a href="#1278" id="1278">1278</a>
+<a href="#1279" id="1279">1279</a>
+<a href="#1280" id="1280">1280</a>
+<a href="#1281" id="1281">1281</a>
+<a href="#1282" id="1282">1282</a>
+<a href="#1283" id="1283">1283</a>
+<a href="#1284" id="1284">1284</a>
+<a href="#1285" id="1285">1285</a>
+<a href="#1286" id="1286">1286</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1228,8 +1295,8 @@
 <span class="kw">use </span>fastcrypto::hash::Hash <span class="kw">as _</span>;
 <span class="kw">use </span>futures::{stream::FuturesOrdered, StreamExt};
 <span class="kw">use </span>mysten_common::sync::notify_once::NotifyOnce;
-<span class="kw">use </span>mysten_metrics::metered_channel::Sender;
-<span class="kw">use </span>mysten_metrics::{monitored_scope, spawn_monitored_task};
+<span class="kw">use </span>mysten_metrics::metered_channel::{channel_with_total, Sender};
+<span class="kw">use </span>mysten_metrics::{monitored_scope, spawn_logged_monitored_task};
 <span class="kw">use </span>network::{
     anemo_ext::{NetworkExt, WaitingPeer},
     client::NetworkClient,
@@ -1248,7 +1315,7 @@
 };
 <span class="kw">use </span>storage::{CertificateStore, PayloadStore};
 <span class="kw">use </span>tokio::{
-    sync::{broadcast, mpsc, oneshot, watch, MutexGuard},
+    sync::{broadcast, oneshot, watch, MutexGuard},
     task::JoinSet,
     time::{sleep, timeout},
 };
@@ -1262,7 +1329,7 @@
 
 <span class="kw">use crate</span>::{
     aggregators::CertificatesAggregator, certificate_fetcher::CertificateFetcherCommand,
-    metrics::PrimaryMetrics, CHANNEL_CAPACITY,
+    metrics::PrimaryMetrics, PrimaryChannelMetrics, CHANNEL_CAPACITY,
 };
 
 <span class="attr">#[cfg(test)]
@@ -1301,7 +1368,7 @@
     <span class="doccomment">/// Send certificates to be accepted into a separate task that runs
     /// `process_certificate_with_lock()` in a loop.
     /// See comment above `process_certificate_with_lock()` for why this is necessary.
-    </span>tx_certificate_acceptor: mpsc::Sender&lt;(Certificate, oneshot::Sender&lt;DagResult&lt;()&gt;&gt;, bool)&gt;,
+    </span>tx_certificate_acceptor: Sender&lt;(Certificate, oneshot::Sender&lt;DagResult&lt;()&gt;&gt;, bool)&gt;,
     <span class="doccomment">/// Output all certificates to the consensus layer. Must send certificates in causal order.
     </span>tx_new_certificates: Sender&lt;Certificate&gt;,
     <span class="doccomment">/// Send valid a quorum of certificates&#39; ids to the `Proposer` (along with their round).
@@ -1316,10 +1383,11 @@
     </span>dag: <span class="prelude-ty">Option</span>&lt;Arc&lt;Dag&gt;&gt;,
     <span class="doccomment">/// Contains Synchronizer specific metrics among other Primary metrics.
     </span>metrics: Arc&lt;PrimaryMetrics&gt;,
-    <span class="doccomment">/// Background tasks synchronizing worker batches for processed certificates.
-    </span>batch_tasks: Mutex&lt;JoinSet&lt;DagResult&lt;()&gt;&gt;&gt;,
     <span class="doccomment">/// Background tasks broadcasting newly formed certificates.
     </span>certificate_senders: Mutex&lt;JoinSet&lt;()&gt;&gt;,
+    <span class="doccomment">/// A background task that synchronizes batches. A tuple of a header and the maximum accepted
+    /// age is sent over.
+    </span>tx_batch_tasks: Sender&lt;(Header, u64)&gt;,
     <span class="doccomment">/// Aggregates certificates to use as parents for new headers.
     </span>certificates_aggregators: Mutex&lt;BTreeMap&lt;Round, Box&lt;CertificatesAggregator&gt;&gt;&gt;,
     <span class="doccomment">/// State for tracking suspended certificates and when they can be accepted.
@@ -1534,6 +1602,7 @@
         rx_synchronizer_network: oneshot::Receiver&lt;Network&gt;,
         dag: <span class="prelude-ty">Option</span>&lt;Arc&lt;Dag&gt;&gt;,
         metrics: Arc&lt;PrimaryMetrics&gt;,
+        primary_channel_metrics: <span class="kw-2">&amp;</span>PrimaryChannelMetrics,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>committee: <span class="kw-2">&amp;</span>Committee = <span class="kw-2">&amp;</span>committee;
         <span class="kw">let </span>genesis = <span class="self">Self</span>::make_genesis(committee);
@@ -1542,8 +1611,18 @@
         <span class="kw">let </span>gc_round = rx_consensus_round_updates.borrow().gc_round;
         <span class="kw">let </span>(tx_own_certificate_broadcast, _rx_own_certificate_broadcast) =
             broadcast::channel(CHANNEL_CAPACITY);
-        <span class="kw">let </span>(tx_certificate_acceptor, <span class="kw-2">mut </span>rx_certificate_acceptor) =
-            mpsc::channel(CHANNEL_CAPACITY);
+        <span class="kw">let </span>(tx_certificate_acceptor, <span class="kw-2">mut </span>rx_certificate_acceptor) = channel_with_total(
+            CHANNEL_CAPACITY,
+            <span class="kw-2">&amp;</span>primary_channel_metrics.tx_certificate_acceptor,
+            <span class="kw-2">&amp;</span>primary_channel_metrics.tx_certificate_acceptor_total,
+        );
+
+        <span class="kw">let </span>(tx_batch_tasks, <span class="kw-2">mut </span>rx_batch_tasks) = channel_with_total(
+            CHANNEL_CAPACITY,
+            <span class="kw-2">&amp;</span>primary_channel_metrics.tx_batch_tasks,
+            <span class="kw-2">&amp;</span>primary_channel_metrics.tx_batch_tasks_total,
+        );
+
         <span class="kw">let </span>inner = Arc::new(Inner {
             authority_id,
             committee: committee.clone(),
@@ -1564,7 +1643,7 @@
             genesis,
             dag,
             metrics,
-            batch_tasks: Mutex::new(JoinSet::new()),
+            tx_batch_tasks,
             certificate_senders: Mutex::new(JoinSet::new()),
             certificates_aggregators: Mutex::new(BTreeMap::new()),
             state: tokio::sync::Mutex::new(State::default()),
@@ -1572,130 +1651,184 @@
 
         <span class="comment">// Start a task to recover parent certificates for proposer.
         </span><span class="kw">let </span>inner_proposer = inner.clone();
-        <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-            <span class="kw">let </span>last_round_certificates = inner_proposer
-                .certificate_store
-                .last_two_rounds_certs()
-                .expect(<span class="string">&quot;Failed recovering certificates in primary core&quot;</span>);
-            <span class="kw">for </span>certificate <span class="kw">in </span>last_round_certificates {
-                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = inner_proposer
-                    .append_certificate_in_aggregator(certificate)
-                    .<span class="kw">await
-                </span>{
-                    <span class="macro">debug!</span>(<span class="string">&quot;Failed to recover certificate, assuming Narwhal is shutting down. {e}&quot;</span>);
-                    <span class="kw">return</span>;
+        <span class="macro">spawn_logged_monitored_task!</span>(
+            <span class="kw">async move </span>{
+                <span class="kw">let </span>last_round_certificates = inner_proposer
+                    .certificate_store
+                    .last_two_rounds_certs()
+                    .expect(<span class="string">&quot;Failed recovering certificates in primary core&quot;</span>);
+                <span class="kw">for </span>certificate <span class="kw">in </span>last_round_certificates {
+                    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = inner_proposer
+                        .append_certificate_in_aggregator(certificate)
+                        .<span class="kw">await
+                    </span>{
+                        <span class="macro">debug!</span>(
+                            <span class="string">&quot;Failed to recover certificate, assuming Narwhal is shutting down. {e}&quot;
+                        </span>);
+                        <span class="kw">return</span>;
+                    }
                 }
-            }
-        });
+            },
+            <span class="string">&quot;SynchronizerCertificateRecovery&quot;
+        </span>);
 
         <span class="comment">// Start a task to update gc_round, gc in-memory data, and trigger certificate catchup
         // if no gc / consensus commit happened for 30s.
         </span><span class="kw">let </span>weak_inner = Arc::downgrade(<span class="kw-2">&amp;</span>inner);
-        <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-            <span class="kw">const </span>FETCH_TRIGGER_TIMEOUT: Duration = Duration::from_secs(<span class="number">30</span>);
-            <span class="kw">let </span><span class="kw-2">mut </span>rx_consensus_round_updates = rx_consensus_round_updates.clone();
-            <span class="kw">loop </span>{
-                <span class="kw">let </span><span class="prelude-val">Ok</span>(result) = timeout(FETCH_TRIGGER_TIMEOUT, rx_consensus_round_updates.changed()).<span class="kw">await else </span>{
-                    <span class="comment">// When consensus commit has not happened for 30s, it is possible that no new
-                    // certificate is received by this primary or created in the network, so
-                    // fetching should definitely be started.
-                    // For other reasons of timing out, there is no harm to start fetching either.
-                    </span><span class="kw">let </span><span class="prelude-val">Some</span>(inner) = weak_inner.upgrade() <span class="kw">else </span>{
-                        <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
-                        <span class="kw">return</span>;
+        <span class="macro">spawn_logged_monitored_task!</span>(
+            <span class="kw">async move </span>{
+                <span class="kw">const </span>FETCH_TRIGGER_TIMEOUT: Duration = Duration::from_secs(<span class="number">30</span>);
+                <span class="kw">let </span><span class="kw-2">mut </span>rx_consensus_round_updates = rx_consensus_round_updates.clone();
+                <span class="kw">loop </span>{
+                    <span class="kw">let </span><span class="prelude-val">Ok</span>(result) = timeout(FETCH_TRIGGER_TIMEOUT, rx_consensus_round_updates.changed()).<span class="kw">await else </span>{
+                        <span class="comment">// When consensus commit has not happened for 30s, it is possible that no new
+                        // certificate is received by this primary or created in the network, so
+                        // fetching should definitely be started.
+                        // For other reasons of timing out, there is no harm to start fetching either.
+                        </span><span class="kw">let </span><span class="prelude-val">Some</span>(inner) = weak_inner.upgrade() <span class="kw">else </span>{
+                            <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
+                            <span class="kw">return</span>;
+                        };
+                        <span class="kw">if </span>inner.tx_certificate_fetcher.send(CertificateFetcherCommand::Kick).<span class="kw">await</span>.is_err() {
+                            <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
+                            <span class="kw">return</span>;
+                        }
+                        inner.metrics.synchronizer_gc_timeout.inc();
+                        <span class="macro">warn!</span>(<span class="string">&quot;No consensus commit happened for {:?}, triggering certificate fetching.&quot;</span>, FETCH_TRIGGER_TIMEOUT);
+                        <span class="kw">continue</span>;
                     };
-                    <span class="kw">if </span>inner.tx_certificate_fetcher.send(CertificateFetcherCommand::Kick).<span class="kw">await</span>.is_err() {
+                    <span class="kw">if </span>result.is_err() {
                         <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
                         <span class="kw">return</span>;
                     }
-                    inner.metrics.synchronizer_gc_timeout.inc();
-                    <span class="macro">warn!</span>(<span class="string">&quot;No consensus commit happened for {:?}, triggering certificate fetching.&quot;</span>, FETCH_TRIGGER_TIMEOUT);
-                    <span class="kw">continue</span>;
-                };
-                <span class="kw">if </span>result.is_err() {
-                    <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
-                    <span class="kw">return</span>;
-                }
-                <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::gc_iteration&quot;</span>);
-                <span class="kw">let </span>gc_round = rx_consensus_round_updates.borrow().gc_round;
-                <span class="kw">let </span><span class="prelude-val">Some</span>(inner) = weak_inner.upgrade() <span class="kw">else </span>{
-                    <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
-                    <span class="kw">return</span>;
-                };
-                <span class="comment">// this is the only task updating gc_round
-                </span>inner.gc_round.store(gc_round, Ordering::Release);
-                inner
-                    .certificates_aggregators
-                    .lock()
-                    .retain(|k, <span class="kw">_</span>| k &gt; <span class="kw-2">&amp;</span>gc_round);
-                <span class="comment">// Accept certificates at gc round + 1, if there is any.
-                </span><span class="kw">let </span><span class="kw-2">mut </span>state = inner.state.lock().<span class="kw">await</span>;
-                <span class="kw">for </span>suspended_cert <span class="kw">in </span>state.run_gc(gc_round) {
-                    <span class="kw">let </span>suspended_certs = state.accept_children(
-                        suspended_cert.certificate.round(),
-                        suspended_cert.certificate.digest(),
-                    );
-                    <span class="comment">// Iteration must be in causal order.
-                    </span><span class="kw">for </span>suspended <span class="kw">in </span>iter::once(suspended_cert).chain(suspended_certs.into_iter()) {
-                        <span class="kw">match </span>inner.accept_suspended_certificate(<span class="kw-2">&amp;</span>state, suspended).<span class="kw">await </span>{
-                            <span class="prelude-val">Ok</span>(()) =&gt; {}
-                            <span class="prelude-val">Err</span>(DagError::ShuttingDown) =&gt; <span class="kw">return</span>,
-                            <span class="prelude-val">Err</span>(e) =&gt; {
-                                <span class="macro">panic!</span>(<span class="string">&quot;Unexpected error accepting certificate during GC! {e}&quot;</span>)
+                    <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;Synchronizer::gc_iteration&quot;</span>);
+                    <span class="kw">let </span>gc_round = rx_consensus_round_updates.borrow().gc_round;
+                    <span class="kw">let </span><span class="prelude-val">Some</span>(inner) = weak_inner.upgrade() <span class="kw">else </span>{
+                        <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
+                        <span class="kw">return</span>;
+                    };
+                    <span class="comment">// this is the only task updating gc_round
+                    </span>inner.gc_round.store(gc_round, Ordering::Release);
+                    inner
+                        .certificates_aggregators
+                        .lock()
+                        .retain(|k, <span class="kw">_</span>| k &gt; <span class="kw-2">&amp;</span>gc_round);
+                    <span class="comment">// Accept certificates at gc round + 1, if there is any.
+                    </span><span class="kw">let </span><span class="kw-2">mut </span>state = inner.state.lock().<span class="kw">await</span>;
+                    <span class="kw">for </span>suspended_cert <span class="kw">in </span>state.run_gc(gc_round) {
+                        <span class="kw">let </span>suspended_certs = state.accept_children(
+                            suspended_cert.certificate.round(),
+                            suspended_cert.certificate.digest(),
+                        );
+                        <span class="comment">// Iteration must be in causal order.
+                        </span><span class="kw">for </span>suspended <span class="kw">in
+                            </span>iter::once(suspended_cert).chain(suspended_certs.into_iter())
+                        {
+                            <span class="kw">match </span>inner.accept_suspended_certificate(<span class="kw-2">&amp;</span>state, suspended).<span class="kw">await </span>{
+                                <span class="prelude-val">Ok</span>(()) =&gt; {}
+                                <span class="prelude-val">Err</span>(DagError::ShuttingDown) =&gt; <span class="kw">return</span>,
+                                <span class="prelude-val">Err</span>(e) =&gt; {
+                                    <span class="macro">panic!</span>(<span class="string">&quot;Unexpected error accepting certificate during GC! {e}&quot;</span>)
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            },
+            <span class="string">&quot;SynchronizerGarbageCollection&quot;
+        </span>);
 
         <span class="comment">// Start a task to accept certificates. See comment above `process_certificate_with_lock()`
         // for why this task is needed.
         </span><span class="kw">let </span>weak_inner = Arc::downgrade(<span class="kw-2">&amp;</span>inner);
-        <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-            <span class="kw">loop </span>{
-                <span class="kw">let </span><span class="prelude-val">Some</span>((certificate, result_sender, early_suspend)) = rx_certificate_acceptor.recv().<span class="kw">await else </span>{
-                    <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
-                    <span class="kw">return</span>;
-                };
-                <span class="kw">let </span><span class="prelude-val">Some</span>(inner) = weak_inner.upgrade() <span class="kw">else </span>{
-                    <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
-                    <span class="kw">return</span>;
-                };
-                <span class="comment">// Ignore error if receiver has been dropped.
-                </span><span class="kw">let _ </span>= result_sender.send(
-                    <span class="self">Self</span>::process_certificate_with_lock(<span class="kw-2">&amp;</span>inner, certificate, early_suspend).<span class="kw">await</span>,
-                );
-            }
-        });
+        <span class="macro">spawn_logged_monitored_task!</span>(
+            <span class="kw">async move </span>{
+                <span class="kw">loop </span>{
+                    <span class="kw">let </span><span class="prelude-val">Some</span>((certificate, result_sender, early_suspend)) = rx_certificate_acceptor.recv().<span class="kw">await else </span>{
+                        <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
+                        <span class="kw">return</span>;
+                    };
+                    <span class="kw">let </span><span class="prelude-val">Some</span>(inner) = weak_inner.upgrade() <span class="kw">else </span>{
+                        <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
+                        <span class="kw">return</span>;
+                    };
+                    <span class="comment">// Ignore error if receiver has been dropped.
+                    </span><span class="kw">let _ </span>= result_sender.send(
+                        <span class="self">Self</span>::process_certificate_with_lock(<span class="kw-2">&amp;</span>inner, certificate, early_suspend)
+                            .<span class="kw">await</span>,
+                    );
+                }
+            },
+            <span class="string">&quot;SynchronizerCertificateAcceptor&quot;
+        </span>);
 
         <span class="comment">// Start tasks to broadcast created certificates.
         </span><span class="kw">let </span>inner_senders = inner.clone();
-        <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-            <span class="kw">let </span><span class="prelude-val">Ok</span>(network) = rx_synchronizer_network.<span class="kw">await else </span>{
-                <span class="macro">error!</span>(<span class="string">&quot;Failed to receive Network!&quot;</span>);
-                <span class="kw">return</span>;
-            };
-            <span class="kw">let </span><span class="kw-2">mut </span>senders = inner_senders.certificate_senders.lock();
-            <span class="kw">for </span>(name, <span class="kw">_</span>, network_key) <span class="kw">in </span>inner_senders
-                .committee
-                .others_primaries_by_id(inner_senders.authority_id)
-                .into_iter()
-            {
-                senders.spawn(<span class="self">Self</span>::push_certificates(
-                    network.clone(),
-                    name,
-                    network_key,
-                    tx_own_certificate_broadcast.subscribe(),
-                ));
-            }
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(cert) = highest_created_certificate {
-                <span class="comment">// Error can be ignored.
-                </span><span class="kw">if </span>tx_own_certificate_broadcast.send(cert).is_err() {
-                    <span class="macro">error!</span>(<span class="string">&quot;Failed to populate initial certificate to send to peers!&quot;</span>);
+        <span class="macro">spawn_logged_monitored_task!</span>(
+            <span class="kw">async move </span>{
+                <span class="kw">let </span><span class="prelude-val">Ok</span>(network) = rx_synchronizer_network.<span class="kw">await else </span>{
+                    <span class="macro">error!</span>(<span class="string">&quot;Failed to receive Network!&quot;</span>);
+                    <span class="kw">return</span>;
+                };
+                <span class="kw">let </span><span class="kw-2">mut </span>senders = inner_senders.certificate_senders.lock();
+                <span class="kw">for </span>(name, <span class="kw">_</span>, network_key) <span class="kw">in </span>inner_senders
+                    .committee
+                    .others_primaries_by_id(inner_senders.authority_id)
+                    .into_iter()
+                {
+                    senders.spawn(<span class="self">Self</span>::push_certificates(
+                        network.clone(),
+                        name,
+                        network_key,
+                        tx_own_certificate_broadcast.subscribe(),
+                    ));
                 }
-            }
-        });
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(cert) = highest_created_certificate {
+                    <span class="comment">// Error can be ignored.
+                    </span><span class="kw">if </span>tx_own_certificate_broadcast.send(cert).is_err() {
+                        <span class="macro">error!</span>(<span class="string">&quot;Failed to populate initial certificate to send to peers!&quot;</span>);
+                    }
+                }
+            },
+            <span class="string">&quot;SynchronizerCertificateBroadcasters&quot;
+        </span>);
+
+        <span class="comment">// Start a task to async download batches if needed
+        </span><span class="kw">let </span>weak_inner = Arc::downgrade(<span class="kw-2">&amp;</span>inner);
+        <span class="macro">spawn_logged_monitored_task!</span>(
+            <span class="kw">async move </span>{
+                <span class="kw">let </span><span class="kw-2">mut </span>batch_tasks: JoinSet&lt;DagResult&lt;()&gt;&gt; = JoinSet::new();
+
+                <span class="kw">loop </span>{
+                    <span class="macro">tokio::select! </span>{
+                        result = rx_batch_tasks.recv() =&gt; {
+                            <span class="kw">let </span>(header, max_age) = <span class="kw">match </span>result {
+                                <span class="prelude-val">Some</span>(r) =&gt; r,
+                                <span class="prelude-val">None </span>=&gt; {
+                                    <span class="comment">// exit loop if the channel has been closed
+                                    </span><span class="kw">break</span>;
+                                }
+                            };
+
+                            <span class="kw">let </span><span class="prelude-val">Some</span>(inner) = weak_inner.upgrade() <span class="kw">else </span>{
+                                <span class="macro">debug!</span>(<span class="string">&quot;Synchronizer is shutting down.&quot;</span>);
+                                <span class="kw">return</span>;
+                            };
+
+                            batch_tasks.spawn(<span class="kw">async move </span>{
+                                Synchronizer::sync_batches_internal(inner.clone(), <span class="kw-2">&amp;</span>header, max_age, <span class="bool-val">true</span>).<span class="kw">await
+                            </span>});
+                        },
+                        <span class="prelude-val">Some</span>(result) = batch_tasks.join_next() =&gt; {
+                            <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = result  {
+                                <span class="macro">error!</span>(<span class="string">&quot;Error when synchronizing batches: {err:?}&quot;</span>)
+                            }
+                        }
+                    }
+                }
+            },
+            <span class="string">&quot;SynchronizerBatchSynchronizer&quot;
+        </span>);
 
         <span class="self">Self </span>{ inner }
     }
@@ -1873,12 +2006,13 @@
         <span class="comment">// Instruct workers to download any missing batches referenced in this certificate.
         // Since this header got certified, we are sure that all the data it refers to (ie. its batches and its parents) are available.
         // We can thus continue the processing of the certificate without blocking on batch synchronization.
-        </span><span class="kw">let </span>inner = <span class="self">self</span>.inner.clone();
-        <span class="kw">let </span>header = certificate.header().clone();
+        </span><span class="kw">let </span>header = certificate.header().clone();
         <span class="kw">let </span>max_age = <span class="self">self</span>.inner.gc_depth.saturating_sub(<span class="number">1</span>);
-        <span class="self">self</span>.inner.batch_tasks.lock().spawn(<span class="kw">async move </span>{
-            Synchronizer::sync_batches_internal(inner, <span class="kw-2">&amp;</span>header, max_age, <span class="bool-val">true</span>).<span class="kw">await
-        </span>});
+        <span class="self">self</span>.inner
+            .tx_batch_tasks
+            .send((header.clone(), max_age))
+            .<span class="kw">await
+            </span>.map_err(|<span class="kw">_</span>| DagError::ShuttingDown)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>highest_processed_round = <span class="self">self</span>.inner.highest_processed_round.load(Ordering::Acquire);
         <span class="kw">if </span>highest_processed_round + NEW_CERTIFICATE_ROUND_LIMIT &lt; certificate.round() {
