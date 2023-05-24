@@ -248,7 +248,7 @@
     <span class="kw">pub fn </span>load_all_pending_transactions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;VerifiedTransaction&gt; {
         <span class="self">self</span>.pending_transactions
             .logs
-            .iter()
+            .unbounded_iter()
             .map(|(_tx_digest, tx)| VerifiedTransaction::from(tx))
             .collect()
     }

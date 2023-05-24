@@ -1556,7 +1556,7 @@
                     #(
                         <span class="macro">stringify!</span>(#field_names) =&gt; {
                             typed_store::traits::Map::try_catch_up_with_primary(<span class="kw-2">&amp;</span><span class="self">self</span>.#field_names)<span class="question-mark">?</span>;
-                            typed_store::traits::Map::iter(<span class="kw-2">&amp;</span><span class="self">self</span>.#field_names)
+                            typed_store::traits::Map::unbounded_iter(<span class="kw-2">&amp;</span><span class="self">self</span>.#field_names)
                                 .skip((page_number * (page_size) <span class="kw">as </span>usize))
                                 .take(page_size <span class="kw">as </span>usize)
                                 .map(|(k, v)| (<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, k), <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, v)))
@@ -1593,7 +1593,7 @@
                     #(
                         <span class="macro">stringify!</span>(#field_names) =&gt; {
                             typed_store::traits::Map::try_catch_up_with_primary(<span class="kw-2">&amp;</span><span class="self">self</span>.#field_names)<span class="question-mark">?</span>;
-                            typed_store::traits::Map::iter(<span class="kw-2">&amp;</span><span class="self">self</span>.#field_names).count()
+                            typed_store::traits::Map::unbounded_iter(<span class="kw-2">&amp;</span><span class="self">self</span>.#field_names).count()
                         }
                     )*
 
@@ -1914,7 +1914,7 @@
                             <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.#field_names {
                                 SallyColumn::RocksDB((db_map, typed_store::sally::SallyConfig { mode: typed_store::sally::SallyRunMode::FallbackToDB })) =&gt; {
                                     typed_store::traits::Map::try_catch_up_with_primary(db_map)<span class="question-mark">?</span>;
-                                    typed_store::traits::Map::iter(db_map)
+                                    typed_store::traits::Map::unbounded_iter(db_map)
                                         .skip((page_number * (page_size) <span class="kw">as </span>usize))
                                         .take(page_size <span class="kw">as </span>usize)
                                         .map(|(k, v)| (<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, k), <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, v)))
@@ -1958,7 +1958,7 @@
                             <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.#field_names {
                                 SallyColumn::RocksDB((db_map, typed_store::sally::SallyConfig { mode: typed_store::sally::SallyRunMode::FallbackToDB })) =&gt; {
                                     typed_store::traits::Map::try_catch_up_with_primary(db_map)<span class="question-mark">?</span>;
-                                    typed_store::traits::Map::iter(db_map).count()
+                                    typed_store::traits::Map::unbounded_iter(db_map).count()
                                 }
                                 <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
                             }

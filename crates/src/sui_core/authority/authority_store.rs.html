@@ -2209,7 +2209,7 @@
         <span class="kw">let </span>data = <span class="self">self
             </span>.perpetual_tables
             .events
-            .iter()
+            .unbounded_iter()
             .skip_to(<span class="kw-2">&amp;</span>(<span class="kw-2">*</span>event_digest, <span class="number">0</span>))<span class="question-mark">?
             </span>.take_while(|((digest, <span class="kw">_</span>), <span class="kw">_</span>)| digest == event_digest)
             .map(|(<span class="kw">_</span>, e)| e)
@@ -2374,7 +2374,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>iterator = <span class="self">self
             </span>.perpetual_tables
             .objects
-            .iter()
+            .unbounded_iter()
             .skip_prior_to(<span class="kw-2">&amp;</span>ObjectKey(<span class="kw-2">*</span>object_id, prior_version))<span class="question-mark">?</span>;
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>((object_key, value)) = iterator.next() {
@@ -3060,7 +3060,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>iterator = <span class="self">self
             </span>.perpetual_tables
             .owned_object_transaction_locks
-            .iter()
+            .unbounded_iter()
             <span class="comment">// Make the max possible entry for this object ID.
             </span>.skip_prior_to(<span class="kw-2">&amp;</span>(object_id, SequenceNumber::MAX, ObjectDigest::MAX))<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(iterator

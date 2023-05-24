@@ -1887,7 +1887,7 @@
 
     <span class="kw">pub fn </span>get_latest_certified_checkpoint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;VerifiedCheckpoint&gt; {
         <span class="self">self</span>.certified_checkpoints
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|(<span class="kw">_</span>, v)| v.into())
@@ -2852,7 +2852,7 @@
     <span class="kw">fn </span>next_checkpoint_to_certify(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CheckpointSequenceNumber {
         <span class="self">self</span>.tables
             .certified_checkpoints
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|(seq, <span class="kw">_</span>)| seq + <span class="number">1</span>)

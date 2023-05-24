@@ -301,14 +301,14 @@
 
     <span class="doccomment">/// Load the last committed round of each validator.
     </span><span class="kw">pub fn </span>read_last_committed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; HashMap&lt;AuthorityIdentifier, Round&gt; {
-        <span class="self">self</span>.last_committed.iter().collect()
+        <span class="self">self</span>.last_committed.unbounded_iter().collect()
     }
 
     <span class="doccomment">/// Gets the latest sub dag index from the store
     </span><span class="kw">pub fn </span>get_latest_sub_dag_index(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SequenceNumber {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(s) = <span class="self">self
             </span>.committed_sub_dags_by_index_v2
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|(seq, <span class="kw">_</span>)| seq)
@@ -319,7 +319,7 @@
         <span class="comment">// TODO: remove once this has been released to the validators
         // If nothing has been found on v2, just fallback on the previous storage
         </span><span class="self">self</span>.committed_sub_dags_by_index
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|(seq, <span class="kw">_</span>)| seq)
@@ -331,7 +331,7 @@
     </span><span class="kw">pub fn </span>get_latest_sub_dag(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ConsensusCommit&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(sub_dag) = <span class="self">self
             </span>.committed_sub_dags_by_index_v2
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|(<span class="kw">_</span>, sub_dag)| sub_dag)
@@ -344,7 +344,7 @@
         // to happen only after validator has upgraded. After that point the v2 table will populated
         // and an entry should be found there.
         </span><span class="self">self</span>.committed_sub_dags_by_index
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|(<span class="kw">_</span>, sub_dag)| ConsensusCommit::V1(sub_dag))
@@ -359,14 +359,14 @@
         // start from the previous table first to ensure we haven&#39;t missed anything.
         </span><span class="kw">let </span><span class="kw-2">mut </span>sub_dags = <span class="self">self
             </span>.committed_sub_dags_by_index
-            .iter()
+            .unbounded_iter()
             .skip_to(from)<span class="question-mark">?
             </span>.map(|(<span class="kw">_</span>, sub_dag)| ConsensusCommit::V1(sub_dag))
             .collect::&lt;Vec&lt;ConsensusCommit&gt;&gt;();
 
         sub_dags.extend(
             <span class="self">self</span>.committed_sub_dags_by_index_v2
-                .iter()
+                .unbounded_iter()
                 .skip_to(from)<span class="question-mark">?
                 </span>.map(|(<span class="kw">_</span>, sub_dag)| sub_dag)
                 .collect::&lt;Vec&lt;ConsensusCommit&gt;&gt;(),

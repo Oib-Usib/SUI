@@ -229,7 +229,7 @@
     </span><span class="kw">pub fn </span>get_latest_committee(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Committee {
         <span class="self">self</span>.tables
             .committee_map
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             <span class="comment">// unwrap safe because we guarantee there is at least a genesis epoch
@@ -257,7 +257,7 @@
     }
 
     <span class="kw">fn </span>database_is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.tables.committee_map.iter().next().is_none()
+        <span class="self">self</span>.tables.committee_map.unbounded_iter().next().is_none()
     }
 }
 </code></pre></div></section></main></body></html>

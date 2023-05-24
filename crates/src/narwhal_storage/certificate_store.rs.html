@@ -1156,6 +1156,14 @@
 <a href="#1156" id="1156">1156</a>
 <a href="#1157" id="1157">1157</a>
 <a href="#1158" id="1158">1158</a>
+<a href="#1159" id="1159">1159</a>
+<a href="#1160" id="1160">1160</a>
+<a href="#1161" id="1161">1161</a>
+<a href="#1162" id="1162">1162</a>
+<a href="#1163" id="1163">1163</a>
+<a href="#1164" id="1164">1164</a>
+<a href="#1165" id="1165">1165</a>
+<a href="#1166" id="1166">1166</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>fastcrypto::hash::Hash;
@@ -1647,7 +1655,7 @@
     </span><span class="kw">pub fn </span>after_round(<span class="kw-2">&amp;</span><span class="self">self</span>, round: Round) -&gt; StoreResult&lt;Vec&lt;Certificate&gt;&gt; {
         <span class="comment">// Skip to a row at or before the requested round.
         // TODO: Add a more efficient seek method to typed store.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.certificate_id_by_round.iter();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.certificate_id_by_round.unbounded_iter();
         <span class="kw">if </span>round &gt; <span class="number">0 </span>{
             iter = iter.skip_to(<span class="kw-2">&amp;</span>(round - <span class="number">1</span>, AuthorityIdentifier::default()))<span class="question-mark">?</span>;
         }
@@ -1686,7 +1694,7 @@
     ) -&gt; StoreResult&lt;BTreeMap&lt;Round, Vec&lt;AuthorityIdentifier&gt;&gt;&gt; {
         <span class="comment">// Skip to a row at or before the requested round.
         // TODO: Add a more efficient seek method to typed store.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.certificate_id_by_round.iter();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.certificate_id_by_round.unbounded_iter();
         <span class="kw">if </span>round &gt; <span class="number">0 </span>{
             iter = iter.skip_to(<span class="kw-2">&amp;</span>(round - <span class="number">1</span>, AuthorityIdentifier::default()))<span class="question-mark">?</span>;
         }
@@ -1705,7 +1713,11 @@
     </span><span class="kw">pub fn </span>last_two_rounds_certs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; StoreResult&lt;Vec&lt;Certificate&gt;&gt; {
         <span class="comment">// starting from the last element - hence the last round - move backwards until
         // we find certificates of different round.
-        </span><span class="kw">let </span>certificates_reverse = <span class="self">self</span>.certificate_id_by_round.iter().skip_to_last().reverse();
+        </span><span class="kw">let </span>certificates_reverse = <span class="self">self
+            </span>.certificate_id_by_round
+            .unbounded_iter()
+            .skip_to_last()
+            .reverse();
 
         <span class="kw">let </span><span class="kw-2">mut </span>round = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>certificates = Vec::new();
@@ -1742,7 +1754,7 @@
         <span class="kw">let </span>key = (origin, Round::MAX);
         <span class="kw">if let </span><span class="prelude-val">Some</span>(((name, _round), digest)) = <span class="self">self
             </span>.certificate_id_by_origin
-            .iter()
+            .unbounded_iter()
             .skip_prior_to(<span class="kw-2">&amp;</span>key)<span class="question-mark">?
             </span>.next()
         {
@@ -1758,7 +1770,7 @@
     </span><span class="kw">pub fn </span>highest_round_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Round {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(((round, <span class="kw">_</span>), <span class="kw">_</span>)) = <span class="self">self
             </span>.certificate_id_by_round
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .reverse()
             .next()
@@ -1775,7 +1787,7 @@
         <span class="kw">let </span>key = (origin, Round::MAX);
         <span class="kw">if let </span><span class="prelude-val">Some</span>(((name, round), <span class="kw">_</span>)) = <span class="self">self
             </span>.certificate_id_by_origin
-            .iter()
+            .unbounded_iter()
             .skip_prior_to(<span class="kw-2">&amp;</span>key)<span class="question-mark">?
             </span>.next()
         {
@@ -1794,7 +1806,11 @@
         round: Round,
     ) -&gt; StoreResult&lt;<span class="prelude-ty">Option</span>&lt;Round&gt;&gt; {
         <span class="kw">let </span>key = (origin, round + <span class="number">1</span>);
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(((name, round), <span class="kw">_</span>)) = <span class="self">self</span>.certificate_id_by_origin.iter().skip_to(<span class="kw-2">&amp;</span>key)<span class="question-mark">?</span>.next()
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(((name, round), <span class="kw">_</span>)) = <span class="self">self
+            </span>.certificate_id_by_origin
+            .unbounded_iter()
+            .skip_to(<span class="kw-2">&amp;</span>key)<span class="question-mark">?
+            </span>.next()
         {
             <span class="kw">if </span>name == origin {
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(round));

@@ -2246,7 +2246,7 @@
 
     <span class="kw">pub fn </span>get_all_pending_consensus_transactions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;ConsensusTransaction&gt; {
         <span class="self">self</span>.pending_consensus_transactions
-            .iter()
+            .unbounded_iter()
             .map(|(_k, v)| v)
             .collect()
     }
@@ -2271,7 +2271,7 @@
         <span class="kw">let </span>epoch_id = committee.epoch;
         <span class="kw">let </span>tables = AuthorityEpochTables::open(epoch_id, parent_path, db_options.clone());
         <span class="kw">let </span>end_of_publish =
-            StakeAggregator::from_iter(committee.clone(), tables.end_of_publish.iter());
+            StakeAggregator::from_iter(committee.clone(), tables.end_of_publish.unbounded_iter());
         <span class="kw">let </span>reconfig_state = tables
             .load_reconfig_state()
             .expect(<span class="string">&quot;Load reconfig state at initialization cannot fail&quot;</span>);
@@ -2544,7 +2544,7 @@
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.tables
             .state_hash_by_checkpoint
-            .iter()
+            .unbounded_iter()
             .skip_to(<span class="kw-2">&amp;</span>from_checkpoint)<span class="question-mark">?
             </span>.take_while(|(checkpoint, <span class="kw">_</span>)| <span class="kw-2">*</span>checkpoint &lt;= to_checkpoint)
             .collect())
@@ -2588,7 +2588,7 @@
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.tables
             .pending_execution
-            .iter()
+            .unbounded_iter()
             .map(|(<span class="kw">_</span>, cert)| cert.into())
             .collect())
     }
@@ -3523,7 +3523,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         last: <span class="prelude-ty">Option</span>&lt;CheckpointCommitHeight&gt;,
     ) -&gt; Vec&lt;(CheckpointCommitHeight, PendingCheckpoint)&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.tables.pending_checkpoints.iter();
+        <span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.tables.pending_checkpoints.unbounded_iter();
         <span class="kw">if let </span><span class="prelude-val">Some</span>(last_processed_height) = last {
             iter = iter
                 .skip_to(<span class="kw-2">&amp;</span>(last_processed_height + <span class="number">1</span>))
@@ -3609,7 +3609,7 @@
     <span class="kw">pub fn </span>last_built_checkpoint_commit_height(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;CheckpointCommitHeight&gt; {
         <span class="self">self</span>.tables
             .builder_checkpoint_summary_v2
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .and_then(|(<span class="kw">_</span>, b)| b.commit_height)
@@ -3621,7 +3621,7 @@
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.tables
             .builder_checkpoint_summary_v2
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|(seq, s)| (seq, s.summary)))
@@ -3659,14 +3659,14 @@
         <span class="macro">debug!</span>(<span class="string">&quot;Scanning pending checkpoint signatures from {:?}&quot;</span>, key);
         <span class="self">self</span>.tables
             .pending_checkpoint_signatures
-            .iter()
+            .unbounded_iter()
             .skip_to(<span class="kw-2">&amp;</span>key)
     }
 
     <span class="kw">pub fn </span>get_last_checkpoint_signature_index(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
         <span class="self">self</span>.tables
             .pending_checkpoint_signatures
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|((<span class="kw">_</span>, index), <span class="kw">_</span>)| index)

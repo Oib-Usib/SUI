@@ -431,7 +431,7 @@
 
 <span class="kw">pub fn </span>duplicate_objects_summary(db_path: PathBuf) -&gt; (usize, usize, usize, usize) {
     <span class="kw">let </span>perpetual_tables = AuthorityPerpetualTables::open_readonly(<span class="kw-2">&amp;</span>db_path);
-    <span class="kw">let </span>iter = perpetual_tables.objects.iter();
+    <span class="kw">let </span>iter = perpetual_tables.objects.unbounded_iter();
     <span class="kw">let </span><span class="kw-2">mut </span>total_count = <span class="number">0</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>duplicate_count = <span class="number">0</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>total_bytes = <span class="number">0</span>;

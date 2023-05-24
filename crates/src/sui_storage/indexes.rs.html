@@ -1992,7 +1992,7 @@
         };
         <span class="kw">let </span>next_sequence_number = tables
             .transaction_order
-            .iter()
+            .unbounded_iter()
             .skip_to_last()
             .next()
             .map(|(seq, <span class="kw">_</span>)| seq + <span class="number">1</span>)
@@ -2395,7 +2395,7 @@
                 error: UserInputError::Unsupported(<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, filter)),
             }),
             <span class="prelude-val">None </span>=&gt; {
-                <span class="kw">let </span>iter = <span class="self">self</span>.tables.transaction_order.iter();
+                <span class="kw">let </span>iter = <span class="self">self</span>.tables.transaction_order.unbounded_iter();
 
                 <span class="kw">if </span>reverse {
                     <span class="kw">let </span>iter = iter
@@ -2452,7 +2452,7 @@
     ) -&gt; SuiResult&lt;Vec&lt;TransactionDigest&gt;&gt; {
         <span class="prelude-val">Ok</span>(<span class="kw">if </span>reverse {
             <span class="kw">let </span>iter = index
-                .iter()
+                .unbounded_iter()
                 .skip_prior_to(<span class="kw-2">&amp;</span>(key.clone(), cursor.unwrap_or(TxSequenceNumber::MAX)))<span class="question-mark">?
                 </span>.reverse()
                 <span class="comment">// skip one more if exclusive cursor is Some
@@ -2466,7 +2466,7 @@
             }
         } <span class="kw">else </span>{
             <span class="kw">let </span>iter = index
-                .iter()
+                .unbounded_iter()
                 .skip_to(<span class="kw-2">&amp;</span>(key.clone(), cursor.unwrap_or(TxSequenceNumber::MIN)))<span class="question-mark">?
                 </span><span class="comment">// skip one more if exclusive cursor is Some
                 </span>.skip(usize::from(cursor.is_some()))
@@ -2574,7 +2574,7 @@
                 .unwrap_or(<span class="kw">if </span>reverse { max_string } <span class="kw">else </span>{ <span class="string">&quot;&quot;</span>.to_string() });
 
         <span class="kw">let </span>key = (package, module_val, function_val, cursor_val);
-        <span class="kw">let </span>iter = <span class="self">self</span>.tables.transactions_by_move_function.iter();
+        <span class="kw">let </span>iter = <span class="self">self</span>.tables.transactions_by_move_function.unbounded_iter();
         <span class="prelude-val">Ok</span>(<span class="kw">if </span>reverse {
             <span class="kw">let </span>iter = iter
                 .skip_prior_to(<span class="kw-2">&amp;</span>key)<span class="question-mark">?
@@ -2644,7 +2644,7 @@
         <span class="prelude-val">Ok</span>(<span class="kw">if </span>descending {
             <span class="self">self</span>.tables
                 .event_order
-                .iter()
+                .unbounded_iter()
                 .skip_prior_to(<span class="kw-2">&amp;</span>(tx_seq, event_seq))<span class="question-mark">?
                 </span>.reverse()
                 .take(limit)
@@ -2655,7 +2655,7 @@
         } <span class="kw">else </span>{
             <span class="self">self</span>.tables
                 .event_order
-                .iter()
+                .unbounded_iter()
                 .skip_to(<span class="kw-2">&amp;</span>(tx_seq, event_seq))<span class="question-mark">?
                 </span>.take(limit)
                 .map(|((<span class="kw">_</span>, event_seq), (digest, tx_digest, time))| {
@@ -2679,7 +2679,7 @@
         <span class="prelude-val">Ok</span>(<span class="kw">if </span>descending {
             <span class="self">self</span>.tables
                 .event_order
-                .iter()
+                .unbounded_iter()
                 .skip_prior_to(<span class="kw-2">&amp;</span>(min(tx_seq, seq), event_seq))<span class="question-mark">?
                 </span>.reverse()
                 .take_while(|((tx, <span class="kw">_</span>), <span class="kw">_</span>)| tx == <span class="kw-2">&amp;</span>seq)
@@ -2691,7 +2691,7 @@
         } <span class="kw">else </span>{
             <span class="self">self</span>.tables
                 .event_order
-                .iter()
+                .unbounded_iter()
                 .skip_to(<span class="kw-2">&amp;</span>(max(tx_seq, seq), event_seq))<span class="question-mark">?
                 </span>.take_while(|((tx, <span class="kw">_</span>), <span class="kw">_</span>)| tx == <span class="kw-2">&amp;</span>seq)
                 .take(limit)
@@ -2712,7 +2712,7 @@
     ) -&gt; SuiResult&lt;Vec&lt;(TransactionEventsDigest, TransactionDigest, usize, u64)&gt;&gt; {
         <span class="prelude-val">Ok</span>(<span class="kw">if </span>descending {
             index
-                .iter()
+                .unbounded_iter()
                 .skip_prior_to(<span class="kw-2">&amp;</span>(key.clone(), (tx_seq, event_seq)))<span class="question-mark">?
                 </span>.reverse()
                 .take_while(|((m, <span class="kw">_</span>), <span class="kw">_</span>)| m == key)
@@ -2723,7 +2723,7 @@
                 .collect()
         } <span class="kw">else </span>{
             index
-                .iter()
+                .unbounded_iter()
                 .skip_to(<span class="kw-2">&amp;</span>(key.clone(), (tx_seq, event_seq)))<span class="question-mark">?
                 </span>.take_while(|((m, <span class="kw">_</span>), <span class="kw">_</span>)| m == key)
                 .take(limit)
@@ -2818,7 +2818,7 @@
         <span class="prelude-val">Ok</span>(<span class="kw">if </span>descending {
             <span class="self">self</span>.tables
                 .event_by_time
-                .iter()
+                .unbounded_iter()
                 .skip_prior_to(<span class="kw-2">&amp;</span>(end_time, (tx_seq, event_seq)))<span class="question-mark">?
                 </span>.reverse()
                 .take_while(|((m, <span class="kw">_</span>), <span class="kw">_</span>)| m &gt;= <span class="kw-2">&amp;</span>start_time)
@@ -2830,7 +2830,7 @@
         } <span class="kw">else </span>{
             <span class="self">self</span>.tables
                 .event_by_time
-                .iter()
+                .unbounded_iter()
                 .skip_to(<span class="kw-2">&amp;</span>(start_time, (tx_seq, event_seq)))<span class="question-mark">?
                 </span>.take_while(|((m, <span class="kw">_</span>), <span class="kw">_</span>)| m &lt;= <span class="kw-2">&amp;</span>end_time)
                 .take(limit)
@@ -2939,7 +2939,7 @@
         <span class="kw">let </span>starting_coin_type =
             coin_type_tag.unwrap_or_else(|| String::from_utf8([<span class="number">0u8</span>].to_vec()).unwrap());
         <span class="prelude-val">Ok</span>(coin_index
-            .iter()
+            .unbounded_iter()
             .skip_to(<span class="kw-2">&amp;</span>(owner, starting_coin_type.clone(), ObjectID::ZERO))<span class="question-mark">?
             </span>.take_while(<span class="kw">move </span>|((addr, coin_type, <span class="kw">_</span>), <span class="kw">_</span>)| {
                 <span class="kw">if </span>addr != <span class="kw-2">&amp;</span>owner {
@@ -2964,7 +2964,7 @@
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.tables
             .coin_index
-            .iter()
+            .unbounded_iter()
             .skip_to(<span class="kw-2">&amp;</span>(owner, starting_coin_type.clone(), starting_object_id))<span class="question-mark">?
             </span>.filter(<span class="kw">move </span>|((<span class="kw">_</span>, <span class="kw">_</span>, obj_id), <span class="kw">_</span>)| obj_id != <span class="kw-2">&amp;</span>starting_object_id)
             .enumerate()
@@ -2994,7 +2994,7 @@
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.tables
             .owner_index
-            .iter()
+            .unbounded_iter()
             <span class="comment">// The object id 0 is the smallest possible
             </span>.skip_to(<span class="kw-2">&amp;</span>(owner, starting_object_id))<span class="question-mark">?
             </span>.skip(usize::from(starting_object_id != ObjectID::ZERO))

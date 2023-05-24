@@ -1170,7 +1170,7 @@
             // so we can read the accurate number of retained versions
             </span><span class="kw-2">&amp;</span>ReadWriteOptions::default(),
         )<span class="question-mark">?</span>;
-        <span class="kw">let </span>iter = objects.iter();
+        <span class="kw">let </span>iter = objects.unbounded_iter();
         <span class="kw">for </span>(k, _v) <span class="kw">in </span>iter {
             after_pruning.insert(k);
         }
