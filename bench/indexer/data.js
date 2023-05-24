@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684948035662,
+  "lastUpdate": 1684949042422,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9575,6 +9575,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 361956,
             "range": "± 61447",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "damirka.ru@gmail.com",
+            "name": "Damir Shamanaev",
+            "username": "damirka"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "177ae2c6293b23d5253d059bcec7bbd12ef78436",
+          "message": "[kiosk] Adds 'default' entry function to Kiosk (#12043)\n\n## Description \r\n\r\nFor an easy CLI setup (it does not support PTBs yet), adds an entry\r\nfunction which shares the Kiosk and transfers the KioskOwnerCap to the\r\ntx sender. This is the most common setup for the Kiosk.\r\n\r\n## Test Plan \r\n\r\n---\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\n- adds `sui::kiosk::default()` function for an easy Kiosk setup\r\n- adds `sui::transfer_policy::default()` function for an easy TP setup",
+          "timestamp": "2023-05-24T20:13:16+03:00",
+          "tree_id": "7f64d30e89b9b251563477cba25a203726ec4927",
+          "url": "https://github.com/MystenLabs/sui/commit/177ae2c6293b23d5253d059bcec7bbd12ef78436"
+        },
+        "date": 1684949025171,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150083458,
+            "range": "± 4677276",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 317353,
+            "range": "± 22213",
             "unit": "ns/iter"
           }
         ]
