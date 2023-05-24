@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684944010034,
+  "lastUpdate": 1684948035662,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9539,6 +9539,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 324839,
             "range": "± 26395",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "228ca35596d9e452d839ee84ecf092951353c1ea",
+          "message": "indexer: merge tx and object in checkpoint handler (#12182)\n\n## Description \r\n\r\nIt was split before mainnet for better backfill speed on testnet, it's\r\nno longer urgent b/c TPS is not super high today, but this split is very\r\nerror-prune and caused issues and affected reliability in the past, thus\r\n\r\nTo improve peak TPS handling capability, it's planned to rewrite object\r\ncommit via replacing upsert with append-only.\r\n\r\n## Test Plan \r\n\r\nrunning locally agains both testnet and mainnet to make sure \r\n- all obj handler related tables are all populated as expected including\r\n`objects`, `epochs`, `packages`, `input_objects`, `move_calls` and\r\n`recipients`.\r\n- compared commit speeds over first 10k checkpoints and the obj is still\r\nthe bottle-neck and it's not any faster\r\n- testnet with change: 650s <> testnet without changes: 1) tx: 510s 2)\r\nobj: 670s\r\n- mainnet with change: 150s <> mainnet without changes: 1) tx: 110s 2)\r\nobj: 145s\r\n  \r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-24T12:56:09-04:00",
+          "tree_id": "0c7f04b9dfd2d225d00a99afc2f231aa5044bd2b",
+          "url": "https://github.com/MystenLabs/sui/commit/228ca35596d9e452d839ee84ecf092951353c1ea"
+        },
+        "date": 1684948018041,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147743450,
+            "range": "± 6317094",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 361956,
+            "range": "± 61447",
             "unit": "ns/iter"
           }
         ]
