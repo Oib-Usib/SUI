@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684934610580,
+  "lastUpdate": 1684944010034,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9503,6 +9503,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 366609,
             "range": "± 68288",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d349dd24c599e5e6e63f0d215ab4f1e66e4b6ad7",
+          "message": "indexer: epoch population with local object store (#12181)\n\n## Description \r\n\r\nPrev. b/c indexer temp. disabled object content population, it had to\r\nfetch FN for epoch data, however FN does not keep historic system state\r\ndata, indexer would always skip old epochs and started from latest.\r\n\r\nAfter recent PRs, indexer now re-populates local object store, thus\r\nindexer epoch processing can use the local epoch store now.\r\n\r\n## Test Plan \r\n\r\n\r\nTested locally and make sure that even following a FN that has been\r\nupdated, indexer populates epoch starting from 0\r\n```\r\ncargo run --bin sui-indexer -- --db-url \"postgres://postgres:postgres@localhost/gegao\" --rpc-client-url http://lax-mnt-rpc-12.mainnet.sui.io:9000 --fullnode-sync-worker --rpc-server-url 127.0.0.1 --rpc-server-port 3030 --reset-db\r\n```\r\n\r\n![Screenshot 2023-05-24 at 8 45 36\r\nAM](https://github.com/MystenLabs/sui/assets/106119108/8bfb233e-ebdc-4e40-b096-9c9d1572ca96)\r\n\r\n\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-24T11:48:52-04:00",
+          "tree_id": "ccf2abcedb3810569046891487d0cba2da3734e0",
+          "url": "https://github.com/MystenLabs/sui/commit/d349dd24c599e5e6e63f0d215ab4f1e66e4b6ad7"
+        },
+        "date": 1684943993253,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146500964,
+            "range": "± 7670850",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 324839,
+            "range": "± 26395",
             "unit": "ns/iter"
           }
         ]
