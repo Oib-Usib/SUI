@@ -11,12 +11,13 @@ import {
 import { ChevronRight12 } from '@mysten/icons';
 import {
     type SuiObjectChangeTypes,
-    type SuiObjectChangeCreated,
-    type SuiObjectChangeMutated,
     type SuiObjectChangePublished,
+    type DisplayFieldsResponse,
 } from '@mysten/sui.js';
 import clsx from 'clsx';
 import { type ReactNode } from 'react';
+
+import { ObjectDisplay } from './ObjectDisplay';
 
 import {
     ExpandableList,
@@ -129,9 +130,11 @@ function ObjectDetailPanel({
 function ObjectDetail({
     objectType,
     objectId,
+    display,
 }: {
     objectType: string;
     objectId: string;
+    display?: DisplayFieldsResponse;
 }) {
     const separator = '::';
     const objectTypeSplit = objectType?.split(separator) || [];
@@ -144,6 +147,9 @@ function ObjectDetail({
         ItemLabels.module,
         ItemLabels.type,
     ];
+    if (!!display?.data) {
+        return <ObjectDisplay display={display} objectId={objectId} />;
+    }
 
     return (
         <ObjectDetailPanel
@@ -202,15 +208,17 @@ function ObjectChangeEntries({
             )
         );
     } else {
-        expandableItems = (
-            changeEntries as (SuiObjectChangeMutated | SuiObjectChangeCreated)[]
-        ).map(({ objectId, objectType }) => (
-            <ObjectDetail
-                key={objectId}
-                objectId={objectId}
-                objectType={objectType}
-            />
-        ));
+        expandableItems = (changeEntries as SuiObjectChangeWithDisplay[]).map(
+            (change) =>
+                'objectId' in change && (
+                    <ObjectDetail
+                        key={change.objectId}
+                        objectId={change.objectId}
+                        objectType={change.objectType}
+                        display={change.display}
+                    />
+                )
+        );
     }
 
     return (
