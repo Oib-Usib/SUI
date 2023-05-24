@@ -1163,27 +1163,6 @@
 <a href="#1163" id="1163">1163</a>
 <a href="#1164" id="1164">1164</a>
 <a href="#1165" id="1165">1165</a>
-<a href="#1166" id="1166">1166</a>
-<a href="#1167" id="1167">1167</a>
-<a href="#1168" id="1168">1168</a>
-<a href="#1169" id="1169">1169</a>
-<a href="#1170" id="1170">1170</a>
-<a href="#1171" id="1171">1171</a>
-<a href="#1172" id="1172">1172</a>
-<a href="#1173" id="1173">1173</a>
-<a href="#1174" id="1174">1174</a>
-<a href="#1175" id="1175">1175</a>
-<a href="#1176" id="1176">1176</a>
-<a href="#1177" id="1177">1177</a>
-<a href="#1178" id="1178">1178</a>
-<a href="#1179" id="1179">1179</a>
-<a href="#1180" id="1180">1180</a>
-<a href="#1181" id="1181">1181</a>
-<a href="#1182" id="1182">1182</a>
-<a href="#1183" id="1183">1183</a>
-<a href="#1184" id="1184">1184</a>
-<a href="#1185" id="1185">1185</a>
-<a href="#1186" id="1186">1186</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1204,7 +1183,7 @@
 
 <span class="kw">use </span>mysten_metrics::spawn_monitored_task;
 <span class="kw">use </span>sui_core::event_handler::SubscriptionHandler;
-<span class="kw">use </span>sui_json_rpc::api::{GovernanceReadApiClient, ReadApiClient};
+<span class="kw">use </span>sui_json_rpc::api::ReadApiClient;
 <span class="kw">use </span>sui_json_rpc_types::{
     OwnedObjectRef, SuiGetPastObjectRequest, SuiObjectData, SuiObjectDataOptions, SuiRawData,
     SuiTransactionBlockDataAPI, SuiTransactionBlockEffects, SuiTransactionBlockEffectsAPI,
@@ -1214,6 +1193,7 @@
 <span class="kw">use </span>sui_types::committee::EpochId;
 <span class="kw">use </span>sui_types::messages_checkpoint::{CheckpointCommitment, CheckpointSequenceNumber};
 <span class="kw">use </span>sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
+<span class="kw">use </span>sui_types::sui_system_state::{get_sui_system_state, SuiSystemStateTrait};
 <span class="kw">use </span>sui_types::transaction::SenderSignedData;
 <span class="kw">use </span>sui_types::SUI_SYSTEM_ADDRESS;
 
@@ -2069,19 +2049,9 @@
         <span class="kw">if </span>index_epoch {
             epoch_index = <span class="kw">if </span>checkpoint.epoch == <span class="number">0 </span>&amp;&amp; checkpoint.sequence_number == <span class="number">0 </span>{
                 <span class="comment">// very first epoch
-                // NOTE: tmp. using latest system state to save storage on indexer.
-                // let system_state = get_sui_system_state(data)?;
-                // let system_state: SuiSystemStateSummary = system_state.into_sui_system_state_summary();
-                </span><span class="kw">let </span>system_state: SuiSystemStateSummary = <span class="self">self
-                    </span>.http_client
-                    .get_latest_sui_system_state()
-                    .<span class="kw">await
-                    </span>.map_err(|e| {
-                        IndexerError::FullNodeReadingError(<span class="macro">format!</span>(
-                            <span class="string">&quot;Failed to get latest system state with error {:?}&quot;</span>,
-                            e
-                        ))
-                    })<span class="question-mark">?</span>;
+                </span><span class="kw">let </span>system_state = get_sui_system_state(data)<span class="question-mark">?</span>;
+                <span class="kw">let </span>system_state: SuiSystemStateSummary =
+                    system_state.into_sui_system_state_summary();
                 <span class="kw">let </span>validators = system_state
                     .active_validators
                     .iter()
@@ -2100,21 +2070,9 @@
                     validators,
                 })
             } <span class="kw">else if let </span><span class="prelude-val">Some</span>(end_of_epoch_data) = <span class="kw-2">&amp;</span>checkpoint.end_of_epoch_data {
-                <span class="comment">// Find system state object
-                // NOTE: tmp. using latest system state to save storage on indexer.
-                // let system_state = get_sui_system_state(data)?;
-                // let system_state: SuiSystemStateSummary = system_state.into_sui_system_state_summary();
-                </span><span class="kw">let </span>system_state: SuiSystemStateSummary = <span class="self">self
-                    </span>.http_client
-                    .get_latest_sui_system_state()
-                    .<span class="kw">await
-                    </span>.map_err(|e| {
-                        IndexerError::FullNodeReadingError(<span class="macro">format!</span>(
-                            <span class="string">&quot;Failed to get latest system state with error {:?}&quot;</span>,
-                            e
-                        ))
-                    })<span class="question-mark">?</span>;
-
+                <span class="kw">let </span>system_state = get_sui_system_state(data)<span class="question-mark">?</span>;
+                <span class="kw">let </span>system_state: SuiSystemStateSummary =
+                    system_state.into_sui_system_state_summary();
                 <span class="kw">let </span>epoch_event = transactions.iter().find_map(|tx| {
                     tx.events.data.iter().find(|ev| {
                         ev.type_.address == SUI_SYSTEM_ADDRESS
