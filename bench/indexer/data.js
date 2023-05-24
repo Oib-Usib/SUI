@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684934384892,
+  "lastUpdate": 1684934610580,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9467,6 +9467,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 394773,
             "range": "± 59318",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "akihidis@gmail.com",
+            "name": "Anastasios Kichidis",
+            "username": "akichidis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "39497992ff495ab2bb56c557a57bc3799ebb0515",
+          "message": "[refactor] exit early on certificate processing when already processed (#12137)\n\n## Description \r\n\r\nLooking over on some mainnet logs (before the recent improvements on the\r\nproposer certificate requests) it seems that nodes were re-processing\r\nsame certificate after this has been enqueued for processing in the\r\n`rx_certificate_acceptor` channel. Ex:\r\n\r\n```\r\n2023-05-09T20:52:32.430427Z DEBUG narwhal_consensus::bullshark: Processing KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:32.432573Z DEBUG request{route=/narwhal.PrimaryToPrimary/RequestVote remote_peer_id=e1b69e22 direction=inbound}: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27) round:27294\r\n2023-05-09T20:52:32.449009Z DEBUG request{route=/narwhal.PrimaryToPrimary/RequestVote remote_peer_id=f6dee950 direction=inbound}: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27) round:27294\r\n2023-05-09T20:52:32.453237Z DEBUG request{route=/narwhal.PrimaryToPrimary/RequestVote remote_peer_id=476f689c direction=inbound}: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27) round:27294\r\n2023-05-09T20:52:37.339802Z DEBUG process_certificate_with_lock: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:37.552668Z DEBUG process_certificate_with_lock:accept_certificate_internal: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:37.552839Z DEBUG narwhal_consensus::bullshark: Processing KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:53.634274Z DEBUG process_certificate_with_lock: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:53.825338Z DEBUG process_certificate_with_lock:accept_certificate_internal: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:53.825588Z DEBUG narwhal_consensus::bullshark: Processing KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:55.546217Z DEBUG process_certificate_with_lock: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:55.855896Z DEBUG process_certificate_with_lock:accept_certificate_internal: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:55.856105Z DEBUG narwhal_consensus::bullshark: Processing KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:56.119861Z DEBUG process_certificate_with_lock: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:56.361722Z DEBUG process_certificate_with_lock:accept_certificate_internal: narwhal_primary::synchronizer: Processing certificate KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:52:56.361919Z DEBUG narwhal_consensus::bullshark: Processing KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:53:08.279937Z DEBUG narwhal_consensus::utils: Sequencing KCS+7qgt4aRBk05R: C27294(24, KCS+7qgt4aRBk05R, E27)\r\n2023-05-09T20:53:08.281682Z DEBUG narwhal_consensus::consensus: Certificate KCS+7qgt4aRBk05RWqzoY8AVcIth6tl6m1Z59Q+eccY= took 36.2 seconds to be committed at round 27294\r\n2023-05-09T20:53:08.302452Z DEBUG narwhal_executor::subscriber: Adding fetched batch MD1H+em9MjxzBoWi from certificate KCS+7qgt4aRBk05R to consensus output\r\n```\r\n\r\nnow, [since those changes](https://github.com/MystenLabs/sui/pull/11835)\r\nI don't expect to see this happening frequently, but still it worth\r\nmaking this check before processing without cost - as we'll most\r\nprobably hit certificate store's memory cache.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-24T14:10:15+01:00",
+          "tree_id": "f08b51609e37b76aad4480518a12ca44a35c4a90",
+          "url": "https://github.com/MystenLabs/sui/commit/39497992ff495ab2bb56c557a57bc3799ebb0515"
+        },
+        "date": 1684934589249,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150404948,
+            "range": "± 5663136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 366609,
+            "range": "± 68288",
             "unit": "ns/iter"
           }
         ]
