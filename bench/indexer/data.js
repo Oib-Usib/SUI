@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684983636788,
+  "lastUpdate": 1684988498547,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9647,6 +9647,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 315748,
             "range": "± 86845",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd6bbe0682fa7c115aca5633b78e172573835794",
+          "message": "Swarm config refactoring (#12117)\n\nThis PR does a series of refactoring on how we construct node config and\r\nswarm configs to make it cleaner:\r\n1. Renames utils.rs in sui-config/ to local_ip_utils.rs, and moved all\r\nthe IP and port management port into it. Now it contains a manager to\r\ngenerate new IPs and new ports for simtest; for non-simtest it always\r\nuse localhost and new available port.\r\n2. Previously we start fullnode inside TestCluster, which runs on the\r\nclient node in simtest. This created a lot of tech debt. This PR moves\r\nall fullnode creation into Swarm. Now we can start arbitrary number of\r\nfullnodes in a Swarm. When starting TestCluster, it uses Swarm to launch\r\na fullnode, and keep a copy of the fullnode handle locally for rpc\r\naccess.\r\n3. Also added the ability to start more fullnodes after a test cluster\r\nstarted running, inside swarm. This means we could also run those\r\nfullnodes in a container, managed by the swarm.\r\n4. Heavy use of the builder pattern: added ValidatorGenesisConfigBuilder\r\nto build a ValidatorGenesisConfig; added ValidatorConfigBuilder and\r\nFullnodeConfigBuilder to build their node configs.\r\n5. Removed a number of unused fields in ConfigBuilder and SwarmBuilder.\r\n\r\nThis this PR, we should be able to start removing all the code that\r\nspawns individual nodes instead of inside a container.",
+          "timestamp": "2023-05-25T04:10:36Z",
+          "tree_id": "ff8aebe91adc2063d58adaaaae2e59d5333718e6",
+          "url": "https://github.com/MystenLabs/sui/commit/cd6bbe0682fa7c115aca5633b78e172573835794"
+        },
+        "date": 1684988480601,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145066270,
+            "range": "± 5304801",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309090,
+            "range": "± 27774",
             "unit": "ns/iter"
           }
         ]
