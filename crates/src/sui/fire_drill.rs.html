@@ -398,9 +398,8 @@
 <span class="kw">use </span>move_core_types::ident_str;
 <span class="kw">use </span>shared_crypto::intent::Intent;
 <span class="kw">use </span>std::path::{Path, PathBuf};
-<span class="kw">use </span>sui_config::node::KeyPairWithPath;
-<span class="kw">use </span>sui_config::utils;
-<span class="kw">use </span>sui_config::{node::AuthorityKeyPairWithPath, Config, NodeConfig, PersistedConfig};
+<span class="kw">use </span>sui_config::node::{AuthorityKeyPairWithPath, KeyPairWithPath};
+<span class="kw">use </span>sui_config::{local_ip_utils, Config, NodeConfig, PersistedConfig};
 <span class="kw">use </span>sui_json_rpc_types::{SuiExecutionStatus, SuiTransactionBlockResponseOptions};
 <span class="kw">use </span>sui_keys::keypair_file::read_keypair_from_file;
 <span class="kw">use </span>sui_sdk::{rpc_types::SuiTransactionBlockEffectsAPI, SuiClient, SuiClientBuilder};
@@ -546,7 +545,8 @@
     <span class="kw">let </span>http = new_network_address.pop().unwrap();
     <span class="comment">// pop out tcp
     </span>new_network_address.pop().unwrap();
-    <span class="kw">let </span>new_port = utils::get_available_port(<span class="string">&quot;127.0.0.1&quot;</span>);
+    <span class="kw">let </span>localhost = local_ip_utils::localhost_for_testing();
+    <span class="kw">let </span>new_port = local_ip_utils::get_available_port(<span class="kw-2">&amp;</span>localhost);
     new_network_address.push(Protocol::Tcp(new_port));
     new_network_address.push(http);
     <span class="macro">info!</span>(<span class="string">&quot;New network address: {:?}&quot;</span>, new_network_address);
@@ -557,7 +557,7 @@
     <span class="macro">info!</span>(<span class="string">&quot;Current P2P external address: {:?}&quot;</span>, new_external_address);
     <span class="comment">// pop out udp
     </span>new_external_address.pop().unwrap();
-    <span class="kw">let </span>new_port = utils::get_available_port(<span class="string">&quot;127.0.0.1&quot;</span>);
+    <span class="kw">let </span>new_port = local_ip_utils::get_available_port(<span class="kw-2">&amp;</span>localhost);
     new_external_address.push(Protocol::Udp(new_port));
     <span class="macro">info!</span>(<span class="string">&quot;New P2P external address: {:?}&quot;</span>, new_external_address);
     new_config.p2p_config.external_address = <span class="prelude-val">Some</span>(new_external_address.clone());
@@ -574,7 +574,7 @@
     <span class="macro">info!</span>(<span class="string">&quot;Current primary address: {:?}&quot;</span>, new_primary_addresses);
     <span class="comment">// pop out udp
     </span>new_primary_addresses.pop().unwrap();
-    <span class="kw">let </span>new_port = utils::get_available_port(<span class="string">&quot;127.0.0.1&quot;</span>);
+    <span class="kw">let </span>new_port = local_ip_utils::get_available_port(<span class="kw-2">&amp;</span>localhost);
     new_primary_addresses.push(Protocol::Udp(new_port));
     <span class="macro">info!</span>(<span class="string">&quot;New primary address: {:?}&quot;</span>, new_primary_addresses);
 
@@ -591,7 +591,7 @@
     <span class="macro">info!</span>(<span class="string">&quot;Current worker address: {:?}&quot;</span>, new_worker_addresses);
     <span class="comment">// pop out udp
     </span>new_worker_addresses.pop().unwrap();
-    <span class="kw">let </span>new_port = utils::get_available_port(<span class="string">&quot;127.0.0.1&quot;</span>);
+    <span class="kw">let </span>new_port = local_ip_utils::get_available_port(<span class="kw-2">&amp;</span>localhost);
     new_worker_addresses.push(Protocol::Udp(new_port));
     <span class="macro">info!</span>(<span class="string">&quot;New worker address:: {:?}&quot;</span>, new_worker_addresses);
 

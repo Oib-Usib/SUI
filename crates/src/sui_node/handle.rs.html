@@ -116,6 +116,12 @@
 <a href="#116" id="116">116</a>
 <a href="#117" id="117">117</a>
 <a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -163,8 +169,10 @@
 </span><span class="kw">use </span><span class="kw">super</span>::SuiNode;
 <span class="kw">use </span>std::future::Future;
 <span class="kw">use </span>std::sync::Arc;
+<span class="kw">use </span>sui_core::authority::AuthorityState;
 
 <span class="doccomment">/// Wrap SuiNode to allow correct access to SuiNode in simulator tests.
+</span><span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>SuiNodeHandle(<span class="prelude-ty">Option</span>&lt;Arc&lt;SuiNode&gt;&gt;);
 
 <span class="kw">impl </span>SuiNodeHandle {
@@ -179,6 +187,10 @@
     <span class="kw">pub fn </span>with&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, cb: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;</span>SuiNode) -&gt; T) -&gt; T {
         <span class="kw">let </span>_guard = <span class="self">self</span>.guard();
         cb(<span class="self">self</span>.inner())
+    }
+
+    <span class="kw">pub fn </span>state(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;AuthorityState&gt; {
+        <span class="self">self</span>.with(|sui_node| sui_node.state())
     }
 }
 

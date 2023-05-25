@@ -392,6 +392,12 @@
 <a href="#392" id="392">392</a>
 <a href="#393" id="393">393</a>
 <a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -591,6 +597,12 @@
 
     <span class="kw">async fn </span>process_tx_effects(<span class="kw-2">&amp;mut </span><span class="self">self</span>, effects: <span class="kw-2">&amp;</span>SuiTransactionBlockEffects) {
         <span class="kw">for </span>(owned_ref, write_kind) <span class="kw">in </span>effects.all_changed_objects() {
+            <span class="kw">if </span><span class="macro">matches!</span>(owned_ref.owner, Owner::ObjectOwner(<span class="kw">_</span>)) {
+                <span class="comment">// For object owned objects, we don&#39;t need to do anything.
+                // We also cannot read them because in the case of shared objects, there can be
+                // races and the child object may no longer exist.
+                </span><span class="kw">continue</span>;
+            }
             <span class="kw">let </span>obj_ref = owned_ref.reference.to_object_ref();
             <span class="kw">let </span>object = <span class="self">self
                 </span>.cluster

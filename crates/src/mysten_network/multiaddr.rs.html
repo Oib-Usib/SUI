@@ -297,6 +297,9 @@
 <a href="#297" id="297">297</a>
 <a href="#298" id="298">298</a>
 <a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -383,6 +386,22 @@
         }
     }
 
+    <span class="comment">// Converts a /ip{4,6}/-/tcp/-[/-] Multiaddr to SocketAddr.
+    // Useful when an external library only accepts SocketAddr, e.g. to start a local server.
+    // See `client::endpoint_from_multiaddr()` for converting to Endpoint for clients.
+    </span><span class="kw">pub fn </span>to_socket_addr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;SocketAddr&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.iter();
+        <span class="kw">let </span>ip = <span class="kw">match </span>iter.next().ok_or_else(|| {
+            <span class="macro">eyre!</span>(<span class="string">&quot;failed to convert to SocketAddr: Multiaddr does not contain IP&quot;</span>)
+        })<span class="question-mark">? </span>{
+            Protocol::Ip4(ip4_addr) =&gt; IpAddr::V4(ip4_addr),
+            Protocol::Ip6(ip6_addr) =&gt; IpAddr::V6(ip6_addr),
+            unsupported =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">eyre!</span>(<span class="string">&quot;unsupported protocol {unsupported}&quot;</span>)),
+        };
+        <span class="kw">let </span>tcp_port = parse_tcp(<span class="kw-2">&amp;mut </span>iter)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(SocketAddr::new(ip, tcp_port))
+    }
+
     <span class="doccomment">/// Set the ip address to `0.0.0.0`. For instance, it converts the following address
     /// `/ip4/155.138.174.208/tcp/1500/http` into `/ip4/0.0.0.0/tcp/1500/http`.
     </span><span class="kw">pub fn </span>zero_ip_multi_address(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
@@ -448,23 +467,6 @@
             .map(<span class="self">Self</span>)
             .map_err(|e| serde::de::Error::custom(e.to_string()))
     }
-}
-
-<span class="comment">// Converts a /ip{4,6}/-/tcp/-[/-] Multiaddr to SocketAddr.
-// Useful when an external library only accepts SocketAddr, e.g. to start a local server.
-// See `client::endpoint_from_multiaddr()` for converting to Endpoint for clients.
-</span><span class="kw">pub fn </span>to_socket_addr(addr: <span class="kw-2">&amp;</span>Multiaddr) -&gt; <span class="prelude-ty">Result</span>&lt;SocketAddr&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>iter = addr.iter();
-    <span class="kw">let </span>ip = <span class="kw">match </span>iter
-        .next()
-        .ok_or_else(|| <span class="macro">eyre!</span>(<span class="string">&quot;failed to convert to SocketAddr: Multiaddr does not contain IP&quot;</span>))<span class="question-mark">?
-    </span>{
-        Protocol::Ip4(ip4_addr) =&gt; IpAddr::V4(ip4_addr),
-        Protocol::Ip6(ip6_addr) =&gt; IpAddr::V6(ip6_addr),
-        unsupported =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">eyre!</span>(<span class="string">&quot;unsupported protocol {unsupported}&quot;</span>)),
-    };
-    <span class="kw">let </span>tcp_port = parse_tcp(<span class="kw-2">&amp;mut </span>iter)<span class="question-mark">?</span>;
-    <span class="prelude-val">Ok</span>(SocketAddr::new(ip, tcp_port))
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>parse_tcp&lt;<span class="lifetime">&#39;a</span>, T: Iterator&lt;Item = Protocol&lt;<span class="lifetime">&#39;a</span>&gt;&gt;&gt;(protocols: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="prelude-ty">Result</span>&lt;u16&gt; {
@@ -574,26 +576,30 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
-    <span class="kw">use super</span>::{to_socket_addr, Multiaddr};
+    <span class="kw">use </span><span class="kw">super</span>::Multiaddr;
     <span class="kw">use </span>multiaddr::multiaddr;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_to_socket_addr_basic() {
         <span class="kw">let </span>multi_addr_ipv4 = Multiaddr(<span class="macro">multiaddr!</span>(Ip4([<span class="number">127</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>]), Tcp(<span class="number">10500u16</span>)));
-        <span class="kw">let </span>socket_addr_ipv4 =
-            to_socket_addr(<span class="kw-2">&amp;</span>multi_addr_ipv4).expect(<span class="string">&quot;Couldn&#39;t convert to socket addr&quot;</span>);
+        <span class="kw">let </span>socket_addr_ipv4 = multi_addr_ipv4
+            .to_socket_addr()
+            .expect(<span class="string">&quot;Couldn&#39;t convert to socket addr&quot;</span>);
         <span class="macro">assert_eq!</span>(socket_addr_ipv4.to_string(), <span class="string">&quot;127.0.0.1:10500&quot;</span>);
 
         <span class="kw">let </span>multi_addr_ipv6 = Multiaddr(<span class="macro">multiaddr!</span>(Ip6([<span class="number">172</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]), Tcp(<span class="number">10500u16</span>)));
-        <span class="kw">let </span>socket_addr_ipv6 =
-            to_socket_addr(<span class="kw-2">&amp;</span>multi_addr_ipv6).expect(<span class="string">&quot;Couldn&#39;t convert to socket addr&quot;</span>);
+        <span class="kw">let </span>socket_addr_ipv6 = multi_addr_ipv6
+            .to_socket_addr()
+            .expect(<span class="string">&quot;Couldn&#39;t convert to socket addr&quot;</span>);
         <span class="macro">assert_eq!</span>(socket_addr_ipv6.to_string(), <span class="string">&quot;[ac::1:1:1:1:1]:10500&quot;</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_to_socket_addr_unsupported_protocol() {
         <span class="kw">let </span>multi_addr_dns = Multiaddr(<span class="macro">multiaddr!</span>(Dnsaddr(<span class="string">&quot;mysten.sui&quot;</span>), Tcp(<span class="number">10500u16</span>)));
-        <span class="kw">let _ </span>= to_socket_addr(<span class="kw-2">&amp;</span>multi_addr_dns).expect_err(<span class="string">&quot;DNS is unsupported&quot;</span>);
+        <span class="kw">let _ </span>= multi_addr_dns
+            .to_socket_addr()
+            .expect_err(<span class="string">&quot;DNS is unsupported&quot;</span>);
     }
 }
 </code></pre></div></section></main></body></html>

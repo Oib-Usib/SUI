@@ -578,6 +578,7 @@
 <a href="#578" id="578">578</a>
 <a href="#579" id="579">579</a>
 <a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -591,6 +592,7 @@
 <span class="kw">use </span>clap::<span class="kw-2">*</span>;
 <span class="kw">use </span>fastcrypto::traits::KeyPair;
 <span class="kw">use </span>move_package::BuildConfig;
+<span class="kw">use </span>rand::rngs::OsRng;
 <span class="kw">use </span>std::io::{stderr, stdout, Write};
 <span class="kw">use </span>std::num::NonZeroUsize;
 <span class="kw">use </span>std::path::{Path, PathBuf};
@@ -611,7 +613,7 @@
 <span class="kw">use </span>sui_swarm_config::genesis_config::{GenesisConfig, DEFAULT_NUMBER_OF_AUTHORITIES};
 <span class="kw">use </span>sui_swarm_config::network_config::NetworkConfig;
 <span class="kw">use </span>sui_swarm_config::network_config_builder::ConfigBuilder;
-<span class="kw">use </span>sui_swarm_config::network_config_builder::FullnodeConfigBuilder;
+<span class="kw">use </span>sui_swarm_config::node_config_builder::FullnodeConfigBuilder;
 <span class="kw">use </span>sui_types::crypto::{SignatureScheme, SuiKeyPair};
 <span class="kw">use </span>tracing::info;
 
@@ -751,16 +753,17 @@
                             network_config_path
                         ))
                     })<span class="question-mark">?</span>;
-
-                <span class="kw">let </span><span class="kw-2">mut </span>swarm = <span class="kw">if </span>no_full_node {
-                    Swarm::builder()
+                <span class="kw">let </span><span class="kw-2">mut </span>swarm_builder = Swarm::builder()
+                    .dir(sui_config_dir()<span class="question-mark">?</span>)
+                    .with_network_config(network_config);
+                <span class="kw">if </span>no_full_node {
+                    swarm_builder = swarm_builder.with_fullnode_count(<span class="number">0</span>);
                 } <span class="kw">else </span>{
-                    Swarm::builder()
-                        .with_fullnode_rpc_addr(sui_config::node::default_json_rpc_address())
-                        .with_event_store()
+                    swarm_builder = swarm_builder
+                        .with_fullnode_count(<span class="number">1</span>)
+                        .with_fullnode_rpc_addr(sui_config::node::default_json_rpc_address());
                 }
-                .from_network_config(sui_config_dir()<span class="question-mark">?</span>, network_config);
-
+                <span class="kw">let </span><span class="kw-2">mut </span>swarm = swarm_builder.build();
                 swarm.launch().<span class="kw">await</span><span class="question-mark">?</span>;
 
                 <span class="kw">let </span><span class="kw-2">mut </span>interval = tokio::time::interval(std::time::Duration::from_secs(<span class="number">3</span>));
@@ -1019,12 +1022,11 @@
 
     <span class="macro">info!</span>(<span class="string">&quot;Client keystore is stored in {:?}.&quot;</span>, keystore_path);
 
-    <span class="kw">let </span><span class="kw-2">mut </span>fullnode_config = FullnodeConfigBuilder::new(<span class="kw-2">&amp;</span>network_config)
-        .with_event_store()
-        .with_dir(FULL_NODE_DB_PATH.into())
-        .build()<span class="question-mark">?</span>;
+    <span class="kw">let </span>fullnode_config = FullnodeConfigBuilder::new()
+        .with_config_directory(FULL_NODE_DB_PATH.into())
+        .with_rpc_addr(sui_config::node::default_json_rpc_address())
+        .build(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>network_config);
 
-    fullnode_config.json_rpc_address = sui_config::node::default_json_rpc_address();
     fullnode_config.save(sui_config_dir.join(SUI_FULLNODE_CONFIG))<span class="question-mark">?</span>;
 
     <span class="kw">for </span>(i, validator) <span class="kw">in </span>network_config

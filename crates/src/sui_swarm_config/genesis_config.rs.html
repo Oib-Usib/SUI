@@ -312,81 +312,10 @@
 <a href="#312" id="312">312</a>
 <a href="#313" id="313">313</a>
 <a href="#314" id="314">314</a>
-<a href="#315" id="315">315</a>
-<a href="#316" id="316">316</a>
-<a href="#317" id="317">317</a>
-<a href="#318" id="318">318</a>
-<a href="#319" id="319">319</a>
-<a href="#320" id="320">320</a>
-<a href="#321" id="321">321</a>
-<a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
-<a href="#324" id="324">324</a>
-<a href="#325" id="325">325</a>
-<a href="#326" id="326">326</a>
-<a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
-<a href="#342" id="342">342</a>
-<a href="#343" id="343">343</a>
-<a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
-<a href="#348" id="348">348</a>
-<a href="#349" id="349">349</a>
-<a href="#350" id="350">350</a>
-<a href="#351" id="351">351</a>
-<a href="#352" id="352">352</a>
-<a href="#353" id="353">353</a>
-<a href="#354" id="354">354</a>
-<a href="#355" id="355">355</a>
-<a href="#356" id="356">356</a>
-<a href="#357" id="357">357</a>
-<a href="#358" id="358">358</a>
-<a href="#359" id="359">359</a>
-<a href="#360" id="360">360</a>
-<a href="#361" id="361">361</a>
-<a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a>
-<a href="#364" id="364">364</a>
-<a href="#365" id="365">365</a>
-<a href="#366" id="366">366</a>
-<a href="#367" id="367">367</a>
-<a href="#368" id="368">368</a>
-<a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
-<a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
-<a href="#384" id="384">384</a>
-<a href="#385" id="385">385</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span>std::net::{IpAddr, Ipv4Addr, SocketAddr};
+</span><span class="kw">use </span>std::net::SocketAddr;
 
 <span class="kw">use </span>anyhow::Result;
 <span class="kw">use </span>fastcrypto::traits::KeyPair;
@@ -394,10 +323,9 @@
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>sui_config::genesis::{GenesisCeremonyParameters, TokenAllocation};
 <span class="kw">use </span>sui_config::node::{DEFAULT_COMMISSION_RATE, DEFAULT_VALIDATOR_GAS_PRICE};
-<span class="kw">use </span>sui_config::utils;
-<span class="kw">use </span>sui_config::Config;
+<span class="kw">use </span>sui_config::{local_ip_utils, Config};
 <span class="kw">use </span>sui_genesis_builder::validator_info::ValidatorInfo;
-<span class="kw">use </span>sui_types::base_types::{ObjectID, SuiAddress};
+<span class="kw">use </span>sui_types::base_types::SuiAddress;
 <span class="kw">use </span>sui_types::crypto::{
     get_key_pair_from_rng, AccountKeyPair, AuthorityKeyPair, AuthorityPublicKeyBytes,
     NetworkKeyPair, NetworkPublicKey, PublicKey, SuiKeyPair,
@@ -430,127 +358,6 @@
 }
 
 <span class="kw">impl </span>ValidatorGenesisConfig {
-    <span class="kw">pub const </span>DEFAULT_NETWORK_PORT: u16 = <span class="number">1000</span>;
-    <span class="kw">pub const </span>DEFAULT_P2P_PORT: u16 = <span class="number">2000</span>;
-    <span class="kw">pub const </span>DEFAULT_P2P_LISTEN_PORT: u16 = <span class="number">3000</span>;
-    <span class="kw">pub const </span>DEFAULT_METRICS_PORT: u16 = <span class="number">4000</span>;
-    <span class="kw">pub const </span>DEFAULT_NARWHAL_METRICS_PORT: u16 = <span class="number">5000</span>;
-    <span class="kw">pub const </span>DEFAULT_NARWHAL_PRIMARY_PORT: u16 = <span class="number">6000</span>;
-    <span class="kw">pub const </span>DEFAULT_NARWHAL_WORKER_PORT: u16 = <span class="number">7000</span>;
-
-    <span class="kw">pub fn </span>from_localhost_for_testing(
-        key_pair: AuthorityKeyPair,
-        worker_key_pair: NetworkKeyPair,
-        account_key_pair: SuiKeyPair,
-        network_key_pair: NetworkKeyPair,
-        gas_price: u64,
-    ) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            key_pair,
-            worker_key_pair,
-            account_key_pair,
-            network_key_pair,
-            network_address: utils::new_tcp_network_address(),
-            p2p_address: utils::new_udp_network_address(),
-            p2p_listen_address: <span class="prelude-val">None</span>,
-            metrics_address: utils::available_local_socket_address(),
-            narwhal_metrics_address: utils::new_tcp_network_address(),
-            gas_price,
-            commission_rate: DEFAULT_COMMISSION_RATE,
-            narwhal_primary_address: utils::new_udp_network_address(),
-            narwhal_worker_address: utils::new_udp_network_address(),
-            consensus_address: utils::new_tcp_network_address(),
-            consensus_internal_worker_address: <span class="prelude-val">None</span>,
-            stake: sui_types::governance::VALIDATOR_LOW_STAKE_THRESHOLD_MIST,
-        }
-    }
-
-    <span class="kw">pub fn </span>from_base_ip(
-        key_pair: AuthorityKeyPair,
-        worker_key_pair: NetworkKeyPair,
-        account_key_pair: SuiKeyPair,
-        network_key_pair: NetworkKeyPair,
-        p2p_listen_address: <span class="prelude-ty">Option</span>&lt;IpAddr&gt;,
-        ip: String,
-        <span class="comment">// Port offset allows running many SuiNodes inside the same simulator node, which is
-        // helpful for tests that don&#39;t use Swarm.
-        </span>port_offset: usize,
-        gas_price: u64,
-    ) -&gt; <span class="self">Self </span>{
-        <span class="macro">assert!</span>(port_offset &lt; <span class="number">1000</span>);
-        <span class="kw">let </span>port_offset: u16 = port_offset.try_into().unwrap();
-        <span class="kw">let </span>make_tcp_addr =
-            |port: u16| -&gt; Multiaddr { <span class="macro">format!</span>(<span class="string">&quot;/ip4/{ip}/tcp/{port}/http&quot;</span>).parse().unwrap() };
-        <span class="kw">let </span>make_udp_addr =
-            |port: u16| -&gt; Multiaddr { <span class="macro">format!</span>(<span class="string">&quot;/ip4/{ip}/udp/{port}&quot;</span>).parse().unwrap() };
-        <span class="kw">let </span>make_tcp_zero_addr =
-            |port: u16| -&gt; Multiaddr { <span class="macro">format!</span>(<span class="string">&quot;/ip4/0.0.0.0/tcp/{port}/http&quot;</span>).parse().unwrap() };
-
-        <span class="self">Self </span>{
-            key_pair,
-            worker_key_pair,
-            account_key_pair,
-            network_key_pair,
-            network_address: make_tcp_addr(<span class="self">Self</span>::DEFAULT_NETWORK_PORT + port_offset),
-            p2p_address: make_udp_addr(<span class="self">Self</span>::DEFAULT_P2P_PORT + port_offset),
-            p2p_listen_address: p2p_listen_address
-                .map(|x| SocketAddr::new(x, <span class="self">Self</span>::DEFAULT_P2P_LISTEN_PORT + port_offset)),
-            metrics_address: <span class="macro">format!</span>(<span class="string">&quot;0.0.0.0:{}&quot;</span>, <span class="self">Self</span>::DEFAULT_METRICS_PORT + port_offset)
-                .parse()
-                .unwrap(),
-            narwhal_metrics_address: make_tcp_zero_addr(
-                <span class="self">Self</span>::DEFAULT_NARWHAL_METRICS_PORT + port_offset,
-            ),
-            gas_price,
-            commission_rate: DEFAULT_COMMISSION_RATE,
-            narwhal_primary_address: make_udp_addr(
-                <span class="self">Self</span>::DEFAULT_NARWHAL_PRIMARY_PORT + port_offset,
-            ),
-            narwhal_worker_address: make_udp_addr(<span class="self">Self</span>::DEFAULT_NARWHAL_WORKER_PORT + port_offset),
-            consensus_address: make_tcp_addr(<span class="number">4000 </span>+ port_offset),
-            consensus_internal_worker_address: <span class="prelude-val">None</span>,
-            stake: sui_types::governance::VALIDATOR_LOW_STAKE_THRESHOLD_MIST,
-        }
-    }
-
-    <span class="kw">pub fn </span>new(
-        index: usize,
-        key_pair: AuthorityKeyPair,
-        worker_key_pair: NetworkKeyPair,
-        account_key_pair: SuiKeyPair,
-        network_key_pair: NetworkKeyPair,
-        gas_price: u64,
-    ) -&gt; <span class="self">Self </span>{
-        <span class="kw">if </span><span class="macro">cfg!</span>(msim) {
-            <span class="comment">// we will probably never run this many validators in a sim
-            </span><span class="kw">let </span>low_octet = index + <span class="number">1</span>;
-            <span class="kw">if </span>low_octet &gt; <span class="number">255 </span>{
-                <span class="macro">todo!</span>(<span class="string">&quot;smarter IP formatting required&quot;</span>);
-            }
-
-            <span class="kw">let </span>ip = <span class="macro">format!</span>(<span class="string">&quot;10.10.0.{}&quot;</span>, low_octet);
-
-            <span class="self">Self</span>::from_base_ip(
-                key_pair,
-                worker_key_pair,
-                account_key_pair,
-                network_key_pair,
-                <span class="prelude-val">None</span>,
-                ip,
-                index,
-                gas_price,
-            )
-        } <span class="kw">else </span>{
-            <span class="self">Self</span>::from_localhost_for_testing(
-                key_pair,
-                worker_key_pair,
-                account_key_pair,
-                network_key_pair,
-                gas_price,
-            )
-        }
-    }
-
     <span class="kw">pub fn </span>to_validator_info(<span class="kw-2">&amp;</span><span class="self">self</span>, name: String) -&gt; ValidatorInfo {
         <span class="kw">let </span>protocol_key: AuthorityPublicKeyBytes = <span class="self">self</span>.key_pair.public().into();
         <span class="kw">let </span>account_key: PublicKey = <span class="self">self</span>.account_key_pair.public();
@@ -573,6 +380,77 @@
             description: String::new(),
             image_url: String::new(),
             project_url: String::new(),
+        }
+    }
+}
+
+<span class="attr">#[derive(Default)]
+</span><span class="kw">pub struct </span>ValidatorGenesisConfigBuilder {
+    protocol_key_pair: <span class="prelude-ty">Option</span>&lt;AuthorityKeyPair&gt;,
+    account_key_pair: <span class="prelude-ty">Option</span>&lt;AccountKeyPair&gt;,
+    ip: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    gas_price: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+}
+
+<span class="kw">impl </span>ValidatorGenesisConfigBuilder {
+    <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::default()
+    }
+
+    <span class="kw">pub fn </span>with_protocol_key_pair(<span class="kw-2">mut </span><span class="self">self</span>, key_pair: AuthorityKeyPair) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.protocol_key_pair = <span class="prelude-val">Some</span>(key_pair);
+        <span class="self">self
+    </span>}
+
+    <span class="kw">pub fn </span>with_account_key_pair(<span class="kw-2">mut </span><span class="self">self</span>, key_pair: AccountKeyPair) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.account_key_pair = <span class="prelude-val">Some</span>(key_pair);
+        <span class="self">self
+    </span>}
+
+    <span class="kw">pub fn </span>with_ip(<span class="kw-2">mut </span><span class="self">self</span>, ip: String) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.ip = <span class="prelude-val">Some</span>(ip);
+        <span class="self">self
+    </span>}
+
+    <span class="kw">pub fn </span>with_gas_price(<span class="kw-2">mut </span><span class="self">self</span>, gas_price: u64) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.gas_price = <span class="prelude-val">Some</span>(gas_price);
+        <span class="self">self
+    </span>}
+
+    <span class="kw">pub fn </span>build&lt;R: rand::RngCore + rand::CryptoRng&gt;(<span class="self">self</span>, rng: <span class="kw-2">&amp;mut </span>R) -&gt; ValidatorGenesisConfig {
+        <span class="kw">let </span>ip = <span class="self">self</span>.ip.unwrap_or_else(local_ip_utils::get_new_ip);
+        <span class="kw">let </span>localhost = local_ip_utils::localhost_for_testing();
+
+        <span class="kw">let </span>protocol_key_pair = <span class="self">self
+            </span>.protocol_key_pair
+            .unwrap_or_else(|| get_key_pair_from_rng(rng).<span class="number">1</span>);
+        <span class="kw">let </span>account_key_pair = <span class="self">self
+            </span>.account_key_pair
+            .unwrap_or_else(|| get_key_pair_from_rng(rng).<span class="number">1</span>);
+        <span class="kw">let </span>gas_price = <span class="self">self</span>.gas_price.unwrap_or(DEFAULT_VALIDATOR_GAS_PRICE);
+
+        <span class="kw">let </span>(worker_key_pair, network_key_pair): (NetworkKeyPair, NetworkKeyPair) =
+            (get_key_pair_from_rng(rng).<span class="number">1</span>, get_key_pair_from_rng(rng).<span class="number">1</span>);
+
+        ValidatorGenesisConfig {
+            key_pair: protocol_key_pair,
+            worker_key_pair,
+            account_key_pair: account_key_pair.into(),
+            network_key_pair,
+            network_address: local_ip_utils::new_tcp_address_for_testing(<span class="kw-2">&amp;</span>ip),
+            p2p_address: local_ip_utils::new_udp_address_for_testing(<span class="kw-2">&amp;</span>ip),
+            p2p_listen_address: <span class="prelude-val">None</span>,
+            metrics_address: local_ip_utils::new_tcp_address_for_testing(<span class="kw-2">&amp;</span>localhost)
+                .to_socket_addr()
+                .unwrap(),
+            narwhal_metrics_address: local_ip_utils::new_tcp_address_for_testing(<span class="kw-2">&amp;</span>localhost),
+            gas_price,
+            commission_rate: DEFAULT_COMMISSION_RATE,
+            narwhal_primary_address: local_ip_utils::new_udp_address_for_testing(<span class="kw-2">&amp;</span>ip),
+            narwhal_worker_address: local_ip_utils::new_udp_address_for_testing(<span class="kw-2">&amp;</span>ip),
+            consensus_address: local_ip_utils::new_tcp_address_for_testing(<span class="kw-2">&amp;</span>ip),
+            consensus_internal_worker_address: <span class="prelude-val">None</span>,
+            stake: sui_types::governance::VALIDATOR_LOW_STAKE_THRESHOLD_MIST,
         }
     }
 }
@@ -623,14 +501,11 @@
 }
 
 <span class="kw">fn </span>default_socket_address() -&gt; SocketAddr {
-    utils::available_local_socket_address()
+    local_ip_utils::new_local_tcp_socket_for_testing()
 }
 
 <span class="kw">fn </span>default_multiaddr_address() -&gt; Multiaddr {
-    <span class="kw">let </span>addr = utils::available_local_socket_address();
-    <span class="macro">format!</span>(<span class="string">&quot;/ip4/{:?}/tcp/{}/http&quot;</span>, addr.ip(), addr.port())
-        .parse()
-        .unwrap()
+    local_ip_utils::new_local_tcp_address_for_testing()
 }
 
 <span class="kw">fn </span>default_stake() -&gt; u64 {
@@ -710,16 +585,9 @@
         <span class="kw">let </span>validator_config_info: Vec&lt;<span class="kw">_</span>&gt; = ips
             .iter()
             .map(|ip| {
-                ValidatorGenesisConfig::from_base_ip(
-                    AuthorityKeyPair::generate(<span class="kw-2">&amp;mut </span>rng), <span class="comment">// key_pair
-                    </span>NetworkKeyPair::generate(<span class="kw-2">&amp;mut </span>rng),   <span class="comment">// worker_key_pair
-                    </span>SuiKeyPair::Ed25519(NetworkKeyPair::generate(<span class="kw-2">&amp;mut </span>rng)), <span class="comment">// account_key_pair
-                    </span>NetworkKeyPair::generate(<span class="kw-2">&amp;mut </span>rng),   <span class="comment">// network_key_pair
-                    </span><span class="prelude-val">Some</span>(IpAddr::V4(Ipv4Addr::new(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))), <span class="comment">// p2p_listen_address
-                    </span>ip.to_string(),
-                    <span class="self">Self</span>::BENCHMARKS_PORT_OFFSET,
-                    DEFAULT_VALIDATOR_GAS_PRICE,
-                )
+                ValidatorGenesisConfigBuilder::new()
+                    .with_ip(ip.to_string())
+                    .build(<span class="kw-2">&amp;mut </span>rng)
             })
             .collect();
 
@@ -756,16 +624,6 @@
     </span><span class="kw">pub fn </span>benchmark_gas_key() -&gt; SuiKeyPair {
         <span class="kw">let </span><span class="kw-2">mut </span>rng = StdRng::seed_from_u64(<span class="self">Self</span>::BENCHMARKS_RNG_SEED);
         SuiKeyPair::Ed25519(NetworkKeyPair::generate(<span class="kw-2">&amp;mut </span>rng))
-    }
-
-    <span class="doccomment">/// Generate several predictable and fixed gas object id offsets for benchmarks. Load generators
-    /// and other benchmark facilities may also need to retrieve these id offsets (hence the importance
-    /// of the seedable rng).
-    </span><span class="kw">pub fn </span>benchmark_gas_object_id_offsets(quantity: usize) -&gt; Vec&lt;ObjectID&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>rng = StdRng::seed_from_u64(<span class="self">Self</span>::BENCHMARKS_RNG_SEED);
-        (<span class="number">0</span>..quantity)
-            .map(|<span class="kw">_</span>| ObjectID::random_from_rng(<span class="kw-2">&amp;mut </span>rng))
-            .collect()
     }
 }
 </code></pre></div></section></main></body></html>

@@ -1260,6 +1260,11 @@
 <a href="#1260" id="1260">1260</a>
 <a href="#1261" id="1261">1261</a>
 <a href="#1262" id="1262">1262</a>
+<a href="#1263" id="1263">1263</a>
+<a href="#1264" id="1264">1264</a>
+<a href="#1265" id="1265">1265</a>
+<a href="#1266" id="1266">1266</a>
+<a href="#1267" id="1267">1267</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2448,6 +2453,11 @@
             new_epoch_store.epoch_start_config().flags(),
         );
         new_epoch_store
+    }
+
+    <span class="attr">#[cfg(msim)]
+    </span><span class="kw">pub fn </span>get_sim_node_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; sui_simulator::task::NodeId {
+        <span class="self">self</span>.sim_node.id()
     }
 }
 

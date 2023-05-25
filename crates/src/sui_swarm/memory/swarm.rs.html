@@ -417,6 +417,31 @@
 <a href="#417" id="417">417</a>
 <a href="#418" id="418">418</a>
 <a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -432,14 +457,15 @@
     path::{Path, PathBuf},
 };
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
+<span class="kw">use </span>sui_config::NodeConfig;
 <span class="kw">use </span>sui_node::SuiNodeHandle;
 <span class="kw">use </span>sui_protocol_config::{ProtocolVersion, SupportedProtocolVersions};
 <span class="kw">use </span>sui_swarm_config::genesis_config::{AccountConfig, GenesisConfig, ValidatorGenesisConfig};
 <span class="kw">use </span>sui_swarm_config::network_config::NetworkConfig;
-<span class="kw">use </span>sui_swarm_config::network_config_builder::FullnodeConfigBuilder;
 <span class="kw">use </span>sui_swarm_config::network_config_builder::{
     CommitteeConfig, ConfigBuilder, ProtocolVersionsConfig, SupportedProtocolVersionsCallback,
 };
+<span class="kw">use </span>sui_swarm_config::node_config_builder::FullnodeConfigBuilder;
 <span class="kw">use </span>sui_types::base_types::AuthorityName;
 <span class="kw">use </span>sui_types::object::Object;
 <span class="kw">use </span>tempfile::TempDir;
@@ -450,11 +476,14 @@
     </span>dir: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
     committee: CommitteeConfig,
     genesis_config: <span class="prelude-ty">Option</span>&lt;GenesisConfig&gt;,
+    network_config: <span class="prelude-ty">Option</span>&lt;NetworkConfig&gt;,
     additional_objects: Vec&lt;Object&gt;,
     fullnode_count: usize,
+    fullnode_rpc_port: <span class="prelude-ty">Option</span>&lt;u16&gt;,
     fullnode_rpc_addr: <span class="prelude-ty">Option</span>&lt;SocketAddr&gt;,
-    with_event_store: bool,
     supported_protocol_versions_config: ProtocolVersionsConfig,
+    <span class="comment">// Default to supported_protocol_versions_config, but can be overridden.
+    </span>fullnode_supported_protocol_versions_config: <span class="prelude-ty">Option</span>&lt;ProtocolVersionsConfig&gt;,
     db_checkpoint_config: DBCheckpointConfig,
 }
 
@@ -466,11 +495,13 @@
             dir: <span class="prelude-val">None</span>,
             committee: CommitteeConfig::Size(NonZeroUsize::new(<span class="number">1</span>).unwrap()),
             genesis_config: <span class="prelude-val">None</span>,
+            network_config: <span class="prelude-val">None</span>,
             additional_objects: <span class="macro">vec!</span>[],
             fullnode_count: <span class="number">0</span>,
+            fullnode_rpc_port: <span class="prelude-val">None</span>,
             fullnode_rpc_addr: <span class="prelude-val">None</span>,
-            with_event_store: <span class="bool-val">false</span>,
             supported_protocol_versions_config: ProtocolVersionsConfig::Default,
+            fullnode_supported_protocol_versions_config: <span class="prelude-val">None</span>,
             db_checkpoint_config: DBCheckpointConfig::default(),
         }
     }
@@ -483,12 +514,15 @@
             dir: <span class="self">self</span>.dir,
             committee: <span class="self">self</span>.committee,
             genesis_config: <span class="self">self</span>.genesis_config,
+            network_config: <span class="self">self</span>.network_config,
             additional_objects: <span class="self">self</span>.additional_objects,
             fullnode_count: <span class="self">self</span>.fullnode_count,
+            fullnode_rpc_port: <span class="self">self</span>.fullnode_rpc_port,
             fullnode_rpc_addr: <span class="self">self</span>.fullnode_rpc_addr,
-            with_event_store: <span class="bool-val">false</span>,
-            supported_protocol_versions_config: ProtocolVersionsConfig::Default,
-            db_checkpoint_config: DBCheckpointConfig::default(),
+            supported_protocol_versions_config: <span class="self">self</span>.supported_protocol_versions_config,
+            fullnode_supported_protocol_versions_config: <span class="self">self
+                </span>.fullnode_supported_protocol_versions_config,
+            db_checkpoint_config: <span class="self">self</span>.db_checkpoint_config,
         }
     }
 
@@ -516,8 +550,14 @@
     </span>}
 
     <span class="kw">pub fn </span>with_genesis_config(<span class="kw-2">mut </span><span class="self">self</span>, genesis_config: GenesisConfig) -&gt; <span class="self">Self </span>{
-        <span class="macro">assert!</span>(<span class="self">self</span>.genesis_config.is_none());
+        <span class="macro">assert!</span>(<span class="self">self</span>.network_config.is_none() &amp;&amp; <span class="self">self</span>.genesis_config.is_none());
         <span class="self">self</span>.genesis_config = <span class="prelude-val">Some</span>(genesis_config);
+        <span class="self">self
+    </span>}
+
+    <span class="kw">pub fn </span>with_network_config(<span class="kw-2">mut </span><span class="self">self</span>, network_config: NetworkConfig) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert!</span>(<span class="self">self</span>.network_config.is_none() &amp;&amp; <span class="self">self</span>.genesis_config.is_none());
+        <span class="self">self</span>.network_config = <span class="prelude-val">Some</span>(network_config);
         <span class="self">self
     </span>}
 
@@ -536,7 +576,14 @@
         <span class="self">self
     </span>}
 
+    <span class="kw">pub fn </span>with_fullnode_rpc_port(<span class="kw-2">mut </span><span class="self">self</span>, fullnode_rpc_port: u16) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert!</span>(<span class="self">self</span>.fullnode_rpc_addr.is_none());
+        <span class="self">self</span>.fullnode_rpc_port = <span class="prelude-val">Some</span>(fullnode_rpc_port);
+        <span class="self">self
+    </span>}
+
     <span class="kw">pub fn </span>with_fullnode_rpc_addr(<span class="kw-2">mut </span><span class="self">self</span>, fullnode_rpc_addr: SocketAddr) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert!</span>(<span class="self">self</span>.fullnode_rpc_port.is_none());
         <span class="self">self</span>.fullnode_rpc_addr = <span class="prelude-val">Some</span>(fullnode_rpc_addr);
         <span class="self">self
     </span>}
@@ -573,6 +620,14 @@
         <span class="self">self
     </span>}
 
+    <span class="kw">pub fn </span>with_fullnode_supported_protocol_versions_config(
+        <span class="kw-2">mut </span><span class="self">self</span>,
+        c: ProtocolVersionsConfig,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.fullnode_supported_protocol_versions_config = <span class="prelude-val">Some</span>(c);
+        <span class="self">self
+    </span>}
+
     <span class="kw">pub fn </span>with_db_checkpoint_config(<span class="kw-2">mut </span><span class="self">self</span>, db_checkpoint_config: DBCheckpointConfig) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.db_checkpoint_config = db_checkpoint_config;
         <span class="self">self
@@ -580,6 +635,7 @@
 
     <span class="kw">fn </span>get_or_init_genesis_config(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>GenesisConfig {
         <span class="kw">if </span><span class="self">self</span>.genesis_config.is_none() {
+            <span class="macro">assert!</span>(<span class="self">self</span>.network_config.is_none());
             <span class="self">self</span>.genesis_config = <span class="prelude-val">Some</span>(GenesisConfig::for_local_testing());
         }
         <span class="self">self</span>.genesis_config.as_mut().unwrap()
@@ -595,21 +651,22 @@
             SwarmDirectory::Temporary(TempDir::new().unwrap())
         };
 
-        <span class="kw">let </span><span class="kw-2">mut </span>config_builder = ConfigBuilder::new(dir.as_ref());
+        <span class="kw">let </span>network_config = <span class="self">self</span>.network_config.unwrap_or_else(|| {
+            <span class="kw">let </span><span class="kw-2">mut </span>config_builder = ConfigBuilder::new(dir.as_ref());
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(genesis_config) = <span class="self">self</span>.genesis_config {
-            config_builder = config_builder.with_genesis_config(genesis_config);
-        }
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(genesis_config) = <span class="self">self</span>.genesis_config {
+                config_builder = config_builder.with_genesis_config(genesis_config);
+            }
 
-        <span class="kw">let </span>network_config = config_builder
-            .committee(<span class="self">self</span>.committee)
-            .with_swarm()
-            .rng(<span class="self">self</span>.rng)
-            .with_objects(<span class="self">self</span>.additional_objects)
-            .with_supported_protocol_versions_config(
-                <span class="self">self</span>.supported_protocol_versions_config.clone(),
-            )
-            .build();
+            config_builder
+                .committee(<span class="self">self</span>.committee)
+                .rng(<span class="self">self</span>.rng)
+                .with_objects(<span class="self">self</span>.additional_objects)
+                .with_supported_protocol_versions_config(
+                    <span class="self">self</span>.supported_protocol_versions_config.clone(),
+                )
+                .build()
+        });
 
         <span class="kw">let </span>validators = network_config
             .validator_configs()
@@ -618,21 +675,33 @@
             .collect();
 
         <span class="kw">let </span><span class="kw-2">mut </span>fullnodes = HashMap::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>fullnode_config_builder = FullnodeConfigBuilder::new()
+            .with_config_directory(dir.as_ref().into())
+            .with_db_checkpoint_config(<span class="self">self</span>.db_checkpoint_config.clone());
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(spvc) = <span class="kw-2">&amp;</span><span class="self">self</span>.fullnode_supported_protocol_versions_config {
+            <span class="kw">let </span>supported_versions = <span class="kw">match </span>spvc {
+                ProtocolVersionsConfig::Default =&gt; SupportedProtocolVersions::SYSTEM_DEFAULT,
+                ProtocolVersionsConfig::Global(v) =&gt; <span class="kw-2">*</span>v,
+                ProtocolVersionsConfig::PerValidator(func) =&gt; func(<span class="number">0</span>, <span class="prelude-val">None</span>),
+            };
+            fullnode_config_builder =
+                fullnode_config_builder.with_supported_protocol_versions(supported_versions);
+        }
 
         <span class="kw">if </span><span class="self">self</span>.fullnode_count &gt; <span class="number">0 </span>{
-            (<span class="number">0</span>..<span class="self">self</span>.fullnode_count).for_each(|<span class="kw">_</span>| {
-                <span class="kw">let </span>spvc = <span class="self">self</span>.supported_protocol_versions_config.clone();
-                <span class="comment">//let spvc = spvc.clone();
-                </span><span class="kw">let </span><span class="kw-2">mut </span>config = FullnodeConfigBuilder::new(<span class="kw-2">&amp;</span>network_config)
-                    .with_supported_protocol_versions_config(spvc)
-                    .with_db_checkpoint_config(<span class="self">self</span>.db_checkpoint_config.clone())
-                    .with_random_dir()
-                    .build()
-                    .unwrap();
-
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(fullnode_rpc_addr) = <span class="self">self</span>.fullnode_rpc_addr {
-                    config.json_rpc_address = fullnode_rpc_addr;
+            (<span class="number">0</span>..<span class="self">self</span>.fullnode_count).for_each(|idx| {
+                <span class="kw">let </span><span class="kw-2">mut </span>builder = fullnode_config_builder.clone();
+                <span class="kw">if </span>idx == <span class="number">0 </span>{
+                    <span class="comment">// Only the first fullnode is used as the rpc fullnode, we can only use the
+                    // same address once.
+                    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(rpc_addr) = <span class="self">self</span>.fullnode_rpc_addr {
+                        builder = builder.with_rpc_addr(rpc_addr);
+                    }
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(rpc_port) = <span class="self">self</span>.fullnode_rpc_port {
+                        builder = builder.with_rpc_port(rpc_port);
+                    }
                 }
+                <span class="kw">let </span>config = builder.build(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>network_config);
                 fullnodes.insert(config.protocol_public_key(), Node::new(config));
             });
         }
@@ -641,41 +710,7 @@
             network_config,
             validators,
             fullnodes,
-        }
-    }
-
-    <span class="kw">pub fn </span>with_event_store(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.with_event_store = <span class="bool-val">true</span>;
-        <span class="self">self
-    </span>}
-
-    <span class="kw">pub fn </span>from_network_config(<span class="self">self</span>, dir: PathBuf, network_config: NetworkConfig) -&gt; Swarm {
-        <span class="kw">let </span>dir = SwarmDirectory::Persistent(dir);
-
-        <span class="kw">let </span>validators = network_config
-            .validator_configs()
-            .iter()
-            .map(|config| (config.protocol_public_key(), Node::new(config.to_owned())))
-            .collect();
-
-        <span class="kw">let </span>fullnodes = <span class="kw">if let </span><span class="prelude-val">Some</span>(fullnode_rpc_addr) = <span class="self">self</span>.fullnode_rpc_addr {
-            <span class="kw">let </span><span class="kw-2">mut </span>config = FullnodeConfigBuilder::new(<span class="kw-2">&amp;</span>network_config)
-                .with_supported_protocol_versions_config(<span class="self">self</span>.supported_protocol_versions_config)
-                .set_event_store(<span class="self">self</span>.with_event_store)
-                .with_random_dir()
-                .build()
-                .unwrap();
-            config.json_rpc_address = fullnode_rpc_addr;
-            HashMap::from([(config.protocol_public_key(), Node::new(config))])
-        } <span class="kw">else </span>{
-            Default::default()
-        };
-
-        Swarm {
-            dir,
-            network_config,
-            validators,
-            fullnodes,
+            fullnode_config_builder,
         }
     }
 }
@@ -687,6 +722,8 @@
     network_config: NetworkConfig,
     validators: HashMap&lt;AuthorityName, Node&gt;,
     fullnodes: HashMap&lt;AuthorityName, Node&gt;,
+    <span class="comment">// Save a copy of the fullnode config builder to build future fullnodes.
+    </span>fullnode_config_builder: FullnodeConfigBuilder,
 }
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>Swarm {
@@ -710,7 +747,7 @@
     <span class="doccomment">/// Start all of the Validators associated with this Swarm
     </span><span class="kw">pub async fn </span>launch(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         try_join_all(<span class="self">self</span>.nodes_iter_mut().map(|node| node.start())).<span class="kw">await</span><span class="question-mark">?</span>;
-
+        <span class="macro">tracing::info!</span>(<span class="string">&quot;Successfully launched Swarm&quot;</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -763,6 +800,19 @@
     <span class="doccomment">/// Return an iterator over shared references of all Fullnodes.
     </span><span class="kw">pub fn </span>fullnodes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Node&gt; {
         <span class="self">self</span>.fullnodes.values()
+    }
+
+    <span class="kw">pub async fn </span>spawn_new_fullnode(<span class="kw-2">&amp;mut </span><span class="self">self</span>, config: NodeConfig) -&gt; SuiNodeHandle {
+        <span class="kw">let </span>name = config.protocol_public_key();
+        <span class="kw">let </span>node = Node::new(config);
+        node.start().<span class="kw">await</span>.unwrap();
+        <span class="kw">let </span>handle = node.get_node_handle().unwrap();
+        <span class="self">self</span>.fullnodes.insert(name, node);
+        handle
+    }
+
+    <span class="kw">pub fn </span>get_fullnode_config_builder(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; FullnodeConfigBuilder {
+        <span class="self">self</span>.fullnode_config_builder.clone()
     }
 }
 

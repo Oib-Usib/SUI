@@ -60,12 +60,14 @@
 <a href="#60" id="60">60</a>
 <a href="#61" id="61">61</a>
 <a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>axum::{http::StatusCode, routing::get, Extension, Router};
 <span class="kw">use </span>config::{AuthorityIdentifier, WorkerId};
 <span class="kw">use </span>mysten_metrics::spawn_logged_monitored_task;
-<span class="kw">use </span>mysten_network::multiaddr::{to_socket_addr, Multiaddr};
+<span class="kw">use </span>mysten_network::multiaddr::Multiaddr;
 <span class="kw">use </span>prometheus::{Registry, TextEncoder};
 <span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>tokio::task::JoinHandle;
@@ -99,7 +101,9 @@
         .route(METRICS_ROUTE, get(metrics))
         .layer(Extension(registry.clone()));
 
-    <span class="kw">let </span>socket_addr = to_socket_addr(<span class="kw-2">&amp;</span>addr).expect(<span class="string">&quot;failed to convert Multiaddr to SocketAddr&quot;</span>);
+    <span class="kw">let </span>socket_addr = addr
+        .to_socket_addr()
+        .expect(<span class="string">&quot;failed to convert Multiaddr to SocketAddr&quot;</span>);
 
     <span class="macro">spawn_logged_monitored_task!</span>(
         <span class="kw">async move </span>{

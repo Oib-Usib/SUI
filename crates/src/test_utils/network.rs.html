@@ -661,10 +661,29 @@
 <a href="#661" id="661">661</a>
 <a href="#662" id="662">662</a>
 <a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>futures::future::join_all;
+<span class="kw">use </span>std::net::SocketAddr;
 <span class="kw">use </span>std::num::NonZeroUsize;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::time::Duration;
@@ -672,19 +691,12 @@
 <span class="kw">use </span>jsonrpsee::http_client::{HttpClient, HttpClientBuilder};
 <span class="kw">use </span>jsonrpsee::ws_client::WsClient;
 <span class="kw">use </span>jsonrpsee::ws_client::WsClientBuilder;
-<span class="kw">use </span>prometheus::Registry;
 <span class="kw">use </span>rand::{distributions::<span class="kw-2">*</span>, rngs::OsRng, seq::SliceRandom};
-<span class="kw">use </span>tokio::time::{timeout, Instant};
-<span class="kw">use </span>tokio::{task::JoinHandle, time::sleep};
-<span class="kw">use </span>tracing::info;
-
-<span class="kw">use </span>mysten_metrics::RegistryService;
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
 <span class="kw">use </span>sui_config::{Config, SUI_CLIENT_CONFIG, SUI_NETWORK_CONFIG};
 <span class="kw">use </span>sui_config::{NodeConfig, PersistedConfig, SUI_KEYSTORE_FILENAME};
 <span class="kw">use </span>sui_json_rpc_types::{SuiTransactionBlockResponse, SuiTransactionBlockResponseOptions};
 <span class="kw">use </span>sui_keys::keystore::{AccountKeystore, FileBasedKeystore, Keystore};
-<span class="kw">use </span>sui_node::SuiNode;
 <span class="kw">use </span>sui_node::SuiNodeHandle;
 <span class="kw">use </span>sui_protocol_config::{ProtocolVersion, SupportedProtocolVersions};
 <span class="kw">use </span>sui_sdk::error::SuiRpcResult;
@@ -694,8 +706,9 @@
 <span class="kw">use </span>sui_swarm::memory::{Swarm, SwarmBuilder};
 <span class="kw">use </span>sui_swarm_config::genesis_config::{AccountConfig, GenesisConfig};
 <span class="kw">use </span>sui_swarm_config::network_config_builder::{
-    FullnodeConfigBuilder, ProtocolVersionsConfig, SupportedProtocolVersionsCallback,
+    ProtocolVersionsConfig, SupportedProtocolVersionsCallback,
 };
+<span class="kw">use </span>sui_swarm_config::node_config_builder::FullnodeConfigBuilder;
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, ObjectID, SuiAddress};
 <span class="kw">use </span>sui_types::committee::EpochId;
 <span class="kw">use </span>sui_types::crypto::KeypairTraits;
@@ -705,16 +718,43 @@
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemStateTrait;
 <span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
+<span class="kw">use </span>tokio::time::{timeout, Instant};
+<span class="kw">use </span>tokio::{task::JoinHandle, time::sleep};
+<span class="kw">use </span>tracing::info;
 
 <span class="kw">const </span>NUM_VALIDAOTR: usize = <span class="number">4</span>;
 
 <span class="kw">pub struct </span>FullNodeHandle {
-    <span class="kw">pub </span>sui_node: Arc&lt;SuiNode&gt;,
+    <span class="kw">pub </span>sui_node: SuiNodeHandle,
     <span class="kw">pub </span>sui_client: SuiClient,
     <span class="kw">pub </span>rpc_client: HttpClient,
     <span class="kw">pub </span>rpc_url: String,
     <span class="kw">pub </span>ws_client: WsClient,
     <span class="kw">pub </span>ws_url: String,
+}
+
+<span class="kw">impl </span>FullNodeHandle {
+    <span class="kw">pub async fn </span>new(sui_node: SuiNodeHandle, json_rpc_address: SocketAddr) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>rpc_url = <span class="macro">format!</span>(<span class="string">&quot;http://{}&quot;</span>, json_rpc_address);
+        <span class="kw">let </span>rpc_client = HttpClientBuilder::default().build(<span class="kw-2">&amp;</span>rpc_url).unwrap();
+
+        <span class="kw">let </span>ws_url = <span class="macro">format!</span>(<span class="string">&quot;ws://{}&quot;</span>, json_rpc_address);
+        <span class="kw">let </span>ws_client = WsClientBuilder::default().build(<span class="kw-2">&amp;</span>ws_url).<span class="kw">await</span>.unwrap();
+        <span class="kw">let </span>sui_client = SuiClientBuilder::default()
+            .ws_url(<span class="kw-2">&amp;</span>ws_url)
+            .build(<span class="kw-2">&amp;</span>rpc_url)
+            .<span class="kw">await
+            </span>.unwrap();
+
+        <span class="self">Self </span>{
+            sui_node,
+            sui_client,
+            rpc_client,
+            rpc_url,
+            ws_client,
+            ws_url,
+        }
+    }
 }
 
 <span class="kw">pub struct </span>TestCluster {
@@ -775,22 +815,29 @@
     }
 
     <span class="kw">pub fn </span>fullnode_config_builder(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; FullnodeConfigBuilder {
-        FullnodeConfigBuilder::new(<span class="self">self</span>.swarm.config())
+        <span class="self">self</span>.swarm.get_fullnode_config_builder()
     }
 
     <span class="doccomment">/// Convenience method to start a new fullnode in the test cluster.
-    </span><span class="kw">pub async fn </span>start_fullnode(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;FullNodeHandle, anyhow::Error&gt; {
-        <span class="kw">let </span>config = <span class="self">self</span>.fullnode_config_builder().build().unwrap();
-        start_fullnode_from_config(config).<span class="kw">await
+    </span><span class="kw">pub async fn </span>start_fullnode(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; FullNodeHandle {
+        <span class="self">self</span>.start_fullnode_from_config(
+            <span class="self">self</span>.fullnode_config_builder()
+                .build(<span class="kw-2">&amp;mut </span>OsRng, <span class="self">self</span>.swarm.config()),
+        )
+        .<span class="kw">await
+    </span>}
+
+    <span class="kw">pub async fn </span>start_fullnode_from_config(<span class="kw-2">&amp;mut </span><span class="self">self</span>, config: NodeConfig) -&gt; FullNodeHandle {
+        <span class="kw">let </span>json_rpc_address = config.json_rpc_address;
+        <span class="kw">let </span>node = <span class="self">self</span>.swarm.spawn_new_fullnode(config).<span class="kw">await</span>;
+        FullNodeHandle::new(node, json_rpc_address).<span class="kw">await
     </span>}
 
     <span class="kw">pub fn </span>all_node_handles(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = SuiNodeHandle&gt; {
         <span class="self">self</span>.swarm
             .validator_node_handles()
             .into_iter()
-            .chain(std::iter::once(SuiNodeHandle::new(
-                <span class="self">self</span>.fullnode_handle.sui_node.clone(),
-            )))
+            .chain(std::iter::once(<span class="self">self</span>.fullnode_handle.sui_node.clone()))
     }
 
     <span class="kw">pub fn </span>get_validator_addresses(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;AuthorityName&gt; {
@@ -799,6 +846,20 @@
 
     <span class="kw">pub fn </span>stop_validator(<span class="kw-2">&amp;</span><span class="self">self</span>, name: AuthorityName) {
         <span class="self">self</span>.swarm.validator(name).unwrap().stop();
+    }
+
+    <span class="kw">pub async fn </span>stop_all_validators(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">info!</span>(<span class="string">&quot;Stopping all validators in the cluster&quot;</span>);
+        <span class="self">self</span>.swarm.validators().for_each(|v| v.stop());
+        tokio::time::sleep(Duration::from_secs(<span class="number">3</span>)).<span class="kw">await</span>;
+    }
+
+    <span class="kw">pub async fn </span>start_all_validator(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">info!</span>(<span class="string">&quot;Starting all validators in the cluster&quot;</span>);
+        <span class="kw">for </span>v <span class="kw">in </span><span class="self">self</span>.swarm.validators() {
+            v.start().<span class="kw">await</span>.unwrap();
+        }
+        tokio::time::sleep(Duration::from_secs(<span class="number">3</span>)).<span class="kw">await</span>;
     }
 
     <span class="kw">pub async fn </span>start_validator(<span class="kw-2">&amp;</span><span class="self">self</span>, name: AuthorityName) {
@@ -824,11 +885,9 @@
     <span class="kw">pub async fn </span>get_object_from_fullnode_store(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; <span class="prelude-ty">Option</span>&lt;Object&gt; {
         <span class="self">self</span>.fullnode_handle
             .sui_node
-            .state()
-            .get_object(object_id)
+            .with_async(|node| <span class="kw">async </span>{ node.state().get_object(object_id).<span class="kw">await</span>.unwrap() })
             .<span class="kw">await
-            </span>.unwrap()
-    }
+    </span>}
 
     <span class="doccomment">/// To detect whether the network has reached such state, we use the fullnode as the
     /// source of truth, since a fullnode only does epoch transition when the network has
@@ -846,7 +905,10 @@
         target_epoch: <span class="prelude-ty">Option</span>&lt;EpochId&gt;,
         timeout_dur: Duration,
     ) -&gt; SuiSystemState {
-        <span class="kw">let </span><span class="kw-2">mut </span>epoch_rx = <span class="self">self</span>.fullnode_handle.sui_node.subscribe_to_epoch_change();
+        <span class="kw">let </span><span class="kw-2">mut </span>epoch_rx = <span class="self">self
+            </span>.fullnode_handle
+            .sui_node
+            .with(|node| node.subscribe_to_epoch_change());
         timeout(timeout_dur, <span class="kw">async move </span>{
             <span class="kw">while let </span><span class="prelude-val">Ok</span>(system_state) = epoch_rx.recv().<span class="kw">await </span>{
                 <span class="macro">info!</span>(<span class="string">&quot;received epoch {}&quot;</span>, system_state.epoch());
@@ -876,8 +938,7 @@
         </span><span class="kw">let </span>cur_committee = <span class="self">self
             </span>.fullnode_handle
             .sui_node
-            .state()
-            .clone_committee_for_testing();
+            .with(|node| node.state().clone_committee_for_testing());
         <span class="kw">let </span><span class="kw-2">mut </span>cur_stake = <span class="number">0</span>;
         <span class="kw">for </span>handle <span class="kw">in </span><span class="self">self</span>.swarm.validator_node_handles() {
             handle
@@ -1068,7 +1129,7 @@
         }
     }
 
-    <span class="kw">pub fn </span>set_fullnode_rpc_port(<span class="kw-2">mut </span><span class="self">self</span>, rpc_port: u16) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>with_fullnode_rpc_port(<span class="kw-2">mut </span><span class="self">self</span>, rpc_port: u16) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.fullnode_rpc_port = <span class="prelude-val">Some</span>(rpc_port);
         <span class="self">self
     </span>}
@@ -1178,19 +1239,10 @@
         <span class="kw">let </span><span class="kw-2">mut </span>wallet_conf: SuiClientConfig =
             PersistedConfig::read(<span class="kw-2">&amp;</span>working_dir.join(SUI_CLIENT_CONFIG))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>fullnode_config = FullnodeConfigBuilder::new(swarm.config())
-            .with_supported_protocol_versions_config(
-                <span class="self">self</span>.fullnode_supported_protocol_versions_config
-                    .clone()
-                    .unwrap_or_else(|| <span class="self">self</span>.validator_supported_protocol_versions_config.clone()),
-            )
-            .with_db_checkpoint_config(<span class="self">self</span>.db_checkpoint_config_fullnodes)
-            .set_event_store(<span class="self">self</span>.enable_fullnode_events)
-            .set_rpc_port(<span class="self">self</span>.fullnode_rpc_port)
-            .build()
-            .unwrap();
-
-        <span class="kw">let </span>fullnode_handle = start_fullnode_from_config(fullnode_config).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>fullnode = swarm.fullnodes().next().unwrap();
+        <span class="kw">let </span>json_rpc_address = fullnode.config.json_rpc_address;
+        <span class="kw">let </span>fullnode_handle =
+            FullNodeHandle::new(fullnode.get_node_handle().unwrap(), json_rpc_address).<span class="kw">await</span>;
 
         wallet_conf.envs.push(SuiEnv {
             alias: <span class="string">&quot;localnet&quot;</span>.to_string(),
@@ -1226,10 +1278,20 @@
             .with_db_checkpoint_config(<span class="self">self</span>.db_checkpoint_config_validators.clone())
             .with_supported_protocol_versions_config(
                 <span class="self">self</span>.validator_supported_protocol_versions_config.clone(),
-            );
+            )
+            .with_fullnode_count(<span class="number">1</span>)
+            .with_fullnode_supported_protocol_versions_config(
+                <span class="self">self</span>.fullnode_supported_protocol_versions_config
+                    .clone()
+                    .unwrap_or(<span class="self">self</span>.validator_supported_protocol_versions_config.clone()),
+            )
+            .with_db_checkpoint_config(<span class="self">self</span>.db_checkpoint_config_fullnodes.clone());
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(genesis_config) = <span class="self">self</span>.genesis_config.take() {
             builder = builder.with_genesis_config(genesis_config);
+        }
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(fullnode_rpc_port) = <span class="self">self</span>.fullnode_rpc_port {
+            builder = builder.with_fullnode_rpc_port(fullnode_rpc_port);
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>swarm = builder.build();
@@ -1274,32 +1336,6 @@
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new()
     }
-}
-
-<span class="kw">pub async fn </span>start_fullnode_from_config(
-    config: NodeConfig,
-) -&gt; <span class="prelude-ty">Result</span>&lt;FullNodeHandle, anyhow::Error&gt; {
-    <span class="kw">let </span>registry_service = RegistryService::new(Registry::new());
-    <span class="kw">let </span>sui_node = SuiNode::start(<span class="kw-2">&amp;</span>config, registry_service, <span class="prelude-val">None</span>).<span class="kw">await</span><span class="question-mark">?</span>;
-
-    <span class="kw">let </span>rpc_url = <span class="macro">format!</span>(<span class="string">&quot;http://{}&quot;</span>, config.json_rpc_address);
-    <span class="kw">let </span>rpc_client = HttpClientBuilder::default().build(<span class="kw-2">&amp;</span>rpc_url)<span class="question-mark">?</span>;
-
-    <span class="kw">let </span>ws_url = <span class="macro">format!</span>(<span class="string">&quot;ws://{}&quot;</span>, config.json_rpc_address);
-    <span class="kw">let </span>ws_client = WsClientBuilder::default().build(<span class="kw-2">&amp;</span>ws_url).<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span>sui_client = SuiClientBuilder::default()
-        .ws_url(<span class="kw-2">&amp;</span>ws_url)
-        .build(<span class="kw-2">&amp;</span>rpc_url)
-        .<span class="kw">await</span><span class="question-mark">?</span>;
-
-    <span class="prelude-val">Ok</span>(FullNodeHandle {
-        sui_node,
-        sui_client,
-        rpc_client,
-        rpc_url,
-        ws_client,
-        ws_url,
-    })
 }
 
 <span class="comment">// TODO: Merge the following functions with the ones inside TestCluster.
