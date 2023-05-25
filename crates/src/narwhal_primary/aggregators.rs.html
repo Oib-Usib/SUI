@@ -135,7 +135,6 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
-<a href="#138" id="138">138</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -267,8 +266,7 @@
         <span class="kw">if </span><span class="self">self</span>.weight &gt;= committee.quorum_threshold() {
             <span class="comment">// Note that we do not reset the weight here. If this function is called again and
             // the proposer didn&#39;t yet advance round, we can add extra certificates as parents.
-            // This is required when running Bullshark as consensus and does not harm when running
-            // Tusk or an external consensus protocol.
+            // This is required when running Bullshark as consensus.
             </span><span class="kw">return </span><span class="prelude-val">Some</span>(<span class="self">self</span>.certificates.drain(..).collect());
         }
         <span class="prelude-val">None
