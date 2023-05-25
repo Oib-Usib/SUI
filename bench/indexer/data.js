@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685051491563,
+  "lastUpdate": 1685058439655,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9827,6 +9827,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 388051,
             "range": "± 76441",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "01cbe46bcaaa23e99e0b471e73fdd1a577a2ce7c",
+          "message": "Remove unnecessary workspace versions (#12211)\n\n## Description \r\n\r\nA few crates don't/shouldn't inherit workspace version. Give them\r\nindividual versions.\r\nAlso the open-json-rpc is generating version using sui-core's version,\r\nwhich is always the workspace version. This is wrong to me. This PR is a\r\nshort-term fix to just use workspace version directly in open-json-rpc,\r\nbut we should make it a real version.\r\n\r\n## Test Plan \r\n\r\ncargo build\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-25T16:34:52-07:00",
+          "tree_id": "5b6da37e50aa5f80779bc20c59e4d3fa9aaf18c5",
+          "url": "https://github.com/MystenLabs/sui/commit/01cbe46bcaaa23e99e0b471e73fdd1a577a2ce7c"
+        },
+        "date": 1685058418568,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109327386,
+            "range": "± 11069902",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 261766,
+            "range": "± 22083",
             "unit": "ns/iter"
           }
         ]
