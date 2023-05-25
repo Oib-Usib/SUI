@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684988498547,
+  "lastUpdate": 1685027347211,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9683,6 +9683,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309090,
             "range": "± 27774",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "51927076+phoenix-o@users.noreply.github.com",
+            "name": "phoenix",
+            "username": "phoenix-o"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d88eb07d0c0a1d386b8a78ab3004150d950656a5",
+          "message": "update rust rocksdb to 0.21.0 (#12185)\n\nupdates rust rocksdb dependency to 0.21.0\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-25T16:59:53+02:00",
+          "tree_id": "6fcb6d3d33fa8a25927b278f765de318f4b46a64",
+          "url": "https://github.com/MystenLabs/sui/commit/d88eb07d0c0a1d386b8a78ab3004150d950656a5"
+        },
+        "date": 1685027315661,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109121430,
+            "range": "± 9302168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 259246,
+            "range": "± 25645",
             "unit": "ns/iter"
           }
         ]
