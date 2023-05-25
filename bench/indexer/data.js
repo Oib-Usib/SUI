@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684949042422,
+  "lastUpdate": 1684983636788,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9611,6 +9611,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 317353,
             "range": "± 22213",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e08f1a080b300efc3b7158ff429ec76464fd4d71",
+          "message": "set alt server name for anemo (#12171)\n\n## Description \r\n\r\nupdate anemo to\r\nhttps://github.com/MystenLabs/anemo/commit/1bfa7842f66a85d35345b5ada358df90c3efd579\r\nwhich includes the `alternate_server_name` change. Set primary server\r\nname as `sui-{chain-id}`.\r\n\r\n## Test Plan \r\n\r\ntested in labnet.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nupdate anemo to\r\nhttps://github.com/MystenLabs/anemo/commit/1bfa7842f66a85d35345b5ada358df90c3efd579\r\nwhich includes the `alternate_server_name` change. Set primary server\r\nname as `sui-{chain-id}`. Note that if node starts to run this version\r\nin testnet/mainnet before the update is officially rolled out, it's\r\nlikely the node won't be able to state sync.",
+          "timestamp": "2023-05-25T02:47:30Z",
+          "tree_id": "bd31f32681f456408079b88f6d031d8f649b7841",
+          "url": "https://github.com/MystenLabs/sui/commit/e08f1a080b300efc3b7158ff429ec76464fd4d71"
+        },
+        "date": 1684983620323,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147144569,
+            "range": "± 6977580",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315748,
+            "range": "± 86845",
             "unit": "ns/iter"
           }
         ]
