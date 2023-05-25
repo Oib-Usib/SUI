@@ -4783,7 +4783,7 @@
     // https://github.com/EighteenZi/rocksdb_wiki/blob/master/Memory-usage-in-RocksDB.md#indexes-and-filter-blocks
     </span>block_options.set_block_size(<span class="number">16 </span>* <span class="number">1024</span>);
     <span class="comment">// Configure a block cache.
-    </span>block_options.set_block_cache(<span class="kw-2">&amp;</span>Cache::new_lru_cache(block_cache_size_mb &lt;&lt; <span class="number">20</span>).unwrap());
+    </span>block_options.set_block_cache(<span class="kw-2">&amp;</span>Cache::new_lru_cache(block_cache_size_mb &lt;&lt; <span class="number">20</span>));
     <span class="comment">// Set a bloomfilter with 1% false positive rate.
     </span>block_options.set_bloom_filter(<span class="number">10.0</span>, <span class="bool-val">false</span>);
     <span class="comment">// From https://github.com/EighteenZi/rocksdb_wiki/blob/master/Block-Cache.md#caching-index-and-filter-blocks
