@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685033545828,
+  "lastUpdate": 1685051190330,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9755,6 +9755,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311223,
             "range": "± 13293",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a19ad3e25893cea3fad6f82367d80d9ef549de66",
+          "message": "update self.checkpoint_sequence_by_contents_digest atomically along with other cfs (#12192)\n\n## Description \r\n\r\nIt's not causing any problems today but in case in the future we\r\nmistakenly assume these inserts happen atomically.\r\n\r\n## Test Plan \r\n\r\nCI\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nupdate self.checkpoint_sequence_by_contents_digest atomically along with\r\nother cfs",
+          "timestamp": "2023-05-25T14:35:24-07:00",
+          "tree_id": "84967f4236f7294ad5838e63336658693bec348a",
+          "url": "https://github.com/MystenLabs/sui/commit/a19ad3e25893cea3fad6f82367d80d9ef549de66"
+        },
+        "date": 1685051172085,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146167309,
+            "range": "± 4589537",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311597,
+            "range": "± 19897",
             "unit": "ns/iter"
           }
         ]
