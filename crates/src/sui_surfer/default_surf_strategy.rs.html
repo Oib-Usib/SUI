@@ -264,7 +264,7 @@
                 Type::U64 =&gt; CallArg::Pure(bcs::to_bytes(<span class="kw-2">&amp;</span>state.rng.gen::&lt;u64&gt;()).unwrap()),
                 Type::U128 =&gt; CallArg::Pure(bcs::to_bytes(<span class="kw-2">&amp;</span>state.rng.gen::&lt;u128&gt;()).unwrap()),
                 Type::Address =&gt; CallArg::Pure(
-                    bcs::to_bytes(<span class="kw-2">&amp;</span>state.cluster.accounts.choose(<span class="kw-2">&amp;mut </span>state.rng)).unwrap(),
+                    bcs::to_bytes(<span class="kw-2">&amp;</span>state.cluster.get_addresses().choose(<span class="kw-2">&amp;mut </span>state.rng)).unwrap(),
                 ),
                 ty @ Type::Struct { .. } =&gt; {
                     <span class="kw">match </span><span class="self">Self</span>::choose_object_call_arg(

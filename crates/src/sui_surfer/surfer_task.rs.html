@@ -165,7 +165,7 @@
         <span class="kw">let </span>shared_objects: SharedObjects = Arc::new(RwLock::new(HashMap::new()));
 
         <span class="kw">let </span><span class="kw-2">mut </span>accounts: HashMap&lt;SuiAddress, (<span class="prelude-ty">Option</span>&lt;ObjectRef&gt;, OwnedObjects)&gt; = cluster
-            .accounts
+            .get_addresses()
             .iter()
             .map(|address| (<span class="kw-2">*</span>address, (<span class="prelude-val">None</span>, HashMap::new())))
             .collect();
