@@ -259,116 +259,26 @@
 <a href="#259" id="259">259</a>
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a>
-<a href="#309" id="309">309</a>
-<a href="#310" id="310">310</a>
-<a href="#311" id="311">311</a>
-<a href="#312" id="312">312</a>
-<a href="#313" id="313">313</a>
-<a href="#314" id="314">314</a>
-<a href="#315" id="315">315</a>
-<a href="#316" id="316">316</a>
-<a href="#317" id="317">317</a>
-<a href="#318" id="318">318</a>
-<a href="#319" id="319">319</a>
-<a href="#320" id="320">320</a>
-<a href="#321" id="321">321</a>
-<a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
-<a href="#324" id="324">324</a>
-<a href="#325" id="325">325</a>
-<a href="#326" id="326">326</a>
-<a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
-<a href="#342" id="342">342</a>
-<a href="#343" id="343">343</a>
-<a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
+
 </span><span class="kw">use </span>anemo::{types::response::StatusCode, Network};
 <span class="kw">use </span>anyhow::Result;
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>config::{AuthorityIdentifier, Committee, WorkerCache, WorkerId};
 <span class="kw">use </span>fastcrypto::hash::Hash;
-<span class="kw">use </span>futures::{stream::FuturesUnordered, StreamExt};
 <span class="kw">use </span>itertools::Itertools;
 <span class="kw">use </span>network::{client::NetworkClient, WorkerToPrimaryClient};
-<span class="kw">use </span>rand::seq::SliceRandom;
 <span class="kw">use </span>std::{collections::HashSet, time::Duration};
 <span class="kw">use </span>store::{rocks::DBMap, Map};
-<span class="kw">use </span>tokio::time::sleep;
-<span class="kw">use </span>tracing::{debug, trace, warn};
+<span class="kw">use </span>tracing::{debug, trace};
 <span class="kw">use </span>types::{
     Batch, BatchDigest, FetchBatchesRequest, FetchBatchesResponse, PrimaryToWorker,
     RequestBatchRequest, RequestBatchResponse, RequestBatchesRequest, RequestBatchesResponse,
     WorkerBatchMessage, WorkerDeleteBatchesMessage, WorkerOthersBatchMessage,
     WorkerSynchronizeMessage, WorkerToWorker, WorkerToWorkerClient,
 };
-
-<span class="kw">use </span>mysten_metrics::monitored_future;
 
 <span class="kw">use crate</span>::{batch_fetcher::BatchFetcher, TransactionValidator};
 
@@ -393,8 +303,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;()&gt;, anemo::rpc::Status&gt; {
         <span class="kw">let </span>message = request.into_body();
         <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.validator.validate_batch(<span class="kw-2">&amp;</span>message.batch).<span class="kw">await </span>{
-            <span class="comment">// The batch is invalid, we don&#39;t want to process it.
-            </span><span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::new_with_message(
+            <span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::new_with_message(
                 StatusCode::BadRequest,
                 <span class="macro">format!</span>(<span class="string">&quot;Invalid batch: {err}&quot;</span>),
             ));
@@ -521,146 +430,65 @@
                 }
             };
         }
-
-        <span class="comment">// Keep attempting to retrieve missing batches until we get them all or the client
-        // abandons the RPC.
-        // TODO: synchronize() should only be used for header payloads, so remove the broadcast
-        // logic after first attempt.
-        // TODO: synchronize() should not be cancelled when the higher level RequestVote gets
-        // cancelled, if payload requests are already inflight. This avoids wasting work and
-        // potentially stuck when there are many batches to fetch.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>first_attempt = <span class="bool-val">true</span>;
-        <span class="kw">loop </span>{
-            <span class="kw">if </span>missing.is_empty() {
-                <span class="kw">return </span><span class="prelude-val">Ok</span>(anemo::Response::new(()));
-            }
-
-            <span class="comment">// TODO: migrate to RequestBatches RPC, or use BatchFetcher.
-            </span><span class="kw">let </span>batch_requests: Vec&lt;<span class="kw">_</span>&gt; = missing
-                .iter()
-                .cloned()
-                .map(|batch| RequestBatchRequest { batch })
-                .collect();
-
-            <span class="kw">let </span><span class="kw-2">mut </span>handles = FuturesUnordered::new();
-            <span class="kw">let </span>request_batch_fn =
-                |<span class="kw-2">mut </span>client: WorkerToWorkerClient&lt;anemo::Peer&gt;, batch_request, timeout| {
-                    <span class="comment">// Wrapper function enables us to move `client` into the future.
-                    </span><span class="macro">monitored_future!</span>(<span class="kw">async move </span>{
-                        client
-                            .request_batch(anemo::Request::new(batch_request).with_timeout(timeout))
-                            .<span class="kw">await
-                    </span>})
-                };
-            <span class="kw">if </span>first_attempt {
-                <span class="comment">// Send first sync request to a single node.
-                </span><span class="kw">let </span>worker_name = <span class="kw">match </span><span class="self">self</span>.worker_cache.worker(
-                    <span class="self">self</span>.committee
-                        .authority(<span class="kw-2">&amp;</span>message.target)
-                        .unwrap()
-                        .protocol_key(),
-                    <span class="kw-2">&amp;</span><span class="self">self</span>.id,
-                ) {
-                    <span class="prelude-val">Ok</span>(worker_info) =&gt; worker_info.name,
-                    <span class="prelude-val">Err</span>(e) =&gt; {
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::internal(<span class="macro">format!</span>(
-                            <span class="string">&quot;The primary asked us to sync with an unknown node: {e}&quot;
-                        </span>)));
-                    }
-                };
-                <span class="kw">let </span>peer_id = anemo::PeerId(worker_name.<span class="number">0</span>.to_bytes());
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(peer) = network.peer(peer_id) {
-                    <span class="macro">debug!</span>(
-                        <span class="string">&quot;Sending BatchRequests to {worker_name}: {:?}&quot;</span>,
-                        batch_requests
-                    );
-                    handles.extend(batch_requests.into_iter().map(|request| {
-                        request_batch_fn(
-                            WorkerToWorkerClient::new(peer.clone()),
-                            request,
-                            <span class="self">self</span>.request_batch_timeout,
-                        )
-                    }));
-                } <span class="kw">else </span>{
-                    <span class="macro">warn!</span>(<span class="string">&quot;Unable to reach primary peer {worker_name} on the network&quot;</span>);
-                }
-            } <span class="kw">else </span>{
-                <span class="comment">// If first request timed out or was missing batches, try broadcasting to some others.
-                </span><span class="kw">let </span>names: Vec&lt;<span class="kw">_</span>&gt; = <span class="self">self
-                    </span>.worker_cache
-                    .others_workers_by_id(
-                        <span class="self">self</span>.committee
-                            .authority(<span class="kw-2">&amp;</span><span class="self">self</span>.authority_id)
-                            .unwrap()
-                            .protocol_key(),
-                        <span class="kw-2">&amp;</span><span class="self">self</span>.id,
-                    )
-                    .into_iter()
-                    .map(|(<span class="kw">_</span>, info)| info.name)
-                    .collect();
-                handles.extend(
-                    names
-                        .choose_multiple(<span class="kw-2">&amp;mut </span>rand::thread_rng(), <span class="self">self</span>.request_batch_retry_nodes)
-                        .filter_map(|name| network.peer(anemo::PeerId(name.<span class="number">0</span>.to_bytes())))
-                        .flat_map(|peer| {
-                            batch_requests.iter().cloned().map(<span class="kw">move </span>|request| {
-                                <span class="kw">let </span>peer = peer.clone();
-                                request_batch_fn(
-                                    WorkerToWorkerClient::new(peer),
-                                    request,
-                                    <span class="self">self</span>.request_batch_timeout,
-                                )
-                            })
-                        }),
-                );
-                <span class="macro">debug!</span>(
-                    <span class="string">&quot;Sending BatchRequest retries to workers {names:?}: {:?}&quot;</span>,
-                    batch_requests
-                );
-            }
-
-            <span class="comment">// Fire off batch request(s) and process results. Stop as soon as we have all the
-            // missing batches.
-            </span><span class="kw">while let </span><span class="prelude-val">Some</span>(result) = handles.next().<span class="kw">await </span>{
-                <span class="kw">match </span>result {
-                    <span class="prelude-val">Ok</span>(response) =&gt; {
-                        <span class="kw">if let </span><span class="prelude-val">Some</span>(batch) = response.into_body().batch {
-                            <span class="kw">if </span>!message.is_certified {
-                                <span class="comment">// This batch is not part of a certificate, so we need to validate it.
-                                </span><span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.validator.validate_batch(<span class="kw-2">&amp;</span>batch).<span class="kw">await </span>{
-                                    <span class="comment">// The batch is invalid, we don&#39;t want to process it.
-                                    </span><span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::new_with_message(
-                                        StatusCode::BadRequest,
-                                        <span class="macro">format!</span>(<span class="string">&quot;Invalid batch: {err}&quot;</span>),
-                                    ));
-                                }
-                            }
-                            <span class="kw">let </span>digest = batch.digest();
-                            <span class="kw">if </span>missing.remove(<span class="kw-2">&amp;</span>digest) {
-                                <span class="self">self</span>.store.insert(<span class="kw-2">&amp;</span>digest, <span class="kw-2">&amp;</span>batch).map_err(|e| {
-                                    anemo::rpc::Status::internal(<span class="macro">format!</span>(
-                                        <span class="string">&quot;failed to write to batch store: {e:?}&quot;
-                                    </span>))
-                                })<span class="question-mark">?</span>;
-                            }
-                        }
-                        <span class="kw">if </span>missing.is_empty() {
-                            <span class="kw">return </span><span class="prelude-val">Ok</span>(anemo::Response::new(()));
-                        }
-                    }
-                    <span class="prelude-val">Err</span>(e) =&gt; {
-                        <span class="macro">debug!</span>(
-                            <span class="string">&quot;RequestBatchRequest to worker {:?} failed: {e:?}&quot;</span>,
-                            e.peer_id()
-                        )
-                    }
-                }
-            }
-
-            first_attempt = <span class="bool-val">false</span>;
-            <span class="comment">// Add a delay before retrying.
-            </span>sleep(Duration::from_secs(<span class="number">1</span>)).<span class="kw">await</span>;
+        <span class="kw">if </span>missing.is_empty() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(anemo::Response::new(()));
         }
+
+        <span class="kw">let </span>worker_name = <span class="kw">match </span><span class="self">self</span>.worker_cache.worker(
+            <span class="self">self</span>.committee
+                .authority(<span class="kw-2">&amp;</span>message.target)
+                .unwrap()
+                .protocol_key(),
+            <span class="kw-2">&amp;</span><span class="self">self</span>.id,
+        ) {
+            <span class="prelude-val">Ok</span>(worker_info) =&gt; worker_info.name,
+            <span class="prelude-val">Err</span>(e) =&gt; {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::internal(<span class="macro">format!</span>(
+                    <span class="string">&quot;The primary asked worker to sync with an unknown node: {e}&quot;
+                </span>)));
+            }
+        };
+        <span class="kw">let </span><span class="prelude-val">Some</span>(peer) = network.peer(anemo::PeerId(worker_name.<span class="number">0</span>.to_bytes())) <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::internal(<span class="macro">format!</span>(
+                <span class="string">&quot;Not connected with worker peer {worker_name}&quot;
+            </span>)));
+        };
+        <span class="kw">let </span><span class="kw-2">mut </span>client = WorkerToWorkerClient::new(peer.clone());
+
+        <span class="comment">// Attempt to retrieve missing batches.
+        // Retried at a higher level in Synchronizer::sync_batches_internal().
+        </span><span class="kw">let </span>request = RequestBatchesRequest {
+            batch_digests: missing.iter().cloned().collect(),
+        };
+        <span class="macro">debug!</span>(<span class="string">&quot;Sending RequestBatchesRequest to {worker_name}: {request:?}&quot;</span>);
+        <span class="kw">let </span>response = client
+            .request_batches(anemo::Request::new(request).with_timeout(<span class="self">self</span>.request_batch_timeout))
+            .<span class="kw">await</span><span class="question-mark">?
+            </span>.into_inner();
+        <span class="kw">for </span>batch <span class="kw">in </span>response.batches {
+            <span class="kw">if </span>!message.is_certified {
+                <span class="comment">// This batch is not part of a certificate, so we need to validate it.
+                </span><span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.validator.validate_batch(<span class="kw-2">&amp;</span>batch).<span class="kw">await </span>{
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::new_with_message(
+                        StatusCode::BadRequest,
+                        <span class="macro">format!</span>(<span class="string">&quot;Invalid batch: {err}&quot;</span>),
+                    ));
+                }
+            }
+            <span class="kw">let </span>digest = batch.digest();
+            <span class="kw">if </span>missing.remove(<span class="kw-2">&amp;</span>digest) {
+                <span class="self">self</span>.store.insert(<span class="kw-2">&amp;</span>digest, <span class="kw-2">&amp;</span>batch).map_err(|e| {
+                    anemo::rpc::Status::internal(<span class="macro">format!</span>(<span class="string">&quot;failed to write to batch store: {e:?}&quot;</span>))
+                })<span class="question-mark">?</span>;
+            }
+        }
+
+        <span class="kw">if </span>missing.is_empty() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(anemo::Response::new(()));
+        }
+        <span class="prelude-val">Err</span>(anemo::rpc::Status::internal(
+            <span class="string">&quot;failed to synchronize batches!&quot;</span>,
+        ))
     }
 
     <span class="kw">async fn </span>fetch_batches(

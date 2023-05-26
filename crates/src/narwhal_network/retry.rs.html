@@ -90,7 +90,6 @@
 <a href="#90" id="90">90</a>
 <a href="#91" id="91">91</a>
 <a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -102,7 +101,6 @@
 </span><span class="kw">pub struct </span>RetryConfig {
     <span class="doccomment">/// The initial retry interval.
     ///
-    /// This is the first delay before a retry, for establishing connections and sending messages.
     /// The subsequent delay will be decided by the `retry_delay_multiplier`.
     </span><span class="kw">pub </span>initial_retry_interval: Duration,
 

@@ -1287,9 +1287,6 @@
 <a href="#1287" id="1287">1287</a>
 <a href="#1288" id="1288">1288</a>
 <a href="#1289" id="1289">1289</a>
-<a href="#1290" id="1290">1290</a>
-<a href="#1291" id="1291">1291</a>
-<a href="#1292" id="1292">1292</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1675,7 +1672,7 @@
                     }
                 }
             },
-            <span class="string">&quot;SynchronizerCertificateRecovery&quot;
+            <span class="string">&quot;Synchronizer::RecoverCertificates&quot;
         </span>);
 
         <span class="comment">// Start a task to update gc_round, gc in-memory data, and trigger certificate catchup
@@ -1741,7 +1738,7 @@
                     }
                 }
             },
-            <span class="string">&quot;SynchronizerGarbageCollection&quot;
+            <span class="string">&quot;Synchronizer::GarbageCollection&quot;
         </span>);
 
         <span class="comment">// Start a task to accept certificates. See comment above `process_certificate_with_lock()`
@@ -1765,7 +1762,7 @@
                     );
                 }
             },
-            <span class="string">&quot;SynchronizerCertificateAcceptor&quot;
+            <span class="string">&quot;Synchronizer::AcceptCertificates&quot;
         </span>);
 
         <span class="comment">// Start tasks to broadcast created certificates.
@@ -1796,7 +1793,7 @@
                     }
                 }
             },
-            <span class="string">&quot;SynchronizerCertificateBroadcasters&quot;
+            <span class="string">&quot;Synchronizer::BroadcastCertificates&quot;
         </span>);
 
         <span class="comment">// Start a task to async download batches if needed
@@ -1833,7 +1830,7 @@
                     }
                 }
             },
-            <span class="string">&quot;SynchronizerBatchSynchronizer&quot;
+            <span class="string">&quot;Synchronizer::SyncrhonizeBatches&quot;
         </span>);
 
         <span class="self">Self </span>{ inner }
@@ -2296,11 +2293,8 @@
                 .expect(<span class="string">&quot;Author of valid header is not in the worker cache&quot;</span>)
                 .name;
             <span class="kw">let </span>client = inner.client.clone();
-            <span class="kw">let </span>retry_config = RetryConfig {
-                retrying_max_elapsed_time: <span class="prelude-val">None</span>, <span class="comment">// Retry forever.
-                </span>..Default::default()
-            };
-            <span class="kw">let </span>handle = retry_config.retry(<span class="kw">move </span>|| {
+            <span class="kw">let </span>retry_config = RetryConfig::default(); <span class="comment">// 30s timeout
+            </span><span class="kw">let </span>handle = retry_config.retry(<span class="kw">move </span>|| {
                 <span class="kw">let </span>digests = digests.clone();
                 <span class="kw">let </span>message = WorkerSynchronizeMessage {
                     digests: digests.clone(),
