@@ -1891,16 +1891,82 @@
 <a href="#1891" id="1891">1891</a>
 <a href="#1892" id="1892">1892</a>
 <a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
+<a href="#1919" id="1919">1919</a>
+<a href="#1920" id="1920">1920</a>
+<a href="#1921" id="1921">1921</a>
+<a href="#1922" id="1922">1922</a>
+<a href="#1923" id="1923">1923</a>
+<a href="#1924" id="1924">1924</a>
+<a href="#1925" id="1925">1925</a>
+<a href="#1926" id="1926">1926</a>
+<a href="#1927" id="1927">1927</a>
+<a href="#1928" id="1928">1928</a>
+<a href="#1929" id="1929">1929</a>
+<a href="#1930" id="1930">1930</a>
+<a href="#1931" id="1931">1931</a>
+<a href="#1932" id="1932">1932</a>
+<a href="#1933" id="1933">1933</a>
+<a href="#1934" id="1934">1934</a>
+<a href="#1935" id="1935">1935</a>
+<a href="#1936" id="1936">1936</a>
+<a href="#1937" id="1937">1937</a>
+<a href="#1938" id="1938">1938</a>
+<a href="#1939" id="1939">1939</a>
+<a href="#1940" id="1940">1940</a>
+<a href="#1941" id="1941">1941</a>
+<a href="#1942" id="1942">1942</a>
+<a href="#1943" id="1943">1943</a>
+<a href="#1944" id="1944">1944</a>
+<a href="#1945" id="1945">1945</a>
+<a href="#1946" id="1946">1946</a>
+<a href="#1947" id="1947">1947</a>
+<a href="#1948" id="1948">1948</a>
+<a href="#1949" id="1949">1949</a>
+<a href="#1950" id="1950">1950</a>
+<a href="#1951" id="1951">1951</a>
+<a href="#1952" id="1952">1952</a>
+<a href="#1953" id="1953">1953</a>
+<a href="#1954" id="1954">1954</a>
+<a href="#1955" id="1955">1955</a>
+<a href="#1956" id="1956">1956</a>
+<a href="#1957" id="1957">1957</a>
+<a href="#1958" id="1958">1958</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::cmp::Ordering;
+<span class="kw">use </span>std::hash::Hash;
 <span class="kw">use </span>std::ops::Not;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::{iter, mem, thread};
 
 <span class="kw">use </span>either::Either;
-<span class="kw">use </span>fastcrypto::hash::MultisetHash;
+<span class="kw">use </span>fastcrypto::hash::{HashFunction, MultisetHash, Sha3_256};
 <span class="kw">use </span>futures::stream::FuturesUnordered;
 <span class="kw">use </span>move_bytecode_utils::module_cache::GetModule;
 <span class="kw">use </span>move_core_types::resolver::ModuleResolver;
@@ -1924,7 +1990,7 @@
 };
 <span class="kw">use </span>sui_types::sui_system_state::get_sui_system_state;
 <span class="kw">use </span>sui_types::{base_types::SequenceNumber, fp_bail, fp_ensure, storage::ParentSync};
-<span class="kw">use </span>typed_store::rocks::{DBBatch, TypedStoreError};
+<span class="kw">use </span>typed_store::rocks::{DBBatch, DBMap, TypedStoreError};
 <span class="kw">use </span>typed_store::traits::Map;
 
 <span class="kw">use </span><span class="kw">crate</span>::authority::authority_per_epoch_store::AuthorityPerEpochStore;
@@ -2716,6 +2782,61 @@
         <span class="prelude-val">Ok</span>(())
     }
 
+    <span class="kw">pub async fn </span>bulk_insert_live_objects(
+        perpetual_db: <span class="kw-2">&amp;</span>AuthorityPerpetualTables,
+        live_objects: <span class="kw">impl </span>Iterator&lt;Item = LiveObject&gt;,
+        indirect_objects_threshold: usize,
+        expected_sha3_digest: <span class="kw-2">&amp;</span>[u8; <span class="number">32</span>],
+    ) -&gt; SuiResult&lt;()&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>hasher = Sha3_256::default();
+        <span class="kw">let </span><span class="kw-2">mut </span>batch = perpetual_db.objects.batch();
+        <span class="kw">for </span>object <span class="kw">in </span>live_objects {
+            hasher.update(object.object_reference().<span class="number">2</span>.inner());
+            <span class="kw">match </span>object {
+                LiveObject::Normal(object) =&gt; {
+                    <span class="kw">let </span>StoreObjectPair(store_object_wrapper, indirect_object) =
+                        get_store_object_pair(object.clone(), indirect_objects_threshold);
+                    batch.insert_batch(
+                        <span class="kw-2">&amp;</span>perpetual_db.objects,
+                        std::iter::once((
+                            ObjectKey::from(object.compute_object_reference()),
+                            store_object_wrapper,
+                        )),
+                    )<span class="question-mark">?</span>;
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(indirect_object) = indirect_object {
+                        batch.merge_batch(
+                            <span class="kw-2">&amp;</span>perpetual_db.indirect_move_objects,
+                            iter::once((indirect_object.inner().digest(), indirect_object)),
+                        )<span class="question-mark">?</span>;
+                    }
+                    <span class="kw">if </span>!object.is_child_object() {
+                        <span class="self">Self</span>::initialize_locks(
+                            <span class="kw-2">&amp;</span>perpetual_db.owned_object_transaction_locks,
+                            <span class="kw-2">&amp;mut </span>batch,
+                            <span class="kw-2">&amp;</span>[object.compute_object_reference()],
+                            <span class="bool-val">false</span>, <span class="comment">// is_force_reset
+                        </span>)<span class="question-mark">?</span>;
+                    }
+                }
+                LiveObject::Wrapped(object_key) =&gt; {
+                    batch.insert_batch(
+                        <span class="kw-2">&amp;</span>perpetual_db.objects,
+                        std::iter::once::&lt;(ObjectKey, StoreObjectWrapper)&gt;((
+                            object_key,
+                            StoreObject::Wrapped.into(),
+                        )),
+                    )<span class="question-mark">?</span>;
+                }
+            }
+        }
+        <span class="kw">let </span>sha3_digest = hasher.finalize().digest;
+        <span class="kw">if </span><span class="kw-2">*</span>expected_sha3_digest != sha3_digest {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::from(<span class="string">&quot;Sha does not match&quot;</span>));
+        }
+        batch.write()<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(())
+    }
+
     <span class="kw">pub async fn </span>set_epoch_start_configuration(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         epoch_start_configuration: <span class="kw-2">&amp;</span>EpochStartConfiguration,
@@ -3112,11 +3233,23 @@
         is_force_reset: bool,
     ) -&gt; SuiResult {
         <span class="macro">trace!</span>(<span class="question-mark">?</span>objects, <span class="string">&quot;initialize_locks&quot;</span>);
+        AuthorityStore::initialize_locks(
+            <span class="kw-2">&amp;</span><span class="self">self</span>.perpetual_tables.owned_object_transaction_locks,
+            write_batch,
+            objects,
+            is_force_reset,
+        )
+    }
 
-        <span class="kw">let </span>locks = <span class="self">self
-            </span>.perpetual_tables
-            .owned_object_transaction_locks
-            .multi_get(objects)<span class="question-mark">?</span>;
+    <span class="kw">pub fn </span>initialize_locks(
+        locks_table: <span class="kw-2">&amp;</span>DBMap&lt;ObjectRef, <span class="prelude-ty">Option</span>&lt;LockDetailsWrapper&gt;&gt;,
+        write_batch: <span class="kw-2">&amp;mut </span>DBBatch,
+        objects: <span class="kw-2">&amp;</span>[ObjectRef],
+        is_force_reset: bool,
+    ) -&gt; SuiResult {
+        <span class="macro">trace!</span>(<span class="question-mark">?</span>objects, <span class="string">&quot;initialize_locks&quot;</span>);
+
+        <span class="kw">let </span>locks = locks_table.multi_get(objects)<span class="question-mark">?</span>;
 
         <span class="kw">if </span>!is_force_reset {
             <span class="comment">// If any locks exist and are not None, return errors for them
@@ -3138,10 +3271,7 @@
             }
         }
 
-        write_batch.insert_batch(
-            <span class="kw-2">&amp;</span><span class="self">self</span>.perpetual_tables.owned_object_transaction_locks,
-            objects.iter().map(|obj_ref| (obj_ref, <span class="prelude-val">None</span>)),
-        )<span class="question-mark">?</span>;
+        write_batch.insert_batch(locks_table, objects.iter().map(|obj_ref| (obj_ref, <span class="prelude-val">None</span>)))<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 

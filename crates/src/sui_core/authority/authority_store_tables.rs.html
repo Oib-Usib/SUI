@@ -588,6 +588,24 @@
 <a href="#588" id="588">588</a>
 <a href="#589" id="589">589</a>
 <a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -600,7 +618,6 @@
 <span class="kw">use </span>sui_types::base_types::SequenceNumber;
 <span class="kw">use </span>sui_types::digests::TransactionEventsDigest;
 <span class="kw">use </span>sui_types::effects::TransactionEffects;
-<span class="kw">use </span>sui_types::storage::ObjectStore;
 <span class="kw">use </span>typed_store::metrics::SamplingInterval;
 <span class="kw">use </span>typed_store::rocks::util::{empty_compaction_filter, reference_count_merge_operator};
 <span class="kw">use </span>typed_store::rocks::{
@@ -944,6 +961,14 @@
         <span class="prelude-val">Ok</span>(object_ref)
     }
 
+    <span class="kw">pub fn </span>set_highest_pruned_checkpoint_without_wb(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        checkpoint_number: CheckpointSequenceNumber,
+    ) -&gt; SuiResult {
+        <span class="kw">let </span><span class="kw-2">mut </span>wb = <span class="self">self</span>.pruned_checkpoint.batch();
+        <span class="self">self</span>.set_highest_pruned_checkpoint(<span class="kw-2">&amp;mut </span>wb, checkpoint_number)
+    }
+
     <span class="kw">pub fn </span>database_is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SuiResult&lt;bool&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.objects
@@ -985,6 +1010,17 @@
             .rocksdb
             .flush()
             .map_err(SuiError::StorageError)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">pub fn </span>insert_root_state_hash(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        epoch: EpochId,
+        last_checkpoint_of_epoch: CheckpointSequenceNumber,
+        accumulator: Accumulator,
+    ) -&gt; SuiResult {
+        <span class="self">self</span>.root_state_hash_by_epoch
+            .insert(<span class="kw-2">&amp;</span>epoch, <span class="kw-2">&amp;</span>(last_checkpoint_of_epoch, accumulator))<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 

@@ -425,6 +425,10 @@
 <a href="#425" id="425">425</a>
 <a href="#426" id="426">426</a>
 <a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="attr">#![allow(dead_code)]
@@ -650,8 +654,8 @@
 <span class="kw">impl </span>StateSnapshotWriterV1 {
     <span class="kw">pub async fn </span>new(
         epoch: u64,
-        local_store_config: ObjectStoreConfig,
-        remote_store_config: ObjectStoreConfig,
+        local_store_config: <span class="kw-2">&amp;</span>ObjectStoreConfig,
+        remote_store_config: <span class="kw-2">&amp;</span>ObjectStoreConfig,
         file_compression: FileCompression,
         concurrency: NonZeroUsize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
@@ -668,8 +672,12 @@
         <span class="kw">let </span>local_object_store = local_store_config.make()<span class="question-mark">?</span>;
         <span class="kw">let </span>local_staging_dir_root = local_store_config
             .directory
-            .context(<span class="string">&quot;No local directory specified&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let </span>local_epoch_dir_path = local_staging_dir_root.join(<span class="kw-2">&amp;</span>epoch_dir);
+            .as_ref()
+            .context(<span class="string">&quot;No local directory specified&quot;</span>)<span class="question-mark">?
+            </span>.clone();
+
+        <span class="comment">// Delete local epoch dir if it exists
+        </span><span class="kw">let </span>local_epoch_dir_path = local_staging_dir_root.join(<span class="kw-2">&amp;</span>epoch_dir);
         <span class="kw">if </span>local_epoch_dir_path.exists() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
                 <span class="string">&quot;Local epoch dir already exists: {:?}&quot;</span>,
@@ -802,7 +810,7 @@
     <span class="kw">fn </span>write_manifest(<span class="kw-2">&amp;mut </span><span class="self">self</span>, file_metadata: Vec&lt;FileMetadata&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span>(f, manifest_file_path) = <span class="self">self</span>.manifest_file()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>wbuf = BufWriter::new(f);
-        <span class="kw">let </span>manifest = Manifest::V1(ManifestV1 {
+        <span class="kw">let </span>manifest: Manifest = Manifest::V1(ManifestV1 {
             snapshot_version: <span class="number">1</span>,
             address_length: ObjectID::LENGTH <span class="kw">as </span>u64,
             file_metadata,
