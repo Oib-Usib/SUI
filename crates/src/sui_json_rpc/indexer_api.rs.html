@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-json-rpc/src/indexer_api.rs`."><title>indexer_api.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_json_rpc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a2b1646c5 2023-05-25)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_json_rpc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-json-rpc/src/indexer_api.rs`."><title>indexer_api.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_json_rpc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (1a5f8bce7 2023-05-26)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_json_rpc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -521,6 +521,14 @@
 <a href="#521" id="521">521</a>
 <a href="#522" id="522">522</a>
 <a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -570,6 +578,12 @@
 <span class="kw">const </span>NAME_SERVICE_TARGET_ADDRESS: <span class="kw-2">&amp;</span>str = <span class="string">&quot;target_address&quot;</span>;
 <span class="kw">const </span>NAME_SERVICE_DOMAIN_MODULE: <span class="kw-2">&amp;</span>IdentStr = <span class="macro">ident_str!</span>(<span class="string">&quot;domain&quot;</span>);
 <span class="kw">const </span>NAME_SERVICE_DOMAIN_STRUCT: <span class="kw-2">&amp;</span>IdentStr = <span class="macro">ident_str!</span>(<span class="string">&quot;Domain&quot;</span>);
+<span class="kw">const </span>NAME_SERVICE_DEFAULT_PACKAGE_ADDRESS: <span class="kw-2">&amp;</span>str =
+    <span class="string">&quot;0xd22b24490e0bae52676651b4f56660a5ff8022a2576e0089f79b3c88d44e08f0&quot;</span>;
+<span class="kw">const </span>NAME_SERVICE_DEFAULT_REGISTRY: <span class="kw-2">&amp;</span>str =
+    <span class="string">&quot;0xe64cd9db9f829c6cc405d9790bd71567ae07259855f4fba6f02c84f52298c106&quot;</span>;
+<span class="kw">const </span>NAME_SERVICE_DEFAULT_REVERSE_REGISTRY: <span class="kw-2">&amp;</span>str =
+    <span class="string">&quot;0x2fd099e17a292d2bc541df474f9fafa595653848cbabb2d7a4656ec786a1969f&quot;</span>;
 
 <span class="kw">pub fn </span>spawn_subscription&lt;S, T&gt;(<span class="kw-2">mut </span>sink: SubscriptionSink, rx: S)
 <span class="kw">where
@@ -847,90 +861,96 @@
     <span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">async fn </span>resolve_name_service_address(<span class="kw-2">&amp;</span><span class="self">self</span>, name: String) -&gt; RpcResult&lt;<span class="prelude-ty">Option</span>&lt;SuiAddress&gt;&gt; {
         <span class="macro">with_tracing!</span>(<span class="kw">async move </span>{
-            <span class="kw">if let </span>(<span class="prelude-val">Some</span>(pkg_addr), <span class="prelude-val">Some</span>(registry_id)) = (<span class="self">self</span>.ns_package_addr, <span class="self">self</span>.ns_registry_id)
-            {
-                <span class="kw">let </span>package_addr = AccountAddress::new(pkg_addr.to_inner());
-                <span class="kw">let </span>name_type_tag = TypeTag::Struct(Box::new(StructTag {
-                    address: package_addr,
-                    module: NAME_SERVICE_DOMAIN_MODULE.to_owned(),
-                    name: NAME_SERVICE_DOMAIN_STRUCT.to_owned(),
-                    type_params: <span class="macro">vec!</span>[],
-                }));
-                <span class="kw">let </span>domain = Domain::from_str(<span class="kw-2">&amp;</span>name).map_err(|e| {
+            <span class="kw">let </span>pkg_addr = <span class="kw">match </span><span class="self">self</span>.ns_package_addr {
+                <span class="prelude-val">Some</span>(addr) =&gt; addr,
+                <span class="prelude-val">None </span>=&gt; SuiAddress::from_str(NAME_SERVICE_DEFAULT_PACKAGE_ADDRESS)<span class="question-mark">?</span>,
+            };
+            <span class="kw">let </span>registry_id = <span class="kw">match </span><span class="self">self</span>.ns_registry_id {
+                <span class="prelude-val">Some</span>(id) =&gt; id,
+                <span class="prelude-val">None </span>=&gt; ObjectID::from_str(NAME_SERVICE_DEFAULT_REGISTRY).map_err(|e| {
                     Error::UnexpectedError(<span class="macro">format!</span>(
-                        <span class="string">&quot;Failed to parse NameService Domain with error: {:?}&quot;</span>,
+                        <span class="string">&quot;Parsing name service default registry ID failed with error: {:?}&quot;</span>,
                         e
                     ))
-                })<span class="question-mark">?</span>;
-                <span class="kw">let </span>domain_bcs_value = bcs::to_bytes(<span class="kw-2">&amp;</span>domain).map_err(|e| {
+                })<span class="question-mark">?</span>,
+            };
+            <span class="kw">let </span>package_addr = AccountAddress::new(pkg_addr.to_inner());
+            <span class="kw">let </span>name_type_tag = TypeTag::Struct(Box::new(StructTag {
+                address: package_addr,
+                module: NAME_SERVICE_DOMAIN_MODULE.to_owned(),
+                name: NAME_SERVICE_DOMAIN_STRUCT.to_owned(),
+                type_params: <span class="macro">vec!</span>[],
+            }));
+            <span class="kw">let </span>domain = Domain::from_str(<span class="kw-2">&amp;</span>name).map_err(|e| {
+                Error::UnexpectedError(<span class="macro">format!</span>(
+                    <span class="string">&quot;Failed to parse NameService Domain with error: {:?}&quot;</span>,
+                    e
+                ))
+            })<span class="question-mark">?</span>;
+            <span class="kw">let </span>domain_bcs_value = bcs::to_bytes(<span class="kw-2">&amp;</span>domain).map_err(|e| {
+                Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(<span class="macro">format!</span>(
+                    <span class="string">&quot;Unable to serialize name: {:?} with error: {:?}&quot;</span>,
+                    domain, e
+                )))
+            })<span class="question-mark">?</span>;
+            <span class="kw">let </span>record_object_id_option = <span class="self">self
+                </span>.state
+                .get_dynamic_field_object_id(registry_id, name_type_tag, <span class="kw-2">&amp;</span>domain_bcs_value)
+                .map_err(|e| {
                     Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(<span class="macro">format!</span>(
-                        <span class="string">&quot;Unable to serialize name: {:?} with error: {:?}&quot;</span>,
-                        domain, e
+                        <span class="string">&quot;Unable to lookup name in name service registry with error: {:?}&quot;</span>,
+                        e
                     )))
                 })<span class="question-mark">?</span>;
-                <span class="kw">let </span>record_object_id_option = <span class="self">self
-                    </span>.state
-                    .get_dynamic_field_object_id(registry_id, name_type_tag, <span class="kw-2">&amp;</span>domain_bcs_value)
-                    .map_err(|e| {
-                        Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(<span class="macro">format!</span>(
-                            <span class="string">&quot;Unable to lookup name in name service registry with error: {:?}&quot;</span>,
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(record_object_id) = record_object_id_option {
+                <span class="kw">let </span>record_object_read =
+                    <span class="self">self</span>.state.get_object_read(<span class="kw-2">&amp;</span>record_object_id).map_err(|e| {
+                        Error::UnexpectedError(<span class="macro">format!</span>(
+                            <span class="string">&quot;Failed to get object read of name with error {:?}&quot;</span>,
                             e
-                        )))
+                        ))
                     })<span class="question-mark">?</span>;
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(record_object_id) = record_object_id_option {
-                    <span class="kw">let </span>record_object_read =
-                        <span class="self">self</span>.state.get_object_read(<span class="kw-2">&amp;</span>record_object_id).map_err(|e| {
-                            Error::UnexpectedError(<span class="macro">format!</span>(
-                                <span class="string">&quot;Failed to get object read of name with error {:?}&quot;</span>,
-                                e
-                            ))
-                        })<span class="question-mark">?</span>;
-                    <span class="kw">let </span>record_parsed_move_object =
-                        SuiParsedMoveObject::try_from_object_read(record_object_read)<span class="question-mark">?</span>;
-                    <span class="comment">// NOTE: &quot;value&quot; is the field name to get the address info
-                    </span><span class="kw">let </span>address_info_move_value = record_parsed_move_object
-                        .read_dynamic_field_value(NAME_SERVICE_VALUE)
-                        .ok_or_else(|| {
-                            Error::UnexpectedError(
-                                <span class="string">&quot;Cannot find value field in record Move struct&quot;</span>.to_string(),
-                            )
-                        })<span class="question-mark">?</span>;
-                    <span class="kw">let </span>address_info_move_struct = <span class="kw">match </span>address_info_move_value {
-                        SuiMoveValue::Struct(a) =&gt; <span class="prelude-val">Ok</span>(a),
-                        <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(
-                            <span class="string">&quot;value field is not found.&quot;</span>.to_string(),
-                        )),
-                    }<span class="question-mark">?</span>;
-                    <span class="comment">// NOTE: &quot;target_address&quot; is the field name to get the address
-                    </span><span class="kw">let </span>address_str_move_value = address_info_move_struct
-                        .read_dynamic_field_value(NAME_SERVICE_TARGET_ADDRESS)
-                        .ok_or_else(|| {
-                            Error::UnexpectedError(<span class="macro">format!</span>(
+                <span class="kw">let </span>record_parsed_move_object =
+                    SuiParsedMoveObject::try_from_object_read(record_object_read)<span class="question-mark">?</span>;
+                <span class="comment">// NOTE: &quot;value&quot; is the field name to get the address info
+                </span><span class="kw">let </span>address_info_move_value = record_parsed_move_object
+                    .read_dynamic_field_value(NAME_SERVICE_VALUE)
+                    .ok_or_else(|| {
+                        Error::UnexpectedError(
+                            <span class="string">&quot;Cannot find value field in record Move struct&quot;</span>.to_string(),
+                        )
+                    })<span class="question-mark">?</span>;
+                <span class="kw">let </span>address_info_move_struct = <span class="kw">match </span>address_info_move_value {
+                    SuiMoveValue::Struct(a) =&gt; <span class="prelude-val">Ok</span>(a),
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(
+                        <span class="string">&quot;value field is not found.&quot;</span>.to_string(),
+                    )),
+                }<span class="question-mark">?</span>;
+                <span class="comment">// NOTE: &quot;target_address&quot; is the field name to get the address
+                </span><span class="kw">let </span>address_str_move_value = address_info_move_struct
+                    .read_dynamic_field_value(NAME_SERVICE_TARGET_ADDRESS)
+                    .ok_or_else(|| {
+                        Error::UnexpectedError(<span class="macro">format!</span>(
                             <span class="string">&quot;Cannot find target_address field in address info Move struct: {:?}&quot;</span>,
                             address_info_move_struct
                         ))
-                        })<span class="question-mark">?</span>;
-                    <span class="kw">let </span>addr = <span class="kw">match </span><span class="kw-2">&amp;</span>address_str_move_value {
-                        SuiMoveValue::Option(boxed_addr) =&gt; <span class="kw">match </span><span class="kw-2">**</span>boxed_addr {
-                            <span class="prelude-val">Some</span>(SuiMoveValue::Address(<span class="kw-2">ref </span>addr)) =&gt; <span class="prelude-val">Ok</span>(<span class="kw-2">*</span>addr),
-                            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(<span class="macro">format!</span>(
-                                <span class="string">&quot;No SuiAddress found in option: {:?}&quot;</span>,
-                                address_str_move_value
-                            ))),
-                        },
+                    })<span class="question-mark">?</span>;
+                <span class="kw">let </span>addr = <span class="kw">match </span><span class="kw-2">&amp;</span>address_str_move_value {
+                    SuiMoveValue::Option(boxed_addr) =&gt; <span class="kw">match </span><span class="kw-2">**</span>boxed_addr {
+                        <span class="prelude-val">Some</span>(SuiMoveValue::Address(<span class="kw-2">ref </span>addr)) =&gt; <span class="prelude-val">Ok</span>(<span class="kw-2">*</span>addr),
                         <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(<span class="macro">format!</span>(
-                            <span class="string">&quot;No SuiAddress found in: {:?}&quot;</span>,
+                            <span class="string">&quot;No SuiAddress found in option: {:?}&quot;</span>,
                             address_str_move_value
                         ))),
-                    }<span class="question-mark">?</span>;
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(addr));
-                }
-                <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(Error::UnexpectedError(
-                    <span class="string">&quot;Name service package address or registry ID is not set.&quot;</span>.to_string(),
-                ))<span class="question-mark">?
-            </span>}
+                    },
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(<span class="macro">format!</span>(
+                        <span class="string">&quot;No SuiAddress found in: {:?}&quot;</span>,
+                        address_str_move_value
+                    ))),
+                }<span class="question-mark">?</span>;
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(addr));
+            }
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
         })
     }
 
@@ -942,95 +962,91 @@
         _limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     ) -&gt; RpcResult&lt;Page&lt;String, ObjectID&gt;&gt; {
         <span class="macro">with_tracing!</span>(<span class="kw">async move </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(reverse_registry_id) = <span class="self">self</span>.ns_reverse_registry_id {
-                <span class="kw">let </span>name_type_tag = TypeTag::Address;
-                <span class="kw">let </span>addr_bcs_value = bcs::to_bytes(<span class="kw-2">&amp;</span>address).map_err(|e| {
-                    Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(<span class="macro">format!</span>(
-                        <span class="string">&quot;Unable to serialize address: {:?} with error: {:?}&quot;</span>,
-                        address, e
-                    )))
-                })<span class="question-mark">?</span>;
+            <span class="kw">let </span>reverse_registry_id = <span class="kw">match </span><span class="self">self</span>.ns_reverse_registry_id {
+                <span class="prelude-val">Some</span>(id) =&gt; id,
+                <span class="prelude-val">None </span>=&gt; ObjectID::from_str(NAME_SERVICE_DEFAULT_REVERSE_REGISTRY).map_err(|e| {
+                    Error::UnexpectedError(<span class="macro">format!</span>(
+                        <span class="string">&quot;Parsing name service default reverse registry ID failed with error: {:?}&quot;</span>,
+                        e
+                    ))
+                })<span class="question-mark">?</span>,
+            };
 
-                <span class="kw">let </span>addr_object_id = <span class="self">self
-                    </span>.state
-                    .get_dynamic_field_object_id(
-                        reverse_registry_id,
-                        name_type_tag,
-                        <span class="kw-2">&amp;</span>addr_bcs_value,
+            <span class="kw">let </span>name_type_tag = TypeTag::Address;
+            <span class="kw">let </span>addr_bcs_value = bcs::to_bytes(<span class="kw-2">&amp;</span>address).map_err(|e| {
+                Error::SuiRpcInputError(SuiRpcInputError::GenericInvalid(<span class="macro">format!</span>(
+                    <span class="string">&quot;Unable to serialize address: {:?} with error: {:?}&quot;</span>,
+                    address, e
+                )))
+            })<span class="question-mark">?</span>;
+
+            <span class="kw">let </span>addr_object_id = <span class="self">self
+                </span>.state
+                .get_dynamic_field_object_id(reverse_registry_id, name_type_tag, <span class="kw-2">&amp;</span>addr_bcs_value)
+                .map_err(|e| {
+                    Error::UnexpectedError(<span class="macro">format!</span>(
+                        <span class="string">&quot;Read name service reverse dynamic field table failed with error: {:?}&quot;</span>,
+                        e
+                    ))
+                })<span class="question-mark">?
+                </span>.ok_or_else(|| {
+                    Error::UnexpectedError(<span class="macro">format!</span>(<span class="string">&quot;Record not found for address: {:?}&quot;</span>, address))
+                })<span class="question-mark">?</span>;
+            <span class="kw">let </span>addr_object_read = <span class="self">self</span>.state.get_object_read(<span class="kw-2">&amp;</span>addr_object_id).map_err(|e| {
+                <span class="macro">warn!</span>(
+                    <span class="string">&quot;Failed to get object read of address {:?} with error: {:?}&quot;</span>,
+                    addr_object_id, e
+                );
+                Error::UnexpectedError(<span class="macro">format!</span>(
+                    <span class="string">&quot;Failed to get object read of address with err: {:?}&quot;</span>,
+                    e
+                ))
+            })<span class="question-mark">?</span>;
+            <span class="kw">let </span>addr_parsed_move_object =
+                SuiParsedMoveObject::try_from_object_read(addr_object_read)<span class="question-mark">?</span>;
+            <span class="kw">let </span>address_info_move_value = addr_parsed_move_object
+                .read_dynamic_field_value(NAME_SERVICE_VALUE)
+                .ok_or_else(|| {
+                    Error::UnexpectedError(
+                        <span class="string">&quot;Cannot find value field in record Move struct&quot;</span>.to_string(),
                     )
-                    .map_err(|e| {
-                        Error::UnexpectedError(<span class="macro">format!</span>(
-                            <span class="string">&quot;Read name service reverse dynamic field table failed with error: {:?}&quot;</span>,
-                            e
-                        ))
-                    })<span class="question-mark">?
-                    </span>.ok_or_else(|| {
-                        Error::UnexpectedError(<span class="macro">format!</span>(
-                            <span class="string">&quot;Record not found for address: {:?}&quot;</span>,
-                            address
-                        ))
-                    })<span class="question-mark">?</span>;
-                <span class="kw">let </span>addr_object_read =
-                    <span class="self">self</span>.state.get_object_read(<span class="kw-2">&amp;</span>addr_object_id).map_err(|e| {
-                        <span class="macro">warn!</span>(
-                            <span class="string">&quot;Failed to get object read of address {:?} with error: {:?}&quot;</span>,
-                            addr_object_id, e
-                        );
-                        Error::UnexpectedError(<span class="macro">format!</span>(
-                            <span class="string">&quot;Failed to get object read of address with err: {:?}&quot;</span>,
-                            e
-                        ))
-                    })<span class="question-mark">?</span>;
-                <span class="kw">let </span>addr_parsed_move_object =
-                    SuiParsedMoveObject::try_from_object_read(addr_object_read)<span class="question-mark">?</span>;
-                <span class="kw">let </span>address_info_move_value = addr_parsed_move_object
-                    .read_dynamic_field_value(NAME_SERVICE_VALUE)
-                    .ok_or_else(|| {
-                        Error::UnexpectedError(
-                            <span class="string">&quot;Cannot find value field in record Move struct&quot;</span>.to_string(),
-                        )
-                    })<span class="question-mark">?</span>;
-                <span class="kw">let </span>domain_info_move_struct = <span class="kw">match </span>address_info_move_value {
-                    SuiMoveValue::Struct(a) =&gt; <span class="prelude-val">Ok</span>(a),
-                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(
-                        <span class="string">&quot;value field is not found.&quot;</span>.to_string(),
-                    )),
-                }<span class="question-mark">?</span>;
-                <span class="kw">let </span>labels_move_value = domain_info_move_struct
-                    .read_dynamic_field_value(<span class="string">&quot;labels&quot;</span>)
-                    .ok_or_else(|| {
-                        Error::UnexpectedError(<span class="macro">format!</span>(
-                            <span class="string">&quot;Cannot find labels field in address info Move struct: {:?}&quot;</span>,
-                            domain_info_move_struct
-                        ))
-                    })<span class="question-mark">?</span>;
-                <span class="kw">let </span>primary_domain = <span class="kw">match </span>labels_move_value {
-                    SuiMoveValue::Vector(labels) =&gt; {
-                        <span class="kw">let </span>label_strs: Vec&lt;String&gt; = labels
-                            .iter()
-                            .rev()
-                            .filter_map(|label| <span class="kw">match </span>label {
-                                SuiMoveValue::String(label_str) =&gt; <span class="prelude-val">Some</span>(label_str.clone()),
-                                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-                            })
-                            .collect();
-                        <span class="prelude-val">Ok</span>(label_strs.join(<span class="string">&quot;.&quot;</span>))
-                    }
-                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(<span class="macro">format!</span>(
-                        <span class="string">&quot;No string field for primary name is found in {:?}&quot;</span>,
-                        labels_move_value
-                    ))),
-                }<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(Page {
-                    data: <span class="macro">vec!</span>[primary_domain],
-                    next_cursor: <span class="prelude-val">Some</span>(addr_object_id),
-                    has_next_page: <span class="bool-val">false</span>,
-                })
-            } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(Error::UnexpectedError(
-                    <span class="string">&quot;Name service reverse registry ID is not set&quot;</span>.to_string(),
-                ))<span class="question-mark">?
-            </span>}
+                })<span class="question-mark">?</span>;
+            <span class="kw">let </span>domain_info_move_struct = <span class="kw">match </span>address_info_move_value {
+                SuiMoveValue::Struct(a) =&gt; <span class="prelude-val">Ok</span>(a),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(
+                    <span class="string">&quot;value field is not found.&quot;</span>.to_string(),
+                )),
+            }<span class="question-mark">?</span>;
+            <span class="kw">let </span>labels_move_value = domain_info_move_struct
+                .read_dynamic_field_value(<span class="string">&quot;labels&quot;</span>)
+                .ok_or_else(|| {
+                    Error::UnexpectedError(<span class="macro">format!</span>(
+                        <span class="string">&quot;Cannot find labels field in address info Move struct: {:?}&quot;</span>,
+                        domain_info_move_struct
+                    ))
+                })<span class="question-mark">?</span>;
+            <span class="kw">let </span>primary_domain = <span class="kw">match </span>labels_move_value {
+                SuiMoveValue::Vector(labels) =&gt; {
+                    <span class="kw">let </span>label_strs: Vec&lt;String&gt; = labels
+                        .iter()
+                        .rev()
+                        .filter_map(|label| <span class="kw">match </span>label {
+                            SuiMoveValue::String(label_str) =&gt; <span class="prelude-val">Some</span>(label_str.clone()),
+                            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+                        })
+                        .collect();
+                    <span class="prelude-val">Ok</span>(label_strs.join(<span class="string">&quot;.&quot;</span>))
+                }
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnexpectedError(<span class="macro">format!</span>(
+                    <span class="string">&quot;No string field for primary name is found in {:?}&quot;</span>,
+                    labels_move_value
+                ))),
+            }<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(Page {
+                data: <span class="macro">vec!</span>[primary_domain],
+                next_cursor: <span class="prelude-val">Some</span>(addr_object_id),
+                has_next_page: <span class="bool-val">false</span>,
+            })
         })
     }
 }
