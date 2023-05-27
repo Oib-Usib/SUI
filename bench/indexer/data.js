@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685115267934,
+  "lastUpdate": 1685212524076,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9899,6 +9899,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314697,
             "range": "± 32057",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ff3a33206b85cc8686c0063392d60b154d836438",
+          "message": "sui ns: add default configs (#12239)\n\n## Description \r\n\r\nbefore this PR, FN config is required to make sui NS work, this PR added\r\ndefault mainnet sui ns config so that\r\n- without extra setup, sui ns on mainnet should just work\r\n- if RPC provider wants to override with custom ones, they still can\r\n- on other *nets, overriding is still required.\r\n\r\n## Test Plan \r\n\r\nTest on testnet with & without overriding.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-27T11:21:17-07:00",
+          "tree_id": "e44e93b60073b5e6fe5ce2d6132470f9c3866f7f",
+          "url": "https://github.com/MystenLabs/sui/commit/ff3a33206b85cc8686c0063392d60b154d836438"
+        },
+        "date": 1685212507247,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141276604,
+            "range": "± 8811500",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 318753,
+            "range": "± 35692",
             "unit": "ns/iter"
           }
         ]
