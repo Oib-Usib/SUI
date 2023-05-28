@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685212524076,
+  "lastUpdate": 1685287543907,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9935,6 +9935,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 318753,
             "range": "± 35692",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "adb00542eff61a0ca5434e33ff5cbdc8e6b72e7e",
+          "message": "Use a single db batch per narwhal commit in consensus task. (#10360)\n\nThis has seen considerable testing in private testnet at this point. The\r\none major issue identified (degrading narwhal performance) appears to\r\nhave been caused by the insufficient udp socket buffers identified by\r\n@aschran - i test this code with his fix and there is no longer any\r\ndegradation caused by this change, and the improvement in consensus\r\nhandler utilization appears to be close to 2x.",
+          "timestamp": "2023-05-28T08:11:23-07:00",
+          "tree_id": "4ac202b416c05fed7248f00df6146d8b7c10fc88",
+          "url": "https://github.com/MystenLabs/sui/commit/adb00542eff61a0ca5434e33ff5cbdc8e6b72e7e"
+        },
+        "date": 1685287526813,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 137810051,
+            "range": "± 4853442",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 316679,
+            "range": "± 20691",
             "unit": "ns/iter"
           }
         ]
