@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/consensus_handler.rs`."><title>consensus_handler.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (1a5f8bce7 2023-05-26)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/consensus_handler.rs`."><title>consensus_handler.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (cca7ee581 2023-05-27)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -576,81 +576,6 @@
 <a href="#576" id="576">576</a>
 <a href="#577" id="577">577</a>
 <a href="#578" id="578">578</a>
-<a href="#579" id="579">579</a>
-<a href="#580" id="580">580</a>
-<a href="#581" id="581">581</a>
-<a href="#582" id="582">582</a>
-<a href="#583" id="583">583</a>
-<a href="#584" id="584">584</a>
-<a href="#585" id="585">585</a>
-<a href="#586" id="586">586</a>
-<a href="#587" id="587">587</a>
-<a href="#588" id="588">588</a>
-<a href="#589" id="589">589</a>
-<a href="#590" id="590">590</a>
-<a href="#591" id="591">591</a>
-<a href="#592" id="592">592</a>
-<a href="#593" id="593">593</a>
-<a href="#594" id="594">594</a>
-<a href="#595" id="595">595</a>
-<a href="#596" id="596">596</a>
-<a href="#597" id="597">597</a>
-<a href="#598" id="598">598</a>
-<a href="#599" id="599">599</a>
-<a href="#600" id="600">600</a>
-<a href="#601" id="601">601</a>
-<a href="#602" id="602">602</a>
-<a href="#603" id="603">603</a>
-<a href="#604" id="604">604</a>
-<a href="#605" id="605">605</a>
-<a href="#606" id="606">606</a>
-<a href="#607" id="607">607</a>
-<a href="#608" id="608">608</a>
-<a href="#609" id="609">609</a>
-<a href="#610" id="610">610</a>
-<a href="#611" id="611">611</a>
-<a href="#612" id="612">612</a>
-<a href="#613" id="613">613</a>
-<a href="#614" id="614">614</a>
-<a href="#615" id="615">615</a>
-<a href="#616" id="616">616</a>
-<a href="#617" id="617">617</a>
-<a href="#618" id="618">618</a>
-<a href="#619" id="619">619</a>
-<a href="#620" id="620">620</a>
-<a href="#621" id="621">621</a>
-<a href="#622" id="622">622</a>
-<a href="#623" id="623">623</a>
-<a href="#624" id="624">624</a>
-<a href="#625" id="625">625</a>
-<a href="#626" id="626">626</a>
-<a href="#627" id="627">627</a>
-<a href="#628" id="628">628</a>
-<a href="#629" id="629">629</a>
-<a href="#630" id="630">630</a>
-<a href="#631" id="631">631</a>
-<a href="#632" id="632">632</a>
-<a href="#633" id="633">633</a>
-<a href="#634" id="634">634</a>
-<a href="#635" id="635">635</a>
-<a href="#636" id="636">636</a>
-<a href="#637" id="637">637</a>
-<a href="#638" id="638">638</a>
-<a href="#639" id="639">639</a>
-<a href="#640" id="640">640</a>
-<a href="#641" id="641">641</a>
-<a href="#642" id="642">642</a>
-<a href="#643" id="643">643</a>
-<a href="#644" id="644">644</a>
-<a href="#645" id="645">645</a>
-<a href="#646" id="646">646</a>
-<a href="#647" id="647">647</a>
-<a href="#648" id="648">648</a>
-<a href="#649" id="649">649</a>
-<a href="#650" id="650">650</a>
-<a href="#651" id="651">651</a>
-<a href="#652" id="652">652</a>
-<a href="#653" id="653">653</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -682,7 +607,7 @@
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, EpochId, TransactionDigest};
 <span class="kw">use </span>sui_types::storage::ParentSync;
-<span class="kw">use </span>sui_types::transaction::VerifiedTransaction;
+<span class="kw">use </span>sui_types::transaction::{SenderSignedData, VerifiedTransaction};
 
 <span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
 <span class="kw">use </span>sui_types::messages_consensus::{
@@ -780,7 +705,15 @@
     </span><span class="attr">#[instrument(level = <span class="string">&quot;trace&quot;</span>, skip_all)]
     </span><span class="kw">async fn </span>handle_consensus_output(<span class="kw-2">&amp;</span><span class="self">self</span>, consensus_output: ConsensusOutput) {
         <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;HandleConsensusOutput&quot;</span>);
+
+        <span class="comment">// This code no longer supports old protocol versions.
+        </span><span class="macro">assert!</span>(<span class="self">self
+            </span>.epoch_store
+            .protocol_config()
+            .consensus_order_end_of_epoch_last());
+
         <span class="kw">let </span><span class="kw-2">mut </span>sequenced_transactions = Vec::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>end_of_publish_transactions = Vec::new();
 
         <span class="kw">let </span><span class="kw-2">mut </span>bytes = <span class="number">0usize</span>;
         <span class="kw">let </span>round = consensus_output.sub_dag.leader_round();
@@ -865,94 +798,90 @@
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>roots = BTreeSet::new();
-        <span class="kw">for </span>(seq, (serialized, transaction, output_cert)) <span class="kw">in </span>transactions.into_iter().enumerate() {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(digest) = transaction.executable_transaction_digest() {
-                roots.insert(digest);
-            }
 
-            <span class="kw">let </span>index = ExecutionIndices {
-                last_committed_round: round,
-                sub_dag_index: consensus_output.sub_dag.sub_dag_index,
-                transaction_index: seq <span class="kw">as </span>u64,
-            };
-
-            <span class="kw">let </span>index_with_hash = <span class="kw">match </span>update_hash(<span class="kw-2">&amp;</span><span class="self">self</span>.last_seen, index, <span class="kw-2">&amp;</span>serialized) {
-                <span class="prelude-val">Some</span>(i) =&gt; i,
-                <span class="prelude-val">None </span>=&gt; {
-                    <span class="macro">debug!</span>(
-                <span class="string">&quot;Ignore consensus transaction at index {:?} as it appear to be already processed&quot;</span>,
-                index
-            );
-                    <span class="kw">continue</span>;
-                }
-            };
-
-            <span class="kw">let </span>certificate_author = AuthorityName::from_bytes(
-                <span class="self">self</span>.committee
-                    .authority_safe(<span class="kw-2">&amp;</span>output_cert.header().author())
-                    .protocol_key_bytes()
-                    .<span class="number">0
-                    </span>.as_ref(),
-            )
-            .unwrap();
-
-            sequenced_transactions.push(SequencedConsensusTransaction {
-                certificate: output_cert.clone(),
-                certificate_author,
-                consensus_index: index_with_hash,
-                transaction,
-            });
-        }
-
-        <span class="comment">// (!) Should not add new transactions to sequenced_transactions beyond this point
-
-        </span><span class="kw">if </span><span class="self">self
-            </span>.epoch_store
-            .protocol_config()
-            .consensus_order_end_of_epoch_last()
         {
-            reorder_end_of_publish(<span class="kw-2">&amp;mut </span>sequenced_transactions);
-        }
-
-        <span class="self">self</span>.metrics
-            .consensus_handler_processed_bytes
-            .inc_by(bytes <span class="kw">as </span>u64);
-
-        <span class="kw">let </span>verified_transactions = {
             <span class="kw">let </span><span class="kw-2">mut </span>processed_cache = <span class="self">self</span>.processed_cache.lock();
             <span class="comment">// We need a set here as well, since the processed_cache is a LRU cache and can drop
             // entries while we&#39;re iterating over the sequenced transactions.
             </span><span class="kw">let </span><span class="kw-2">mut </span>processed_set = HashSet::new();
 
-            sequenced_transactions
-                .into_iter()
-                .filter_map(|sequenced_transaction| {
-                    <span class="kw">let </span>key = sequenced_transaction.key();
-                    <span class="kw">let </span>in_set = !processed_set.insert(key);
-                    <span class="kw">let </span>in_cache = processed_cache
-                        .put(sequenced_transaction.key(), ())
-                        .is_some();
+            <span class="kw">for </span>(seq, (serialized, transaction, output_cert)) <span class="kw">in
+                </span>transactions.into_iter().enumerate()
+            {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(digest) = transaction.executable_transaction_digest() {
+                    roots.insert(digest);
+                }
 
-                    <span class="kw">if </span>in_set || in_cache {
-                        <span class="self">self</span>.metrics.skipped_consensus_txns_cache_hit.inc();
-                        <span class="kw">return </span><span class="prelude-val">None</span>;
-                    }
+                <span class="kw">let </span>index = ExecutionIndices {
+                    last_committed_round: round,
+                    sub_dag_index: consensus_output.sub_dag.sub_dag_index,
+                    transaction_index: seq <span class="kw">as </span>u64,
+                };
 
-                    <span class="kw">match </span><span class="self">self</span>.epoch_store.verify_consensus_transaction(
-                        sequenced_transaction,
-                        <span class="kw-2">&amp;</span><span class="self">self</span>.metrics.skipped_consensus_txns,
-                    ) {
-                        <span class="prelude-val">Ok</span>(verified_transaction) =&gt; <span class="prelude-val">Some</span>(verified_transaction),
-                        <span class="prelude-val">Err</span>(()) =&gt; <span class="prelude-val">None</span>,
+                <span class="kw">let </span>index_with_hash = <span class="kw">match </span>update_hash(<span class="kw-2">&amp;</span><span class="self">self</span>.last_seen, index, <span class="kw-2">&amp;</span>serialized) {
+                    <span class="prelude-val">Some</span>(i) =&gt; i,
+                    <span class="prelude-val">None </span>=&gt; {
+                        <span class="macro">debug!</span>(
+                            <span class="string">&quot;Ignore consensus transaction at index {:?} as it appear to be already processed&quot;</span>,
+                            index
+                        );
+                        <span class="kw">continue</span>;
                     }
-                })
-                .collect()
-        };
+                };
+
+                <span class="kw">let </span>certificate_author = AuthorityName::from_bytes(
+                    <span class="self">self</span>.committee
+                        .authority_safe(<span class="kw-2">&amp;</span>output_cert.header().author())
+                        .protocol_key_bytes()
+                        .<span class="number">0
+                        </span>.as_ref(),
+                )
+                .unwrap();
+
+                <span class="kw">let </span>sequenced_transaction = SequencedConsensusTransaction {
+                    certificate: output_cert.clone(),
+                    certificate_author,
+                    consensus_index: index_with_hash,
+                    transaction,
+                };
+
+                <span class="kw">let </span>key = sequenced_transaction.key();
+                <span class="kw">let </span>in_set = !processed_set.insert(key);
+                <span class="kw">let </span>in_cache = processed_cache
+                    .put(sequenced_transaction.key(), ())
+                    .is_some();
+
+                <span class="kw">if </span>in_set || in_cache {
+                    <span class="self">self</span>.metrics.skipped_consensus_txns_cache_hit.inc();
+                    <span class="kw">continue</span>;
+                }
+
+                <span class="kw">let </span><span class="prelude-val">Ok</span>(verified_transaction) = <span class="self">self</span>.epoch_store.verify_consensus_transaction(
+                    sequenced_transaction,
+                    <span class="kw-2">&amp;</span><span class="self">self</span>.metrics.skipped_consensus_txns,
+                ) <span class="kw">else </span>{
+                    <span class="kw">continue</span>;
+                };
+
+                <span class="kw">if </span>verified_transaction.<span class="number">0</span>.is_end_of_publish() {
+                    end_of_publish_transactions.push(verified_transaction);
+                } <span class="kw">else </span>{
+                    sequenced_transactions.push(verified_transaction);
+                }
+            }
+        }
+
+        <span class="comment">// (!) Should not add new transactions to sequenced_transactions beyond this point
+
+        </span><span class="self">self</span>.metrics
+            .consensus_handler_processed_bytes
+            .inc_by(bytes <span class="kw">as </span>u64);
 
         <span class="kw">let </span>transactions_to_schedule = <span class="self">self
             </span>.epoch_store
-            .process_consensus_transactions(
-                verified_transactions,
+            .process_consensus_transactions_and_commit_boundary(
+                <span class="kw-2">&amp;</span>sequenced_transactions,
+                <span class="kw-2">&amp;</span>end_of_publish_transactions,
                 <span class="kw-2">&amp;</span><span class="self">self</span>.checkpoint_service,
                 <span class="kw-2">&amp;</span><span class="self">self</span>.parent_sync_store,
             )
@@ -1004,10 +933,6 @@
 
         index_with_hash.index.sub_dag_index
     }
-}
-
-<span class="kw">fn </span>reorder_end_of_publish(sequenced_transactions: <span class="kw-2">&amp;mut </span>[SequencedConsensusTransaction]) {
-    sequenced_transactions.sort_by_key(SequencedConsensusTransaction::is_end_of_publish);
 }
 
 <span class="kw">struct </span>AsyncTransactionScheduler {
@@ -1133,6 +1058,15 @@
             SequencedConsensusTransactionKind::System(txn) =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">*</span>txn.digest()),
         }
     }
+
+    <span class="kw">pub fn </span>is_end_of_publish(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">match </span><span class="self">self </span>{
+            SequencedConsensusTransactionKind::External(ext) =&gt; {
+                <span class="macro">matches!</span>(ext.kind, ConsensusTransactionKind::EndOfPublish(..))
+            }
+            SequencedConsensusTransactionKind::System(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+        }
+    }
 }
 
 <span class="kw">impl </span>SequencedConsensusTransaction {
@@ -1150,6 +1084,19 @@
         } <span class="kw">else </span>{
             <span class="bool-val">false
         </span>}
+    }
+
+    <span class="kw">pub fn </span>as_shared_object_txn(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>SenderSignedData&gt; {
+        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.transaction {
+            SequencedConsensusTransactionKind::External(ConsensusTransaction {
+                kind: ConsensusTransactionKind::UserTransaction(certificate),
+                ..
+            }) <span class="kw">if </span>certificate.contains_shared_object() =&gt; <span class="prelude-val">Some</span>(certificate.data()),
+            SequencedConsensusTransactionKind::System(txn) <span class="kw">if </span>txn.contains_shared_object() =&gt; {
+                <span class="prelude-val">Some</span>(txn.data())
+            }
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+        }
     }
 }
 
@@ -1176,12 +1123,6 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span>narwhal_types::Certificate;
-    <span class="kw">use </span>sui_protocol_config::SupportedProtocolVersions;
-    <span class="kw">use </span>sui_types::base_types::AuthorityName;
-    <span class="kw">use </span>sui_types::messages_consensus::{
-        AuthorityCapabilities, ConsensusTransaction, ConsensusTransactionKind,
-    };
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>test_update_hash() {
@@ -1211,97 +1152,6 @@
         <span class="macro">assert!</span>(update_hash(<span class="kw-2">&amp;</span>last_seen, index0, tx).is_none());
         <span class="macro">assert!</span>(update_hash(<span class="kw-2">&amp;</span>last_seen, index1, tx).is_none());
         <span class="macro">assert!</span>(update_hash(<span class="kw-2">&amp;</span>last_seen, index2, tx).is_some());
-    }
-
-    <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_reorder_end_of_publish() {
-        <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="macro">vec!</span>[cap_txn(<span class="number">10</span>), cap_txn(<span class="number">1</span>)];
-        reorder_end_of_publish(<span class="kw-2">&amp;mut </span>v);
-        <span class="macro">assert_eq!</span>(
-            extract(v),
-            <span class="macro">vec!</span>[<span class="string">&quot;cap(10)&quot;</span>.to_string(), <span class="string">&quot;cap(1)&quot;</span>.to_string()]
-        );
-        <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="macro">vec!</span>[cap_txn(<span class="number">1</span>), cap_txn(<span class="number">10</span>)];
-        reorder_end_of_publish(<span class="kw-2">&amp;mut </span>v);
-        <span class="macro">assert_eq!</span>(
-            extract(v),
-            <span class="macro">vec!</span>[<span class="string">&quot;cap(1)&quot;</span>.to_string(), <span class="string">&quot;cap(10)&quot;</span>.to_string()]
-        );
-        <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="macro">vec!</span>[cap_txn(<span class="number">1</span>), eop_txn(<span class="number">1</span>), cap_txn(<span class="number">10</span>), eop_txn(<span class="number">10</span>)];
-        reorder_end_of_publish(<span class="kw-2">&amp;mut </span>v);
-        <span class="macro">assert_eq!</span>(
-            extract(v),
-            <span class="macro">vec!</span>[
-                <span class="string">&quot;cap(1)&quot;</span>.to_string(),
-                <span class="string">&quot;cap(10)&quot;</span>.to_string(),
-                <span class="string">&quot;eop(1)&quot;</span>.to_string(),
-                <span class="string">&quot;eop(10)&quot;</span>.to_string()
-            ]
-        );
-        <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="macro">vec!</span>[cap_txn(<span class="number">1</span>), eop_txn(<span class="number">10</span>), cap_txn(<span class="number">10</span>), eop_txn(<span class="number">1</span>)];
-        reorder_end_of_publish(<span class="kw-2">&amp;mut </span>v);
-        <span class="macro">assert_eq!</span>(
-            extract(v),
-            <span class="macro">vec!</span>[
-                <span class="string">&quot;cap(1)&quot;</span>.to_string(),
-                <span class="string">&quot;cap(10)&quot;</span>.to_string(),
-                <span class="string">&quot;eop(10)&quot;</span>.to_string(),
-                <span class="string">&quot;eop(1)&quot;</span>.to_string()
-            ]
-        );
-    }
-
-    <span class="kw">fn </span>extract(v: Vec&lt;SequencedConsensusTransaction&gt;) -&gt; Vec&lt;String&gt; {
-        v.into_iter().map(extract_one).collect()
-    }
-
-    <span class="kw">fn </span>extract_one(t: SequencedConsensusTransaction) -&gt; String {
-        <span class="kw">match </span>t.transaction {
-            SequencedConsensusTransactionKind::External(ext) =&gt; <span class="kw">match </span>ext.kind {
-                ConsensusTransactionKind::EndOfPublish(authority) =&gt; {
-                    <span class="macro">format!</span>(<span class="string">&quot;eop({})&quot;</span>, authority.<span class="number">0</span>[<span class="number">0</span>])
-                }
-                ConsensusTransactionKind::CapabilityNotification(cap) =&gt; {
-                    <span class="macro">format!</span>(<span class="string">&quot;cap({})&quot;</span>, cap.generation)
-                }
-                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
-            },
-            SequencedConsensusTransactionKind::System(<span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(),
-        }
-    }
-
-    <span class="kw">fn </span>eop_txn(a: u8) -&gt; SequencedConsensusTransaction {
-        <span class="kw">let </span><span class="kw-2">mut </span>authority = AuthorityName::default();
-        authority.<span class="number">0</span>[<span class="number">0</span>] = a;
-        txn(ConsensusTransactionKind::EndOfPublish(authority))
-    }
-
-    <span class="kw">fn </span>cap_txn(generation: u64) -&gt; SequencedConsensusTransaction {
-        txn(ConsensusTransactionKind::CapabilityNotification(
-            AuthorityCapabilities {
-                authority: Default::default(),
-                generation,
-                supported_protocol_versions: SupportedProtocolVersions::SYSTEM_DEFAULT,
-                available_system_packages: <span class="macro">vec!</span>[],
-            },
-        ))
-    }
-
-    <span class="kw">fn </span>txn(kind: ConsensusTransactionKind) -&gt; SequencedConsensusTransaction {
-        <span class="kw">let </span>c = ConsensusTransaction {
-            kind,
-            tracking_id: Default::default(),
-        };
-        <span class="kw">let </span>transaction = SequencedConsensusTransactionKind::External(c);
-        <span class="kw">let </span>certificate = Arc::new(Certificate::default());
-        <span class="kw">let </span>certificate_author = Default::default();
-        <span class="kw">let </span>consensus_index = Default::default();
-        SequencedConsensusTransaction {
-            certificate,
-            certificate_author,
-            consensus_index,
-            transaction,
-        }
     }
 }
 </code></pre></div></section></main></body></html>
