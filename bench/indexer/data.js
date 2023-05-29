@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685287543907,
+  "lastUpdate": 1685385778595,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -9971,6 +9971,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 316679,
             "range": "± 20691",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "2895723+tzakian@users.noreply.github.com",
+            "name": "Tim Zakian",
+            "username": "tzakian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9977d222f858db75958e57029b0731579f8b3bbf",
+          "message": "Update Move command-line parser (#12243)",
+          "timestamp": "2023-05-29T18:30:55Z",
+          "tree_id": "caa7336cff211b10b7697c36184dc2ce8e322f1a",
+          "url": "https://github.com/MystenLabs/sui/commit/9977d222f858db75958e57029b0731579f8b3bbf"
+        },
+        "date": 1685385756125,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144530100,
+            "range": "± 5844856",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 347286,
+            "range": "± 77620",
             "unit": "ns/iter"
           }
         ]
