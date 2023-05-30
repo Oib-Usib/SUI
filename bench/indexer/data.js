@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685475761057,
+  "lastUpdate": 1685477137957,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10079,6 +10079,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 514200,
             "range": "± 74476",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9b5606125b3d04ab6553bd39754d2a1697c3990c",
+          "message": "sui ns: null if valid address or name is not set (#12258)\n\n## Description \r\n\r\nsee title.\r\n\r\n## Test Plan \r\n\r\ntested on testnet FN:\r\n\r\nto make sure that success lookups still return values\r\n```\r\ncurl --location --request POST http://ord-exp-val-01.experiments.sui.io:9000 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_resolveNameServiceAddress\",\r\n\"params\": [\"manos2.sui\"]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":\"0xe0b97bff42fcef320b5f148db69033b9f689555348b2e90f1da72b0644fa37d0\",\"id\":1}%                                                 \r\ncurl --location --request POST http://ord-exp-val-01.experiments.sui.io:9000 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_resolveNameServiceNames\",\r\n\"params\": [\"0xe0b97bff42fcef320b5f148db69033b9f689555348b2e90f1da72b0644fa37d0\"]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":{\"data\":[\"manos2.sui\"],\"nextCursor\":\"0x50197be085d892f02d3179405e8a8ae62e60c7946d487e3e7bfbb54ed85acb3e\",\"hasNextPage\":false},\"id\":1}%     \r\n\r\n```\r\n\r\n`app.sui` is reserved but has not valid addr\r\n```\r\ncurl --location --request POST http://ord-exp-val-01.experiments.sui.io:9000 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_resolveNameServiceAddress\",\r\n\"params\": [\"app.sui\"]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":null,\"id\":1}%      \r\n```\r\n\r\n`0x0b1763f73f457a764b7dca9ebb6383f789480fd80e3007dfa961db738d8a7524` has\r\nnot corresponding name\r\n```\r\ncurl --location --request POST http://ord-exp-val-01.experiments.sui.io:9000 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_resolveNameServiceNames\",\r\n\"params\": [\"0x0b1763f73f457a764b7dca9ebb6383f789480fd80e3007dfa961db738d8a7524\"]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":{\"data\":[],\"nextCursor\":null,\"hasNextPage\":false},\"id\":1}%\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-30T15:54:57-04:00",
+          "tree_id": "010f908f446d0940b2b8f2015117e92ab98249ba",
+          "url": "https://github.com/MystenLabs/sui/commit/9b5606125b3d04ab6553bd39754d2a1697c3990c"
+        },
+        "date": 1685477121769,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144716910,
+            "range": "± 5140692",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308610,
+            "range": "± 75873",
             "unit": "ns/iter"
           }
         ]
