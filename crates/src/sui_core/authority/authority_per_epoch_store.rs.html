@@ -2020,19 +2020,6 @@
 <a href="#2020" id="2020">2020</a>
 <a href="#2021" id="2021">2021</a>
 <a href="#2022" id="2022">2022</a>
-<a href="#2023" id="2023">2023</a>
-<a href="#2024" id="2024">2024</a>
-<a href="#2025" id="2025">2025</a>
-<a href="#2026" id="2026">2026</a>
-<a href="#2027" id="2027">2027</a>
-<a href="#2028" id="2028">2028</a>
-<a href="#2029" id="2029">2029</a>
-<a href="#2030" id="2030">2030</a>
-<a href="#2031" id="2031">2031</a>
-<a href="#2032" id="2032">2032</a>
-<a href="#2033" id="2033">2033</a>
-<a href="#2034" id="2034">2034</a>
-<a href="#2035" id="2035">2035</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2172,10 +2159,6 @@
 
     <span class="doccomment">/// This is used to notify all epoch specific tasks that epoch has ended.
     </span>epoch_alive_notify: NotifyOnce,
-
-    <span class="doccomment">/// Used to notify all epoch specific tasks that user certs are closed.
-    </span>user_certs_closed_notify: NotifyOnce,
-
     <span class="doccomment">/// This lock acts as a barrier for tasks that should not be executed in parallel with reconfiguration
     /// See comments in AuthorityPerEpochStore::epoch_terminated() on how this is used
     /// Crash recovery note: we write next epoch in the database first, and then use this lock to
@@ -2465,7 +2448,6 @@
             db_options,
             reconfig_state_mem: RwLock::new(reconfig_state),
             epoch_alive_notify,
-            user_certs_closed_notify: NotifyOnce::new(),
             epoch_alive: tokio::sync::RwLock::new(<span class="bool-val">true</span>),
             consensus_notify_read: NotifyRead::new(),
             signature_verifier,
@@ -3317,16 +3299,8 @@
         <span class="kw">if </span>epoch_close_time.is_none() {
             <span class="comment">// Only update it the first time epoch is closed.
             </span><span class="kw-2">*</span>epoch_close_time = <span class="prelude-val">Some</span>(Instant::now());
-
-            <span class="self">self</span>.user_certs_closed_notify
-                .notify()
-                .expect(<span class="string">&quot;user_certs_closed_notify called twice on same epoch store&quot;</span>);
         }
     }
-
-    <span class="kw">pub async fn </span>user_certs_closed_notify(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="self">self</span>.user_certs_closed_notify.wait().<span class="kw">await
-    </span>}
 
     <span class="doccomment">/// Notify epoch is terminated, can only be called once on epoch store
     </span><span class="kw">pub async fn </span>epoch_terminated(<span class="kw-2">&amp;</span><span class="self">self</span>) {
