@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685477460856,
+  "lastUpdate": 1685477587329,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10151,6 +10151,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308511,
             "range": "± 11701",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ec0610274b81c62ec3679bcfc0bba7b625b9a458",
+          "message": "add PTB friendly staking funs (#12092)\n\n## Description \r\n\r\nAdd a non-entry version of the unstaking function that returns the\r\nwithdrawn SUI instead of sending it to the sender. This way we can\r\nbetter compose in PTBs.\r\n\r\n## Test Plan \r\n\r\nExisting tests.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nAdded a version of stake withdraw function that returns the withdrawn\r\nSUI tokens, for better composability.",
+          "timestamp": "2023-05-30T20:01:08Z",
+          "tree_id": "07720cce207b9e887cd9b5caccb772b242c5a5e8",
+          "url": "https://github.com/MystenLabs/sui/commit/ec0610274b81c62ec3679bcfc0bba7b625b9a458"
+        },
+        "date": 1685477564595,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149689491,
+            "range": "± 5010099",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310195,
+            "range": "± 65390",
             "unit": "ns/iter"
           }
         ]
