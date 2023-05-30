@@ -104,11 +104,23 @@
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>prometheus::{
-    default_registry, register_histogram_with_registry, register_int_counter_with_registry,
-    register_int_gauge_with_registry, Histogram, IntCounter, IntGauge, Registry,
+    default_registry, register_histogram_vec_with_registry, register_histogram_with_registry,
+    register_int_counter_with_registry, register_int_gauge_with_registry, Histogram, HistogramVec,
+    IntCounter, IntGauge, Registry,
 };
 
 <span class="comment">// buckets defined in seconds
@@ -140,6 +152,9 @@
     <span class="doccomment">/// Latency between the time when the batch has been
     /// created and when it has been fetched for execution
     </span><span class="kw">pub </span>batch_execution_latency: Histogram,
+    <span class="doccomment">/// This is similar to batch_execution_latency but without the latency of
+    /// fetching batches from remote workers.
+    </span><span class="kw">pub </span>batch_execution_local_latency: HistogramVec,
     <span class="doccomment">/// The number of batches per committed subdag to be fetched
     </span><span class="kw">pub </span>committed_subdag_batch_count: Histogram,
     <span class="doccomment">/// Latency for time taken to fetch all batches for committed subdag
@@ -192,6 +207,13 @@
             batch_execution_latency: <span class="macro">register_histogram_with_registry!</span>(
                 <span class="string">&quot;batch_execution_latency&quot;</span>,
                 <span class="string">&quot;Latency between the time when the batch has been created and when it has been fetched for execution&quot;</span>,
+                LATENCY_SEC_BUCKETS.to_vec(),
+                registry
+            ).unwrap(),
+            batch_execution_local_latency: <span class="macro">register_histogram_vec_with_registry!</span>(
+                <span class="string">&quot;batch_execution_local_latency&quot;</span>,
+                <span class="string">&quot;This is similar to batch_execution_latency but without the latency of fetching batches from remote workers.&quot;</span>,
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;source&quot;</span>],
                 LATENCY_SEC_BUCKETS.to_vec(),
                 registry
             ).unwrap(),

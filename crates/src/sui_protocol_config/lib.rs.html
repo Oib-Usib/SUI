@@ -1421,6 +1421,18 @@
 <a href="#1421" id="1421">1421</a>
 <a href="#1422" id="1422">1422</a>
 <a href="#1423" id="1423">1423</a>
+<a href="#1424" id="1424">1424</a>
+<a href="#1425" id="1425">1425</a>
+<a href="#1426" id="1426">1426</a>
+<a href="#1427" id="1427">1427</a>
+<a href="#1428" id="1428">1428</a>
+<a href="#1429" id="1429">1429</a>
+<a href="#1430" id="1430">1430</a>
+<a href="#1431" id="1431">1431</a>
+<a href="#1432" id="1432">1432</a>
+<a href="#1433" id="1433">1433</a>
+<a href="#1434" id="1434">1434</a>
+<a href="#1435" id="1435">1435</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1461,6 +1473,7 @@
 //            framework changes.
 // Version 11: Introduce `std::type_name::get_with_original_ids` to the system frameworks.
 // Version 12: Changes to deepbook in framework to add API for querying marketplace.
+//             Change NW Batch to use versioned metadata field.
 
 </span><span class="attr">#[derive(Copy, Clone, Debug, Hash, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 </span><span class="kw">pub struct </span>ProtocolVersion(u64);
@@ -1606,6 +1619,9 @@
     <span class="comment">// If true, checks no extra bytes in a compiled module
     </span><span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;is_false&quot;</span>)]
     </span>no_extraneous_module_bytes: bool,
+    <span class="comment">// If true, then use the versioned metadata format in narwhal entities.
+    </span><span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;is_false&quot;</span>)]
+    </span>narwhal_versioned_metadata: bool,
 }
 
 <span class="kw">fn </span>is_false(b: <span class="kw-2">&amp;</span>bool) -&gt; bool {
@@ -2095,6 +2111,10 @@
         <span class="self">self</span>.feature_flags.scoring_decision_with_validity_cutoff
     }
 
+    <span class="kw">pub fn </span>narwhal_versioned_metadata(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.feature_flags.narwhal_versioned_metadata
+    }
+
     <span class="kw">pub fn </span>consensus_order_end_of_epoch_last(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.feature_flags.consensus_order_end_of_epoch_last
     }
@@ -2558,7 +2578,11 @@
                 cfg
             }
             <span class="number">11 </span>=&gt; <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>),
-            <span class="number">12 </span>=&gt; <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>),
+            <span class="number">12 </span>=&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>);
+                cfg.feature_flags.narwhal_versioned_metadata = <span class="bool-val">true</span>;
+                cfg
+            }
             <span class="comment">// Use this template when making changes:
             //
             //     // modify an existing constant.

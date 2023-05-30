@@ -379,6 +379,13 @@
 <a href="#379" id="379">379</a>
 <a href="#380" id="380">380</a>
 <a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -396,6 +403,7 @@
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::time::Instant;
 <span class="kw">use </span>storage::NodeStorage;
+<span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>tokio::sync::RwLock;
 <span class="kw">use </span>tokio::task::JoinHandle;
 <span class="kw">use </span>tracing::{info, instrument};
@@ -406,6 +414,7 @@
 <span class="kw">pub struct </span>WorkerNodeInner {
     <span class="comment">// The worker&#39;s id
     </span>id: WorkerId,
+    protocol_config: ProtocolConfig,
     <span class="comment">// The configuration parameters.
     </span>parameters: Parameters,
     <span class="comment">// A prometheus RegistryService to use for the metrics
@@ -477,6 +486,7 @@
             <span class="self">self</span>.id,
             committee.clone(),
             worker_cache.clone(),
+            <span class="self">self</span>.protocol_config.clone(),
             <span class="self">self</span>.parameters.clone(),
             tx_validator.clone(),
             client.clone(),
@@ -563,11 +573,13 @@
 <span class="kw">impl </span>WorkerNode {
     <span class="kw">pub fn </span>new(
         id: WorkerId,
+        protocol_config: ProtocolConfig,
         parameters: Parameters,
         registry_service: RegistryService,
     ) -&gt; WorkerNode {
         <span class="kw">let </span>inner = WorkerNodeInner {
             id,
+            protocol_config,
             parameters,
             registry_service,
             registry: <span class="prelude-val">None</span>,
@@ -660,6 +672,7 @@
         </span>ids_and_keypairs: Vec&lt;(WorkerId, NetworkKeyPair)&gt;,
         <span class="comment">// The committee information.
         </span>committee: Committee,
+        protocol_config: ProtocolConfig,
         <span class="comment">// The worker information cache.
         </span>worker_cache: WorkerCache,
         <span class="comment">// Client for communications.
@@ -691,6 +704,7 @@
         </span><span class="kw">for </span>(worker_id, key_pair) <span class="kw">in </span>ids_and_keypairs {
             <span class="kw">let </span>worker = WorkerNode::new(
                 worker_id,
+                protocol_config.clone(),
                 <span class="self">self</span>.parameters.clone(),
                 <span class="self">self</span>.registry_service.clone(),
             );

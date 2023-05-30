@@ -279,6 +279,22 @@
 <a href="#279" id="279">279</a>
 <a href="#280" id="280">280</a>
 <a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -299,12 +315,13 @@
 <span class="kw">use </span>std::path::PathBuf;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::time::Instant;
+<span class="kw">use </span>sui_protocol_config::{ProtocolConfig, ProtocolVersion};
 <span class="kw">use </span>sui_types::crypto::{AuthorityKeyPair, NetworkKeyPair};
 <span class="kw">use </span>tokio::sync::Mutex;
 
 <span class="attr">#[derive(PartialEq)]
 </span><span class="kw">enum </span>Running {
-    True(Epoch),
+    True(Epoch, ProtocolVersion),
     False,
 }
 
@@ -398,9 +415,17 @@
     }
 
     <span class="comment">// Starts the Narwhal (primary &amp; worker(s)) - if not already running.
+    // Note: After a binary is updated with the new protocol version and the node
+    // is restarted, the protocol config does not take effect until we have a quorum
+    // of validators have updated the binary. Because of this the protocol upgrade
+    // will happen in the following epoch after quorum is reached. In this case NarwhalManager
+    // is not recreated which is why we pass protocol config in at start and not at creation.
+    // To ensure correct behavior an updated protocol config must be passed in at the
+    // start of EACH epoch.
     </span><span class="kw">pub async fn </span>start&lt;State, TxValidator: TransactionValidator&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         committee: Committee,
+        protocol_config: ProtocolConfig,
         worker_cache: WorkerCache,
         execution_state: Arc&lt;State&gt;,
         tx_validator: TxValidator,
@@ -409,10 +434,9 @@
     {
         <span class="kw">let </span><span class="kw-2">mut </span>running = <span class="self">self</span>.running.lock().<span class="kw">await</span>;
 
-        <span class="kw">if let </span>Running::True(epoch) = <span class="kw-2">*</span>running {
+        <span class="kw">if let </span>Running::True(epoch, version) = <span class="kw-2">*</span>running {
             <span class="macro">tracing::warn!</span>(
-                <span class="string">&quot;Narwhal node is already Running at epoch {:?} - shutdown first before starting&quot;</span>,
-                epoch
+                <span class="string">&quot;Narwhal node is already Running for epoch {epoch:?} &amp; protocol version {version:?} - shutdown first before starting&quot;</span>,
             );
             <span class="kw">return</span>;
         }
@@ -428,7 +452,11 @@
 
         <span class="kw">let </span>name = <span class="self">self</span>.primary_keypair.public().clone();
 
-        <span class="macro">tracing::info!</span>(<span class="string">&quot;Starting up Narwhal for epoch {}&quot;</span>, committee.epoch());
+        <span class="macro">tracing::info!</span>(
+            <span class="string">&quot;Starting up Narwhal for epoch {} &amp; protocol version {:?}&quot;</span>,
+            committee.epoch(),
+            protocol_config.version
+        );
 
         <span class="comment">// start primary
         </span><span class="kw">const </span>MAX_PRIMARY_RETRIES: u32 = <span class="number">2</span>;
@@ -440,6 +468,7 @@
                     <span class="self">self</span>.primary_keypair.copy(),
                     <span class="self">self</span>.network_keypair.copy(),
                     committee.clone(),
+                    protocol_config.clone(),
                     worker_cache.clone(),
                     network_client.clone(),
                     <span class="kw-2">&amp;</span>store,
@@ -478,6 +507,7 @@
                     name.clone(),
                     id_keypair_copy,
                     committee.clone(),
+                    protocol_config.clone(),
                     worker_cache.clone(),
                     network_client.clone(),
                     <span class="kw-2">&amp;</span>store,
@@ -500,8 +530,9 @@
         }
 
         <span class="macro">tracing::info!</span>(
-            <span class="string">&quot;Starting up Narwhal for epoch {} is complete - took {} seconds&quot;</span>,
+            <span class="string">&quot;Starting up Narwhal for epoch {} &amp; protocol version {:?} is complete - took {} seconds&quot;</span>,
             committee.epoch(),
+            protocol_config.version,
             now.elapsed().as_secs_f64()
         );
 
@@ -514,7 +545,7 @@
             .set(primary_retries <span class="kw">as </span>i64);
         <span class="self">self</span>.metrics.start_worker_retries.set(worker_retries <span class="kw">as </span>i64);
 
-        <span class="kw-2">*</span>running = Running::True(committee.epoch());
+        <span class="kw-2">*</span>running = Running::True(committee.epoch(), protocol_config.version);
     }
 
     <span class="comment">// Shuts down whole Narwhal (primary &amp; worker(s)) and waits until nodes
@@ -523,16 +554,17 @@
         <span class="kw">let </span><span class="kw-2">mut </span>running = <span class="self">self</span>.running.lock().<span class="kw">await</span>;
 
         <span class="kw">match </span><span class="kw-2">*</span>running {
-            Running::True(epoch) =&gt; {
+            Running::True(epoch, version) =&gt; {
                 <span class="kw">let </span>now = Instant::now();
-                <span class="macro">tracing::info!</span>(<span class="string">&quot;Shutting down Narwhal epoch {:?}&quot;</span>, epoch);
+                <span class="macro">tracing::info!</span>(
+                    <span class="string">&quot;Shutting down Narwhal for epoch {epoch:?} &amp; protocol version {version:?}&quot;
+                </span>);
 
                 <span class="self">self</span>.primary_node.shutdown().<span class="kw">await</span>;
                 <span class="self">self</span>.worker_nodes.shutdown().<span class="kw">await</span>;
 
                 <span class="macro">tracing::info!</span>(
-                    <span class="string">&quot;Narwhal shutdown for epoch {:?} is complete - took {} seconds&quot;</span>,
-                    epoch,
+                    <span class="string">&quot;Narwhal shutdown for epoch {epoch:?} &amp; protocol version {version:?} is complete - took {} seconds&quot;</span>,
                     now.elapsed().as_secs_f64()
                 );
 

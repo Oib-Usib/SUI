@@ -841,9 +841,10 @@
 <a href="#841" id="841">841</a>
 <a href="#842" id="842">842</a>
 <a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-</span><span class="kw">use crate</span>::{temp_dir, CommitteeFixture};
+</span><span class="kw">use crate</span>::{latest_protocol_version, temp_dir, CommitteeFixture};
 <span class="kw">use </span>config::{AuthorityIdentifier, Committee, Parameters, WorkerCache, WorkerId};
 <span class="kw">use </span>crypto::{KeyPair, NetworkKeyPair, PublicKey};
 <span class="kw">use </span>executor::SerializedTransaction;
@@ -1207,6 +1208,7 @@
                 <span class="self">self</span>.key_pair.copy(),
                 <span class="self">self</span>.network_key_pair.copy(),
                 <span class="self">self</span>.committee.clone(),
+                latest_protocol_version(),
                 <span class="self">self</span>.worker_cache.clone(),
                 client,
                 <span class="kw-2">&amp;</span>primary_store,
@@ -1272,7 +1274,7 @@
         worker_cache: WorkerCache,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>registry_service = RegistryService::new(Registry::new());
-        <span class="kw">let </span>node = WorkerNode::new(id, parameters, registry_service);
+        <span class="kw">let </span>node = WorkerNode::new(id, latest_protocol_version(), parameters, registry_service);
 
         <span class="self">Self </span>{
             id,

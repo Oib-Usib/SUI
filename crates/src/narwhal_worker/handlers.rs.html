@@ -259,6 +259,40 @@
 <a href="#259" id="259">259</a>
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -272,12 +306,13 @@
 <span class="kw">use </span>network::{client::NetworkClient, WorkerToPrimaryClient};
 <span class="kw">use </span>std::{collections::HashSet, time::Duration};
 <span class="kw">use </span>store::{rocks::DBMap, Map};
+<span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>tracing::{debug, trace};
 <span class="kw">use </span>types::{
-    Batch, BatchDigest, FetchBatchesRequest, FetchBatchesResponse, PrimaryToWorker,
-    RequestBatchRequest, RequestBatchResponse, RequestBatchesRequest, RequestBatchesResponse,
-    WorkerBatchMessage, WorkerDeleteBatchesMessage, WorkerOthersBatchMessage,
-    WorkerSynchronizeMessage, WorkerToWorker, WorkerToWorkerClient,
+    now, validate_batch_version, Batch, BatchAPI, BatchDigest, FetchBatchesRequest,
+    FetchBatchesResponse, MetadataAPI, PrimaryToWorker, RequestBatchRequest, RequestBatchResponse,
+    RequestBatchesRequest, RequestBatchesResponse, WorkerBatchMessage, WorkerDeleteBatchesMessage,
+    WorkerOthersBatchMessage, WorkerSynchronizeMessage, WorkerToWorker, WorkerToWorkerClient,
 };
 
 <span class="kw">use crate</span>::{batch_fetcher::BatchFetcher, TransactionValidator};
@@ -289,6 +324,7 @@
 <span class="doccomment">/// Defines how the network receiver handles incoming workers messages.
 </span><span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>WorkerReceiverHandler&lt;V&gt; {
+    <span class="kw">pub </span>protocol_config: ProtocolConfig,
     <span class="kw">pub </span>id: WorkerId,
     <span class="kw">pub </span>client: NetworkClient,
     <span class="kw">pub </span>store: DBMap&lt;BatchDigest, Batch&gt;,
@@ -302,14 +338,26 @@
         request: anemo::Request&lt;WorkerBatchMessage&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;anemo::Response&lt;()&gt;, anemo::rpc::Status&gt; {
         <span class="kw">let </span>message = request.into_body();
-        <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.validator.validate_batch(<span class="kw-2">&amp;</span>message.batch).<span class="kw">await </span>{
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self
+            </span>.validator
+            .validate_batch(<span class="kw-2">&amp;</span>message.batch, <span class="kw-2">&amp;</span><span class="self">self</span>.protocol_config)
+            .<span class="kw">await
+        </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::new_with_message(
                 StatusCode::BadRequest,
                 <span class="macro">format!</span>(<span class="string">&quot;Invalid batch: {err}&quot;</span>),
             ));
         }
         <span class="kw">let </span>digest = message.batch.digest();
-        <span class="self">self</span>.store.insert(<span class="kw-2">&amp;</span>digest, <span class="kw-2">&amp;</span>message.batch).map_err(|e| {
+
+        <span class="kw">let </span><span class="kw-2">mut </span>batch = message.batch.clone();
+
+        <span class="comment">// TODO: Remove once we have upgraded to protocol version 12.
+        </span><span class="kw">if </span><span class="self">self</span>.protocol_config.narwhal_versioned_metadata() {
+            <span class="comment">// Set received_at timestamp for remote batch.
+            </span>batch.versioned_metadata_mut().set_received_at(now());
+        }
+        <span class="self">self</span>.store.insert(<span class="kw-2">&amp;</span>digest, <span class="kw-2">&amp;</span>batch).map_err(|e| {
             anemo::rpc::Status::internal(<span class="macro">format!</span>(<span class="string">&quot;failed to write to batch store: {e:?}&quot;</span>))
         })<span class="question-mark">?</span>;
         <span class="self">self</span>.client
@@ -383,6 +431,7 @@
     </span><span class="kw">pub </span>id: WorkerId,
     <span class="comment">// The committee information.
     </span><span class="kw">pub </span>committee: Committee,
+    <span class="kw">pub </span>protocol_config: ProtocolConfig,
     <span class="comment">// The worker information cache.
     </span><span class="kw">pub </span>worker_cache: WorkerCache,
     <span class="comment">// The batch store
@@ -461,23 +510,42 @@
             batch_digests: missing.iter().cloned().collect(),
         };
         <span class="macro">debug!</span>(<span class="string">&quot;Sending RequestBatchesRequest to {worker_name}: {request:?}&quot;</span>);
-        <span class="kw">let </span>response = client
+
+        <span class="kw">let </span><span class="kw-2">mut </span>response = client
             .request_batches(anemo::Request::new(request).with_timeout(<span class="self">self</span>.request_batch_timeout))
             .<span class="kw">await</span><span class="question-mark">?
             </span>.into_inner();
-        <span class="kw">for </span>batch <span class="kw">in </span>response.batches {
+        <span class="kw">for </span>batch <span class="kw">in </span>response.batches.iter_mut() {
             <span class="kw">if </span>!message.is_certified {
                 <span class="comment">// This batch is not part of a certificate, so we need to validate it.
-                </span><span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.validator.validate_batch(<span class="kw-2">&amp;</span>batch).<span class="kw">await </span>{
+                </span><span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self
+                    </span>.validator
+                    .validate_batch(batch, <span class="kw-2">&amp;</span><span class="self">self</span>.protocol_config)
+                    .<span class="kw">await
+                </span>{
                     <span class="kw">return </span><span class="prelude-val">Err</span>(anemo::rpc::Status::new_with_message(
                         StatusCode::BadRequest,
                         <span class="macro">format!</span>(<span class="string">&quot;Invalid batch: {err}&quot;</span>),
                     ));
                 }
             }
+
+            <span class="comment">// TODO: Remove once we have upgraded to protocol version 12.
+            </span>validate_batch_version(batch, <span class="kw-2">&amp;</span><span class="self">self</span>.protocol_config).map_err(|err| {
+                anemo::rpc::Status::new_with_message(
+                    StatusCode::BadRequest,
+                    <span class="macro">format!</span>(<span class="string">&quot;Invalid batch: {err}&quot;</span>),
+                )
+            })<span class="question-mark">?</span>;
+
             <span class="kw">let </span>digest = batch.digest();
             <span class="kw">if </span>missing.remove(<span class="kw-2">&amp;</span>digest) {
-                <span class="self">self</span>.store.insert(<span class="kw-2">&amp;</span>digest, <span class="kw-2">&amp;</span>batch).map_err(|e| {
+                <span class="comment">// TODO: Remove once we have upgraded to protocol version 12.
+                </span><span class="kw">if </span><span class="self">self</span>.protocol_config.narwhal_versioned_metadata() {
+                    <span class="comment">// Set received_at timestamp for remote batch.
+                    </span>batch.versioned_metadata_mut().set_received_at(now());
+                }
+                <span class="self">self</span>.store.insert(<span class="kw-2">&amp;</span>digest, batch).map_err(|e| {
                     anemo::rpc::Status::internal(<span class="macro">format!</span>(<span class="string">&quot;failed to write to batch store: {e:?}&quot;</span>))
                 })<span class="question-mark">?</span>;
             }

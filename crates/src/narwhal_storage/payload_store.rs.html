@@ -171,6 +171,8 @@
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
 <a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -306,6 +308,7 @@
     <span class="kw">use </span><span class="kw">crate</span>::PayloadStore;
     <span class="kw">use </span>fastcrypto::hash::Hash;
     <span class="kw">use </span>futures::future::join_all;
+    <span class="kw">use </span>test_utils::latest_protocol_version;
     <span class="kw">use </span>types::Batch;
 
     <span class="attr">#[tokio::test]
@@ -313,7 +316,8 @@
         <span class="kw">let </span>store = PayloadStore::new_for_tests();
 
         <span class="comment">// run the tests a few times
-        </span><span class="kw">let </span>batch: Batch = test_utils::fixture_batch_with_transactions(<span class="number">10</span>);
+        </span><span class="kw">let </span>batch: Batch =
+            test_utils::fixture_batch_with_transactions(<span class="number">10</span>, <span class="kw-2">&amp;</span>latest_protocol_version());
         <span class="kw">let </span>id = batch.digest();
         <span class="kw">let </span>worker_id = <span class="number">0</span>;
 
