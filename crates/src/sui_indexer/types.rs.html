@@ -401,6 +401,12 @@
 <a href="#401" id="401">401</a>
 <a href="#402" id="402">402</a>
 <a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -674,11 +680,17 @@
             .collect()
     }
 
-    <span class="kw">pub fn </span>get_from_and_to_addresses(<span class="kw-2">&amp;</span><span class="self">self</span>, epoch: u64, checkpoint: u64) -&gt; Vec&lt;AddressData&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>addresses = <span class="self">self
-            </span>.get_recipients(epoch, checkpoint)
-            .into_iter()
-            .map(|r| r.recipient)
+    <span class="kw">pub fn </span>get_from_and_to_addresses(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;AddressData&gt; {
+        <span class="kw">let </span>created = <span class="self">self</span>.effects.created().iter();
+        <span class="kw">let </span>mutated = <span class="self">self</span>.effects.mutated().iter();
+        <span class="kw">let </span>unwrapped = <span class="self">self</span>.effects.unwrapped().iter();
+        <span class="kw">let </span><span class="kw-2">mut </span>addresses = created
+            .chain(mutated)
+            .chain(unwrapped)
+            .filter_map(|obj_ref| <span class="kw">match </span>obj_ref.owner {
+                Owner::AddressOwner(address) =&gt; <span class="prelude-val">Some</span>(address.to_string()),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            })
             .collect::&lt;Vec&lt;String&gt;&gt;();
         addresses.push(<span class="self">self</span>.transaction.data.sender().to_string());
         addresses

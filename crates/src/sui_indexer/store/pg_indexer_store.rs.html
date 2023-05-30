@@ -1928,22 +1928,6 @@
 <a href="#1928" id="1928">1928</a>
 <a href="#1929" id="1929">1929</a>
 <a href="#1930" id="1930">1930</a>
-<a href="#1931" id="1931">1931</a>
-<a href="#1932" id="1932">1932</a>
-<a href="#1933" id="1933">1933</a>
-<a href="#1934" id="1934">1934</a>
-<a href="#1935" id="1935">1935</a>
-<a href="#1936" id="1936">1936</a>
-<a href="#1937" id="1937">1937</a>
-<a href="#1938" id="1938">1938</a>
-<a href="#1939" id="1939">1939</a>
-<a href="#1940" id="1940">1940</a>
-<a href="#1941" id="1941">1941</a>
-<a href="#1942" id="1942">1942</a>
-<a href="#1943" id="1943">1943</a>
-<a href="#1944" id="1944">1944</a>
-<a href="#1945" id="1945">1945</a>
-<a href="#1946" id="1946">1946</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2236,10 +2220,39 @@ GROUP BY table_name;
             </span>};
             cp.into_rpc(end_of_epoch_data)
         })
+        .context(<span class="macro">format!</span>(<span class="string">&quot;Failed reading checkpoint {:?} from PostgresDB&quot;</span>, id).as_str())
+    }
+
+    <span class="kw">async fn </span>get_checkpoints(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        cursor: <span class="prelude-ty">Option</span>&lt;CheckpointId&gt;,
+        limit: usize,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;sui_json_rpc_types::Checkpoint&gt;, IndexerError&gt; {
+        <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            <span class="kw">let </span>cp_vec: Vec&lt;Checkpoint&gt; = <span class="kw">match </span>cursor {
+                <span class="prelude-val">Some</span>(CheckpointId::SequenceNumber(seq)) =&gt; checkpoints::dsl::checkpoints
+                    .filter(checkpoints::sequence_number.gt(seq <span class="kw">as </span>i64))
+                    .order_by(checkpoints::sequence_number)
+                    .limit(limit <span class="kw">as </span>i64)
+                    .load::&lt;Checkpoint&gt;(conn)<span class="question-mark">?</span>,
+                <span class="prelude-val">Some</span>(CheckpointId::Digest(digest)) =&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
+                    <span class="string">&quot;CheckpointId::Digest: {} is not supported as cursor in get_checkpoints.&quot;</span>,
+                    digest
+                ))<span class="question-mark">?</span>,
+                <span class="prelude-val">None </span>=&gt; checkpoints::dsl::checkpoints
+                    .order_by(checkpoints::sequence_number)
+                    .limit(limit <span class="kw">as </span>i64)
+                    .load::&lt;Checkpoint&gt;(conn)<span class="question-mark">?</span>,
+            };
+            cp_vec
+                .into_iter()
+                .map(|cp| cp.into_rpc(<span class="prelude-val">None</span>))
+                .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()
+        })
         .context(
             <span class="macro">format!</span>(
-                <span class="string">&quot;Failed reading previous checkpoint {:?} from PostgresDB&quot;</span>,
-                id
+                <span class="string">&quot;Failed reading checkpoints with cursor: {:?} and limit: {} from PostgresDB&quot;</span>,
+                cursor, limit
             )
             .as_str(),
         )
@@ -3081,8 +3094,6 @@ GROUP BY table_name;
             transactions,
             events,
             object_changes: tx_object_changes,
-            addresses,
-            active_addresses,
             packages,
             input_objects,
             move_calls,
@@ -3134,50 +3145,7 @@ GROUP BY table_name;
             persist_transaction_object_changes(conn, mutated_objects, deleted_objects, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
 
             <span class="comment">// TODO(gegaowp): refactor to consolidate commit blocks
-            // Commit indexed addresses &amp; active addresses
-            </span><span class="kw">for </span>address_chunk <span class="kw">in </span>addresses.chunks(PG_COMMIT_CHUNK_SIZE) {
-                diesel::insert_into(addresses::table)
-                    .values(address_chunk)
-                    .on_conflict(addresses::account_address)
-                    .do_update()
-                    .set((
-                        addresses::last_appearance_time
-                            .eq(excluded(addresses::last_appearance_time)),
-                        addresses::last_appearance_tx.eq(excluded(addresses::last_appearance_tx)),
-                    ))
-                    .execute(conn)
-                    .map_err(IndexerError::from)
-                    .context(
-                        <span class="macro">format!</span>(
-                            <span class="string">&quot;Failed writing addresses to PostgresDB with tx {}&quot;</span>,
-                            address_chunk[<span class="number">0</span>].last_appearance_tx
-                        )
-                        .as_str(),
-                    )<span class="question-mark">?</span>;
-            }
-            <span class="kw">for </span>active_address_chunk <span class="kw">in </span>active_addresses.chunks(PG_COMMIT_CHUNK_SIZE) {
-                diesel::insert_into(active_addresses::table)
-                    .values(active_address_chunk)
-                    .on_conflict(active_addresses::account_address)
-                    .do_update()
-                    .set((
-                        active_addresses::last_appearance_time
-                            .eq(excluded(active_addresses::last_appearance_time)),
-                        active_addresses::last_appearance_tx
-                            .eq(excluded(active_addresses::last_appearance_tx)),
-                    ))
-                    .execute(conn)
-                    .map_err(IndexerError::from)
-                    .context(
-                        <span class="macro">format!</span>(
-                            <span class="string">&quot;Failed writing active addresses to PostgresDB with tx {}&quot;</span>,
-                            active_address_chunk[<span class="number">0</span>].last_appearance_tx
-                        )
-                        .as_str(),
-                    )<span class="question-mark">?</span>;
-            }
-
-            <span class="comment">// Commit indexed packages
+            // Commit indexed packages
             </span><span class="kw">for </span>packages_chunk <span class="kw">in </span>packages.chunks(PG_COMMIT_CHUNK_SIZE) {
                 diesel::insert_into(packages::table)
                     .values(packages_chunk)

@@ -929,49 +929,6 @@
 <a href="#929" id="929">929</a>
 <a href="#930" id="930">930</a>
 <a href="#931" id="931">931</a>
-<a href="#932" id="932">932</a>
-<a href="#933" id="933">933</a>
-<a href="#934" id="934">934</a>
-<a href="#935" id="935">935</a>
-<a href="#936" id="936">936</a>
-<a href="#937" id="937">937</a>
-<a href="#938" id="938">938</a>
-<a href="#939" id="939">939</a>
-<a href="#940" id="940">940</a>
-<a href="#941" id="941">941</a>
-<a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a>
-<a href="#944" id="944">944</a>
-<a href="#945" id="945">945</a>
-<a href="#946" id="946">946</a>
-<a href="#947" id="947">947</a>
-<a href="#948" id="948">948</a>
-<a href="#949" id="949">949</a>
-<a href="#950" id="950">950</a>
-<a href="#951" id="951">951</a>
-<a href="#952" id="952">952</a>
-<a href="#953" id="953">953</a>
-<a href="#954" id="954">954</a>
-<a href="#955" id="955">955</a>
-<a href="#956" id="956">956</a>
-<a href="#957" id="957">957</a>
-<a href="#958" id="958">958</a>
-<a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a>
-<a href="#962" id="962">962</a>
-<a href="#963" id="963">963</a>
-<a href="#964" id="964">964</a>
-<a href="#965" id="965">965</a>
-<a href="#966" id="966">966</a>
-<a href="#967" id="967">967</a>
-<a href="#968" id="968">968</a>
-<a href="#969" id="969">969</a>
-<a href="#970" id="970">970</a>
-<a href="#971" id="971">971</a>
-<a href="#972" id="972">972</a>
-<a href="#973" id="973">973</a>
-<a href="#974" id="974">974</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1008,7 +965,6 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::errors::IndexerError;
 <span class="kw">use </span><span class="kw">crate</span>::metrics::IndexerMetrics;
-<span class="kw">use </span><span class="kw">crate</span>::models::addresses::{dedup_from_addresses, dedup_from_and_to_addresses};
 <span class="kw">use </span><span class="kw">crate</span>::models::checkpoints::Checkpoint;
 <span class="kw">use </span><span class="kw">crate</span>::models::epoch::{DBEpochInfo, SystemEpochInfoEvent};
 <span class="kw">use </span><span class="kw">crate</span>::models::objects::{DeletedObject, Object, ObjectStatus};
@@ -1274,8 +1230,6 @@
                     transactions,
                     events,
                     object_changes,
-                    addresses,
-                    active_addresses,
                     packages,
                     input_objects,
                     move_calls,
@@ -1297,28 +1251,6 @@
                         ))
                         .<span class="kw">await</span>;
                         event_commit_res = events_handler.state.persist_events(<span class="kw-2">&amp;</span>events).<span class="kw">await</span>;
-                    }
-                });
-
-                <span class="kw">let </span>addresses_handler = <span class="self">self</span>.clone();
-                <span class="macro">spawn_monitored_task!</span>(<span class="kw">async move </span>{
-                    <span class="kw">let </span><span class="kw-2">mut </span>address_commit_res = addresses_handler
-                        .state
-                        .persist_addresses(<span class="kw-2">&amp;</span>addresses, <span class="kw-2">&amp;</span>active_addresses)
-                        .<span class="kw">await</span>;
-                    <span class="kw">while let </span><span class="prelude-val">Err</span>(e) = address_commit_res {
-                        <span class="macro">warn!</span>(
-                            <span class="string">&quot;Indexer address commit failed with error: {:?}, retrying after {:?} milli-secs...&quot;</span>,
-                            e, DB_COMMIT_RETRY_INTERVAL_IN_MILLIS
-                        );
-                        tokio::time::sleep(std::time::Duration::from_millis(
-                            DB_COMMIT_RETRY_INTERVAL_IN_MILLIS,
-                        ))
-                        .<span class="kw">await</span>;
-                        address_commit_res = addresses_handler
-                            .state
-                            .persist_addresses(<span class="kw-2">&amp;</span>addresses, <span class="kw-2">&amp;</span>active_addresses)
-                            .<span class="kw">await</span>;
                     }
                 });
 
@@ -1651,22 +1583,6 @@
             .flat_map(|tx| tx.get_recipients(checkpoint.epoch, checkpoint.sequence_number))
             .collect();
 
-        <span class="comment">// Index addresses
-        // NOTE: dedup is necessary because there are multiple transactions in a checkpoint,
-        // otherwise error of `ON CONFLICT DO UPDATE command cannot affect row a second time` will be thrown.
-        </span><span class="kw">let </span>from_and_to_address_data = transactions
-            .iter()
-            .flat_map(|tx| {
-                tx.get_from_and_to_addresses(checkpoint.epoch, checkpoint.sequence_number)
-            })
-            .collect();
-        <span class="kw">let </span>from_address_data = transactions
-            .iter()
-            .map(|tx| tx.get_from_address())
-            .collect();
-        <span class="kw">let </span>addresses = dedup_from_and_to_addresses(from_and_to_address_data);
-        <span class="kw">let </span>active_addresses = dedup_from_addresses(from_address_data);
-
         <span class="comment">// NOTE: Index epoch when object checkpoint index has reached the same checkpoint,
         // because epoch info is based on the latest system state object by the current checkpoint.
         </span><span class="kw">let </span>epoch_index = <span class="kw">if </span>checkpoint.epoch == <span class="number">0 </span>&amp;&amp; checkpoint.sequence_number == <span class="number">0 </span>{
@@ -1794,8 +1710,6 @@
                 transactions: db_transactions,
                 events,
                 object_changes: objects_changes,
-                addresses,
-                active_addresses,
                 packages,
                 input_objects,
                 move_calls,

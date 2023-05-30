@@ -315,6 +315,9 @@
 <a href="#315" id="315">315</a>
 <a href="#316" id="316">316</a>
 <a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -354,6 +357,11 @@
 
     <span class="kw">async fn </span>get_latest_checkpoint_sequence_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i64, IndexerError&gt;;
     <span class="kw">async fn </span>get_checkpoint(<span class="kw-2">&amp;</span><span class="self">self</span>, id: CheckpointId) -&gt; <span class="prelude-ty">Result</span>&lt;RpcCheckpoint, IndexerError&gt;;
+    <span class="kw">async fn </span>get_checkpoints(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        cursor: <span class="prelude-ty">Option</span>&lt;CheckpointId&gt;,
+        limit: usize,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;RpcCheckpoint&gt;, IndexerError&gt;;
     <span class="kw">async fn </span>get_checkpoint_sequence_number(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         digest: CheckpointDigest,
@@ -611,8 +619,6 @@
     <span class="kw">pub </span>transactions: Vec&lt;Transaction&gt;,
     <span class="kw">pub </span>events: Vec&lt;Event&gt;,
     <span class="kw">pub </span>object_changes: Vec&lt;TransactionObjectChanges&gt;,
-    <span class="kw">pub </span>addresses: Vec&lt;Address&gt;,
-    <span class="kw">pub </span>active_addresses: Vec&lt;ActiveAddress&gt;,
     <span class="kw">pub </span>packages: Vec&lt;Package&gt;,
     <span class="kw">pub </span>input_objects: Vec&lt;InputObject&gt;,
     <span class="kw">pub </span>move_calls: Vec&lt;MoveCall&gt;,
