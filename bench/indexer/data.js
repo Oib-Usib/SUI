@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685477587329,
+  "lastUpdate": 1685477703973,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10187,6 +10187,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310195,
             "range": "± 65390",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ae9c95d47b299b341048cbe96d091cda682c87e6",
+          "message": "Cancel submission waits after close of epoch (#12223)\n\nA node that is trying to send end-of-publish, but is waiting for locally\r\nexecuted transactions to be sequenced, may end up waiting a long time if\r\nthe elected submitter of that cert has failed to submit. Instead, at\r\nreconfig time, we should immediately submit everything we are waiting\r\nfor.\r\n\r\nThis greatly reduced reconfig pauses while testing my problematic PR\r\n#10360, and it may provide some benefit even during normal operation.\r\nThere were no obvious problems caused by the temporary increase in\r\namplification even though we were above 4K tps, so the inflight\r\nsubmission limit appears to be doing the right thing.",
+          "timestamp": "2023-05-30T20:06:01Z",
+          "tree_id": "d21fe328ed6d3c0cb04871a7b603aa18ca2b53bf",
+          "url": "https://github.com/MystenLabs/sui/commit/ae9c95d47b299b341048cbe96d091cda682c87e6"
+        },
+        "date": 1685477684810,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106466115,
+            "range": "± 4887185",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 306831,
+            "range": "± 18742",
             "unit": "ns/iter"
           }
         ]
