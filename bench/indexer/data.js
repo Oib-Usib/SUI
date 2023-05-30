@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685477137957,
+  "lastUpdate": 1685477460856,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10115,6 +10115,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308610,
             "range": "± 75873",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "308bb5536ef4455ad70e1a572d4d8e1bf1421307",
+          "message": "indexer: move address to async processor (#12204)\n\n## Description \r\n\r\nMove processing of `addresses` table and `active_addresses` table to\r\nasync processor.\r\n\r\nThe motivations are:\r\n- address stats were not accurate, b/c both `addresses` and\r\n`active_addresses` are updated each checkpoint before this change and\r\nwill not wait for `address_stats`; this is especially bad when we\r\nbackfill `address_stats` with populated address tables\r\n- updating `addresses` and `active_addresses` each checkpoint oftentimes\r\ncaused concurrent writes and sometimes even dead_lock on PG commit; the\r\ndeadlock is not end of world b/c PG can somehow recover from it.\r\n\r\nAfter this change:\r\n- the addresses and active_addresses tables are updated each 100\r\ncheckpoints, and wait for address_stats to update before moving for next\r\n100 checkpoints\r\n- such that it solves both problems above, we can adjust the batch size\r\nif better latency is needed.\r\n\r\n## Test Plan \r\n\r\nlocal run and compare `addresses`, `active_addresses` & `address_stats`\r\nwith and without the change.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-30T15:59:37-04:00",
+          "tree_id": "bcad8bfa3340d7d6a6bcc8537cd74ca6f363f339",
+          "url": "https://github.com/MystenLabs/sui/commit/308bb5536ef4455ad70e1a572d4d8e1bf1421307"
+        },
+        "date": 1685477444737,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 138720788,
+            "range": "± 4569725",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308511,
+            "range": "± 11701",
             "unit": "ns/iter"
           }
         ]
