@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685477703973,
+  "lastUpdate": 1685510740806,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10223,6 +10223,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 306831,
             "range": "± 18742",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ac410ee27a0562dc230a4d7c530592cae5b1d80f",
+          "message": "Add state archival writer and uploader (#12077)\n\n## Description \r\n\r\nPR adds archival writer and uploader code. Will add some tests to this\r\nsoon.",
+          "timestamp": "2023-05-30T22:14:50-07:00",
+          "tree_id": "7f100ec44413ed28a7061a483ebee4de0b253350",
+          "url": "https://github.com/MystenLabs/sui/commit/ac410ee27a0562dc230a4d7c530592cae5b1d80f"
+        },
+        "date": 1685510723682,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146958778,
+            "range": "± 5218467",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 599166,
+            "range": "± 79804",
             "unit": "ns/iter"
           }
         ]
