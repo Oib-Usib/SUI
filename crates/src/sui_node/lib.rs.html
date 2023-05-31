@@ -1290,6 +1290,18 @@
 <a href="#1290" id="1290">1290</a>
 <a href="#1291" id="1291">1291</a>
 <a href="#1292" id="1292">1292</a>
+<a href="#1293" id="1293">1293</a>
+<a href="#1294" id="1294">1294</a>
+<a href="#1295" id="1295">1295</a>
+<a href="#1296" id="1296">1296</a>
+<a href="#1297" id="1297">1297</a>
+<a href="#1298" id="1298">1298</a>
+<a href="#1299" id="1299">1299</a>
+<a href="#1300" id="1300">1300</a>
+<a href="#1301" id="1301">1301</a>
+<a href="#1302" id="1302">1302</a>
+<a href="#1303" id="1303">1303</a>
+<a href="#1304" id="1304">1304</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1942,6 +1954,18 @@
             <span class="comment">// Set the max_frame_size to be 2 GB to work around the issue of there being too many
             // staking events in the epoch change txn.
             </span>anemo_config.max_frame_size = <span class="prelude-val">Some</span>(<span class="number">2 </span>&lt;&lt; <span class="number">30</span>);
+
+            <span class="comment">// Set a higher default value for socket send/receive buffers if not already
+            // configured.
+            </span><span class="kw">let </span><span class="kw-2">mut </span>quic_config = anemo_config.quic.unwrap_or_default();
+            <span class="kw">if </span>quic_config.socket_send_buffer_size.is_none() {
+                quic_config.socket_send_buffer_size = <span class="prelude-val">Some</span>(<span class="number">20 </span>&lt;&lt; <span class="number">20</span>);
+            }
+            <span class="kw">if </span>quic_config.socket_receive_buffer_size.is_none() {
+                quic_config.socket_receive_buffer_size = <span class="prelude-val">Some</span>(<span class="number">20 </span>&lt;&lt; <span class="number">20</span>);
+            }
+            quic_config.allow_failed_socket_buffer_size_setting = <span class="bool-val">true</span>;
+            anemo_config.quic = <span class="prelude-val">Some</span>(quic_config);
 
             <span class="kw">let </span>server_name = <span class="macro">format!</span>(<span class="string">&quot;sui-{}&quot;</span>, chain_identifier);
             <span class="kw">let </span>alt_server_name = <span class="string">&quot;sui&quot;</span>;
