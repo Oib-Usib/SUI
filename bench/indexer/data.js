@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685510740806,
+  "lastUpdate": 1685553592673,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10259,6 +10259,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 599166,
             "range": "± 79804",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7907ff5917fed47b6f740e12eca46167095172d9",
+          "message": "indexer: forward suins requests (#12268)\n\n## Description \r\n\r\nrefer title\r\n\r\n## Test Plan \r\n\r\ntest locally with http://ewr-mnt-rpc-03.mainnet.sui.io:9000/ as\r\nunderlying FN and make sure SuiNS endpoints work\r\n\r\n```\r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_resolveNameServiceAddress\",\r\n\"params\": [\"seanmikha.sui\"]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":\"0xe0b97bff42fcef320b5f148db69033b9f689555348b2e90f1da72b0644fa37d0\",\"id\":1}%                                                 \r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_resolveNameServiceNames\",\r\n\"params\": [\"0xe0b97bff42fcef320b5f148db69033b9f689555348b2e90f1da72b0644fa37d0\"]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":{\"data\":[\"seanmikha.sui\"],\"nextCursor\":\"0xce63acd667fb227282c32eeef8d63e543996df9617715649d2a68436a31161b0\",\"hasNextPage\":false},\"id\":1}%       \r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-31T13:05:33-04:00",
+          "tree_id": "52f25925979473552ceae7db60afa1bbf842145b",
+          "url": "https://github.com/MystenLabs/sui/commit/7907ff5917fed47b6f740e12eca46167095172d9"
+        },
+        "date": 1685553573827,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 136804213,
+            "range": "± 4973926",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 319586,
+            "range": "± 19490",
             "unit": "ns/iter"
           }
         ]
