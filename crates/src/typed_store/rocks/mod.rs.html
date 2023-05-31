@@ -2539,6 +2539,57 @@
 <a href="#2539" id="2539">2539</a>
 <a href="#2540" id="2540">2540</a>
 <a href="#2541" id="2541">2541</a>
+<a href="#2542" id="2542">2542</a>
+<a href="#2543" id="2543">2543</a>
+<a href="#2544" id="2544">2544</a>
+<a href="#2545" id="2545">2545</a>
+<a href="#2546" id="2546">2546</a>
+<a href="#2547" id="2547">2547</a>
+<a href="#2548" id="2548">2548</a>
+<a href="#2549" id="2549">2549</a>
+<a href="#2550" id="2550">2550</a>
+<a href="#2551" id="2551">2551</a>
+<a href="#2552" id="2552">2552</a>
+<a href="#2553" id="2553">2553</a>
+<a href="#2554" id="2554">2554</a>
+<a href="#2555" id="2555">2555</a>
+<a href="#2556" id="2556">2556</a>
+<a href="#2557" id="2557">2557</a>
+<a href="#2558" id="2558">2558</a>
+<a href="#2559" id="2559">2559</a>
+<a href="#2560" id="2560">2560</a>
+<a href="#2561" id="2561">2561</a>
+<a href="#2562" id="2562">2562</a>
+<a href="#2563" id="2563">2563</a>
+<a href="#2564" id="2564">2564</a>
+<a href="#2565" id="2565">2565</a>
+<a href="#2566" id="2566">2566</a>
+<a href="#2567" id="2567">2567</a>
+<a href="#2568" id="2568">2568</a>
+<a href="#2569" id="2569">2569</a>
+<a href="#2570" id="2570">2570</a>
+<a href="#2571" id="2571">2571</a>
+<a href="#2572" id="2572">2572</a>
+<a href="#2573" id="2573">2573</a>
+<a href="#2574" id="2574">2574</a>
+<a href="#2575" id="2575">2575</a>
+<a href="#2576" id="2576">2576</a>
+<a href="#2577" id="2577">2577</a>
+<a href="#2578" id="2578">2578</a>
+<a href="#2579" id="2579">2579</a>
+<a href="#2580" id="2580">2580</a>
+<a href="#2581" id="2581">2581</a>
+<a href="#2582" id="2582">2582</a>
+<a href="#2583" id="2583">2583</a>
+<a href="#2584" id="2584">2584</a>
+<a href="#2585" id="2585">2585</a>
+<a href="#2586" id="2586">2586</a>
+<a href="#2587" id="2587">2587</a>
+<a href="#2588" id="2588">2588</a>
+<a href="#2589" id="2589">2589</a>
+<a href="#2590" id="2590">2590</a>
+<a href="#2591" id="2591">2591</a>
+<a href="#2592" id="2592">2592</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">pub mod </span>errors;
@@ -2557,7 +2608,7 @@
 <span class="kw">use </span>itertools::Itertools;
 <span class="kw">use </span>rocksdb::{
     checkpoint::Checkpoint, BlockBasedOptions, BottommostLevelCompaction, Cache, CompactOptions,
-    LiveFile, OptimisticTransactionDB, SnapshotWithThreadMode,
+    DBPinnableSlice, LiveFile, OptimisticTransactionDB, SnapshotWithThreadMode,
 };
 <span class="kw">use </span>rocksdb::{
     properties, AsColumnFamilyRef, CStrLike, ColumnFamilyDescriptor, DBWithThreadMode, Error,
@@ -2787,6 +2838,20 @@
         <span class="macro">delegate_call!</span>(<span class="self">self</span>.multi_get_cf_opt(keys, readopts))
     }
 
+    <span class="kw">pub fn </span>batched_multi_get_cf_opt&lt;I, K&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        cf: <span class="kw-2">&amp;</span><span class="kw">impl </span>AsColumnFamilyRef,
+        keys: I,
+        sorted_input: bool,
+        readopts: <span class="kw-2">&amp;</span>ReadOptions,
+    ) -&gt; Vec&lt;<span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;DBPinnableSlice&lt;<span class="lifetime">&#39;_</span>&gt;&gt;, Error&gt;&gt;
+    <span class="kw">where
+        </span>I: IntoIterator&lt;Item = K&gt;,
+        K: AsRef&lt;[u8]&gt;,
+    {
+        <span class="macro">delegate_call!</span>(<span class="self">self</span>.batched_multi_get_cf_opt(cf, keys, sorted_input, readopts))
+    }
+
     <span class="kw">pub fn </span>property_int_value_cf(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         cf: <span class="kw-2">&amp;</span><span class="kw">impl </span>AsColumnFamilyRef,
@@ -2795,12 +2860,12 @@
         <span class="macro">delegate_call!</span>(<span class="self">self</span>.property_int_value_cf(cf, name))
     }
 
-    <span class="kw">pub fn </span>get_pinned_cf&lt;K: AsRef&lt;[u8]&gt;&gt;(
+    <span class="kw">pub fn </span>get_pinned_cf_opt&lt;K: AsRef&lt;[u8]&gt;&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         cf: <span class="kw-2">&amp;</span><span class="kw">impl </span>AsColumnFamilyRef,
         key: K,
         readopts: <span class="kw-2">&amp;</span>ReadOptions,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;rocksdb::DBPinnableSlice&lt;<span class="lifetime">&#39;_</span>&gt;&gt;, rocksdb::Error&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;DBPinnableSlice&lt;<span class="lifetime">&#39;_</span>&gt;&gt;, rocksdb::Error&gt; {
         <span class="macro">delegate_call!</span>(<span class="self">self</span>.get_pinned_cf_opt(cf, key, readopts))
     }
 
@@ -3362,6 +3427,60 @@
             <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="number">0</span>),
             <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(TypedStoreError::RocksDBError(e.into_string())),
         }
+    }
+
+    <span class="doccomment">/// Returns a vector of raw values corresponding to the keys provided.
+    </span><span class="kw">fn </span>multi_get_pinned&lt;J&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        keys: <span class="kw">impl </span>IntoIterator&lt;Item = J&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;DBPinnableSlice&lt;<span class="lifetime">&#39;_</span>&gt;&gt;&gt;, TypedStoreError&gt;
+    <span class="kw">where
+        </span>J: Borrow&lt;K&gt;,
+        K: Serialize,
+    {
+        <span class="kw">let </span>_timer = <span class="self">self
+            </span>.db_metrics
+            .op_metrics
+            .rocksdb_multiget_latency_seconds
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="self">self</span>.cf])
+            .start_timer();
+        <span class="kw">let </span>perf_ctx = <span class="kw">if </span><span class="self">self</span>.multiget_sample_interval.sample() {
+            <span class="prelude-val">Some</span>(RocksDBPerfContext::default())
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>};
+        <span class="kw">let </span>keys_bytes: <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, TypedStoreError&gt; = keys
+            .into_iter()
+            .map(|k| be_fix_int_ser(k.borrow()))
+            .collect();
+        <span class="kw">let </span>results: <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, TypedStoreError&gt; = <span class="self">self
+            </span>.rocksdb
+            .batched_multi_get_cf_opt(
+                <span class="kw-2">&amp;</span><span class="self">self</span>.cf(),
+                keys_bytes<span class="question-mark">?</span>,
+                <span class="comment">/*sorted_keys=*/ </span><span class="bool-val">false</span>,
+                <span class="kw-2">&amp;</span><span class="self">self</span>.opts.readopts(),
+            )
+            .into_iter()
+            .map(|r| r.map_err(|e| TypedStoreError::RocksDBError(e.into_string())))
+            .collect();
+        <span class="kw">let </span>entries = results<span class="question-mark">?</span>;
+        <span class="kw">let </span>entry_size = entries
+            .iter()
+            .flatten()
+            .map(|entry| entry.len())
+            .sum::&lt;usize&gt;();
+        <span class="self">self</span>.db_metrics
+            .op_metrics
+            .rocksdb_multiget_bytes
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="self">self</span>.cf])
+            .observe(entry_size <span class="kw">as </span>f64);
+        <span class="kw">if </span>perf_ctx.is_some() {
+            <span class="self">self</span>.db_metrics
+                .read_perf_ctx_metrics
+                .report_metrics(<span class="kw-2">&amp;</span><span class="self">self</span>.cf);
+        }
+        <span class="prelude-val">Ok</span>(entries)
     }
 
     <span class="kw">fn </span>report_metrics(rocksdb: <span class="kw-2">&amp;</span>Arc&lt;RocksDB&gt;, cf_name: <span class="kw-2">&amp;</span>str, db_metrics: <span class="kw-2">&amp;</span>Arc&lt;DBMetrics&gt;) {
@@ -4036,8 +4155,20 @@
             .key_may_exist_cf(<span class="kw-2">&amp;</span><span class="self">self</span>.cf(), <span class="kw-2">&amp;</span>key_buf, <span class="kw-2">&amp;</span>readopts)
             &amp;&amp; <span class="self">self
                 </span>.rocksdb
-                .get_pinned_cf(<span class="kw-2">&amp;</span><span class="self">self</span>.cf(), <span class="kw-2">&amp;</span>key_buf, <span class="kw-2">&amp;</span>readopts)<span class="question-mark">?
+                .get_pinned_cf_opt(<span class="kw-2">&amp;</span><span class="self">self</span>.cf(), <span class="kw-2">&amp;</span>key_buf, <span class="kw-2">&amp;</span>readopts)<span class="question-mark">?
                 </span>.is_some())
+    }
+
+    <span class="attr">#[instrument(level = <span class="string">&quot;trace&quot;</span>, skip_all, err)]
+    </span><span class="kw">fn </span>multi_contains_keys&lt;J&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        keys: <span class="kw">impl </span>IntoIterator&lt;Item = J&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;bool&gt;, <span class="self">Self</span>::Error&gt;
+    <span class="kw">where
+        </span>J: Borrow&lt;K&gt;,
+    {
+        <span class="kw">let </span>values = <span class="self">self</span>.multi_get_pinned(keys)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(values.into_iter().map(|v| v.is_some()).collect())
     }
 
     <span class="attr">#[instrument(level = <span class="string">&quot;trace&quot;</span>, skip_all, err)]
@@ -4056,7 +4187,7 @@
         <span class="kw">let </span>key_buf = be_fix_int_ser(key)<span class="question-mark">?</span>;
         <span class="kw">let </span>res = <span class="self">self
             </span>.rocksdb
-            .get_pinned_cf(<span class="kw-2">&amp;</span><span class="self">self</span>.cf(), <span class="kw-2">&amp;</span>key_buf, <span class="kw-2">&amp;</span><span class="self">self</span>.opts.readopts())<span class="question-mark">?</span>;
+            .get_pinned_cf_opt(<span class="kw-2">&amp;</span><span class="self">self</span>.cf(), <span class="kw-2">&amp;</span>key_buf, <span class="kw-2">&amp;</span><span class="self">self</span>.opts.readopts())<span class="question-mark">?</span>;
         <span class="self">self</span>.db_metrics
             .op_metrics
             .rocksdb_get_bytes
@@ -4089,7 +4220,7 @@
         <span class="kw">let </span>key_buf = be_fix_int_ser(key)<span class="question-mark">?</span>;
         <span class="kw">let </span>res = <span class="self">self
             </span>.rocksdb
-            .get_pinned_cf(<span class="kw-2">&amp;</span><span class="self">self</span>.cf(), <span class="kw-2">&amp;</span>key_buf, <span class="kw-2">&amp;</span><span class="self">self</span>.opts.readopts())<span class="question-mark">?</span>;
+            .get_pinned_cf_opt(<span class="kw-2">&amp;</span><span class="self">self</span>.cf(), <span class="kw-2">&amp;</span>key_buf, <span class="kw-2">&amp;</span><span class="self">self</span>.opts.readopts())<span class="question-mark">?</span>;
         <span class="self">self</span>.db_metrics
             .op_metrics
             .rocksdb_get_bytes
@@ -4408,41 +4539,12 @@
     <span class="kw">where
         </span>J: Borrow&lt;K&gt;,
     {
-        <span class="kw">let </span>_timer = <span class="self">self
-            </span>.db_metrics
-            .op_metrics
-            .rocksdb_multiget_latency_seconds
-            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="self">self</span>.cf])
-            .start_timer();
-        <span class="kw">let </span>perf_ctx = <span class="kw">if </span><span class="self">self</span>.multiget_sample_interval.sample() {
-            <span class="prelude-val">Some</span>(RocksDBPerfContext::default())
-        } <span class="kw">else </span>{
-            <span class="prelude-val">None
-        </span>};
-        <span class="kw">let </span>cf = <span class="self">self</span>.cf();
-        <span class="kw">let </span>keys_bytes: <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, TypedStoreError&gt; = keys
-            .into_iter()
-            .map(|k| <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>cf, be_fix_int_ser(k.borrow())<span class="question-mark">?</span>)))
-            .collect();
         <span class="kw">let </span>results = <span class="self">self
-            </span>.rocksdb
-            .multi_get_cf(keys_bytes<span class="question-mark">?</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.opts.readopts());
-        <span class="kw">let </span>entry_size = |entry: <span class="kw-2">&amp;</span><span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;, rocksdb::Error&gt;| -&gt; f64 {
-            entry
-                .as_ref()
-                .map_or(<span class="number">0.0</span>, |e| e.as_ref().map_or(<span class="number">0.0</span>, |v| v.len() <span class="kw">as </span>f64))
-        };
-        <span class="self">self</span>.db_metrics
-            .op_metrics
-            .rocksdb_multiget_bytes
-            .with_label_values(<span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="self">self</span>.cf])
-            .observe(results.iter().map(entry_size).sum());
-        <span class="kw">if </span>perf_ctx.is_some() {
-            <span class="self">self</span>.db_metrics
-                .read_perf_ctx_metrics
-                .report_metrics(<span class="kw-2">&amp;</span><span class="self">self</span>.cf);
-        }
-        <span class="prelude-val">Ok</span>(results.into_iter().collect::&lt;<span class="prelude-ty">Result</span>&lt;<span class="kw">_</span>, <span class="kw">_</span>&gt;&gt;()<span class="question-mark">?</span>)
+            </span>.multi_get_pinned(keys)<span class="question-mark">?
+            </span>.into_iter()
+            .map(|val| val.map(|v| v.to_vec()))
+            .collect();
+        <span class="prelude-val">Ok</span>(results)
     }
 
     <span class="doccomment">/// Returns a vector of values corresponding to the keys provided.
@@ -4454,7 +4556,7 @@
     <span class="kw">where
         </span>J: Borrow&lt;K&gt;,
     {
-        <span class="kw">let </span>results = <span class="self">self</span>.multi_get_raw_bytes(keys)<span class="question-mark">?</span>;
+        <span class="kw">let </span>results = <span class="self">self</span>.multi_get_pinned(keys)<span class="question-mark">?</span>;
         <span class="kw">let </span>values_parsed: <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, TypedStoreError&gt; = results
             .into_iter()
             .map(|value_byte| <span class="kw">match </span>value_byte {
