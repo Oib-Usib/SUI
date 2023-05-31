@@ -928,20 +928,20 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">async fn </span>resolve_name_service_address(<span class="kw-2">&amp;</span><span class="self">self</span>, _name: String) -&gt; RpcResult&lt;<span class="prelude-ty">Option</span>&lt;SuiAddress&gt;&gt; {
-        <span class="comment">// TODO(gegaowp): implement name service resolver in indexer
-        </span><span class="macro">todo!</span>()
-    }
+    <span class="kw">async fn </span>resolve_name_service_address(<span class="kw-2">&amp;</span><span class="self">self</span>, name: String) -&gt; RpcResult&lt;<span class="prelude-ty">Option</span>&lt;SuiAddress&gt;&gt; {
+        <span class="self">self</span>.fullnode.resolve_name_service_address(name).<span class="kw">await
+    </span>}
 
     <span class="kw">async fn </span>resolve_name_service_names(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        _address: SuiAddress,
-        _cursor: <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
-        _limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+        address: SuiAddress,
+        cursor: <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
+        limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     ) -&gt; RpcResult&lt;Page&lt;String, ObjectID&gt;&gt; {
-        <span class="comment">// TODO(gegaowp): implement name service resolver in indexer
-        </span><span class="macro">todo!</span>()
-    }
+        <span class="self">self</span>.fullnode
+            .resolve_name_service_names(address, cursor, limit)
+            .<span class="kw">await
+    </span>}
 }
 
 <span class="kw">impl</span>&lt;S&gt; SuiRpcModule <span class="kw">for </span>IndexerApi&lt;S&gt;
