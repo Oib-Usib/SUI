@@ -1202,6 +1202,7 @@
 <a href="#1202" id="1202">1202</a>
 <a href="#1203" id="1203">1203</a>
 <a href="#1204" id="1204">1204</a>
+<a href="#1205" id="1205">1205</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1267,6 +1268,7 @@
 <span class="kw">use </span>std::str::FromStr;
 
 <span class="attr">#[cfg(test)]
+#[cfg(feature = <span class="string">&quot;test-utils&quot;</span>)]
 #[path = <span class="string">&quot;unit_tests/base_types_tests.rs&quot;</span>]
 </span><span class="kw">mod </span>base_types_tests;
 

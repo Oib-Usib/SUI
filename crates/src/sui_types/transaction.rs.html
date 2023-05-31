@@ -2142,6 +2142,16 @@
 <a href="#2142" id="2142">2142</a>
 <a href="#2143" id="2143">2143</a>
 <a href="#2144" id="2144">2144</a>
+<a href="#2145" id="2145">2145</a>
+<a href="#2146" id="2146">2146</a>
+<a href="#2147" id="2147">2147</a>
+<a href="#2148" id="2148">2148</a>
+<a href="#2149" id="2149">2149</a>
+<a href="#2150" id="2150">2150</a>
+<a href="#2151" id="2151">2151</a>
+<a href="#2152" id="2152">2152</a>
+<a href="#2153" id="2153">2153</a>
+<a href="#2154" id="2154">2154</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -2154,12 +2164,14 @@
     ToFromBytes,
 };
 <span class="kw">use </span><span class="kw">crate</span>::digests::{CertificateDigest, SenderSignedDataDigest};
-<span class="kw">use </span><span class="kw">crate</span>::message_envelope::{Envelope, Message, TrustedEnvelope, VerifiedEnvelope};
+<span class="kw">use </span><span class="kw">crate</span>::message_envelope::{
+    get_google_jwk_bytes, Envelope, Message, TrustedEnvelope, VerifiedEnvelope,
+};
 <span class="kw">use </span><span class="kw">crate</span>::messages_checkpoint::CheckpointTimestamp;
 <span class="kw">use </span><span class="kw">crate</span>::messages_consensus::ConsensusCommitPrologue;
 <span class="kw">use </span><span class="kw">crate</span>::object::{MoveObject, Object, Owner};
 <span class="kw">use </span><span class="kw">crate</span>::programmable_transaction_builder::ProgrammableTransactionBuilder;
-<span class="kw">use </span><span class="kw">crate</span>::signature::{AuthenticatorTrait, GenericSignature};
+<span class="kw">use </span><span class="kw">crate</span>::signature::{AuthenticatorTrait, AuxVerifyData, GenericSignature};
 <span class="kw">use crate</span>::{
     SUI_CLOCK_OBJECT_ID, SUI_CLOCK_OBJECT_SHARED_VERSION, SUI_FRAMEWORK_PACKAGE_ID,
     SUI_SYSTEM_STATE_OBJECT_ID, SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
@@ -2201,6 +2213,7 @@
 <span class="kw">const </span>BLOCKED_MOVE_FUNCTIONS: [(ObjectID, <span class="kw-2">&amp;</span>str, <span class="kw-2">&amp;</span>str); <span class="number">0</span>] = [];
 
 <span class="attr">#[cfg(test)]
+#[cfg(feature = <span class="string">&quot;test-utils&quot;</span>)]
 #[path = <span class="string">&quot;unit_tests/messages_tests.rs&quot;</span>]
 </span><span class="kw">mod </span>messages_tests;
 
@@ -3877,7 +3890,7 @@
         TransactionDigest::new(default_hash(<span class="kw-2">&amp;</span><span class="self">self</span>.intent_message().value))
     }
 
-    <span class="kw">fn </span>verify(<span class="kw-2">&amp;</span><span class="self">self</span>, _sig_epoch: <span class="prelude-ty">Option</span>&lt;EpochId&gt;) -&gt; SuiResult {
+    <span class="kw">fn </span>verify(<span class="kw-2">&amp;</span><span class="self">self</span>, sig_epoch: <span class="prelude-ty">Option</span>&lt;EpochId&gt;) -&gt; SuiResult {
         <span class="macro">fp_ensure!</span>(
             <span class="self">self</span>.<span class="number">0</span>.len() == <span class="number">1</span>,
             SuiError::UserInputError {
@@ -3912,7 +3925,14 @@
 
         <span class="comment">// Verify all present signatures.
         </span><span class="kw">for </span>(signer, signature) <span class="kw">in </span>present_sigs {
-            signature.verify_secure_generic(<span class="self">self</span>.intent_message(), signer)<span class="question-mark">?</span>;
+            signature.verify_secure_generic(
+                <span class="self">self</span>.intent_message(),
+                signer,
+                AuxVerifyData::new(
+                    sig_epoch,
+                    <span class="prelude-val">Some</span>(get_google_jwk_bytes().read().unwrap().clone()),
+                ),
+            )<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())
     }

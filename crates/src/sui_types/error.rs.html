@@ -826,6 +826,9 @@
 <a href="#826" id="826">826</a>
 <a href="#827" id="827">827</a>
 <a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1381,6 +1384,9 @@
 
     <span class="attr">#[error(<span class="string">&quot;Failed to perform file operation: {0}&quot;</span>)]
     </span>FileIOError(String),
+
+    <span class="attr">#[error(<span class="string">&quot;Failed to get JWK&quot;</span>)]
+    </span>JWKRetrievalError,
 }
 
 <span class="attr">#[repr(u64)]

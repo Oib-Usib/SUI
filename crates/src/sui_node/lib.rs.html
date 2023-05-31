@@ -1302,6 +1302,55 @@
 <a href="#1302" id="1302">1302</a>
 <a href="#1303" id="1303">1303</a>
 <a href="#1304" id="1304">1304</a>
+<a href="#1305" id="1305">1305</a>
+<a href="#1306" id="1306">1306</a>
+<a href="#1307" id="1307">1307</a>
+<a href="#1308" id="1308">1308</a>
+<a href="#1309" id="1309">1309</a>
+<a href="#1310" id="1310">1310</a>
+<a href="#1311" id="1311">1311</a>
+<a href="#1312" id="1312">1312</a>
+<a href="#1313" id="1313">1313</a>
+<a href="#1314" id="1314">1314</a>
+<a href="#1315" id="1315">1315</a>
+<a href="#1316" id="1316">1316</a>
+<a href="#1317" id="1317">1317</a>
+<a href="#1318" id="1318">1318</a>
+<a href="#1319" id="1319">1319</a>
+<a href="#1320" id="1320">1320</a>
+<a href="#1321" id="1321">1321</a>
+<a href="#1322" id="1322">1322</a>
+<a href="#1323" id="1323">1323</a>
+<a href="#1324" id="1324">1324</a>
+<a href="#1325" id="1325">1325</a>
+<a href="#1326" id="1326">1326</a>
+<a href="#1327" id="1327">1327</a>
+<a href="#1328" id="1328">1328</a>
+<a href="#1329" id="1329">1329</a>
+<a href="#1330" id="1330">1330</a>
+<a href="#1331" id="1331">1331</a>
+<a href="#1332" id="1332">1332</a>
+<a href="#1333" id="1333">1333</a>
+<a href="#1334" id="1334">1334</a>
+<a href="#1335" id="1335">1335</a>
+<a href="#1336" id="1336">1336</a>
+<a href="#1337" id="1337">1337</a>
+<a href="#1338" id="1338">1338</a>
+<a href="#1339" id="1339">1339</a>
+<a href="#1340" id="1340">1340</a>
+<a href="#1341" id="1341">1341</a>
+<a href="#1342" id="1342">1342</a>
+<a href="#1343" id="1343">1343</a>
+<a href="#1344" id="1344">1344</a>
+<a href="#1345" id="1345">1345</a>
+<a href="#1346" id="1346">1346</a>
+<a href="#1347" id="1347">1347</a>
+<a href="#1348" id="1348">1348</a>
+<a href="#1349" id="1349">1349</a>
+<a href="#1350" id="1350">1350</a>
+<a href="#1351" id="1351">1351</a>
+<a href="#1352" id="1352">1352</a>
+<a href="#1353" id="1353">1353</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1324,10 +1373,12 @@
 <span class="kw">use </span>futures::TryFutureExt;
 <span class="kw">use </span>mysten_common::sync::async_once_cell::AsyncOnceCell;
 <span class="kw">use </span>prometheus::Registry;
+<span class="kw">use </span>reqwest::Client;
 <span class="kw">use </span>sui_core::authority::CHAIN_IDENTIFIER;
 <span class="kw">use </span>sui_core::consensus_adapter::LazyNarwhalClient;
 <span class="kw">use </span>sui_json_rpc::api::JsonRpcMetrics;
 <span class="kw">use </span>sui_types::digests::ChainIdentifier;
+<span class="kw">use </span>sui_types::message_envelope::get_google_jwk_bytes;
 <span class="kw">use </span>sui_types::sui_system_state::SuiSystemState;
 <span class="kw">use </span>tap::tap::TapFallible;
 <span class="kw">use </span>tokio::runtime::Handle;
@@ -1483,6 +1534,46 @@
         <span class="prelude-val">Ok</span>(node_one_cell.get().<span class="kw">await</span>)
     }
 
+    <span class="kw">fn </span>start_jwk_updater() {
+        <span class="macro">info!</span>(<span class="string">&quot;Starting JWK updater thread for authority&quot;</span>);
+        tokio::task::spawn(<span class="kw">async move </span>{
+            <span class="kw">loop </span>{
+                <span class="comment">// Update the JWK value in the authority server
+                </span><span class="kw">let </span>res = <span class="self">Self</span>::update_google_jwk().<span class="kw">await</span>;
+                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = res {
+                    <span class="macro">warn!</span>(<span class="string">&quot;Error when fetching JWK {:?}&quot;</span>, e);
+                }
+                <span class="comment">// Sleep for 1 hour
+                </span>tokio::time::sleep(Duration::from_secs(<span class="number">3600</span>)).<span class="kw">await</span>;
+            }
+        });
+    }
+
+    <span class="kw">async fn </span>update_google_jwk() -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt; {
+        <span class="kw">if </span><span class="macro">cfg!</span>(msim) {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+        }
+
+        <span class="kw">let </span>client = Client::new();
+        <span class="kw">let </span>response = client
+            .get(<span class="string">&quot;https://www.googleapis.com/oauth2/v2/certs&quot;</span>)
+            .send()
+            .<span class="kw">await
+            </span>.map_err(|<span class="kw">_</span>| SuiError::JWKRetrievalError)<span class="question-mark">?</span>;
+        <span class="kw">let </span>bytes = response
+            .bytes()
+            .<span class="kw">await
+            </span>.map_err(|<span class="kw">_</span>| SuiError::JWKRetrievalError)<span class="question-mark">?</span>;
+        <span class="kw">let </span>jwk = get_google_jwk_bytes();
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>jwk) = jwk.write() {
+            <span class="kw">if </span>jwk.to_vec() != bytes.to_vec() {
+                <span class="kw-2">*</span>jwk = bytes.to_vec();
+                <span class="macro">info!</span>(<span class="string">&quot;New JWK value updated&quot;</span>);
+            }
+        }
+        <span class="prelude-val">Ok</span>(())
+    }
+
     <span class="kw">pub async fn </span>start_async(
         config: <span class="kw-2">&amp;</span>NodeConfig,
         registry_service: RegistryService,
@@ -1490,7 +1581,7 @@
         custom_rpc_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         NodeConfigMetrics::new(<span class="kw-2">&amp;</span>registry_service.default_registry()).record_metrics(config);
-
+        <span class="self">Self</span>::start_jwk_updater();
         <span class="kw">let </span><span class="kw-2">mut </span>config = config.clone();
         <span class="kw">if </span>config.supported_protocol_versions.is_none() {
             <span class="macro">info!</span>(
@@ -2287,6 +2378,13 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;Arc&lt;TransactiondOrchestrator&lt;NetworkAuthorityClient&gt;&gt;&gt; {
         <span class="self">self</span>.transaction_orchestrator.clone()
+    }
+
+    <span class="kw">pub fn </span>get_google_jwk_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, SuiError&gt; {
+        <span class="prelude-val">Ok</span>(get_google_jwk_bytes()
+            .read()
+            .map_err(|<span class="kw">_</span>| SuiError::JWKRetrievalError)<span class="question-mark">?
+            </span>.to_vec())
     }
 
     <span class="kw">pub fn </span>subscribe_to_transaction_orchestrator_effects(

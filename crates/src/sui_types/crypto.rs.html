@@ -1701,6 +1701,7 @@
 <a href="#1701" id="1701">1701</a>
 <a href="#1702" id="1702">1702</a>
 <a href="#1703" id="1703">1703</a>
+<a href="#1704" id="1704">1704</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>anyhow::{anyhow, Error};
@@ -1758,6 +1759,7 @@
 </span><span class="kw">mod </span>crypto_tests;
 
 <span class="attr">#[cfg(test)]
+#[cfg(feature = <span class="string">&quot;test-utils&quot;</span>)]
 #[path = <span class="string">&quot;unit_tests/intent_tests.rs&quot;</span>]
 </span><span class="kw">mod </span>intent_tests;
 
