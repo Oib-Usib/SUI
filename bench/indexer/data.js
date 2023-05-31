@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685553592673,
+  "lastUpdate": 1685566241564,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10295,6 +10295,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 319586,
             "range": "± 19490",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aschran@mystenlabs.com",
+            "name": "Andrew Schran",
+            "username": "aschran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "27c31b7df54ff0cbb59e9d4e34f369bbf074b58d",
+          "message": "Increase UDP socket buffer sizes for Anemo networks (#12230)\n\n## Description \r\n\r\nIncreases size of UDP socket buffers for sui, primary, and worker Anemo\r\nnetworks. This improves performance under high load.\r\n\r\n## Test Plan \r\n\r\nManual benchmarks & testing on private-testnet.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nIncreases size of UDP socket buffers for sui, primary, and worker Anemo\r\nnetworks. This improves performance under high load.\r\n\r\n**NOTE:** the buffer sizes requested after this change are larger than\r\nthe default maximum buffer allowed by many operating systems. If the sui\r\nnode binary logs errors about failure to set UDP socket buffer size, you\r\nmay need to increase the maximum allowed by your OS.\r\n\r\nSome examples:\r\n* Linux: `sudo sysctl -w net.core.rmem_max=104857600; sudo sysctl -w\r\nnet.core.wmem_max=104857600`\r\n* MacOS: `sudo sysctl -w kern.ipc.maxsockbuf=104857600`",
+          "timestamp": "2023-05-31T20:39:00Z",
+          "tree_id": "89814d4c2d3dba7f0a74c2fdf0365dfb2976b5c9",
+          "url": "https://github.com/MystenLabs/sui/commit/27c31b7df54ff0cbb59e9d4e34f369bbf074b58d"
+        },
+        "date": 1685566221841,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 158030450,
+            "range": "± 4721976",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 339495,
+            "range": "± 24270",
             "unit": "ns/iter"
           }
         ]
