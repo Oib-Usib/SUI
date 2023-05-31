@@ -26,6 +26,7 @@ var sourcesIndex = JSON.parse('{\
 "sui":["",[],["client_commands.rs","console.rs","fire_drill.rs","genesis_ceremony.rs","genesis_inspector.rs","keytool.rs","lib.rs","shell.rs","sui_commands.rs","validator_commands.rs"]],\
 "sui_adapter_latest":["",[["programmable_transactions",[],["context.rs","execution.rs","linkage_view.rs","mod.rs","types.rs"]]],["adapter.rs","error.rs","execution_engine.rs","execution_mode.rs","lib.rs","type_layout_resolver.rs"]],\
 "sui_adapter_transactional_tests":["",[],["lib.rs"]],\
+"sui_archival":["",[],["lib.rs","writer.rs"]],\
 "sui_benchmark":["",[["drivers",[],["bench_driver.rs","driver.rs","mod.rs"]],["workloads",[],["adversarial.rs","batch_payment.rs","delegation.rs","mod.rs","payload.rs","shared_counter.rs","transfer_object.rs","workload.rs","workload_configuration.rs"]]],["bank.rs","benchmark_setup.rs","embedded_reconfig_observer.rs","fullnode_reconfig_observer.rs","in_memory_wallet.rs","lib.rs","options.rs","system_state_observer.rs","util.rs"]],\
 "sui_cluster_test":["",[["test_case",[],["coin_index_test.rs","coin_merge_split_test.rs","fullnode_build_publish_transaction_test.rs","fullnode_execute_transaction_test.rs","native_transfer_test.rs","shared_object_test.rs"]]],["cluster.rs","config.rs","faucet.rs","helper.rs","lib.rs","test_case.rs","wallet_client.rs"]],\
 "sui_config":["",[],["certificate_deny_config.rs","genesis.rs","lib.rs","local_ip_utils.rs","node.rs","node_config_metrics.rs","p2p.rs","transaction_deny_config.rs"]],\
@@ -46,7 +47,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_move":["",[],["build.rs","coverage.rs","disassemble.rs","lib.rs","new.rs","prove.rs","unit_test.rs"]],\
 "sui_move_build":["",[],["lib.rs"]],\
 "sui_move_natives_latest":["",[["crypto",[],["bls12381.rs","ecdsa_k1.rs","ecdsa_r1.rs","ecvrf.rs","ed25519.rs","groth16.rs","hash.rs","hmac.rs","mod.rs"]],["object_runtime",[],["mod.rs","object_store.rs"]]],["address.rs","dynamic_field.rs","event.rs","lib.rs","object.rs","test_scenario.rs","test_utils.rs","transfer.rs","tx_context.rs","types.rs","validator.rs"]],\
-"sui_network":["",[["discovery",[],["builder.rs","mod.rs","server.rs"]],["state_sync",[],["builder.rs","metrics.rs","mod.rs","server.rs","test_utils.rs"]]],["api.rs","lib.rs","utils.rs"]],\
+"sui_network":["",[["discovery",[],["builder.rs","mod.rs","server.rs"]],["state_sync",[],["builder.rs","metrics.rs","mod.rs","server.rs"]]],["api.rs","lib.rs","utils.rs"]],\
 "sui_node":["",[],["admin.rs","handle.rs","lib.rs","metrics.rs"]],\
 "sui_open_rpc":["",[],["lib.rs"]],\
 "sui_open_rpc_macros":["",[],["lib.rs"]],\
@@ -64,7 +65,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_storage":["",[["object_store",[],["mod.rs","util.rs"]]],["indexes.rs","lib.rs","mutex_table.rs","package_object_cache.rs","sharded_lru.rs","write_path_pending_tx_log.rs"]],\
 "sui_surfer":["",[],["default_surf_strategy.rs","lib.rs","surf_strategy.rs","surfer_state.rs","surfer_task.rs"]],\
 "sui_swarm":["",[["memory",[],["container.rs","mod.rs","node.rs","swarm.rs"]]],["lib.rs"]],\
-"sui_swarm_config":["",[],["genesis_config.rs","lib.rs","network_config.rs","network_config_builder.rs","node_config_builder.rs"]],\
+"sui_swarm_config":["",[],["genesis_config.rs","lib.rs","network_config.rs","network_config_builder.rs","node_config_builder.rs","test_utils.rs"]],\
 "sui_telemetry":["",[],["lib.rs"]],\
 "sui_test_transaction_builder":["",[],["lib.rs"]],\
 "sui_test_validator":["",[],["main.rs"]],\

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["indexes","mutex_table","object_store","package_object_cache","sharded_lru","write_path_pending_tx_log"]};
+window.SIDEBAR_ITEMS = {"constant":["BLOB_ENCODING_BYTES","MAX_VARINT_LENGTH","SHA3_BYTES"],"enum":["Encoding","FileCompression"],"fn":["compute_sha3_checksum","compute_sha3_checksum_for_file"],"mod":["indexes","mutex_table","object_store","package_object_cache","sharded_lru","write_path_pending_tx_log"],"struct":["Blob"]};
