@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685652142912,
+  "lastUpdate": 1685653831376,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10547,6 +10547,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 361927,
             "range": "± 66133",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8b44f3c390d370b23f177c9f304ba71098e16126",
+          "message": "indexer: FromOrTo tx filter (#12251)\n\n## Description \r\n\r\nThis PR added a tx filter\r\n```\r\n    /// Query txs that have a given address as sender or recipient.\r\n    FromOrToAddress { addr: SuiAddress },\r\n```\r\nsuch that on Explorer etc. the address page could fetch \"related txs\"\r\nefficiently.\r\n\r\n## Test Plan \r\n\r\nLocal run network + indexer, query tx with new filter.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-01T16:55:11-04:00",
+          "tree_id": "612674fc4a36650bcc05df609d124b64ab514b47",
+          "url": "https://github.com/MystenLabs/sui/commit/8b44f3c390d370b23f177c9f304ba71098e16126"
+        },
+        "date": 1685653811369,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 136683517,
+            "range": "± 4316570",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311965,
+            "range": "± 17524",
             "unit": "ns/iter"
           }
         ]
