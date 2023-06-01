@@ -4198,6 +4198,7 @@
 <a href="#4198" id="4198">4198</a>
 <a href="#4199" id="4199">4199</a>
 <a href="#4200" id="4200">4200</a>
+<a href="#4201" id="4201">4201</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -4241,9 +4242,9 @@
 };
 <span class="kw">use </span>once_cell::sync::OnceCell;
 <span class="kw">use </span>shared_crypto::intent::{Intent, IntentScope};
+<span class="kw">use </span>sui_adapter::adapter;
 <span class="kw">use </span>sui_adapter::execution_engine;
 <span class="kw">use </span>sui_adapter::type_layout_resolver::TypeLayoutResolver;
-<span class="kw">use </span>sui_adapter::{adapter, execution_mode};
 <span class="kw">use </span>sui_config::certificate_deny_config::CertificateDenyConfig;
 <span class="kw">use </span>sui_config::genesis::Genesis;
 <span class="kw">use </span>sui_config::node::{
@@ -4275,8 +4276,8 @@
 <span class="kw">use </span>sui_types::error::{ExecutionError, UserInputError};
 <span class="kw">use </span>sui_types::event::{Event, EventID};
 <span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
+<span class="kw">use </span>sui_types::execution_mode;
 <span class="kw">use </span>sui_types::gas::{GasCostSummary, SuiGasStatus};
-<span class="kw">use </span>sui_types::layout_resolver::LayoutResolver;
 <span class="kw">use </span>sui_types::message_envelope::Message;
 <span class="kw">use </span>sui_types::messages_checkpoint::{
     CheckpointCommitment, CheckpointContents, CheckpointContentsDigest, CheckpointDigest,
@@ -4298,6 +4299,7 @@
 <span class="kw">use </span>sui_types::temporary_store::{
     InnerTemporaryStore, ObjectMap, TemporaryModuleResolver, TxCoins, WrittenObjects,
 };
+<span class="kw">use </span>sui_types::type_resolver::LayoutResolver;
 <span class="kw">use </span>sui_types::{
     base_types::<span class="kw-2">*</span>,
     committee::Committee,

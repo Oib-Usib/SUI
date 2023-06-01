@@ -1685,11 +1685,11 @@
 <span class="kw">use </span><span class="kw">crate</span>::committee::EpochId;
 <span class="kw">use </span><span class="kw">crate</span>::effects::{TransactionEffects, TransactionEvents};
 <span class="kw">use </span><span class="kw">crate</span>::execution_status::ExecutionStatus;
-<span class="kw">use </span><span class="kw">crate</span>::layout_resolver::LayoutResolver;
 <span class="kw">use </span><span class="kw">crate</span>::storage::ObjectStore;
 <span class="kw">use </span><span class="kw">crate</span>::sui_system_state::{
     get_sui_system_state, get_sui_system_state_wrapper, AdvanceEpochParams, SuiSystemState,
 };
+<span class="kw">use </span><span class="kw">crate</span>::type_resolver::LayoutResolver;
 <span class="kw">use crate</span>::{
     base_types::{
         ObjectDigest, ObjectID, ObjectRef, SequenceNumber, SuiAddress, TransactionDigest,

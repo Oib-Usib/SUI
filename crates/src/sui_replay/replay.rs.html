@@ -1946,7 +1946,6 @@
 <span class="kw">use </span>std::sync::Mutex;
 <span class="kw">use </span>sui_adapter::adapter;
 <span class="kw">use </span>sui_adapter::execution_engine::execute_transaction_to_effects_impl;
-<span class="kw">use </span>sui_adapter::execution_mode;
 <span class="kw">use </span>sui_config::node::ExpensiveSafetyCheckConfig;
 <span class="kw">use </span>sui_core::authority::authority_per_epoch_store::AuthorityPerEpochStore;
 <span class="kw">use </span>sui_core::authority::epoch_start_configuration::EpochStartConfiguration;
@@ -1971,6 +1970,7 @@
 <span class="kw">use </span>sui_types::error::ExecutionError;
 <span class="kw">use </span>sui_types::error::{SuiError, SuiResult};
 <span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
+<span class="kw">use </span>sui_types::execution_mode;
 <span class="kw">use </span>sui_types::gas::SuiGasStatus;
 <span class="kw">use </span>sui_types::metrics::LimitsMetrics;
 <span class="kw">use </span>sui_types::object::{Data, Object, Owner};

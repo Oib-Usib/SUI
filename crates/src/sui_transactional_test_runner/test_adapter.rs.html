@@ -1573,6 +1573,7 @@
 <a href="#1573" id="1573">1573</a>
 <a href="#1574" id="1574">1574</a>
 <a href="#1575" id="1575">1575</a>
+<a href="#1576" id="1576">1576</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1613,8 +1614,8 @@
     path::Path,
     sync::Arc,
 };
+<span class="kw">use </span>sui_adapter::adapter::new_move_vm;
 <span class="kw">use </span>sui_adapter::execution_engine;
-<span class="kw">use </span>sui_adapter::{adapter::new_move_vm, execution_mode};
 <span class="kw">use </span>sui_core::{
     state_accumulator::{accumulate_effects, WrappedObject},
     transaction_input_checker::check_objects,
@@ -1624,6 +1625,7 @@
 <span class="kw">use </span>sui_protocol_config::{Chain, ProtocolConfig};
 <span class="kw">use </span>sui_types::accumulator::Accumulator;
 <span class="kw">use </span>sui_types::effects::TransactionEffectsAPI;
+<span class="kw">use </span>sui_types::execution_mode;
 <span class="kw">use </span>sui_types::execution_status::ExecutionStatus;
 <span class="kw">use </span>sui_types::MOVE_STDLIB_PACKAGE_ID;
 <span class="kw">use </span>sui_types::{

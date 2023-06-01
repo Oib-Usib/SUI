@@ -837,8 +837,7 @@
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-</span><span class="kw">use </span><span class="kw">crate</span>::execution_mode::{<span class="self">self</span>, ExecutionMode};
-<span class="kw">use </span>move_binary_format::CompiledModule;
+</span><span class="kw">use </span>move_binary_format::CompiledModule;
 <span class="kw">use </span>move_bytecode_utils::module_cache::GetModule;
 <span class="kw">use </span>move_vm_runtime::move_vm::MoveVM;
 <span class="kw">use </span>once_cell::sync::Lazy;
@@ -851,6 +850,7 @@
     BALANCE_MODULE_NAME,
 };
 <span class="kw">use </span>sui_types::base_types::ObjectID;
+<span class="kw">use </span>sui_types::execution_mode::{<span class="self">self</span>, ExecutionMode};
 <span class="kw">use </span>sui_types::gas_coin::GAS;
 <span class="kw">use </span>sui_types::metrics::LimitsMetrics;
 <span class="kw">use </span>sui_types::object::OBJECT_START_VERSION;

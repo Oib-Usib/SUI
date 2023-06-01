@@ -831,6 +831,9 @@
 <a href="#831" id="831">831</a>
 <a href="#832" id="832">832</a>
 <a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -891,6 +894,9 @@
     Write(Object, WriteKind),
     Delete(SequenceNumber, DeleteKind),
 }
+
+<span class="kw">pub trait </span>StorageView: Storage + ParentSync + ChildObjectResolver {}
+<span class="kw">impl</span>&lt;T: Storage + ParentSync + ChildObjectResolver&gt; StorageView <span class="kw">for </span>T {}
 
 <span class="doccomment">/// An abstraction of the (possibly distributed) store for objects. This
 /// API only allows for the retrieval of objects, not any state changes

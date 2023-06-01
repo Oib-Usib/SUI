@@ -829,6 +829,14 @@
 <a href="#829" id="829">829</a>
 <a href="#830" id="830">830</a>
 <a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -837,6 +845,7 @@
     base_types::<span class="kw-2">*</span>,
     committee::{Committee, EpochId, StakeUnit},
     digests::CheckpointContentsDigest,
+    execution_status::CommandArgumentError,
     messages_checkpoint::CheckpointSequenceNumber,
     object::Owner,
 };
@@ -904,7 +913,7 @@
 
 <span class="attr">#[macro_export]
 </span><span class="macro">macro_rules! </span>assert_invariant {
-    (<span class="macro-nonterminal">$cond</span>:expr, $(<span class="macro-nonterminal">$args</span>:expr),<span class="kw-2">*</span>) =&gt; {{
+    (<span class="macro-nonterminal">$cond</span>:expr, $(<span class="macro-nonterminal">$args</span>:expr),* $(,)<span class="question-mark">?</span>) =&gt; {{
         <span class="kw">if </span>!<span class="macro-nonterminal">$cond </span>{
             <span class="macro">invariant_violation!</span>($(<span class="macro-nonterminal">$args</span>),<span class="kw-2">*</span>)
         }
@@ -1659,5 +1668,12 @@
     <span class="kw">fn </span>from(kind: ExecutionErrorKind) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::from_kind(kind)
     }
+}
+
+<span class="kw">pub fn </span>command_argument_error(e: CommandArgumentError, arg_idx: usize) -&gt; ExecutionError {
+    ExecutionError::from_kind(ExecutionErrorKind::command_argument_error(
+        e,
+        arg_idx <span class="kw">as </span>u16,
+    ))
 }
 </code></pre></div></section></main></body></html>

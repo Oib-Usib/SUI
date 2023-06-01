@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"sui_adapter_latest":[["impl&lt;'vm, 'state, 'a, S: StorageView&gt; TypeTagResolver for <a class=\"struct\" href=\"sui_adapter_latest/programmable_transactions/context/struct.ExecutionContext.html\" title=\"struct sui_adapter_latest::programmable_transactions::context::ExecutionContext\">ExecutionContext</a>&lt;'vm, 'state, 'a, S&gt;<span class=\"where fmt-newline\">where\n    <a class=\"primitive\" href=\"https://doc.rust-lang.org/nightly/std/primitive.reference.html\">&amp;'state S</a>: SuiResolver,</span>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
