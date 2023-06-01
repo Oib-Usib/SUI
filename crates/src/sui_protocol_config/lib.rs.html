@@ -1456,6 +1456,9 @@
 <a href="#1456" id="1456">1456</a>
 <a href="#1457" id="1457">1457</a>
 <a href="#1458" id="1458">1458</a>
+<a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
+<a href="#1461" id="1461">1461</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2270,7 +2273,7 @@
         ProtocolConfig::get_for_version(ProtocolVersion::MAX, Chain::Unknown)
     }
 
-    <span class="kw">fn </span>get_for_version_impl(version: ProtocolVersion, _chain: Chain) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>get_for_version_impl(version: ProtocolVersion, chain: Chain) -&gt; <span class="self">Self </span>{
         <span class="attr">#[cfg(msim)]
         </span>{
             <span class="comment">// populate the fake simulator version # with a different base tx cost.
@@ -2538,12 +2541,12 @@
                 // new_constant: None,
             </span>},
             <span class="number">2 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 cfg.feature_flags.advance_epoch_start_time_in_safe_mode = <span class="bool-val">true</span>;
                 cfg
             }
             <span class="number">3 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 <span class="comment">// changes for gas model
                 </span>cfg.gas_model_version = <span class="prelude-val">Some</span>(<span class="number">2</span>);
                 <span class="comment">// max gas budget is in MIST and an absolute value 50SUI
@@ -2561,7 +2564,7 @@
                 cfg
             }
             <span class="number">4 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 <span class="comment">// Change reward slashing rate to 100%.
                 </span>cfg.reward_slashing_rate = <span class="prelude-val">Some</span>(<span class="number">10000</span>);
                 <span class="comment">// protect old and new lookup for object version
@@ -2569,7 +2572,7 @@
                 cfg
             }
             <span class="number">5 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 cfg.feature_flags.missing_type_is_compatibility_error = <span class="bool-val">true</span>;
                 cfg.gas_model_version = <span class="prelude-val">Some</span>(<span class="number">4</span>);
                 cfg.feature_flags.scoring_decision_with_validity_cutoff = <span class="bool-val">true</span>;
@@ -2578,14 +2581,14 @@
                 cfg
             }
             <span class="number">6 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 cfg.gas_model_version = <span class="prelude-val">Some</span>(<span class="number">5</span>);
                 cfg.buffer_stake_for_protocol_upgrade_bps = <span class="prelude-val">Some</span>(<span class="number">5000</span>);
                 cfg.feature_flags.consensus_order_end_of_epoch_last = <span class="bool-val">true</span>;
                 cfg
             }
             <span class="number">7 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 cfg.feature_flags.disallow_adding_abilities_on_upgrade = <span class="bool-val">true</span>;
                 cfg.feature_flags
                     .disable_invariant_violation_check_in_swap_loc = <span class="bool-val">true</span>;
@@ -2594,13 +2597,13 @@
                 cfg
             }
             <span class="number">8 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 cfg.feature_flags
                     .disallow_change_struct_type_params_on_upgrade = <span class="bool-val">true</span>;
                 cfg
             }
             <span class="number">9 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 <span class="comment">// Limits the length of a Move identifier
                 </span>cfg.max_move_identifier_len = <span class="prelude-val">Some</span>(<span class="number">128</span>);
                 cfg.feature_flags.no_extraneous_module_bytes = <span class="bool-val">true</span>;
@@ -2609,15 +2612,18 @@
                 cfg
             }
             <span class="number">10 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 cfg.max_verifier_meter_ticks_per_function = <span class="prelude-val">Some</span>(<span class="number">16_000_000</span>);
                 cfg.max_meter_ticks_per_module = <span class="prelude-val">Some</span>(<span class="number">16_000_000</span>);
                 cfg
             }
-            <span class="number">11 </span>=&gt; <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain),
+            <span class="number">11 </span>=&gt; <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain),
             <span class="number">12 </span>=&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, _chain);
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 cfg.feature_flags.narwhal_versioned_metadata = <span class="bool-val">true</span>;
+                <span class="kw">if </span>chain != Chain::Mainnet {
+                    cfg.feature_flags.commit_root_state_digest = <span class="bool-val">true</span>;
+                }
                 cfg
             }
             <span class="comment">// Use this template when making changes:
