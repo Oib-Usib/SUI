@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685651869180,
+  "lastUpdate": 1685652142912,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10511,6 +10511,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 383952,
             "range": "± 57911",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "108701016+joyqvq@users.noreply.github.com",
+            "name": "Joy Wang",
+            "username": "joyqvq"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b53bf161551204f5d981fdbbf7363cdf81d65d5",
+          "message": "crypto: implement zk login authenticator (#12210)\n\n## Description \r\nadd a zk login authenticator that can verify and execute the tx if all\r\nchecks passes. jwk is retrieved from global value.\r\n\r\n## Test Plan \r\n\r\nunit test + localnet\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-01T16:27:57-04:00",
+          "tree_id": "3c93c67b4d7a2067f5601b2337c7a0e0594daf74",
+          "url": "https://github.com/MystenLabs/sui/commit/7b53bf161551204f5d981fdbbf7363cdf81d65d5"
+        },
+        "date": 1685652121981,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 143114603,
+            "range": "± 4639996",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 361927,
+            "range": "± 66133",
             "unit": "ns/iter"
           }
         ]
