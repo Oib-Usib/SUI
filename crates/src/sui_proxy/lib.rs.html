@@ -178,6 +178,9 @@
 <a href="#178" id="178">178</a>
 <a href="#179" id="179">179</a>
 <a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">pub mod </span>admin;
@@ -277,12 +280,15 @@
             )
             .unwrap();
 
-        <span class="kw">let </span>client = admin::make_reqwest_client(RemoteWriteConfig {
-            url: dummy_remote_write_url.to_owned(),
-            username: <span class="string">&quot;bar&quot;</span>.into(),
-            password: <span class="string">&quot;foo&quot;</span>.into(),
-            ..Default::default()
-        });
+        <span class="kw">let </span>client = admin::make_reqwest_client(
+            RemoteWriteConfig {
+                url: dummy_remote_write_url.to_owned(),
+                username: <span class="string">&quot;bar&quot;</span>.into(),
+                password: <span class="string">&quot;foo&quot;</span>.into(),
+                ..Default::default()
+            },
+            <span class="string">&quot;dummy user agent&quot;</span>,
+        );
 
         <span class="comment">// add handler to server
         </span><span class="kw">async fn </span>handler(tls_info: axum::Extension&lt;TlsConnectionInfo&gt;) -&gt; String {
