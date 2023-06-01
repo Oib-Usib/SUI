@@ -185,6 +185,14 @@
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -332,7 +340,7 @@
 }
 
 <span class="kw">impl </span>WriteStore <span class="kw">for </span>RocksDbStore {
-    <span class="kw">fn </span>insert_checkpoint(<span class="kw-2">&amp;</span><span class="self">self</span>, checkpoint: VerifiedCheckpoint) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="self">Self</span>::Error&gt; {
+    <span class="kw">fn </span>insert_checkpoint(<span class="kw-2">&amp;</span><span class="self">self</span>, checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="self">Self</span>::Error&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(EndOfEpochData {
             next_epoch_committee,
             ..
@@ -352,6 +360,14 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="self">Self</span>::Error&gt; {
         <span class="self">self</span>.checkpoint_store
             .update_highest_synced_checkpoint(checkpoint)
+    }
+
+    <span class="kw">fn </span>update_highest_verified_checkpoint(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="self">Self</span>::Error&gt; {
+        <span class="self">self</span>.checkpoint_store
+            .update_highest_verified_checkpoint(checkpoint)
     }
 
     <span class="kw">fn </span>insert_checkpoint_contents(

@@ -1687,6 +1687,8 @@
 <a href="#1687" id="1687">1687</a>
 <a href="#1688" id="1688">1688</a>
 <a href="#1689" id="1689">1689</a>
+<a href="#1690" id="1690">1690</a>
+<a href="#1691" id="1691">1691</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1849,7 +1851,7 @@
                 );
             }
             <span class="self">self</span>.insert_checkpoint_contents(contents).unwrap();
-            <span class="self">self</span>.insert_verified_checkpoint(checkpoint.clone()).unwrap();
+            <span class="self">self</span>.insert_verified_checkpoint(<span class="kw-2">&amp;</span>checkpoint).unwrap();
             <span class="self">self</span>.update_highest_synced_checkpoint(<span class="kw-2">&amp;</span>checkpoint).unwrap();
         }
     }
@@ -1928,16 +1930,6 @@
         <span class="self">self</span>.get_checkpoint_by_digest(<span class="kw-2">&amp;</span>highest_verified.<span class="number">1</span>)
     }
 
-    <span class="kw">pub fn </span>get_highest_synced_checkpoint_seq_number(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;CheckpointSequenceNumber&gt;, TypedStoreError&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(highest_synced) = <span class="self">self</span>.watermarks.get(<span class="kw-2">&amp;</span>CheckpointWatermark::HighestSynced)<span class="question-mark">? </span>{
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(highest_synced.<span class="number">0</span>))
-        } <span class="kw">else </span>{
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
-        }
-    }
-
     <span class="kw">pub fn </span>get_highest_synced_checkpoint(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;VerifiedCheckpoint&gt;, TypedStoreError&gt; {
@@ -1990,7 +1982,12 @@
         <span class="self">self</span>.full_checkpoint_content.get(<span class="kw-2">&amp;</span>seq)
     }
 
-    <span class="kw">pub fn </span>insert_certified_checkpoint(
+    <span class="comment">// Called by consensus (ConsensusAggregator).
+    // Different from `insert_verified_checkpoint`, it does not touch
+    // the highest_verified_checkpoint watermark such that state sync
+    // will have a chance to process this checkpoint and perfom some
+    // state-sync only things.
+    </span><span class="kw">pub fn </span>insert_certified_checkpoint(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TypedStoreError&gt; {
@@ -2013,14 +2010,21 @@
         batch.write()
     }
 
-    <span class="kw">pub fn </span>insert_verified_checkpoint(
+    <span class="comment">// Called by state sync, apart from inserting the checkpoint and updating
+    // related tables, it also bumps the highest_verified_checkpoint watermark.
+    </span><span class="kw">pub fn </span>insert_verified_checkpoint(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        checkpoint: VerifiedCheckpoint,
+        checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TypedStoreError&gt; {
-        <span class="self">self</span>.insert_certified_checkpoint(<span class="kw-2">&amp;</span>checkpoint)<span class="question-mark">?</span>;
+        <span class="self">self</span>.insert_certified_checkpoint(checkpoint)<span class="question-mark">?</span>;
+        <span class="self">self</span>.update_highest_verified_checkpoint(checkpoint)
+    }
 
-        <span class="comment">// Update latest
-        </span><span class="kw">if </span><span class="prelude-val">Some</span>(<span class="kw-2">*</span>checkpoint.sequence_number())
+    <span class="kw">pub fn </span>update_highest_verified_checkpoint(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        checkpoint: <span class="kw-2">&amp;</span>VerifiedCheckpoint,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TypedStoreError&gt; {
+        <span class="kw">if </span><span class="prelude-val">Some</span>(<span class="kw-2">*</span>checkpoint.sequence_number())
             &gt; <span class="self">self
                 </span>.get_highest_verified_checkpoint()<span class="question-mark">?
                 </span>.map(|x| <span class="kw-2">*</span>x.sequence_number())
