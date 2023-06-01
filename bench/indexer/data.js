@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685657282053,
+  "lastUpdate": 1685658583295,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10619,6 +10619,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 370320,
             "range": "± 74307",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f2982516a6cd5bb06531f3024e4f8f35382f8e18",
+          "message": "Simplify `handle_checkpoint_from_consensus` (#12212)\n\n## Description\r\n\r\nBased on feedback, now this PR simplifies\r\n`handle_checkpoint_from_consensus`. Previously there is a branch to\r\nhandle when the checkpoint is too new (newer than the\r\nhighest_verified_checkpoint). I think this case wouldn't happen because\r\nconsensus sends checkpoint in order. So we consolidate the two cases\r\ninto one, which is, whenever consensus sends a checkpoint, we do the\r\nfollowing things:\r\n1. check the previous digest matches. This is to ensure state sync and\r\nconsensus do not brain-split.\r\n2. if the checkpoint is older, ignore and exit\r\n3. update metrics and bump watermark\r\n4. notify others\r\n\r\n--------------------------\r\n# Old\r\n\r\n## Description \r\n\r\nWhen consensus sends checkpoint y, it means all prior checkpoints are\r\nverified and sent, so `highest_verified_checkpoint` can be safely\r\nupdated without looking at the checkpoint store. However it's a bit\r\ntricky for `highest_synced_checkpoint`, because there are a few cfs\r\n(e.g. `full_checkpoint_contents`) that could only be updated in state\r\nsync checkpoint contents. If we bump this watermarks, those cfs may not\r\nbe filled at all.\r\n\r\n## Test Plan \r\n\r\nCI\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nDo not update highest_synced_checkpoint when consensus sends a too new\r\ncheckpoint",
+          "timestamp": "2023-06-01T15:16:50-07:00",
+          "tree_id": "f79fe43b4784d8fb3af4fbad50a009f4b736e437",
+          "url": "https://github.com/MystenLabs/sui/commit/f2982516a6cd5bb06531f3024e4f8f35382f8e18"
+        },
+        "date": 1685658561455,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 139613852,
+            "range": "± 4199853",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312847,
+            "range": "± 18964",
             "unit": "ns/iter"
           }
         ]
