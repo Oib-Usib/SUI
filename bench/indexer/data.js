@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685658583295,
+  "lastUpdate": 1685661557337,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10655,6 +10655,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312847,
             "range": "± 18964",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aschran@mystenlabs.com",
+            "name": "Andrew Schran",
+            "username": "aschran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c43bc7efbfd8941d339553e554aca4f871a02795",
+          "message": "Advance anemo version (#12303)",
+          "timestamp": "2023-06-01T16:08:43-07:00",
+          "tree_id": "a6892664afdc28b0d34b26961c0f0c7c4e19c8c3",
+          "url": "https://github.com/MystenLabs/sui/commit/c43bc7efbfd8941d339553e554aca4f871a02795"
+        },
+        "date": 1685661536927,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105501057,
+            "range": "± 3050452",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312776,
+            "range": "± 25103",
             "unit": "ns/iter"
           }
         ]
