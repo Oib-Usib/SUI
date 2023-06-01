@@ -255,11 +255,11 @@
             );
             <span class="prelude-val">Ok</span>((kp.public().into(), SuiKeyPair::Secp256r1(kp)))
         }
-        SignatureScheme::BLS12381 | SignatureScheme::MultiSig =&gt; {
-            <span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
-                error: <span class="macro">format!</span>(<span class="string">&quot;key derivation not supported {:?}&quot;</span>, key_scheme),
-            })
-        }
+        SignatureScheme::BLS12381
+        | SignatureScheme::MultiSig
+        | SignatureScheme::ZkLoginAuthenticator =&gt; <span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
+            error: <span class="macro">format!</span>(<span class="string">&quot;key derivation not supported {:?}&quot;</span>, key_scheme),
+        }),
     }
 }
 
@@ -352,11 +352,11 @@
                 .map_err(|<span class="kw">_</span>| SuiError::SignatureKeyGenError(<span class="string">&quot;Cannot parse path&quot;</span>.to_string()))<span class="question-mark">?</span>),
             }
         }
-        SignatureScheme::BLS12381 | SignatureScheme::MultiSig =&gt; {
-            <span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
-                error: <span class="macro">format!</span>(<span class="string">&quot;key derivation not supported {:?}&quot;</span>, key_scheme),
-            })
-        }
+        SignatureScheme::BLS12381
+        | SignatureScheme::MultiSig
+        | SignatureScheme::ZkLoginAuthenticator =&gt; <span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
+            error: <span class="macro">format!</span>(<span class="string">&quot;key derivation not supported {:?}&quot;</span>, key_scheme),
+        }),
     }
 }
 

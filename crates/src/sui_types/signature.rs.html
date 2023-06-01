@@ -133,11 +133,19 @@
 <a href="#133" id="133">133</a>
 <a href="#134" id="134">134</a>
 <a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span><span class="kw">crate</span>::committee::EpochId;
 <span class="kw">use </span><span class="kw">crate</span>::crypto::{SignatureScheme, SuiSignature};
+<span class="kw">use </span><span class="kw">crate</span>::zk_login_authenticator::ZkLoginAuthenticator;
 <span class="kw">use crate</span>::{base_types::SuiAddress, crypto::Signature, error::SuiError, multisig::MultiSig};
 <span class="kw">pub use </span>enum_dispatch::enum_dispatch;
 <span class="kw">use </span>fastcrypto::{
@@ -184,6 +192,7 @@
 </span><span class="kw">pub enum </span>GenericSignature {
     MultiSig,
     Signature,
+    ZkLoginAuthenticator,
 }
 
 <span class="doccomment">/// GenericSignature encodes a single signature [enum Signature] as is `flag || signature || pubkey`.
@@ -204,6 +213,10 @@
                     <span class="kw">let </span>multisig = MultiSig::from_bytes(bytes)<span class="question-mark">?</span>;
                     <span class="prelude-val">Ok</span>(GenericSignature::MultiSig(multisig))
                 }
+                SignatureScheme::ZkLoginAuthenticator =&gt; {
+                    <span class="kw">let </span>zk_login = ZkLoginAuthenticator::from_bytes(bytes)<span class="question-mark">?</span>;
+                    <span class="prelude-val">Ok</span>(GenericSignature::ZkLoginAuthenticator(zk_login))
+                }
                 <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(FastCryptoError::InvalidInput),
             },
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(FastCryptoError::InvalidInput),
@@ -217,6 +230,7 @@
         <span class="kw">match </span><span class="self">self </span>{
             GenericSignature::MultiSig(s) =&gt; s.as_ref(),
             GenericSignature::Signature(s) =&gt; s.as_ref(),
+            GenericSignature::ZkLoginAuthenticator(s) =&gt; s.as_ref(),
         }
     }
 }
@@ -265,7 +279,7 @@
     <span class="kw">where
         </span>T: Serialize,
     {
-        <span class="self">self</span>.verify_secure(value, author)
+        <span class="self">self</span>.verify_secure(value, author, <span class="self">self</span>.scheme())
     }
 }
 </code></pre></div></section></main></body></html>

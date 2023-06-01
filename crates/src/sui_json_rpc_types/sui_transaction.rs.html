@@ -1710,6 +1710,9 @@
 <a href="#1710" id="1710">1710</a>
 <a href="#1711" id="1711">1711</a>
 <a href="#1712" id="1712">1712</a>
+<a href="#1713" id="1713">1713</a>
+<a href="#1714" id="1714">1714</a>
+<a href="#1715" id="1715">1715</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -3379,6 +3382,8 @@
     </span>ToAddress(SuiAddress),
     <span class="doccomment">/// Query by sender and recipient address.
     </span>FromAndToAddress { from: SuiAddress, to: SuiAddress },
+    <span class="doccomment">/// Query txs that have a given address as sender or recipient.
+    </span>FromOrToAddress { addr: SuiAddress },
     <span class="doccomment">/// Query by transaction kind
     </span>TransactionKind(String),
 }
@@ -3419,6 +3424,7 @@
             TransactionFilter::TransactionKind(kind) =&gt; item.input.kind().to_string() == <span class="kw-2">*</span>kind,
             <span class="comment">// these filters are not supported, rpc will reject these filters on subscription
             </span>TransactionFilter::Checkpoint(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            TransactionFilter::FromOrToAddress { addr: <span class="kw">_ </span>} =&gt; <span class="bool-val">false</span>,
         }
     }
 }
