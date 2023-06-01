@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685566532092,
+  "lastUpdate": 1685587498258,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10367,6 +10367,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 342465,
             "range": "± 81839",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "williamprincesmith@gmail.com",
+            "name": "William Smith",
+            "username": "williampsmith"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e8a351ecf791793eb00f5e986b8a0eb35df532d6",
+          "message": "[Core] Add support for chain-specific configs (#12183)\n\n## Description \r\n\r\nThe goal is to be able to roll out features for certain chains and not\r\nothers.\r\n\r\nTo accomplish this, we introduce a `Chain` enum, with a getter function\r\nto map the hard coded checkpoint identifier (i.e. the digest of the\r\ngenesis checkpoint) to the `Chain`, and have all callsites where the\r\nprotocol config is materialized to provide the chain identifier.\r\n\r\nWith the `Chain` being available in the\r\n`ProtocolConfig::get_for_version`, we can then make use of this in the\r\nprotocol version map.\r\n\r\n## Test Plan \r\n\r\nTested against a Mainnet node to ensure that the chain is correctly\r\nidentified. Also locally enabled a feature for all chains but mainnet in\r\nthe highest protocol version, and saw that the feature was active.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-05-31T19:30:41-07:00",
+          "tree_id": "4a7dc7ff2a791624507af477b7bdeaea93e4d71b",
+          "url": "https://github.com/MystenLabs/sui/commit/e8a351ecf791793eb00f5e986b8a0eb35df532d6"
+        },
+        "date": 1685587478916,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 138345315,
+            "range": "± 4669759",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314421,
+            "range": "± 20936",
             "unit": "ns/iter"
           }
         ]
