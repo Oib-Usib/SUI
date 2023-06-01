@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685587498258,
+  "lastUpdate": 1685628657370,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10403,6 +10403,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314421,
             "range": "± 20936",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "brandon@mystenlabs.com",
+            "name": "Brandon Williams",
+            "username": "bmwill"
+          },
+          "committer": {
+            "email": "bwilliams.eng@gmail.com",
+            "name": "Brandon Williams",
+            "username": "bmwill"
+          },
+          "distinct": true,
+          "id": "8cda4863d432050b4a096681bc0b04c7ccb18eab",
+          "message": "sui-proxy: fix build script to only rerun when needed",
+          "timestamp": "2023-06-01T08:58:26-05:00",
+          "tree_id": "bb5892cd07a18e15ba29c82e56952f5903a253bc",
+          "url": "https://github.com/MystenLabs/sui/commit/8cda4863d432050b4a096681bc0b04c7ccb18eab"
+        },
+        "date": 1685628637034,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109386037,
+            "range": "± 4926854",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309038,
+            "range": "± 24943",
             "unit": "ns/iter"
           }
         ]
