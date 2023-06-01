@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685653831376,
+  "lastUpdate": 1685657282053,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10583,6 +10583,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311965,
             "range": "± 17524",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a290023e55dfc4611688d6b439069daafc77bbb0",
+          "message": "indexer: remove diesel async (#12297)\n\n## Description \r\n\r\nDiesel async was introduced to optimize indexer throughput but did not\r\nsee significant improvement, also saw some issues on building like\r\nhttps://mysten-labs.slack.com/archives/C04FG4Q7YJ3/p1685265857488579\r\n\r\n## Test Plan \r\n\r\nCI\r\n\r\nlocal run to make sure indexer reader & writer can both work.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-01T17:51:31-04:00",
+          "tree_id": "c73c99fa32c7a42d5aada3cf8294148434ca0d25",
+          "url": "https://github.com/MystenLabs/sui/commit/a290023e55dfc4611688d6b439069daafc77bbb0"
+        },
+        "date": 1685657260700,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 155715923,
+            "range": "± 4111987",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 370320,
+            "range": "± 74307",
             "unit": "ns/iter"
           }
         ]
