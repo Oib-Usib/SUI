@@ -1958,13 +1958,6 @@
 <a href="#1958" id="1958">1958</a>
 <a href="#1959" id="1959">1959</a>
 <a href="#1960" id="1960">1960</a>
-<a href="#1961" id="1961">1961</a>
-<a href="#1962" id="1962">1962</a>
-<a href="#1963" id="1963">1963</a>
-<a href="#1964" id="1964">1964</a>
-<a href="#1965" id="1965">1965</a>
-<a href="#1966" id="1966">1966</a>
-<a href="#1967" id="1967">1967</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2036,7 +2029,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::store::TransactionObjectChanges;
 <span class="kw">use </span><span class="kw">crate</span>::store::{IndexerStore, TemporaryEpochStore};
 <span class="kw">use </span><span class="kw">crate</span>::utils::{get_balance_changes_from_effect, get_object_changes};
-<span class="kw">use crate</span>::{AsyncPgConnectionPool, PgConnectionPool};
+<span class="kw">use </span><span class="kw">crate</span>::PgConnectionPool;
 
 <span class="kw">const </span>MAX_EVENT_PAGE_SIZE: usize = <span class="number">1000</span>;
 <span class="kw">const </span>PG_COMMIT_CHUNK_SIZE: usize = <span class="number">1000</span>;
@@ -2061,8 +2054,6 @@ GROUP BY table_name;
 
 <span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>PgIndexerStore {
-    <span class="attr">#[allow(dead_code)]
-    </span>cp: AsyncPgConnectionPool,
     blocking_cp: PgConnectionPool,
     <span class="comment">// MUSTFIX(gegaowp): temporarily disable partition management.
     </span><span class="attr">#[allow(dead_code)]
@@ -2072,16 +2063,11 @@ GROUP BY table_name;
 }
 
 <span class="kw">impl </span>PgIndexerStore {
-    <span class="kw">pub async fn </span>new(
-        cp: AsyncPgConnectionPool,
-        blocking_cp: PgConnectionPool,
-        metrics: IndexerMetrics,
-    ) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub async fn </span>new(blocking_cp: PgConnectionPool, metrics: IndexerMetrics) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>module_cache = Arc::new(SyncModuleCache::new(IndexerModuleResolver::new(
             blocking_cp.clone(),
         )));
         PgIndexerStore {
-            cp: cp.clone(),
             blocking_cp: blocking_cp.clone(),
             partition_manager: PartitionManager::new(blocking_cp).<span class="kw">await</span>.unwrap(),
             module_cache,

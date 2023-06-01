@@ -146,7 +146,7 @@
     config: IndexerConfig,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(PgIndexerStore, JoinHandle&lt;<span class="prelude-ty">Result</span>&lt;(), IndexerError&gt;&gt;), anyhow::Error&gt; {
     <span class="kw">let </span>parsed_url = config.base_connection_url()<span class="question-mark">?</span>;
-    <span class="kw">let </span>(blocking_pool, async_pool) = new_pg_connection_pool(<span class="kw-2">&amp;</span>parsed_url)
+    <span class="kw">let </span>blocking_pool = new_pg_connection_pool(<span class="kw-2">&amp;</span>parsed_url)
         .<span class="kw">await
         </span>.map_err(|e| <span class="macro">anyhow!</span>(<span class="string">&quot;unable to connect to Postgres, is it running? {e}&quot;</span>))<span class="question-mark">?</span>;
     <span class="kw">if </span>config.reset_db {
@@ -161,7 +161,7 @@
     <span class="kw">let </span>registry = Registry::default();
     <span class="kw">let </span>indexer_metrics = IndexerMetrics::new(<span class="kw-2">&amp;</span>registry);
 
-    <span class="kw">let </span>store = PgIndexerStore::new(async_pool, blocking_pool, indexer_metrics.clone()).<span class="kw">await</span>;
+    <span class="kw">let </span>store = PgIndexerStore::new(blocking_pool, indexer_metrics.clone()).<span class="kw">await</span>;
     <span class="kw">let </span>store_clone = store.clone();
     <span class="kw">let </span>handle = tokio::spawn(<span class="kw">async move </span>{
         Indexer::start(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>registry, store_clone, indexer_metrics, <span class="prelude-val">None</span>).<span class="kw">await
