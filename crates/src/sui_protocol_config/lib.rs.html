@@ -1467,6 +1467,18 @@
 <a href="#1467" id="1467">1467</a>
 <a href="#1468" id="1468">1468</a>
 <a href="#1469" id="1469">1469</a>
+<a href="#1470" id="1470">1470</a>
+<a href="#1471" id="1471">1471</a>
+<a href="#1472" id="1472">1472</a>
+<a href="#1473" id="1473">1473</a>
+<a href="#1474" id="1474">1474</a>
+<a href="#1475" id="1475">1475</a>
+<a href="#1476" id="1476">1476</a>
+<a href="#1477" id="1477">1477</a>
+<a href="#1478" id="1478">1478</a>
+<a href="#1479" id="1479">1479</a>
+<a href="#1480" id="1480">1480</a>
+<a href="#1481" id="1481">1481</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1670,6 +1682,10 @@
     <span class="comment">// If true, then use the versioned metadata format in narwhal entities.
     </span><span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;is_false&quot;</span>)]
     </span>narwhal_versioned_metadata: bool,
+
+    <span class="comment">// Enable zklogin auth
+    </span><span class="attr">#[serde(skip_serializing_if = <span class="string">&quot;is_false&quot;</span>)]
+    </span>zklogin_auth: bool,
 }
 
 <span class="kw">fn </span>is_false(b: <span class="kw-2">&amp;</span>bool) -&gt; bool {
@@ -2200,6 +2216,10 @@
     <span class="kw">pub fn </span>no_extraneous_module_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.feature_flags.no_extraneous_module_bytes
     }
+
+    <span class="kw">pub fn </span>zklogin_auth(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.feature_flags.zklogin_auth
+    }
 }
 
 <span class="attr">#[cfg(not(msim))]
@@ -2639,6 +2659,7 @@
                 cfg.feature_flags.narwhal_versioned_metadata = <span class="bool-val">true</span>;
                 <span class="kw">if </span>chain != Chain::Mainnet {
                     cfg.feature_flags.commit_root_state_digest = <span class="bool-val">true</span>;
+                    cfg.feature_flags.zklogin_auth = <span class="bool-val">true</span>;
                 }
                 cfg
             }
@@ -2693,6 +2714,9 @@
     }
     <span class="kw">pub fn </span>set_commit_root_state_digest_supported(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: bool) {
         <span class="self">self</span>.feature_flags.commit_root_state_digest = val
+    }
+    <span class="kw">pub fn </span>set_zklogin_auth(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: bool) {
+        <span class="self">self</span>.feature_flags.zklogin_auth = val
     }
 }
 

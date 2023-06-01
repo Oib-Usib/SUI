@@ -2154,6 +2154,10 @@
 <a href="#2154" id="2154">2154</a>
 <a href="#2155" id="2155">2155</a>
 <a href="#2156" id="2156">2156</a>
+<a href="#2157" id="2157">2157</a>
+<a href="#2158" id="2158">2158</a>
+<a href="#2159" id="2159">2159</a>
+<a href="#2160" id="2160">2160</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -3839,6 +3843,10 @@
 
     <span class="kw">pub fn </span>tx_signatures(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[GenericSignature] {
         <span class="kw-2">&amp;</span><span class="self">self</span>.inner().tx_signatures
+    }
+
+    <span class="kw">pub fn </span>has_zklogin_sig(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.tx_signatures().iter().any(|sig| sig.is_zklogin())
     }
 
     <span class="attr">#[cfg(test)]

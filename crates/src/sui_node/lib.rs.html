@@ -1352,6 +1352,9 @@
 <a href="#1352" id="1352">1352</a>
 <a href="#1353" id="1353">1353</a>
 <a href="#1354" id="1354">1354</a>
+<a href="#1355" id="1355">1355</a>
+<a href="#1356" id="1356">1356</a>
+<a href="#1357" id="1357">1357</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1582,7 +1585,6 @@
         custom_rpc_runtime: <span class="prelude-ty">Option</span>&lt;Handle&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         NodeConfigMetrics::new(<span class="kw-2">&amp;</span>registry_service.default_registry()).record_metrics(config);
-        <span class="self">Self</span>::start_jwk_updater();
         <span class="kw">let </span><span class="kw-2">mut </span>config = config.clone();
         <span class="kw">if </span>config.supported_protocol_versions.is_none() {
             <span class="macro">info!</span>(
@@ -1657,6 +1659,10 @@
             <span class="kw-2">&amp;</span>config.expensive_safety_check_config,
             ChainIdentifier::from(<span class="kw-2">*</span>genesis.checkpoint().digest()),
         );
+
+        <span class="kw">if </span>epoch_store.protocol_config().zklogin_auth() {
+            <span class="self">Self</span>::start_jwk_updater();
+        }
 
         <span class="comment">// the database is empty at genesis time
         </span><span class="kw">if </span>is_genesis {

@@ -613,6 +613,13 @@
 <a href="#613" id="613">613</a>
 <a href="#614" id="614">614</a>
 <a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -917,6 +924,13 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;tonic::Response&lt;HandleTransactionResponse&gt;, tonic::Status&gt; {
         <span class="kw">let </span>transaction = request.into_inner();
         <span class="kw">let </span>epoch_store = state.load_epoch_store_one_call_per_task();
+
+        <span class="kw">if </span>!epoch_store.protocol_config().zklogin_auth() &amp;&amp; transaction.has_zklogin_sig() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::UnsupportedFeatureError {
+                error: <span class="string">&quot;zklogin is not enabled on this network&quot;</span>.to_string(),
+            }
+            .into());
+        }
 
         <span class="comment">// Enforce overall transaction size limit.
         </span><span class="kw">let </span>tx_size = bcs::serialized_size(<span class="kw-2">&amp;</span>transaction).map_err(|e| {
