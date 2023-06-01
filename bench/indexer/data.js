@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685661557337,
+  "lastUpdate": 1685662032372,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10691,6 +10691,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312776,
             "range": "± 25103",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2e1d1d636b42ced93cd0e7066bce59c11988dcbc",
+          "message": "config gating for zklogin (#12301)",
+          "timestamp": "2023-06-01T23:13:04Z",
+          "tree_id": "e3d40963337eeb8eb566cfeedcbfd702faf7ea94",
+          "url": "https://github.com/MystenLabs/sui/commit/2e1d1d636b42ced93cd0e7066bce59c11988dcbc"
+        },
+        "date": 1685662012673,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 137814506,
+            "range": "± 6388311",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309801,
+            "range": "± 31026",
             "unit": "ns/iter"
           }
         ]
