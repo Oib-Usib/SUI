@@ -1203,6 +1203,23 @@
 <a href="#1203" id="1203">1203</a>
 <a href="#1204" id="1204">1204</a>
 <a href="#1205" id="1205">1205</a>
+<a href="#1206" id="1206">1206</a>
+<a href="#1207" id="1207">1207</a>
+<a href="#1208" id="1208">1208</a>
+<a href="#1209" id="1209">1209</a>
+<a href="#1210" id="1210">1210</a>
+<a href="#1211" id="1211">1211</a>
+<a href="#1212" id="1212">1212</a>
+<a href="#1213" id="1213">1213</a>
+<a href="#1214" id="1214">1214</a>
+<a href="#1215" id="1215">1215</a>
+<a href="#1216" id="1216">1216</a>
+<a href="#1217" id="1217">1217</a>
+<a href="#1218" id="1218">1218</a>
+<a href="#1219" id="1219">1219</a>
+<a href="#1220" id="1220">1220</a>
+<a href="#1221" id="1221">1221</a>
+<a href="#1222" id="1222">1222</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1238,6 +1255,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::sui_serde::{to_sui_struct_tag_string, HexAccountAddress};
 <span class="kw">use </span><span class="kw">crate</span>::transaction::Transaction;
 <span class="kw">use </span><span class="kw">crate</span>::transaction::VerifiedTransaction;
+<span class="kw">use </span><span class="kw">crate</span>::zk_login_authenticator::ZkLoginAuthenticator;
 <span class="kw">use </span><span class="kw">crate</span>::MOVE_STDLIB_ADDRESS;
 <span class="kw">use </span><span class="kw">crate</span>::SUI_CLOCK_OBJECT_ID;
 <span class="kw">use </span><span class="kw">crate</span>::SUI_FRAMEWORK_ADDRESS;
@@ -1247,6 +1265,7 @@
 <span class="kw">use </span>fastcrypto::encoding::{Encoding, Hex};
 <span class="kw">use </span>fastcrypto::hash::HashFunction;
 <span class="kw">use </span>fastcrypto::traits::AllowedRng;
+<span class="kw">use </span>fastcrypto_zkp::bn254::zk_login::big_int_str_to_bytes;
 <span class="kw">use </span>move_binary_format::binary_views::BinaryIndexedView;
 <span class="kw">use </span>move_binary_format::file_format::SignatureToken;
 <span class="kw">use </span>move_bytecode_utils::resolve_struct;
@@ -1786,6 +1805,20 @@
     }
 }
 
+<span class="doccomment">/// Sui address for [struct ZkLoginAuthenticator] is defined as the black2b hash of
+/// [zklogin_flag || bcs bytes of AddressParams || address seed in bytes] where
+/// AddressParams contains iss and key_claim_name.
+</span><span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>ZkLoginAuthenticator&gt; <span class="kw">for </span>SuiAddress {
+    <span class="kw">fn </span>from(authenticator: <span class="kw-2">&amp;</span>ZkLoginAuthenticator) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>hasher = DefaultHash::default();
+        hasher.update([SignatureScheme::ZkLoginAuthenticator.flag()]);
+        <span class="comment">// unwrap is safe here
+        </span>hasher.update(bcs::to_bytes(<span class="kw-2">&amp;</span>authenticator.get_address_params()).unwrap());
+        hasher.update(big_int_str_to_bytes(authenticator.get_address_seed()));
+        SuiAddress(hasher.finalize().digest)
+    }
+}
+
 <span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>GenericSignature&gt; <span class="kw">for </span>SuiAddress {
     <span class="kw">type </span>Error = SuiError;
     <span class="doccomment">/// Derive a SuiAddress from a serialized signature in Sui [GenericSignature].
@@ -1802,6 +1835,7 @@
                 SuiAddress::from(<span class="kw-2">&amp;</span>pub_key)
             }
             GenericSignature::MultiSig(ms) =&gt; ms.get_pk().into(),
+            GenericSignature::ZkLoginAuthenticator(zklogin) =&gt; zklogin.into(),
         })
     }
 }

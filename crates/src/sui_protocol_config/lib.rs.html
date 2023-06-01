@@ -1459,6 +1459,14 @@
 <a href="#1459" id="1459">1459</a>
 <a href="#1460" id="1460">1460</a>
 <a href="#1461" id="1461">1461</a>
+<a href="#1462" id="1462">1462</a>
+<a href="#1463" id="1463">1463</a>
+<a href="#1464" id="1464">1464</a>
+<a href="#1465" id="1465">1465</a>
+<a href="#1466" id="1466">1466</a>
+<a href="#1467" id="1467">1467</a>
+<a href="#1468" id="1468">1468</a>
+<a href="#1469" id="1469">1469</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1497,7 +1505,7 @@
 // Version 10:increase bytecode verifier `max_verifier_meter_ticks_per_function` and
 //            `max_meter_ticks_per_module` limits each from 6_000_000 to 16_000_000. sui-system
 //            framework changes.
-// Version 11: Introduce `std::type_name::get_with_original_ids` to the system frameworks.
+// Version 11: Introduce `std::type_name::get_with_original_ids` to the system frameworks. Bound max depth of values within the VM.
 // Version 12: Changes to deepbook in framework to add API for querying marketplace.
 //             Change NW Batch to use versioned metadata field.
 //             Changes to sui-system package to add PTB-friendly unstake function.
@@ -1825,6 +1833,9 @@
 
     <span class="doccomment">/// Maximum length of an `Identifier` in Move. Enforced by the bytecode verifier at signing.
     </span>max_move_identifier_len: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+
+    <span class="doccomment">/// Maximum depth of a Move value within the VM.
+    </span>max_move_value_depth: <span class="prelude-ty">Option</span>&lt;u64&gt;,
 
     <span class="doccomment">/// Maximum number of back edges in Move function. Enforced by the bytecode verifier at signing.
     </span>max_back_edges_per_function: <span class="prelude-ty">Option</span>&lt;u64&gt;,
@@ -2536,6 +2547,7 @@
 
                 <span class="comment">// Limits the length of a Move identifier
                 </span>max_move_identifier_len: <span class="prelude-val">None</span>,
+                max_move_value_depth: <span class="prelude-val">None</span>,
 
                 <span class="comment">// When adding a new constant, set it to None in the earliest version, like this:
                 // new_constant: None,
@@ -2617,7 +2629,11 @@
                 cfg.max_meter_ticks_per_module = <span class="prelude-val">Some</span>(<span class="number">16_000_000</span>);
                 cfg
             }
-            <span class="number">11 </span>=&gt; <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain),
+            <span class="number">11 </span>=&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
+                cfg.max_move_value_depth = <span class="prelude-val">Some</span>(<span class="number">128</span>);
+                cfg
+            }
             <span class="number">12 </span>=&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>cfg = <span class="self">Self</span>::get_for_version_impl(version - <span class="number">1</span>, chain);
                 cfg.feature_flags.narwhal_versioned_metadata = <span class="bool-val">true</span>;

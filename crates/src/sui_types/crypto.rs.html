@@ -1702,6 +1702,27 @@
 <a href="#1702" id="1702">1702</a>
 <a href="#1703" id="1703">1703</a>
 <a href="#1704" id="1704">1704</a>
+<a href="#1705" id="1705">1705</a>
+<a href="#1706" id="1706">1706</a>
+<a href="#1707" id="1707">1707</a>
+<a href="#1708" id="1708">1708</a>
+<a href="#1709" id="1709">1709</a>
+<a href="#1710" id="1710">1710</a>
+<a href="#1711" id="1711">1711</a>
+<a href="#1712" id="1712">1712</a>
+<a href="#1713" id="1713">1713</a>
+<a href="#1714" id="1714">1714</a>
+<a href="#1715" id="1715">1715</a>
+<a href="#1716" id="1716">1716</a>
+<a href="#1717" id="1717">1717</a>
+<a href="#1718" id="1718">1718</a>
+<a href="#1719" id="1719">1719</a>
+<a href="#1720" id="1720">1720</a>
+<a href="#1721" id="1721">1721</a>
+<a href="#1722" id="1722">1722</a>
+<a href="#1723" id="1723">1723</a>
+<a href="#1724" id="1724">1724</a>
+<a href="#1725" id="1725">1725</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>anyhow::{anyhow, Error};
@@ -2631,18 +2652,10 @@
     <span class="kw">const </span>LENGTH: usize = <span class="self">Self</span>::Sig::LENGTH + <span class="self">Self</span>::PubKey::LENGTH + <span class="number">1</span>;
     <span class="kw">const </span>SCHEME: SignatureScheme = <span class="self">Self</span>::PubKey::SIGNATURE_SCHEME;
 
-    <span class="kw">fn </span>get_verification_inputs(<span class="kw-2">&amp;</span><span class="self">self</span>, author: SuiAddress) -&gt; SuiResult&lt;(<span class="self">Self</span>::Sig, <span class="self">Self</span>::PubKey)&gt; {
-        <span class="comment">// Is this signature emitted by the expected author?
-        </span><span class="kw">let </span>bytes = <span class="self">self</span>.public_key_bytes();
-        <span class="kw">let </span>pk = <span class="self">Self</span>::PubKey::from_bytes(bytes)
+    <span class="doccomment">/// Returns the deserialized signature and deserialized pubkey.
+    </span><span class="kw">fn </span>get_verification_inputs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SuiResult&lt;(<span class="self">Self</span>::Sig, <span class="self">Self</span>::PubKey)&gt; {
+        <span class="kw">let </span>pk = <span class="self">Self</span>::PubKey::from_bytes(<span class="self">self</span>.public_key_bytes())
             .map_err(|<span class="kw">_</span>| SuiError::KeyConversionError(<span class="string">&quot;Invalid public key&quot;</span>.to_string()))<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>received_addr = SuiAddress::from(<span class="kw-2">&amp;</span>pk);
-        <span class="kw">if </span>received_addr != author {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::IncorrectSigner {
-                error: <span class="macro">format!</span>(<span class="string">&quot;Signature get_verification_inputs() failure. Author is {author}, received address is {received_addr}&quot;</span>)
-            });
-        }
 
         <span class="comment">// deserialize the signature
         </span><span class="kw">let </span>signature = <span class="self">Self</span>::Sig::from_bytes(<span class="self">self</span>.signature_bytes()).map_err(|<span class="kw">_</span>| {
@@ -2677,7 +2690,12 @@
     <span class="kw">fn </span>public_key_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8];
     <span class="kw">fn </span>scheme(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SignatureScheme;
 
-    <span class="kw">fn </span>verify_secure&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, value: <span class="kw-2">&amp;</span>IntentMessage&lt;T&gt;, author: SuiAddress) -&gt; SuiResult&lt;()&gt;
+    <span class="kw">fn </span>verify_secure&lt;T&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        value: <span class="kw-2">&amp;</span>IntentMessage&lt;T&gt;,
+        author: SuiAddress,
+        scheme: SignatureScheme,
+    ) -&gt; SuiResult&lt;()&gt;
     <span class="kw">where
         </span>T: Serialize;
 }
@@ -2699,7 +2717,12 @@
         S::PubKey::SIGNATURE_SCHEME
     }
 
-    <span class="kw">fn </span>verify_secure&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, value: <span class="kw-2">&amp;</span>IntentMessage&lt;T&gt;, author: SuiAddress) -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt;
+    <span class="kw">fn </span>verify_secure&lt;T&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        value: <span class="kw-2">&amp;</span>IntentMessage&lt;T&gt;,
+        author: SuiAddress,
+        scheme: SignatureScheme,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt;
     <span class="kw">where
         </span>T: Serialize,
     {
@@ -2707,7 +2730,22 @@
         hasher.update(<span class="kw-2">&amp;</span>bcs::to_bytes(<span class="kw-2">&amp;</span>value).expect(<span class="string">&quot;Message serialization should not fail&quot;</span>));
         <span class="kw">let </span>digest = hasher.finalize().digest;
 
-        <span class="kw">let </span>(sig, pk) = <span class="kw-2">&amp;</span><span class="self">self</span>.get_verification_inputs(author)<span class="question-mark">?</span>;
+        <span class="kw">let </span>(sig, pk) = <span class="kw-2">&amp;</span><span class="self">self</span>.get_verification_inputs()<span class="question-mark">?</span>;
+        <span class="kw">match </span>scheme {
+            SignatureScheme::ZkLoginAuthenticator =&gt; {} <span class="comment">// Pass this check because zk login does not derive address from pubkey.
+            </span><span class="kw">_ </span>=&gt; {
+                <span class="kw">let </span>address = SuiAddress::from(pk);
+                <span class="kw">if </span>author != address {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::IncorrectSigner {
+                        error: <span class="macro">format!</span>(
+                            <span class="string">&quot;Incorrect signer, expected {:?}, got {:?}&quot;</span>,
+                            author, address
+                        ),
+                    });
+                }
+            }
+        }
+
         pk.verify(<span class="kw-2">&amp;</span>digest, sig)
             .map_err(|e| SuiError::InvalidSignature {
                 error: <span class="macro">format!</span>(<span class="string">&quot;Fail to verify user sig {}&quot;</span>, e),
@@ -3342,6 +3380,7 @@
     Secp256r1,
     BLS12381, <span class="comment">// This is currently not supported for user Sui Address.
     </span>MultiSig,
+    ZkLoginAuthenticator,
 }
 
 <span class="kw">impl </span>SignatureScheme {
@@ -3352,7 +3391,8 @@
             SignatureScheme::Secp256r1 =&gt; <span class="number">0x02</span>,
             SignatureScheme::MultiSig =&gt; <span class="number">0x03</span>,
             SignatureScheme::BLS12381 =&gt; <span class="number">0x04</span>, <span class="comment">// This is currently not supported for user Sui Address.
-        </span>}
+            </span>SignatureScheme::ZkLoginAuthenticator =&gt; <span class="number">0x05</span>,
+        }
     }
 
     <span class="kw">pub fn </span>from_flag(flag: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;SignatureScheme, SuiError&gt; {
@@ -3368,6 +3408,8 @@
             <span class="number">0x01 </span>=&gt; <span class="prelude-val">Ok</span>(SignatureScheme::Secp256k1),
             <span class="number">0x02 </span>=&gt; <span class="prelude-val">Ok</span>(SignatureScheme::Secp256r1),
             <span class="number">0x03 </span>=&gt; <span class="prelude-val">Ok</span>(SignatureScheme::MultiSig),
+            <span class="number">0x04 </span>=&gt; <span class="prelude-val">Ok</span>(SignatureScheme::BLS12381),
+            <span class="number">0x05 </span>=&gt; <span class="prelude-val">Ok</span>(SignatureScheme::ZkLoginAuthenticator),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(SuiError::KeyConversionError(
                 <span class="string">&quot;Invalid key scheme&quot;</span>.to_string(),
             )),
