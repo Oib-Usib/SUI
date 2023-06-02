@@ -1878,7 +1878,7 @@
                 SuiClientCommandResult::SerializedSignedTransaction(sender_signed_data)
             } <span class="kw">else </span>{
                 <span class="kw">let </span>transaction = Transaction::new(sender_signed_data).verify()<span class="question-mark">?</span>;
-                <span class="kw">let </span>response = <span class="macro-nonterminal">$context</span>.execute_transaction_block(transaction).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>response = <span class="macro-nonterminal">$context</span>.execute_transaction_may_fail(transaction).<span class="kw">await</span><span class="question-mark">?</span>;
                 <span class="kw">let </span>effects = response.effects.as_ref().ok_or_else(|| {
                     <span class="macro">anyhow!</span>(<span class="string">&quot;Effects from SuiTransactionBlockResult should not be empty&quot;</span>)
                 })<span class="question-mark">?</span>;
@@ -1995,7 +1995,7 @@
         </span>serialize_signed_transaction: bool,
     },
 
-    <span class="doccomment">/// Run the bytecode verifer on the package
+    <span class="doccomment">/// Run the bytecode verifier on the package
     </span><span class="attr">#[clap(name = <span class="string">&quot;verify-bytecode-meter&quot;</span>)]
     </span>VerifyBytecodeMeter {
         <span class="doccomment">/// Path to directory containing a Move package
@@ -2984,7 +2984,7 @@
                     Transaction::from_generic_sig_data(data, Intent::sui_transaction(), sigs)
                         .verify()<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>response = context.execute_transaction_block(verified).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>response = context.execute_transaction_may_fail(verified).<span class="kw">await</span><span class="question-mark">?</span>;
                 SuiClientCommandResult::ExecuteSignedTx(response)
             }
             SuiClientCommands::NewEnv { alias, rpc, ws } =&gt; {

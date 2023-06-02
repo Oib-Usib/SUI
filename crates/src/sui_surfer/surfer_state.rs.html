@@ -398,6 +398,16 @@
 <a href="#398" id="398">398</a>
 <a href="#399" id="399">399</a>
 <a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -565,7 +575,12 @@
         .unwrap();
         <span class="kw">let </span>tx = <span class="self">self</span>.cluster.wallet.sign_transaction(<span class="kw-2">&amp;</span>tx_data);
         <span class="kw">let </span>response = <span class="kw">loop </span>{
-            <span class="kw">match </span><span class="self">self</span>.cluster.execute_transaction(tx.clone()).<span class="kw">await </span>{
+            <span class="kw">match </span><span class="self">self
+                </span>.cluster
+                .wallet
+                .execute_transaction_may_fail(tx.clone())
+                .<span class="kw">await
+            </span>{
                 <span class="prelude-val">Ok</span>(effects) =&gt; <span class="kw">break </span>effects,
                 <span class="prelude-val">Err</span>(e) =&gt; {
                     <span class="macro">error!</span>(<span class="string">&quot;Error executing transaction: {:?}&quot;</span>, e);
@@ -719,7 +734,12 @@
         );
         <span class="kw">let </span>tx = <span class="self">self</span>.cluster.wallet.sign_transaction(<span class="kw-2">&amp;</span>tx_data);
         <span class="kw">let </span>response = <span class="kw">loop </span>{
-            <span class="kw">match </span><span class="self">self</span>.cluster.execute_transaction(tx.clone()).<span class="kw">await </span>{
+            <span class="kw">match </span><span class="self">self
+                </span>.cluster
+                .wallet
+                .execute_transaction_may_fail(tx.clone())
+                .<span class="kw">await
+            </span>{
                 <span class="prelude-val">Ok</span>(response) =&gt; {
                     <span class="kw">break </span>response;
                 }

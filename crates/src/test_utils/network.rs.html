@@ -654,13 +654,6 @@
 <a href="#654" id="654">654</a>
 <a href="#655" id="655">655</a>
 <a href="#656" id="656">656</a>
-<a href="#657" id="657">657</a>
-<a href="#658" id="658">658</a>
-<a href="#659" id="659">659</a>
-<a href="#660" id="660">660</a>
-<a href="#661" id="661">661</a>
-<a href="#662" id="662">662</a>
-<a href="#663" id="663">663</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -677,11 +670,10 @@
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
 <span class="kw">use </span>sui_config::{Config, SUI_CLIENT_CONFIG, SUI_NETWORK_CONFIG};
 <span class="kw">use </span>sui_config::{NodeConfig, PersistedConfig, SUI_KEYSTORE_FILENAME};
-<span class="kw">use </span>sui_json_rpc_types::{SuiTransactionBlockResponse, SuiTransactionBlockResponseOptions};
+<span class="kw">use </span>sui_json_rpc_types::SuiTransactionBlockResponse;
 <span class="kw">use </span>sui_keys::keystore::{AccountKeystore, FileBasedKeystore, Keystore};
 <span class="kw">use </span>sui_node::SuiNodeHandle;
 <span class="kw">use </span>sui_protocol_config::{ProtocolVersion, SupportedProtocolVersions};
-<span class="kw">use </span>sui_sdk::error::SuiRpcResult;
 <span class="kw">use </span>sui_sdk::sui_client_config::{SuiClientConfig, SuiEnv};
 <span class="kw">use </span>sui_sdk::wallet_context::WalletContext;
 <span class="kw">use </span>sui_sdk::{SuiClient, SuiClientBuilder};
@@ -992,19 +984,13 @@
         }
     }
 
-    <span class="kw">pub async fn </span>execute_transaction(
+    <span class="doccomment">/// Execute a transaction on the network and wait for it to be executed on the rpc fullnode.
+    /// Also expects the effects status to be ExecutionStatus::Success.
+    </span><span class="kw">pub async fn </span>execute_transaction(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        transaction: VerifiedTransaction,
-    ) -&gt; SuiRpcResult&lt;SuiTransactionBlockResponse&gt; {
-        <span class="self">self</span>.fullnode_handle
-            .sui_client
-            .quorum_driver_api()
-            .execute_transaction_block(
-                transaction,
-                SuiTransactionBlockResponseOptions::new().with_effects(),
-                <span class="prelude-val">None</span>,
-            )
-            .<span class="kw">await
+        tx: VerifiedTransaction,
+    ) -&gt; SuiTransactionBlockResponse {
+        <span class="self">self</span>.wallet.execute_transaction_must_succeed(tx).<span class="kw">await
     </span>}
 
     <span class="attr">#[cfg(msim)]
