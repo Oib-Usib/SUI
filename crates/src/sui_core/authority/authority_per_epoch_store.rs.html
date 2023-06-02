@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority/authority_per_epoch_store.rs`."><title>authority_per_epoch_store.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (871b59520 2023-05-31)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../sui_core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority/authority_per_epoch_store.rs`."><title>authority_per_epoch_store.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (d59363ad0 2023-06-01)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../sui_core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2046,6 +2046,26 @@
 <a href="#2046" id="2046">2046</a>
 <a href="#2047" id="2047">2047</a>
 <a href="#2048" id="2048">2048</a>
+<a href="#2049" id="2049">2049</a>
+<a href="#2050" id="2050">2050</a>
+<a href="#2051" id="2051">2051</a>
+<a href="#2052" id="2052">2052</a>
+<a href="#2053" id="2053">2053</a>
+<a href="#2054" id="2054">2054</a>
+<a href="#2055" id="2055">2055</a>
+<a href="#2056" id="2056">2056</a>
+<a href="#2057" id="2057">2057</a>
+<a href="#2058" id="2058">2058</a>
+<a href="#2059" id="2059">2059</a>
+<a href="#2060" id="2060">2060</a>
+<a href="#2061" id="2061">2061</a>
+<a href="#2062" id="2062">2062</a>
+<a href="#2063" id="2063">2063</a>
+<a href="#2064" id="2064">2064</a>
+<a href="#2065" id="2065">2065</a>
+<a href="#2066" id="2066">2066</a>
+<a href="#2067" id="2067">2067</a>
+<a href="#2068" id="2068">2068</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2145,6 +2165,15 @@
 <span class="kw">impl </span>CertTxGuard {
     <span class="kw">pub fn </span>release(<span class="self">self</span>) {}
     <span class="kw">pub fn </span>commit_tx(<span class="self">self</span>) {}
+}
+
+<span class="kw">pub enum </span>ConsensusCertificateResult {
+    <span class="doccomment">/// The consensus message was ignored (e.g. because it has already been processed).
+    </span>Ignored,
+    <span class="doccomment">/// An executable transaction (can be a user tx or a system tx)
+    </span>SuiTransaction(VerifiedExecutableTransaction),
+    <span class="doccomment">/// Everything else, e.g. AuthorityCapabilities, CheckpointSignatures, etc.
+    </span>ConsensusMessage,
 }
 
 <span class="attr">#[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq, Eq)]
@@ -3476,7 +3505,7 @@
         parent_sync_store: <span class="kw">impl </span>ParentSync,
     ) -&gt; SuiResult&lt;Vec&lt;VerifiedExecutableTransaction&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>batch = <span class="self">self</span>.db_batch();
-        <span class="kw">let </span>(executable_txns, _lock) = <span class="self">self
+        <span class="kw">let </span>(executable_txns, notifications, _lock) = <span class="self">self
             </span>.process_consensus_transactions(
                 <span class="kw-2">&amp;mut </span>batch,
                 transactions,
@@ -3487,14 +3516,7 @@
             .<span class="kw">await</span><span class="question-mark">?</span>;
         batch.write()<span class="question-mark">?</span>;
 
-        <span class="kw">for </span>tx <span class="kw">in </span>transactions
-            .iter()
-            .chain(end_of_publish_transactions.iter())
-        {
-            <span class="kw">let </span>key = tx.<span class="number">0</span>.transaction.key();
-            <span class="self">self</span>.consensus_notify_read.notify(<span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>());
-        }
-
+        <span class="self">self</span>.process_notifications(<span class="kw-2">&amp;</span>notifications, end_of_publish_transactions);
         <span class="prelude-val">Ok</span>(executable_txns)
     }
 
@@ -3510,7 +3532,7 @@
             .into_iter()
             .partition(|txn| !txn.<span class="number">0</span>.is_end_of_publish());
 
-        <span class="kw">let </span>(certs, _lock) = <span class="self">self
+        <span class="kw">let </span>(certs, notifications, _lock) = <span class="self">self
             </span>.process_consensus_transactions(
                 <span class="kw-2">&amp;mut </span>batch,
                 <span class="kw-2">&amp;</span>transactions,
@@ -3521,15 +3543,22 @@
             .<span class="kw">await</span><span class="question-mark">?</span>;
         batch.write()<span class="question-mark">?</span>;
 
-        <span class="kw">for </span>tx <span class="kw">in </span>transactions
+        <span class="self">self</span>.process_notifications(<span class="kw-2">&amp;</span>notifications, <span class="kw-2">&amp;</span>end_of_publish_transactions);
+        <span class="prelude-val">Ok</span>(certs)
+    }
+
+    <span class="kw">fn </span>process_notifications(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        notifications: <span class="kw-2">&amp;</span>[SequencedConsensusTransactionKey],
+        end_of_publish: <span class="kw-2">&amp;</span>[VerifiedSequencedConsensusTransaction],
+    ) {
+        <span class="kw">for </span>key <span class="kw">in </span>notifications
             .iter()
-            .chain(end_of_publish_transactions.iter())
+            .cloned()
+            .chain(end_of_publish.iter().map(|tx| tx.<span class="number">0</span>.transaction.key()))
         {
-            <span class="kw">let </span>key = tx.<span class="number">0</span>.transaction.key();
             <span class="self">self</span>.consensus_notify_read.notify(<span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>());
         }
-
-        <span class="prelude-val">Ok</span>(certs)
     }
 
     <span class="doccomment">/// Depending on the type of the VerifiedSequencedConsensusTransaction wrappers,
@@ -3545,9 +3574,11 @@
         parent_sync_store: <span class="kw">impl </span>ParentSync,
     ) -&gt; SuiResult&lt;(
         Vec&lt;VerifiedExecutableTransaction&gt;,
-        <span class="prelude-ty">Option</span>&lt;parking_lot::RwLockWriteGuard&lt;ReconfigState&gt;&gt;,
+        Vec&lt;SequencedConsensusTransactionKey&gt;, <span class="comment">// keys to notify as complete
+        </span><span class="prelude-ty">Option</span>&lt;parking_lot::RwLockWriteGuard&lt;ReconfigState&gt;&gt;,
     )&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>verified_certificates = Vec::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>verified_certificates = Vec::with_capacity(transactions.len());
+        <span class="kw">let </span><span class="kw-2">mut </span>notifications = Vec::with_capacity(transactions.len());
 
         <span class="comment">// get the current next versions for each shared object in transactions
         </span><span class="kw">let </span><span class="kw-2">mut </span>shared_input_next_versions = {
@@ -3576,7 +3607,9 @@
         </span>};
 
         <span class="kw">for </span>tx <span class="kw">in </span>transactions {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(cert) = <span class="self">self
+            <span class="kw">let </span>key = tx.<span class="number">0</span>.transaction.key();
+
+            <span class="kw">match </span><span class="self">self
                 </span>.process_consensus_transaction(
                     batch,
                     <span class="kw-2">&amp;mut </span>shared_input_next_versions,
@@ -3585,7 +3618,12 @@
                 )
                 .<span class="kw">await</span><span class="question-mark">?
             </span>{
-                verified_certificates.push(cert);
+                ConsensusCertificateResult::SuiTransaction(cert) =&gt; {
+                    notifications.push(key);
+                    verified_certificates.push(cert);
+                }
+                ConsensusCertificateResult::ConsensusMessage =&gt; notifications.push(key),
+                ConsensusCertificateResult::Ignored =&gt; (),
             }
         }
 
@@ -3596,7 +3634,7 @@
 
         <span class="kw">let </span>lock = <span class="self">self</span>.process_end_of_publish_transactions(batch, end_of_publish_transactions)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>((verified_certificates, lock))
+        <span class="prelude-val">Ok</span>((verified_certificates, notifications, lock))
     }
 
     <span class="kw">fn </span>process_end_of_publish_transactions(
@@ -3680,7 +3718,7 @@
         shared_input_next_versions: <span class="kw-2">&amp;mut </span>HashMap&lt;ObjectID, SequenceNumber&gt;,
         transaction: <span class="kw-2">&amp;</span>VerifiedSequencedConsensusTransaction,
         checkpoint_service: <span class="kw-2">&amp;</span>Arc&lt;C&gt;,
-    ) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;VerifiedExecutableTransaction&gt;&gt; {
+    ) -&gt; SuiResult&lt;ConsensusCertificateResult&gt; {
         <span class="kw">let </span>_scope = monitored_scope(<span class="string">&quot;HandleConsensusTransaction&quot;</span>);
         <span class="kw">let </span>VerifiedSequencedConsensusTransaction(SequencedConsensusTransaction {
             certificate: _consensus_output,
@@ -3702,7 +3740,7 @@
                         certificate.epoch(),
                         <span class="self">self</span>.epoch()
                     );
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(ConsensusCertificateResult::Ignored);
                 }
                 <span class="kw">if </span><span class="self">self</span>.has_sent_end_of_publish(certificate_author)<span class="question-mark">? </span>{
                     <span class="comment">// This can not happen with valid authority
@@ -3710,7 +3748,7 @@
                     // However this certificate will be filtered out before this line by `consensus_message_processed` call in `verify_consensus_transaction`
                     // If we see some new certificate here it means authority is byzantine and sent certificate after EndOfPublish (or we have some bug in ConsensusAdapter)
                     </span><span class="macro">warn!</span>(<span class="string">&quot;[Byzantine authority] Authority {:?} sent a new, previously unseen certificate {:?} after it sent EndOfPublish message to consensus&quot;</span>, certificate_author.concise(), certificate.digest());
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(ConsensusCertificateResult::Ignored);
                 }
                 <span class="comment">// Safe because signatures are verified when VerifiedSequencedConsensusTransaction
                 // is constructed.
@@ -3729,7 +3767,7 @@
                 {
                     <span class="macro">debug!</span>(<span class="string">&quot;Ignoring consensus certificate for transaction {:?} because of end of epoch&quot;</span>,
                     certificate.digest());
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(ConsensusCertificateResult::Ignored);
                 }
 
                 <span class="kw">if </span>certificate.contains_shared_object() {
@@ -3751,7 +3789,7 @@
                     .<span class="kw">await</span><span class="question-mark">?</span>;
                 }
 
-                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(certificate))
+                <span class="prelude-val">Ok</span>(ConsensusCertificateResult::SuiTransaction(certificate))
             }
             SequencedConsensusTransactionKind::External(ConsensusTransaction {
                 kind: ConsensusTransactionKind::CheckpointSignature(info),
@@ -3759,7 +3797,7 @@
             }) =&gt; {
                 checkpoint_service.notify_checkpoint_signature(<span class="self">self</span>, info)<span class="question-mark">?</span>;
                 <span class="self">self</span>.record_consensus_transaction_processed(batch, transaction, consensus_index)<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
+                <span class="prelude-val">Ok</span>(ConsensusCertificateResult::ConsensusMessage)
             }
             SequencedConsensusTransactionKind::External(ConsensusTransaction {
                 kind: ConsensusTransactionKind::EndOfPublish(<span class="kw">_</span>),
@@ -3789,7 +3827,7 @@
                     );
                 }
                 <span class="self">self</span>.record_consensus_transaction_processed(batch, transaction, consensus_index)<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
+                <span class="prelude-val">Ok</span>(ConsensusCertificateResult::ConsensusMessage)
             }
             SequencedConsensusTransactionKind::System(system_transaction) =&gt; {
                 <span class="kw">if </span>!<span class="self">self
@@ -3800,7 +3838,7 @@
                         <span class="string">&quot;Ignoring system transaction {:?} because of end of epoch&quot;</span>,
                         system_transaction.digest()
                     );
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(ConsensusCertificateResult::Ignored);
                 }
 
                 <span class="comment">// If needed we can support owned object system transactions as well...
@@ -3814,7 +3852,9 @@
                 )
                 .<span class="kw">await</span><span class="question-mark">?</span>;
 
-                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(system_transaction.clone()))
+                <span class="prelude-val">Ok</span>(ConsensusCertificateResult::SuiTransaction(
+                    system_transaction.clone(),
+                ))
             }
         }
     }
