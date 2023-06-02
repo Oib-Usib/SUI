@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685665349913,
+  "lastUpdate": 1685724475026,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10763,6 +10763,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 336263,
             "range": "± 85627",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e52af128605b4328695eebc4c3e51b635457712c",
+          "message": "Do not notify about ignored certificates (#12291)\n\nFixes a bug where txns that are ignored due to end of epoch are not\r\nreverted during reconfig",
+          "timestamp": "2023-06-02T16:31:04Z",
+          "tree_id": "f30e506225f7f9db0be985fd7e89016430cfb5da",
+          "url": "https://github.com/MystenLabs/sui/commit/e52af128605b4328695eebc4c3e51b635457712c"
+        },
+        "date": 1685724455959,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150415561,
+            "range": "± 5176124",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 338775,
+            "range": "± 33113",
             "unit": "ns/iter"
           }
         ]
