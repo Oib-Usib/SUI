@@ -1236,7 +1236,7 @@
                 <span class="kw">let </span>first_bigint = BigInt::from_bytes_be(Sign::Plus, first_half);
                 <span class="kw">let </span>second_bigint = BigInt::from_bytes_be(Sign::Plus, second_half);
 
-                <span class="kw">let </span><span class="kw-2">mut </span>poseidon = PoseidonWrapper::new(<span class="number">4</span>);
+                <span class="kw">let </span><span class="kw-2">mut </span>poseidon = PoseidonWrapper::new();
                 <span class="kw">let </span>first = Bn254Fr::from_str(<span class="kw-2">&amp;</span>first_bigint.to_string()).unwrap();
                 <span class="kw">let </span>second = Bn254Fr::from_str(<span class="kw-2">&amp;</span>second_bigint.to_string()).unwrap();
                 <span class="kw">let </span>max_epoch = Bn254Fr::from_str(max_epoch.as_str()).unwrap();
@@ -1244,7 +1244,7 @@
                     <span class="string">&quot;50683480294434968413708503290439057629605340925620961559740848568164438166&quot;</span>,
                 )
                 .unwrap();
-                <span class="kw">let </span>hash = poseidon.hash(<span class="kw-2">&amp;</span>[first, second, max_epoch, jwt_randomness]);
+                <span class="kw">let </span>hash = poseidon.hash(<span class="macro">vec!</span>[first, second, max_epoch, jwt_randomness])<span class="question-mark">?</span>;
                 <span class="macro">println!</span>(<span class="string">&quot;Nonce: {:?}&quot;</span>, hash.to_string());
             }
 

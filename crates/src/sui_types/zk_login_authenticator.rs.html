@@ -231,6 +231,12 @@
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
 <a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -348,7 +354,13 @@
         }
 
         <span class="comment">// Calculates the hash of all inputs equals to the one in public inputs.
-        </span><span class="kw">if </span>aux_inputs.calculate_all_inputs_hash() != <span class="self">self</span>.public_inputs.get_all_inputs_hash() {
+        </span><span class="kw">if </span>aux_inputs
+            .calculate_all_inputs_hash()
+            .map_err(|<span class="kw">_</span>| SuiError::InvalidSignature {
+                error: <span class="string">&quot;Fail to caculate hash&quot;</span>.to_string(),
+            })<span class="question-mark">?
+            </span>!= <span class="self">self</span>.public_inputs.get_all_inputs_hash()
+        {
             <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::InvalidSignature {
                 error: <span class="string">&quot;Invalid all inputs hash&quot;</span>.to_string(),
             });
