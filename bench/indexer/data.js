@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685743745091,
+  "lastUpdate": 1685751527283,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10871,6 +10871,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 301878,
             "range": "± 38958",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "709f856943024cc67e74038e923646ac565abb2a",
+          "message": "[sui-system] remove unused code and correct variable naming (#12321)\n\n## Description \r\n\r\n- `request_withdraw_stake_preactive` was never used so it's removed.\r\n- In `derive_reference_gas_price` we are using voting power, not stake.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-02T17:07:21-07:00",
+          "tree_id": "ef4a652da1f73132e5c86532c426a0ab9d156b9c",
+          "url": "https://github.com/MystenLabs/sui/commit/709f856943024cc67e74038e923646ac565abb2a"
+        },
+        "date": 1685751506702,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146639800,
+            "range": "± 5367381",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 332352,
+            "range": "± 35026",
             "unit": "ns/iter"
           }
         ]
