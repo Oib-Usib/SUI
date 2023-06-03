@@ -428,6 +428,8 @@
 <a href="#428" id="428">428</a>
 <a href="#429" id="429">429</a>
 <a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -588,12 +590,14 @@
                 parents
             };
 
-            <span class="kw">let </span>request = anemo::Request::new(RequestVoteRequest {
-                header: header.clone(),
-                parents,
-            })
-            .with_timeout(Duration::from_secs(<span class="number">30</span>));
-            <span class="kw">match </span>client.request_vote(request).<span class="kw">await </span>{
+            <span class="comment">// TODO: Remove timeout from this RPC once anemo issue #10 is resolved.
+            </span><span class="kw">match </span>client
+                .request_vote(RequestVoteRequest {
+                    header: header.clone(),
+                    parents,
+                })
+                .<span class="kw">await
+            </span>{
                 <span class="prelude-val">Ok</span>(response) =&gt; {
                     <span class="kw">let </span>response = response.into_body();
                     <span class="kw">if </span>response.vote.is_some() {

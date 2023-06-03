@@ -477,6 +477,8 @@
 <a href="#477" id="477">477</a>
 <a href="#478" id="478">478</a>
 <a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -738,7 +740,8 @@
 
         <span class="self">self</span>.targets.retain(|origin, target_round| {
             <span class="kw">let </span>last_written_round = written_rounds.get(origin).map_or(gc_round, |rounds| {
-                rounds.last().unwrap_or(<span class="kw-2">&amp;</span>gc_round).to_owned()
+                <span class="comment">// TODO: switch to last() after it stabilizes for BTreeSet.
+                </span>rounds.iter().rev().next().unwrap_or(<span class="kw-2">&amp;</span>gc_round).to_owned()
             });
             <span class="comment">// Drop sync target when cert store already has an equal or higher round for the origin.
             // This applies GC to targets as well.
@@ -840,7 +843,8 @@
     <span class="kw">let </span>fetch_timeout = PARALLEL_FETCH_REQUEST_INTERVAL_SECS * peers.len().try_into().unwrap()
         + PARALLEL_FETCH_REQUEST_ADDITIONAL_TIMEOUT;
     <span class="kw">let </span>fetch_callback = <span class="kw">async move </span>{
-        <span class="macro">debug!</span>(<span class="string">&quot;Starting to fetch certificates&quot;</span>);
+        <span class="comment">// TODO: shuffle by stake weight instead.
+        </span><span class="macro">debug!</span>(<span class="string">&quot;Starting to fetch certificates&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>fut = FuturesUnordered::new();
         <span class="comment">// Loop until one peer returns with certificates, or no peer does.
         </span><span class="kw">loop </span>{

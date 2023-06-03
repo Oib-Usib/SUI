@@ -519,7 +519,6 @@
 <a href="#519" id="519">519</a>
 <a href="#520" id="520">520</a>
 <a href="#521" id="521">521</a>
-<a href="#522" id="522">522</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -1015,7 +1014,7 @@
             shutdown_receivers.pop().unwrap(),
             rx_batch_maker,
             tx_quorum_waiter,
-            node_metrics.clone(),
+            node_metrics,
             client,
             <span class="self">self</span>.store.clone(),
             <span class="self">self</span>.protocol_config.clone(),
@@ -1031,7 +1030,6 @@
             shutdown_receivers.pop().unwrap(),
             rx_quorum_waiter,
             network,
-            node_metrics,
         );
 
         <span class="macro">info!</span>(

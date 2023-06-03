@@ -242,16 +242,6 @@
 <a href="#242" id="242">242</a>
 <a href="#243" id="243">243</a>
 <a href="#244" id="244">244</a>
-<a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-<a href="#254" id="254">254</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">use </span>mysten_network::metrics::MetricsCallbackProvider;
@@ -317,8 +307,6 @@
     </span><span class="kw">pub </span>created_batch_latency: HistogramVec,
     <span class="doccomment">/// The number of parallel worker batches currently processed by the worker
     </span><span class="kw">pub </span>parallel_worker_batches: IntGauge,
-    <span class="doccomment">/// Latency of broadcasting batches to a quorum in seconds.
-    </span><span class="kw">pub </span>batch_broadcast_quorum_latency: Histogram,
     <span class="doccomment">/// Counter of remote/local batch fetch statuses.
     </span><span class="kw">pub </span>worker_batch_fetch: IntCounterVec,
     <span class="doccomment">/// Time it takes to download a payload from local worker peer
@@ -365,14 +353,6 @@
             parallel_worker_batches: <span class="macro">register_int_gauge_with_registry!</span>(
                 <span class="string">&quot;parallel_worker_batches&quot;</span>,
                 <span class="string">&quot;The number of parallel worker batches currently processed by the worker&quot;</span>,
-                registry
-            )
-            .unwrap(),
-            batch_broadcast_quorum_latency: <span class="macro">register_histogram_with_registry!</span>(
-                <span class="string">&quot;batch_broadcast_quorum_latency&quot;</span>,
-                <span class="string">&quot;The latency of broadcasting batches to a quorum in seconds&quot;</span>,
-                <span class="comment">// buckets in seconds
-                </span>LATENCY_SEC_BUCKETS.to_vec(),
                 registry
             )
             .unwrap(),
