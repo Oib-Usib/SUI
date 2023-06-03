@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685753311211,
+  "lastUpdate": 1685756873913,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10979,6 +10979,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 320279,
             "range": "± 54159",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "942b49865e1de1c8a69a40d999d06d53657034c6",
+          "message": "add checkpoint low watermark for state sync (#12231)\n\n## Description \r\n\r\nThis PR adds the checkpoint low watermark for state sync. This lets a\r\nnode to know who to query checkpoint contents according to the\r\nwatermarks, once checkpoint pruning is enabled.\r\n\r\n* It adds a new state sync method `get_peer_latest_checkpoint_info`.\r\nThis call will eventually replace `GetCheckpointSummaryRequest::Latest`\r\nrequest and is called between every tick in `get_latest_from_peer`. The\r\nresponse include the highest synced checkpoint summary and the lowest\r\navailable checkpoint content watermark.\r\n* To deal with the upgrade, we first query\r\n`get_peer_latest_checkpoint_info`, if it's 404 then we query\r\n`get_checkpoint_summary` and set the low watermark to 0 (if the node\r\nhasn't upgraded, they will have all the checkpoint content up to\r\ngenesis).\r\n* this low watermark is then updated in `PeerHeights`. When a node\r\nqueries peer for checkpoint content, it will only contact peers who has\r\nlow-watermark lower than the requested checkpoint.\r\n* currently all nodes has low-watermark set to 0, once\r\nhttps://github.com/MystenLabs/sui/pull/12067 lands, we will use the\r\nwatermark set there.\r\n\r\n## Test Plan \r\n\r\nTests in `state_sync/tests/rs`\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nAdds the checkpoint low watermark for state sync. This lets a node to\r\nknow who to query checkpoint contents according to the watermarks, once\r\ncheckpoint pruning is enabled.",
+          "timestamp": "2023-06-03T01:37:08Z",
+          "tree_id": "45f3ce57b7dc80e2039c3b6fd426f8575209c07e",
+          "url": "https://github.com/MystenLabs/sui/commit/942b49865e1de1c8a69a40d999d06d53657034c6"
+        },
+        "date": 1685756854925,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 141152930,
+            "range": "± 4521572",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 371521,
+            "range": "± 98623",
             "unit": "ns/iter"
           }
         ]
