@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685752098766,
+  "lastUpdate": 1685753311211,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10943,6 +10943,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 380162,
             "range": "± 50982",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ddfea7a0f813bc75ff22e22f5b3475af9484034",
+          "message": "insert committee when handling checkpoint from consensus (#12324)\n\n## Description \r\n\r\nIn https://github.com/MystenLabs/sui/pull/12212, we refactored\r\n`handle_checkpoint_from_consensus`. The PR missed one thing: when a last\r\ncheckpoint of an epoch is certified in consensus and sent to state sync,\r\nwe do not update the committee store. This is problematic because state\r\nsync does not reconfig. It means if a validator is slow in\r\nreconfiguration (where committee store would also be updated) and gets\r\ncheckpoints in the next epoch from peers, it will panic in that it\r\ncouldn't find the committee. This PR fixes it.\r\n\r\n\r\n## Test Plan \r\n\r\n```\r\nfor f in `seq 1 20`; do MSIM_TEST_NUM=5 MSIM_TEST_SEED=98$f RUST_LOG=off simt test_simulated_load_reconfig_restarts --no-capture > log-$f 2>&1 &; done\r\n```\r\n\r\n```\r\ngrep FAIL log-*\r\n```\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nInsert committee when handling checkpoint from consensus.",
+          "timestamp": "2023-06-03T00:37:27Z",
+          "tree_id": "74ea3569650619f3f9cf9da8212208c28bf91f41",
+          "url": "https://github.com/MystenLabs/sui/commit/1ddfea7a0f813bc75ff22e22f5b3475af9484034"
+        },
+        "date": 1685753290358,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 150767150,
+            "range": "± 6452294",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 320279,
+            "range": "± 54159",
             "unit": "ns/iter"
           }
         ]
