@@ -2590,6 +2590,33 @@
 <a href="#2590" id="2590">2590</a>
 <a href="#2591" id="2591">2591</a>
 <a href="#2592" id="2592">2592</a>
+<a href="#2593" id="2593">2593</a>
+<a href="#2594" id="2594">2594</a>
+<a href="#2595" id="2595">2595</a>
+<a href="#2596" id="2596">2596</a>
+<a href="#2597" id="2597">2597</a>
+<a href="#2598" id="2598">2598</a>
+<a href="#2599" id="2599">2599</a>
+<a href="#2600" id="2600">2600</a>
+<a href="#2601" id="2601">2601</a>
+<a href="#2602" id="2602">2602</a>
+<a href="#2603" id="2603">2603</a>
+<a href="#2604" id="2604">2604</a>
+<a href="#2605" id="2605">2605</a>
+<a href="#2606" id="2606">2606</a>
+<a href="#2607" id="2607">2607</a>
+<a href="#2608" id="2608">2608</a>
+<a href="#2609" id="2609">2609</a>
+<a href="#2610" id="2610">2610</a>
+<a href="#2611" id="2611">2611</a>
+<a href="#2612" id="2612">2612</a>
+<a href="#2613" id="2613">2613</a>
+<a href="#2614" id="2614">2614</a>
+<a href="#2615" id="2615">2615</a>
+<a href="#2616" id="2616">2616</a>
+<a href="#2617" id="2617">2617</a>
+<a href="#2618" id="2618">2618</a>
+<a href="#2619" id="2619">2619</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="kw">pub mod </span>errors;
@@ -2933,15 +2960,19 @@
         <span class="macro">delegate_call!</span>(<span class="self">self</span>.try_catch_up_with_primary())
     }
 
-    <span class="kw">pub fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>, batch: RocksDBBatch) -&gt; <span class="prelude-ty">Result</span>&lt;(), TypedStoreError&gt; {
+    <span class="kw">pub fn </span>write(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        batch: RocksDBBatch,
+        writeopts: <span class="kw-2">&amp;</span>WriteOptions,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TypedStoreError&gt; {
         <span class="macro">fail_point!</span>(<span class="string">&quot;batch-write-before&quot;</span>);
         <span class="kw">let </span>ret = <span class="kw">match </span>(<span class="self">self</span>, batch) {
             (RocksDB::DBWithThreadMode(db), RocksDBBatch::Regular(batch)) =&gt; {
-                db.underlying.write(batch)<span class="question-mark">?</span>;
+                db.underlying.write_opt(batch, writeopts)<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(())
             }
             (RocksDB::OptimisticTransactionDB(db), RocksDBBatch::Transactional(batch)) =&gt; {
-                db.underlying.write(batch)<span class="question-mark">?</span>;
+                db.underlying.write_opt(batch, writeopts)<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(())
             }
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(TypedStoreError::RocksDBError(
@@ -3371,6 +3402,7 @@
         DBBatch::new(
             <span class="kw-2">&amp;</span><span class="self">self</span>.rocksdb,
             batch,
+            <span class="self">self</span>.opts.writeopts(),
             <span class="kw-2">&amp;</span><span class="self">self</span>.db_metrics,
             <span class="kw-2">&amp;</span><span class="self">self</span>.write_sample_interval,
         )
@@ -3725,6 +3757,7 @@
 </span><span class="kw">pub struct </span>DBBatch {
     rocksdb: Arc&lt;RocksDB&gt;,
     batch: RocksDBBatch,
+    opts: WriteOptions,
     db_metrics: Arc&lt;DBMetrics&gt;,
     write_sample_interval: SamplingInterval,
 }
@@ -3736,12 +3769,14 @@
     </span><span class="kw">pub fn </span>new(
         dbref: <span class="kw-2">&amp;</span>Arc&lt;RocksDB&gt;,
         batch: RocksDBBatch,
+        opts: WriteOptions,
         db_metrics: <span class="kw-2">&amp;</span>Arc&lt;DBMetrics&gt;,
         write_sample_interval: <span class="kw-2">&amp;</span>SamplingInterval,
     ) -&gt; <span class="self">Self </span>{
         DBBatch {
             rocksdb: dbref.clone(),
             batch,
+            opts,
             db_metrics: db_metrics.clone(),
             write_sample_interval: write_sample_interval.clone(),
         }
@@ -3764,7 +3799,7 @@
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>};
-        <span class="self">self</span>.rocksdb.write(<span class="self">self</span>.batch)<span class="question-mark">?</span>;
+        <span class="self">self</span>.rocksdb.write(<span class="self">self</span>.batch, <span class="kw-2">&amp;</span><span class="self">self</span>.opts)<span class="question-mark">?</span>;
         <span class="self">self</span>.db_metrics
             .op_metrics
             .rocksdb_batch_commit_bytes
@@ -4674,9 +4709,11 @@
         .ok()
 }
 
-<span class="attr">#[derive(Default, Clone, Debug)]
+<span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>ReadWriteOptions {
     <span class="kw">pub </span>ignore_range_deletions: bool,
+    <span class="comment">// Whether to sync to disk on every write.
+    </span>sync_to_disk: bool,
 }
 
 <span class="kw">impl </span>ReadWriteOptions {
@@ -4685,8 +4722,25 @@
         readopts.set_ignore_range_deletions(<span class="self">self</span>.ignore_range_deletions);
         readopts
     }
+
     <span class="kw">pub fn </span>writeopts(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WriteOptions {
-        WriteOptions::default()
+        <span class="kw">let </span><span class="kw-2">mut </span>opts = WriteOptions::default();
+        opts.set_sync(<span class="self">self</span>.sync_to_disk);
+        opts
+    }
+
+    <span class="kw">pub fn </span>set_ignore_range_deletions(<span class="kw-2">mut </span><span class="self">self</span>, ignore: bool) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.ignore_range_deletions = ignore;
+        <span class="self">self
+    </span>}
+}
+
+<span class="kw">impl </span>Default <span class="kw">for </span>ReadWriteOptions {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            ignore_range_deletions: <span class="bool-val">false</span>,
+            sync_to_disk: std::env::var(<span class="string">&quot;SUI_DB_SYNC_TO_DISK&quot;</span>).map_or(<span class="bool-val">false</span>, |v| v != <span class="string">&quot;0&quot;</span>),
+        }
     }
 }
 
