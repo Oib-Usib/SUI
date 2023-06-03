@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685751527283,
+  "lastUpdate": 1685752098766,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -10907,6 +10907,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 332352,
             "range": "± 35026",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ce7f3433dfa4895bbf23a06c238dd884887d695d",
+          "message": "[rocksdb] allow setting sync to disk on WriteOptions (#12323)\n\n## Description \r\n\r\nThere have been reports of fullnode operators seeing data corruptions,\r\nwhere fullnodes are running in evictable pods. Add an option to ensure\r\nrocksdb writes are flushed to disk, so operators can experiment with its\r\neffectiveness.\r\n\r\nEventually we want to make sync to disk the default behavior, but right\r\nnow this slows down maximum write throughput a bit too much.\r\n\r\n## Test Plan \r\n\r\nCI. Private testnet.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-02T17:16:43-07:00",
+          "tree_id": "385d8b7a9a54cab4f4fb27a915f46f1df970f3fc",
+          "url": "https://github.com/MystenLabs/sui/commit/ce7f3433dfa4895bbf23a06c238dd884887d695d"
+        },
+        "date": 1685752078017,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 155108362,
+            "range": "± 5326161",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 380162,
+            "range": "± 50982",
             "unit": "ns/iter"
           }
         ]
