@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["empty_contents"],"struct":["CommitteeFixture"]};
+window.SIDEBAR_ITEMS = {"fn":["empty_contents","random_contents"],"struct":["CommitteeFixture"]};
