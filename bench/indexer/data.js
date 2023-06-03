@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685756873913,
+  "lastUpdate": 1685757121954,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11015,6 +11015,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 371521,
             "range": "± 98623",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "81660174+mwtian@users.noreply.github.com",
+            "name": "mwtian",
+            "username": "mwtian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ae8fffc3833bd59c29df40ba15cb36351a3320a",
+          "message": "[Narwhal] measure batch broadcast quorum latency (#12277)\n\n## Description \r\n\r\nThis is going to be compared against `header_to_certificate_latency` to\r\nunderstand the quorum latencies of each validator.\r\n\r\n## Test Plan \r\n\r\nCI. Private testnet.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-03T01:40:05Z",
+          "tree_id": "f0dbf81813c258fbf6ed0f3916d684f63b6475db",
+          "url": "https://github.com/MystenLabs/sui/commit/7ae8fffc3833bd59c29df40ba15cb36351a3320a"
+        },
+        "date": 1685757102568,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147702739,
+            "range": "± 5276638",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 307011,
+            "range": "± 18611",
             "unit": "ns/iter"
           }
         ]
