@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AuthorityStorePruner","AuthorityStorePruningMetrics"]};
+window.SIDEBAR_ITEMS = {"enum":["PruningMode"],"struct":["AuthorityStorePruner","AuthorityStorePruningMetrics"]};
