@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685980848751,
+  "lastUpdate": 1685981714451,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11195,6 +11195,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 535495,
             "range": "± 51170",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "eugene@mystenlabs.com",
+            "name": "Eugene Boguslavsky",
+            "username": "ebmifa"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bbbe114543d64dcd8fd06c90cefdad5fdb846cc8",
+          "message": "v1.3.0 Framework Bytecode Snapshot for branch cut (#12341)\n\n## Description \r\nFramework Bytecode Snapshot updates for `v1.30.0` branch cut\r\n\r\n## Test Plan \r\n👀",
+          "timestamp": "2023-06-05T16:04:28Z",
+          "tree_id": "9bbf969b9af04dd6f91298f4fc0be0da937c4933",
+          "url": "https://github.com/MystenLabs/sui/commit/bbbe114543d64dcd8fd06c90cefdad5fdb846cc8"
+        },
+        "date": 1685981693163,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 152597420,
+            "range": "± 4834696",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 332049,
+            "range": "± 22733",
             "unit": "ns/iter"
           }
         ]
