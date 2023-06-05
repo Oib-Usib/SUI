@@ -56,6 +56,11 @@
 <a href="#56" id="56">56</a>
 <a href="#57" id="57">57</a>
 <a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -113,5 +118,10 @@
     </span><span class="kw">async fn </span>get_latest_address_metrics(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;AddressMetrics&gt;;
     <span class="attr">#[method(name = <span class="string">&quot;getCheckpointAddressMetrics&quot;</span>)]
     </span><span class="kw">async fn </span>get_checkpoint_address_metrics(<span class="kw-2">&amp;</span><span class="self">self</span>, checkpoint: u64) -&gt; RpcResult&lt;AddressMetrics&gt;;
+    <span class="attr">#[method(name = <span class="string">&quot;getAllEpochAddressMetrics&quot;</span>)]
+    </span><span class="kw">async fn </span>get_all_epoch_address_metrics(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        descending_order: <span class="prelude-ty">Option</span>&lt;bool&gt;,
+    ) -&gt; RpcResult&lt;Vec&lt;AddressMetrics&gt;&gt;;
 }
 </code></pre></div></section></main></body></html>

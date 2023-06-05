@@ -154,6 +154,20 @@
 <a href="#154" id="154">154</a>
 <a href="#155" id="155">155</a>
 <a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -295,6 +309,20 @@
             .get_checkpoint_address_stats(checkpoint <span class="kw">as </span>i64)
             .<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(AddressMetrics::from(address_stats))
+    }
+
+    <span class="kw">async fn </span>get_all_epoch_address_metrics(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        descending_order: <span class="prelude-ty">Option</span>&lt;bool&gt;,
+    ) -&gt; RpcResult&lt;Vec&lt;AddressMetrics&gt;&gt; {
+        <span class="kw">let </span>epoch_address_stats = <span class="self">self
+            </span>.state
+            .get_all_epoch_address_stats(descending_order)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(epoch_address_stats
+            .into_iter()
+            .map(AddressMetrics::from)
+            .collect())
     }
 }
 
