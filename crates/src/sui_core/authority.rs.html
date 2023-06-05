@@ -4199,6 +4199,64 @@
 <a href="#4199" id="4199">4199</a>
 <a href="#4200" id="4200">4200</a>
 <a href="#4201" id="4201">4201</a>
+<a href="#4202" id="4202">4202</a>
+<a href="#4203" id="4203">4203</a>
+<a href="#4204" id="4204">4204</a>
+<a href="#4205" id="4205">4205</a>
+<a href="#4206" id="4206">4206</a>
+<a href="#4207" id="4207">4207</a>
+<a href="#4208" id="4208">4208</a>
+<a href="#4209" id="4209">4209</a>
+<a href="#4210" id="4210">4210</a>
+<a href="#4211" id="4211">4211</a>
+<a href="#4212" id="4212">4212</a>
+<a href="#4213" id="4213">4213</a>
+<a href="#4214" id="4214">4214</a>
+<a href="#4215" id="4215">4215</a>
+<a href="#4216" id="4216">4216</a>
+<a href="#4217" id="4217">4217</a>
+<a href="#4218" id="4218">4218</a>
+<a href="#4219" id="4219">4219</a>
+<a href="#4220" id="4220">4220</a>
+<a href="#4221" id="4221">4221</a>
+<a href="#4222" id="4222">4222</a>
+<a href="#4223" id="4223">4223</a>
+<a href="#4224" id="4224">4224</a>
+<a href="#4225" id="4225">4225</a>
+<a href="#4226" id="4226">4226</a>
+<a href="#4227" id="4227">4227</a>
+<a href="#4228" id="4228">4228</a>
+<a href="#4229" id="4229">4229</a>
+<a href="#4230" id="4230">4230</a>
+<a href="#4231" id="4231">4231</a>
+<a href="#4232" id="4232">4232</a>
+<a href="#4233" id="4233">4233</a>
+<a href="#4234" id="4234">4234</a>
+<a href="#4235" id="4235">4235</a>
+<a href="#4236" id="4236">4236</a>
+<a href="#4237" id="4237">4237</a>
+<a href="#4238" id="4238">4238</a>
+<a href="#4239" id="4239">4239</a>
+<a href="#4240" id="4240">4240</a>
+<a href="#4241" id="4241">4241</a>
+<a href="#4242" id="4242">4242</a>
+<a href="#4243" id="4243">4243</a>
+<a href="#4244" id="4244">4244</a>
+<a href="#4245" id="4245">4245</a>
+<a href="#4246" id="4246">4246</a>
+<a href="#4247" id="4247">4247</a>
+<a href="#4248" id="4248">4248</a>
+<a href="#4249" id="4249">4249</a>
+<a href="#4250" id="4250">4250</a>
+<a href="#4251" id="4251">4251</a>
+<a href="#4252" id="4252">4252</a>
+<a href="#4253" id="4253">4253</a>
+<a href="#4254" id="4254">4254</a>
+<a href="#4255" id="4255">4255</a>
+<a href="#4256" id="4256">4256</a>
+<a href="#4257" id="4257">4257</a>
+<a href="#4258" id="4258">4258</a>
+<a href="#4259" id="4259">4259</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -4411,6 +4469,14 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_num_pending_certificates: IntGauge,
     <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_num_executing_certificates: IntGauge,
     <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_num_ready: IntGauge,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_object_cache_size: IntGauge,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_object_cache_hits: IntCounter,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_object_cache_misses: IntCounter,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_object_cache_evictions: IntCounter,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_package_cache_size: IntGauge,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_package_cache_hits: IntCounter,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_package_cache_misses: IntCounter,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) transaction_manager_package_cache_evictions: IntCounter,
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) execution_driver_executed_transactions: IntCounter,
     <span class="kw">pub</span>(<span class="kw">crate</span>) execution_driver_dispatch_queue: IntGauge,
@@ -4605,6 +4671,54 @@
             transaction_manager_num_ready: <span class="macro">register_int_gauge_with_registry!</span>(
                 <span class="string">&quot;transaction_manager_num_ready&quot;</span>,
                 <span class="string">&quot;Number of ready transactions in TransactionManager&quot;</span>,
+                registry,
+            )
+            .unwrap(),
+            transaction_manager_object_cache_size: <span class="macro">register_int_gauge_with_registry!</span>(
+                <span class="string">&quot;transaction_manager_object_cache_size&quot;</span>,
+                <span class="string">&quot;Current size of object-availability cache in TransactionManager&quot;</span>,
+                registry,
+            )
+            .unwrap(),
+            transaction_manager_object_cache_hits: <span class="macro">register_int_counter_with_registry!</span>(
+                <span class="string">&quot;transaction_manager_object_cache_hits&quot;</span>,
+                <span class="string">&quot;Number of object-availability cache hits in TransactionManager&quot;</span>,
+                registry,
+            )
+            .unwrap(),
+            transaction_manager_object_cache_misses: <span class="macro">register_int_counter_with_registry!</span>(
+                <span class="string">&quot;transaction_manager_object_cache_misses&quot;</span>,
+                <span class="string">&quot;Number of object-availability cache misses in TransactionManager&quot;</span>,
+                registry,
+            )
+            .unwrap(),
+            transaction_manager_object_cache_evictions: <span class="macro">register_int_counter_with_registry!</span>(
+                <span class="string">&quot;transaction_manager_object_cache_evictions&quot;</span>,
+                <span class="string">&quot;Number of object-availability cache evictions in TransactionManager&quot;</span>,
+                registry,
+            )
+            .unwrap(),
+            transaction_manager_package_cache_size: <span class="macro">register_int_gauge_with_registry!</span>(
+                <span class="string">&quot;transaction_manager_package_cache_size&quot;</span>,
+                <span class="string">&quot;Current size of package-availability cache in TransactionManager&quot;</span>,
+                registry,
+            )
+            .unwrap(),
+            transaction_manager_package_cache_hits: <span class="macro">register_int_counter_with_registry!</span>(
+                <span class="string">&quot;transaction_manager_package_cache_hits&quot;</span>,
+                <span class="string">&quot;Number of package-availability cache hits in TransactionManager&quot;</span>,
+                registry,
+            )
+            .unwrap(),
+            transaction_manager_package_cache_misses: <span class="macro">register_int_counter_with_registry!</span>(
+                <span class="string">&quot;transaction_manager_package_cache_misses&quot;</span>,
+                <span class="string">&quot;Number of package-availability cache misses in TransactionManager&quot;</span>,
+                registry,
+            )
+            .unwrap(),
+            transaction_manager_package_cache_evictions: <span class="macro">register_int_counter_with_registry!</span>(
+                <span class="string">&quot;transaction_manager_package_cache_evictions&quot;</span>,
+                <span class="string">&quot;Number of package-availability cache evictions in TransactionManager&quot;</span>,
                 registry,
             )
             .unwrap(),
@@ -4939,8 +5053,10 @@
             );
             <span class="self">self</span>.database
                 .fullnode_fast_path_insert_objects_to_object_store_maybe(<span class="kw-2">&amp;</span>objects)<span class="question-mark">?</span>;
-            <span class="self">self</span>.transaction_manager()
-                .objects_available(objects.iter().map(InputKey::from).collect(), epoch_store);
+            <span class="self">self</span>.transaction_manager().fastpath_objects_available(
+                objects.iter().map(InputKey::from).collect(),
+                epoch_store,
+            );
         }
 
         <span class="kw">if </span>transaction.contains_shared_object() {
