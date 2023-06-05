@@ -1215,6 +1215,7 @@
 <a href="#1215" id="1215">1215</a>
 <a href="#1216" id="1216">1216</a>
 <a href="#1217" id="1217">1217</a>
+<a href="#1218" id="1218">1218</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -2098,6 +2099,7 @@
                 <span class="self">self</span>.stake.pop_front().unwrap_or(<span class="number">1</span>),
                 a.address.clone(),
                 a.network_public_key(),
+                a.address.to_string(),
             );
         }
         <span class="kw">let </span>committee = committee_builder.build();

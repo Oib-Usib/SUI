@@ -355,6 +355,26 @@
 <a href="#355" id="355">355</a>
 <a href="#356" id="356">356</a>
 <a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -363,16 +383,13 @@
     consensus::{ConsensusState, Dag},
     utils, ConsensusError, Outcome,
 };
-<span class="kw">use </span>config::{AuthorityIdentifier, Committee, Stake};
+<span class="kw">use </span>config::{Authority, Committee, Stake};
 <span class="kw">use </span>fastcrypto::hash::Hash;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>storage::ConsensusStore;
 <span class="kw">use </span>tokio::time::Instant;
 <span class="kw">use </span>tracing::{debug, error_span};
-<span class="kw">use </span>types::{
-    Certificate, CertificateAPI, CertificateDigest, CommittedSubDag, HeaderAPI, ReputationScores,
-    Round,
-};
+<span class="kw">use </span>types::{Certificate, CertificateAPI, CommittedSubDag, HeaderAPI, ReputationScores, Round};
 
 <span class="attr">#[cfg(test)]
 #[path = <span class="string">&quot;tests/bullshark_tests.rs&quot;</span>]
@@ -389,6 +406,9 @@
 /// and consequently a commit.
 </span><span class="attr">#[derive(Default)]
 </span><span class="kw">pub struct </span>LastRound {
+    <span class="doccomment">/// The elected leader of the round. That&#39;s irrespective of whether the corresponding certificate
+    /// is found or not.
+    </span>leader: <span class="prelude-ty">Option</span>&lt;Authority&gt;,
     <span class="doccomment">/// True when the leader has actually proposed a certificate
     /// and found in our DAG
     </span>leader_found: bool,
@@ -434,10 +454,10 @@
         }
     }
 
-    <span class="comment">// Returns the PublicKey of the authority which is the leader for the provided `round`.
+    <span class="comment">// Returns the the authority which is the leader for the provided `round`.
     // Pay attention that this method will return always the first authority as the leader
     // when used under a test environment.
-    </span><span class="kw">pub fn </span>leader_authority(committee: <span class="kw-2">&amp;</span>Committee, round: Round) -&gt; AuthorityIdentifier {
+    </span><span class="kw">pub fn </span>leader_authority(committee: <span class="kw-2">&amp;</span>Committee, round: Round) -&gt; Authority {
         <span class="macro">assert_eq!</span>(
             round % <span class="number">2</span>,
             <span class="number">0</span>,
@@ -454,27 +474,31 @@
                 </span><span class="kw">let </span>next_leader = (round/<span class="number">2 </span>- <span class="number">1</span>) <span class="kw">as </span>usize % committee.size();
                 <span class="kw">let </span>authorities = committee.authorities().collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
 
-                authorities.get(next_leader).unwrap().id()
+                (<span class="kw-2">*</span>authorities.get(next_leader).unwrap()).clone()
             } <span class="kw">else </span>{
                 <span class="comment">// Elect the leader in a stake-weighted choice seeded by the round
-                </span>committee.leader(round).id()
+                </span>committee.leader(round)
             }
         }
     }
 
-    <span class="doccomment">/// Returns the certificate (and the certificate&#39;s digest) originated by the leader of the
-    /// specified round (if any).
+    <span class="doccomment">/// Returns the certificate originated by the leader of the specified round (if any). The Authority
+    /// leader of the round is always returned and that&#39;s irrespective of whether the certificate exists
+    /// as that&#39;s deterministically determined.
     </span><span class="kw">fn </span>leader&lt;<span class="lifetime">&#39;a</span>&gt;(
         committee: <span class="kw-2">&amp;</span>Committee,
         round: Round,
         dag: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Dag,
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>(CertificateDigest, Certificate)&gt; {
+    ) -&gt; (Authority, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Certificate&gt;) {
         <span class="comment">// Note: this function is often called with even rounds only. While we do not aim at random selection
         // yet (see issue #10), repeated calls to this function should still pick from the whole roster of leaders.
         </span><span class="kw">let </span>leader = <span class="self">Self</span>::leader_authority(committee, round);
 
         <span class="comment">// Return its certificate and the certificate&#39;s digest.
-        </span>dag.get(<span class="kw-2">&amp;</span>round).and_then(|x| x.get(<span class="kw-2">&amp;</span>leader))
+        </span><span class="kw">match </span>dag.get(<span class="kw-2">&amp;</span>round).and_then(|x| x.get(<span class="kw-2">&amp;</span>leader.id())) {
+            <span class="prelude-val">None </span>=&gt; (leader, <span class="prelude-val">None</span>),
+            <span class="prelude-val">Some</span>((<span class="kw">_</span>, certificate)) =&gt; (leader, <span class="prelude-val">Some</span>(certificate)),
+        }
     }
 
     <span class="doccomment">/// Calculates the reputation score for the current commit by taking into account the reputation
@@ -550,16 +574,21 @@
         <span class="comment">// Report last leader election if was unsuccessful
         </span><span class="kw">if </span>round &gt; <span class="self">self</span>.max_inserted_certificate_round &amp;&amp; round % <span class="number">2 </span>== <span class="number">0 </span>{
             <span class="kw">let </span>last_election_round = <span class="kw-2">&amp;</span><span class="self">self</span>.last_leader_election;
+            <span class="kw">let </span>hostname = last_election_round
+                .leader
+                .as_ref()
+                .map(|authority| authority.hostname())
+                .unwrap_or_default();
 
             <span class="kw">if </span>!last_election_round.leader_found {
                 <span class="self">self</span>.metrics
                     .leader_election
-                    .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;not_found&quot;</span>])
+                    .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;not_found&quot;</span>, hostname])
                     .inc();
             } <span class="kw">else if </span>!last_election_round.leader_has_support {
                 <span class="self">self</span>.metrics
                     .leader_election
-                    .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;not_enough_support&quot;</span>])
+                    .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;not_enough_support&quot;</span>, hostname])
                     .inc();
             }
         }
@@ -582,18 +611,21 @@
         <span class="kw">if </span>leader_round &lt;= state.last_round.committed_round {
             <span class="kw">return </span><span class="prelude-val">Ok</span>((Outcome::LeaderBelowCommitRound, Vec::new()));
         }
-        <span class="kw">let </span>(leader_digest, leader) = <span class="kw">match </span><span class="self">Self</span>::leader(<span class="kw-2">&amp;</span><span class="self">self</span>.committee, leader_round, <span class="kw-2">&amp;</span>state.dag)
-        {
-            <span class="prelude-val">Some</span>(x) =&gt; x,
-            <span class="prelude-val">None </span>=&gt; {
-                <span class="self">self</span>.last_leader_election = LastRound {
-                    leader_found: <span class="bool-val">false</span>,
-                    leader_has_support: <span class="bool-val">false</span>,
-                };
-                <span class="comment">// leader has not been found - we don&#39;t have any certificate
-                </span><span class="kw">return </span><span class="prelude-val">Ok</span>((Outcome::LeaderNotFound, Vec::new()));
-            }
-        };
+
+        <span class="kw">let </span>(leader, leader_authority) =
+            <span class="kw">match </span><span class="self">Self</span>::leader(<span class="kw-2">&amp;</span><span class="self">self</span>.committee, leader_round, <span class="kw-2">&amp;</span>state.dag) {
+                (leader_authority, <span class="prelude-val">Some</span>(certificate)) =&gt; (certificate, leader_authority),
+                (leader_authority, <span class="prelude-val">None</span>) =&gt; {
+                    <span class="self">self</span>.last_leader_election = LastRound {
+                        leader: <span class="prelude-val">Some</span>(leader_authority),
+                        leader_found: <span class="bool-val">false</span>,
+                        leader_has_support: <span class="bool-val">false</span>,
+                    };
+
+                    <span class="comment">// leader has not been found - we don&#39;t have any certificate
+                    </span><span class="kw">return </span><span class="prelude-val">Ok</span>((Outcome::LeaderNotFound, Vec::new()));
+                }
+            };
 
         <span class="comment">// Check if the leader has f+1 support from its children (ie. round r+1).
         </span><span class="kw">let </span>stake: Stake = state
@@ -601,11 +633,12 @@
             .get(<span class="kw-2">&amp;</span>round)
             .expect(<span class="string">&quot;We should have the whole history by now&quot;</span>)
             .values()
-            .filter(|(<span class="kw">_</span>, x)| x.header().parents().contains(leader_digest))
+            .filter(|(<span class="kw">_</span>, x)| x.header().parents().contains(<span class="kw-2">&amp;</span>leader.digest()))
             .map(|(<span class="kw">_</span>, x)| <span class="self">self</span>.committee.stake_by_id(x.origin()))
             .sum();
 
         <span class="self">self</span>.last_leader_election = LastRound {
+            leader: <span class="prelude-val">Some</span>(leader_authority),
             leader_found: <span class="bool-val">true</span>,
             leader_has_support: <span class="bool-val">false</span>,
         };
@@ -682,9 +715,16 @@
 
         <span class="self">self</span>.last_successful_leader_election_timestamp = Instant::now();
 
+        <span class="kw">let </span>hostname = <span class="self">self
+            </span>.last_leader_election
+            .leader
+            .as_ref()
+            .map(|authority| authority.hostname())
+            .unwrap_or_default();
+
         <span class="self">self</span>.metrics
             .leader_election
-            .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;elected&quot;</span>])
+            .with_label_values(<span class="kw-2">&amp;</span>[<span class="string">&quot;elected&quot;</span>, hostname])
             .inc();
 
         <span class="comment">// The total leader_commits are expected to grow the same amount on validators,

@@ -260,7 +260,7 @@
             leader_election: <span class="macro">register_int_counter_vec_with_registry!</span>(
                 <span class="string">&quot;leader_election&quot;</span>,
                 <span class="string">&quot;The outcome of a leader election round&quot;</span>,
-                <span class="kw-2">&amp;</span>[<span class="string">&quot;outcome&quot;</span>],
+                <span class="kw-2">&amp;</span>[<span class="string">&quot;outcome&quot;</span>, <span class="string">&quot;authority&quot;</span>],
                 registry
             ).unwrap(),
             leader_commits: <span class="macro">register_int_counter_vec_with_registry!</span>(

@@ -560,6 +560,23 @@
 <a href="#560" id="560">560</a>
 <a href="#561" id="561">561</a>
 <a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -592,6 +609,8 @@
     </span>primary_address: Multiaddr,
     <span class="doccomment">/// Network key of the primary.
     </span>network_key: NetworkPublicKey,
+    <span class="doccomment">/// The validator&#39;s hostname
+    </span>hostname: String,
     <span class="doccomment">/// There are secondary indexes that should be initialised before we are ready to use the
     /// authority - this bool protect us for premature use.
     </span><span class="attr">#[serde(skip)]
@@ -608,6 +627,7 @@
         stake: Stake,
         primary_address: Multiaddr,
         network_key: NetworkPublicKey,
+        hostname: String,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>protocol_key_bytes = PublicKeyBytes::from(<span class="kw-2">&amp;</span>protocol_key);
 
@@ -618,6 +638,7 @@
             stake,
             primary_address,
             network_key,
+            hostname,
             initialised: <span class="bool-val">false</span>,
         }
     }
@@ -655,6 +676,11 @@
     <span class="kw">pub fn </span>network_key(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; NetworkPublicKey {
         <span class="macro">assert!</span>(<span class="self">self</span>.initialised);
         <span class="self">self</span>.network_key.clone()
+    }
+
+    <span class="kw">pub fn </span>hostname(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="macro">assert!</span>(<span class="self">self</span>.initialised);
+        <span class="self">self</span>.hostname.as_str()
     }
 }
 
@@ -1034,8 +1060,15 @@
         stake: Stake,
         primary_address: Multiaddr,
         network_key: NetworkPublicKey,
+        hostname: String,
     ) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>authority = Authority::new(protocol_key.clone(), stake, primary_address, network_key);
+        <span class="kw">let </span>authority = Authority::new(
+            protocol_key.clone(),
+            stake,
+            primary_address,
+            network_key,
+            hostname,
+        );
         <span class="self">self</span>.authorities.insert(protocol_key, authority);
         <span class="self">self
     </span>}
@@ -1061,7 +1094,7 @@
         <span class="kw">let </span>num_of_authorities = <span class="number">10</span>;
 
         <span class="kw">let </span>authorities = (<span class="number">0</span>..num_of_authorities)
-            .map(|_i| {
+            .map(|i| {
                 <span class="kw">let </span>keypair = KeyPair::generate(<span class="kw-2">&amp;mut </span>rng);
                 <span class="kw">let </span>network_keypair = NetworkKeyPair::generate(<span class="kw-2">&amp;mut </span>rng);
 
@@ -1070,6 +1103,7 @@
                     <span class="number">1</span>,
                     Multiaddr::empty(),
                     network_keypair.public().clone(),
+                    i.to_string(),
                 );
 
                 (keypair.public().clone(), a)
