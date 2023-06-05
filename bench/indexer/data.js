@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685963126986,
+  "lastUpdate": 1685976523807,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11123,6 +11123,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 315507,
             "range": "± 16957",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f652942f12587fb4af21441c2b943c8b887db03e",
+          "message": "rpc: DAU chart endpoint (#12313)\n\n## Description \r\n\r\nAdd endpoints for DAU over epochs.\r\n\r\n## Test Plan \r\n\r\n```\r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_getAllEpochAddressMetrics\",\r\n\"params\": [true]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":[{\"checkpoint\":36799,\"epoch\":1,\"timestampMs\":1683849325183,\"cumulativeAddresses\":84280,\"cumulativeActiveAddresses\":1218,\"dailyActiveAddresses\":1218},{\"checkpoint\":5499,\"epoch\":0,\"timestampMs\":1683817158611,\"cumulativeAddresses\":690,\"cumulativeActiveAddresses\":5,\"dailyActiveAddresses\":5}],\"id\":1}%             \r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n\"jsonrpc\": \"2.0\",\r\n\"id\": 1,\r\n\"method\": \"suix_getAllEpochAddressMetrics\",\r\n\"params\": []\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":[{\"checkpoint\":5499,\"epoch\":0,\"timestampMs\":1683817158611,\"cumulativeAddresses\":690,\"cumulativeActiveAddresses\":5,\"dailyActiveAddresses\":5},{\"checkpoint\":36799,\"epoch\":1,\"timestampMs\":1683849325183,\"cumulativeAddresses\":84280,\"cumulativeActiveAddresses\":1218,\"dailyActiveAddresses\":1218}],\"id\":1}% \r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-05T10:34:20-04:00",
+          "tree_id": "da32fa1fccd90749ff21cb79b4f70eec985897a4",
+          "url": "https://github.com/MystenLabs/sui/commit/f652942f12587fb4af21441c2b943c8b887db03e"
+        },
+        "date": 1685976502514,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 144808295,
+            "range": "± 6109377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 384574,
+            "range": "± 66656",
             "unit": "ns/iter"
           }
         ]
