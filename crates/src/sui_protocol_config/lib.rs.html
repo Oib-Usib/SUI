@@ -1479,6 +1479,9 @@
 <a href="#1479" id="1479">1479</a>
 <a href="#1480" id="1480">1480</a>
 <a href="#1481" id="1481">1481</a>
+<a href="#1482" id="1482">1482</a>
+<a href="#1483" id="1483">1483</a>
+<a href="#1484" id="1484">1484</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2659,6 +2662,9 @@
                 cfg.feature_flags.narwhal_versioned_metadata = <span class="bool-val">true</span>;
                 <span class="kw">if </span>chain != Chain::Mainnet {
                     cfg.feature_flags.commit_root_state_digest = <span class="bool-val">true</span>;
+                }
+
+                <span class="kw">if </span>chain != Chain::Mainnet &amp;&amp; chain != Chain::Testnet {
                     cfg.feature_flags.zklogin_auth = <span class="bool-val">true</span>;
                 }
                 cfg
