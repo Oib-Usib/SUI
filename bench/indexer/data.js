@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1685827454566,
+  "lastUpdate": 1685963126986,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11087,6 +11087,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 322671,
             "range": "± 24039",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "51927076+phoenix-o@users.noreply.github.com",
+            "name": "phoenix",
+            "username": "phoenix-o"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d04d499667c054c2a707561eaab9fa4b079ef666",
+          "message": "[pruner] initial version of checkpoints pruner (#12067)\n\nInitial version of the checkpoint pruner:\r\nSimilar to the existing objects pruner (i.e., tails checkpoints from the\r\npast epochs and removes relevant data).\r\nNotes:\r\n* current approach employs rocksdb's `delete_range` API. Point-delete\r\ntombstones have a negative performance impact on reads. It may still\r\nsuffer from the same issue where deleted data occupies space in SST\r\nfiles, so alternative solutions like FIFO compaction style should be\r\nconsidered in the future\r\n* each pruning batch affects both the perpetual DB and the checkpoint\r\nDB. We can't have an atomic batch between those two, so ordering is\r\nimportant. The perpetual DB batch must be committed first. Its changes\r\nare idempotent. Because of this, the pruning watermark is stored in the\r\ncheckpoint DB\r\n* the checkpoint pruner is blocked by the objects pruner watermark. It's\r\nnecessary because once the checkpoint is gone, there's no way to delete\r\nthe corresponding objects\r\n* objects and checkpoints pruning are two separate routines. That's\r\nbecause a node can have different pruning policies for them, and objects\r\npruning is not idempotent in general. In the future, a new Universal\r\npruning mode can be added that aligns the two if pruning settings are\r\nsimilar. That should help with resource consumption on the node so that\r\nthe same data won't be read twice during two different time windows",
+          "timestamp": "2023-06-05T12:54:42+02:00",
+          "tree_id": "fd7f79e7d812f46fcd23a91e3a80574ea6cec070",
+          "url": "https://github.com/MystenLabs/sui/commit/d04d499667c054c2a707561eaab9fa4b079ef666"
+        },
+        "date": 1685963106017,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 138477420,
+            "range": "± 5326479",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315507,
+            "range": "± 16957",
             "unit": "ns/iter"
           }
         ]
