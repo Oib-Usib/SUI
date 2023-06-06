@@ -312,6 +312,25 @@
 <a href="#312" id="312">312</a>
 <a href="#313" id="313">313</a>
 <a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="attr">#![allow(dead_code)]
@@ -365,7 +384,11 @@
 ///┌──────────────────────────────┐
 ///│       magic &lt;4 byte&gt;         │
 ///├──────────────────────────────┤
-///│ ┌──────────────────────────┐ │
+///│  storage format &lt;1 byte&gt;     │
+</span><span class="comment">// ├──────────────────────────────┤
+</span><span class="doccomment">///│    file compression &lt;1 byte&gt; │
+</span><span class="comment">// ├──────────────────────────────┤
+</span><span class="doccomment">///│ ┌──────────────────────────┐ │
 ///│ │   CheckpointContent 1    │ │
 ///│ ├──────────────────────────┤ │
 ///│ │          ...             │ │
@@ -382,7 +405,11 @@
 ///┌──────────────────────────────┐
 ///│       magic &lt;4 byte&gt;         │
 ///├──────────────────────────────┤
-///│ ┌──────────────────────────┐ │
+///│  storage format &lt;1 byte&gt;     │
+</span><span class="comment">// ├──────────────────────────────┤
+// │  file compression &lt;1 byte&gt;   │
+// ├──────────────────────────────┤
+</span><span class="doccomment">///│ ┌──────────────────────────┐ │
 ///│ │   CheckpointSummary 1    │ │
 ///│ ├──────────────────────────┤ │
 ///│ │          ...             │ │
@@ -416,6 +443,14 @@
     Copy, Clone, Debug, Eq, PartialEq, Serialize, Deserialize, TryFromPrimitive, IntoPrimitive,
 )]
 #[repr(u8)]
+</span><span class="kw">pub enum </span>StorageFormat {
+    Blob = <span class="number">0</span>,
+}
+
+<span class="attr">#[derive(
+    Copy, Clone, Debug, Eq, PartialEq, Serialize, Deserialize, TryFromPrimitive, IntoPrimitive,
+)]
+#[repr(u8)]
 </span><span class="kw">pub enum </span>FileType {
     CheckpointContent = <span class="number">0</span>,
     CheckpointSummary,
@@ -427,6 +462,7 @@
     <span class="kw">pub </span>epoch_num: u64,
     <span class="kw">pub </span>checkpoint_seq_range: Range&lt;u64&gt;,
     <span class="kw">pub </span>file_compression: FileCompression,
+    <span class="kw">pub </span>storage_format: StorageFormat,
     <span class="kw">pub </span>sha3_digest: [u8; <span class="number">32</span>],
 }
 
@@ -551,6 +587,7 @@
     file_path: <span class="kw-2">&amp;</span>std::path::Path,
     file_compression: FileCompression,
     file_type: FileType,
+    storage_format: StorageFormat,
     epoch_num: u64,
     checkpoint_seq_range: Range&lt;u64&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;FileMetadata&gt; {
@@ -561,6 +598,7 @@
         epoch_num,
         checkpoint_seq_range,
         file_compression,
+        storage_format,
         sha3_digest,
     };
     <span class="prelude-val">Ok</span>(file_metadata)

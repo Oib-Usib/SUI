@@ -1359,6 +1359,8 @@
 <a href="#1359" id="1359">1359</a>
 <a href="#1360" id="1360">1360</a>
 <a href="#1361" id="1361">1361</a>
+<a href="#1362" id="1362">1362</a>
+<a href="#1363" id="1363">1363</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1405,6 +1407,7 @@
 <span class="kw">use </span>narwhal_network::metrics::MetricsMakeCallbackHandler;
 <span class="kw">use </span>narwhal_network::metrics::{NetworkConnectionMetrics, NetworkMetrics};
 <span class="kw">use </span>sui_archival::writer::ArchiveWriterV1;
+<span class="kw">use </span>sui_archival::StorageFormat;
 <span class="kw">use </span>sui_config::node::DBCheckpointConfig;
 <span class="kw">use </span>sui_config::node_config_metrics::NodeConfigMetrics;
 <span class="kw">use </span>sui_config::{ConsensusConfig, NodeConfig};
@@ -1749,6 +1752,7 @@
                     local_store_config,
                     remote_store_config.clone(),
                     FileCompression::Zstd,
+                    StorageFormat::Blob,
                     Duration::from_secs(<span class="number">600</span>),
                     <span class="number">1024 </span>* <span class="number">1024 </span>* <span class="number">1024</span>,
                     <span class="kw-2">&amp;</span>prometheus_registry,
