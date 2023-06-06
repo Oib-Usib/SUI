@@ -426,8 +426,6 @@
 <a href="#426" id="426">426</a>
 <a href="#427" id="427">427</a>
 <a href="#428" id="428">428</a>
-<a href="#429" id="429">429</a>
-<a href="#430" id="430">430</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -442,7 +440,7 @@
 <span class="kw">use </span>sui_protocol_config::SupportedProtocolVersions;
 <span class="kw">use </span>sui_types::base_types::{AuthorityName, SuiAddress};
 <span class="kw">use </span>sui_types::committee::{Committee, ProtocolVersion};
-<span class="kw">use </span>sui_types::crypto::{generate_proof_of_possession, AccountKeyPair, KeypairTraits, PublicKey};
+<span class="kw">use </span>sui_types::crypto::{AccountKeyPair, KeypairTraits, PublicKey};
 <span class="kw">use </span>sui_types::object::Object;
 
 <span class="kw">pub enum </span>CommitteeConfig {
@@ -680,11 +678,8 @@
             <span class="kw">for </span>(i, validator) <span class="kw">in </span>validators.iter().enumerate() {
                 <span class="kw">let </span>name = <span class="macro">format!</span>(<span class="string">&quot;validator-{i}&quot;</span>);
                 <span class="kw">let </span>validator_info = validator.to_validator_info(name);
-                <span class="kw">let </span>pop = generate_proof_of_possession(
-                    <span class="kw-2">&amp;</span>validator.key_pair,
-                    (<span class="kw-2">&amp;</span>validator.account_key_pair.public()).into(),
-                );
-                builder = builder.add_validator(validator_info, pop);
+                builder =
+                    builder.add_validator(validator_info.info, validator_info.proof_of_possession);
             }
 
             builder = builder.with_token_distribution_schedule(token_distribution_schedule);
@@ -700,7 +695,8 @@
             .into_iter()
             .enumerate()
             .map(|(idx, validator)| {
-                <span class="kw">let </span><span class="kw-2">mut </span>builder = ValidatorConfigBuilder::new(<span class="self">self</span>.config_directory.clone());
+                <span class="kw">let </span><span class="kw-2">mut </span>builder = ValidatorConfigBuilder::new()
+                    .with_config_directory(<span class="self">self</span>.config_directory.clone());
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(spvc) = <span class="kw-2">&amp;</span><span class="self">self</span>.supported_protocol_versions_config {
                     <span class="kw">let </span>supported_versions = <span class="kw">match </span>spvc {
                         ProtocolVersionsConfig::Default =&gt; {

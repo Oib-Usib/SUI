@@ -317,7 +317,7 @@
         telemetry_subscribers::init_for_testing();
         <span class="kw">let </span>swarm = Swarm::builder().build();
 
-        <span class="kw">let </span>validator = swarm.validators().next().unwrap();
+        <span class="kw">let </span>validator = swarm.validator_nodes().next().unwrap();
 
         validator.start().<span class="kw">await</span>.unwrap();
         validator.health_check(<span class="bool-val">true</span>).<span class="kw">await</span>.unwrap();

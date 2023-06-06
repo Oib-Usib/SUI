@@ -312,6 +312,17 @@
 <a href="#312" id="312">312</a>
 <a href="#313" id="313">313</a>
 <a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -324,11 +335,11 @@
 <span class="kw">use </span>sui_config::genesis::{GenesisCeremonyParameters, TokenAllocation};
 <span class="kw">use </span>sui_config::node::{DEFAULT_COMMISSION_RATE, DEFAULT_VALIDATOR_GAS_PRICE};
 <span class="kw">use </span>sui_config::{local_ip_utils, Config};
-<span class="kw">use </span>sui_genesis_builder::validator_info::ValidatorInfo;
+<span class="kw">use </span>sui_genesis_builder::validator_info::{GenesisValidatorInfo, ValidatorInfo};
 <span class="kw">use </span>sui_types::base_types::SuiAddress;
 <span class="kw">use </span>sui_types::crypto::{
-    get_key_pair_from_rng, AccountKeyPair, AuthorityKeyPair, AuthorityPublicKeyBytes,
-    NetworkKeyPair, NetworkPublicKey, PublicKey, SuiKeyPair,
+    generate_proof_of_possession, get_key_pair_from_rng, AccountKeyPair, AuthorityKeyPair,
+    AuthorityPublicKeyBytes, NetworkKeyPair, NetworkPublicKey, PublicKey, SuiKeyPair,
 };
 <span class="kw">use </span>sui_types::multiaddr::Multiaddr;
 <span class="kw">use </span>tracing::info;
@@ -358,14 +369,14 @@
 }
 
 <span class="kw">impl </span>ValidatorGenesisConfig {
-    <span class="kw">pub fn </span>to_validator_info(<span class="kw-2">&amp;</span><span class="self">self</span>, name: String) -&gt; ValidatorInfo {
+    <span class="kw">pub fn </span>to_validator_info(<span class="kw-2">&amp;</span><span class="self">self</span>, name: String) -&gt; GenesisValidatorInfo {
         <span class="kw">let </span>protocol_key: AuthorityPublicKeyBytes = <span class="self">self</span>.key_pair.public().into();
         <span class="kw">let </span>account_key: PublicKey = <span class="self">self</span>.account_key_pair.public();
         <span class="kw">let </span>network_key: NetworkPublicKey = <span class="self">self</span>.network_key_pair.public().clone();
         <span class="kw">let </span>worker_key: NetworkPublicKey = <span class="self">self</span>.worker_key_pair.public().clone();
         <span class="kw">let </span>network_address = <span class="self">self</span>.network_address.clone();
 
-        ValidatorInfo {
+        <span class="kw">let </span>info = ValidatorInfo {
             name,
             protocol_key,
             worker_key,
@@ -380,7 +391,18 @@
             description: String::new(),
             image_url: String::new(),
             project_url: String::new(),
+        };
+        <span class="kw">let </span>proof_of_possession =
+            generate_proof_of_possession(<span class="kw-2">&amp;</span><span class="self">self</span>.key_pair, (<span class="kw-2">&amp;</span><span class="self">self</span>.account_key_pair.public()).into());
+        GenesisValidatorInfo {
+            info,
+            proof_of_possession,
         }
+    }
+
+    <span class="doccomment">/// Use validator public key as validator name.
+    </span><span class="kw">pub fn </span>to_validator_info_with_random_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; GenesisValidatorInfo {
+        <span class="self">self</span>.to_validator_info(<span class="self">self</span>.key_pair.public().to_string())
     }
 }
 

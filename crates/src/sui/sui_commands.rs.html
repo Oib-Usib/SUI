@@ -769,7 +769,7 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>interval = tokio::time::interval(std::time::Duration::from_secs(<span class="number">3</span>));
                 <span class="kw">let </span><span class="kw-2">mut </span>unhealthy_cnt = <span class="number">0</span>;
                 <span class="kw">loop </span>{
-                    <span class="kw">for </span>node <span class="kw">in </span>swarm.validators() {
+                    <span class="kw">for </span>node <span class="kw">in </span>swarm.validator_nodes() {
                         <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = node.health_check(<span class="bool-val">true</span>).<span class="kw">await </span>{
                             unhealthy_cnt += <span class="number">1</span>;
                             <span class="kw">if </span>unhealthy_cnt &gt; <span class="number">3 </span>{

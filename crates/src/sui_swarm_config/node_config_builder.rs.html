@@ -302,6 +302,11 @@
 <a href="#302" id="302">302</a>
 <a href="#303" id="303">303</a>
 <a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -328,19 +333,22 @@
 
 <span class="doccomment">/// This builder contains information that&#39;s not included in ValidatorGenesisConfig for building
 /// a validator NodeConfig. It can be used to build either a genesis validator or a new validator.
-</span><span class="attr">#[derive(Clone)]
+</span><span class="attr">#[derive(Clone, Default)]
 </span><span class="kw">pub struct </span>ValidatorConfigBuilder {
-    config_directory: PathBuf,
+    config_directory: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
     supported_protocol_versions: <span class="prelude-ty">Option</span>&lt;SupportedProtocolVersions&gt;,
 }
 
 <span class="kw">impl </span>ValidatorConfigBuilder {
-    <span class="kw">pub fn </span>new(config_directory: PathBuf) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            config_directory,
-            supported_protocol_versions: <span class="prelude-val">None</span>,
-        }
+    <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::default()
     }
+
+    <span class="kw">pub fn </span>with_config_directory(<span class="kw-2">mut </span><span class="self">self</span>, config_directory: PathBuf) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert!</span>(<span class="self">self</span>.config_directory.is_none());
+        <span class="self">self</span>.config_directory = <span class="prelude-val">Some</span>(config_directory);
+        <span class="self">self
+    </span>}
 
     <span class="kw">pub fn </span>with_supported_protocol_versions(
         <span class="kw-2">mut </span><span class="self">self</span>,
@@ -357,7 +365,9 @@
         genesis: sui_config::genesis::Genesis,
     ) -&gt; NodeConfig {
         <span class="kw">let </span>key_path = get_key_path(<span class="kw-2">&amp;</span>validator.key_pair);
-        <span class="kw">let </span>config_directory = <span class="self">self</span>.config_directory;
+        <span class="kw">let </span>config_directory = <span class="self">self
+            </span>.config_directory
+            .unwrap_or_else(|| tempfile::tempdir().unwrap().into_path());
         <span class="kw">let </span>db_path = config_directory
             .join(AUTHORITIES_DB_NAME)
             .join(key_path.clone());

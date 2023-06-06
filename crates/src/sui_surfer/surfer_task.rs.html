@@ -171,7 +171,7 @@
             .collect();
         <span class="kw">let </span>validator = cluster
             .swarm
-            .validators()
+            .validator_nodes()
             .next()
             .unwrap()
             .get_node_handle()

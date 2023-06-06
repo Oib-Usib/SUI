@@ -442,6 +442,16 @@
 <a href="#442" id="442">442</a>
 <a href="#443" id="443">443</a>
 <a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -668,13 +678,12 @@
                 .build()
         });
 
-        <span class="kw">let </span>validators = network_config
+        <span class="kw">let </span><span class="kw-2">mut </span>nodes: HashMap&lt;<span class="kw">_</span>, <span class="kw">_</span>&gt; = network_config
             .validator_configs()
             .iter()
             .map(|config| (config.protocol_public_key(), Node::new(config.to_owned())))
             .collect();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>fullnodes = HashMap::new();
         <span class="kw">let </span><span class="kw-2">mut </span>fullnode_config_builder = FullnodeConfigBuilder::new()
             .with_config_directory(dir.as_ref().into())
             .with_db_checkpoint_config(<span class="self">self</span>.db_checkpoint_config.clone());
@@ -702,14 +711,13 @@
                     }
                 }
                 <span class="kw">let </span>config = builder.build(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>network_config);
-                fullnodes.insert(config.protocol_public_key(), Node::new(config));
+                nodes.insert(config.protocol_public_key(), Node::new(config));
             });
         }
         Swarm {
             dir,
             network_config,
-            validators,
-            fullnodes,
+            nodes,
             fullnode_config_builder,
         }
     }
@@ -720,8 +728,7 @@
 </span><span class="kw">pub struct </span>Swarm {
     dir: SwarmDirectory,
     network_config: NetworkConfig,
-    validators: HashMap&lt;AuthorityName, Node&gt;,
-    fullnodes: HashMap&lt;AuthorityName, Node&gt;,
+    nodes: HashMap&lt;AuthorityName, Node&gt;,
     <span class="comment">// Save a copy of the fullnode config builder to build future fullnodes.
     </span>fullnode_config_builder: FullnodeConfigBuilder,
 }
@@ -733,18 +740,16 @@
 }
 
 <span class="kw">impl </span>Swarm {
+    <span class="kw">fn </span>nodes_iter_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;mut </span>Node&gt; {
+        <span class="self">self</span>.nodes.values_mut()
+    }
+
     <span class="doccomment">/// Return a new Builder
     </span><span class="kw">pub fn </span>builder() -&gt; SwarmBuilder {
         SwarmBuilder::new()
     }
 
-    <span class="kw">fn </span>nodes_iter_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;mut </span>Node&gt; {
-        <span class="self">self</span>.validators
-            .values_mut()
-            .chain(<span class="self">self</span>.fullnodes.values_mut())
-    }
-
-    <span class="doccomment">/// Start all of the Validators associated with this Swarm
+    <span class="doccomment">/// Start all nodes associated with this Swarm
     </span><span class="kw">pub async fn </span>launch(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         try_join_all(<span class="self">self</span>.nodes_iter_mut().map(|node| node.start())).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="macro">tracing::info!</span>(<span class="string">&quot;Successfully launched Swarm&quot;</span>);
@@ -768,46 +773,61 @@
     }
 
     <span class="doccomment">/// Return a mutable reference to this Swarm&#39;s `NetworkConfig`.
+    </span><span class="comment">// TODO: It&#39;s not ideal to mutate network config. We should consider removing this.
     </span><span class="kw">pub fn </span>config_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>NetworkConfig {
         <span class="kw-2">&amp;mut </span><span class="self">self</span>.network_config
     }
 
-    <span class="doccomment">/// Attempt to lookup and return a shared reference to the Validator with the provided `name`.
-    </span><span class="kw">pub fn </span>validator(<span class="kw-2">&amp;</span><span class="self">self</span>, name: AuthorityName) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Node&gt; {
-        <span class="self">self</span>.validators.get(<span class="kw-2">&amp;</span>name)
+    <span class="kw">pub fn </span>all_nodes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Node&gt; {
+        <span class="self">self</span>.nodes.values()
     }
 
-    <span class="kw">pub fn </span>validator_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: AuthorityName) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Node&gt; {
-        <span class="self">self</span>.validators.get_mut(<span class="kw-2">&amp;</span>name)
+    <span class="kw">pub fn </span>node(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>AuthorityName) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Node&gt; {
+        <span class="self">self</span>.nodes.get(name)
     }
 
-    <span class="doccomment">/// Return an iterator over shared references of all Validators.
-    </span><span class="kw">pub fn </span>validators(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Node&gt; {
-        <span class="self">self</span>.validators.values()
+    <span class="kw">pub fn </span>node_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>AuthorityName) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Node&gt; {
+        <span class="self">self</span>.nodes.get_mut(name)
+    }
+
+    <span class="doccomment">/// Return an iterator over shared references of all nodes that are set up as validators.
+    /// This means that they have a consensus config. This however doesn&#39;t mean this validator is
+    /// currently active (i.e. it&#39;s not necessarily in the validator set at the moment).
+    </span><span class="kw">pub fn </span>validator_nodes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Node&gt; {
+        <span class="self">self</span>.nodes
+            .values()
+            .filter(|node| node.config.consensus_config.is_some())
     }
 
     <span class="kw">pub fn </span>validator_node_handles(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;SuiNodeHandle&gt; {
-        <span class="self">self</span>.validators()
+        <span class="self">self</span>.validator_nodes()
             .map(|node| node.get_node_handle().unwrap())
             .collect()
     }
 
-    <span class="doccomment">/// Attempt to lookup and return a shared reference to the Fullnode with the provided `name`.
-    </span><span class="kw">pub fn </span>fullnode(<span class="kw-2">&amp;</span><span class="self">self</span>, name: AuthorityName) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Node&gt; {
-        <span class="self">self</span>.fullnodes.get(<span class="kw-2">&amp;</span>name)
+    <span class="doccomment">/// Returns an iterator over all currently active validators.
+    </span><span class="kw">pub fn </span>active_validators(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Node&gt; {
+        <span class="self">self</span>.validator_nodes().filter(|node| {
+            node.get_node_handle().map_or(<span class="bool-val">false</span>, |handle| {
+                <span class="kw">let </span>state = handle.state();
+                state.is_validator(<span class="kw-2">&amp;</span>state.epoch_store_for_testing())
+            })
+        })
     }
 
     <span class="doccomment">/// Return an iterator over shared references of all Fullnodes.
     </span><span class="kw">pub fn </span>fullnodes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Node&gt; {
-        <span class="self">self</span>.fullnodes.values()
+        <span class="self">self</span>.nodes
+            .values()
+            .filter(|node| node.config.consensus_config.is_none())
     }
 
-    <span class="kw">pub async fn </span>spawn_new_fullnode(<span class="kw-2">&amp;mut </span><span class="self">self</span>, config: NodeConfig) -&gt; SuiNodeHandle {
+    <span class="kw">pub async fn </span>spawn_new_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>, config: NodeConfig) -&gt; SuiNodeHandle {
         <span class="kw">let </span>name = config.protocol_public_key();
         <span class="kw">let </span>node = Node::new(config);
         node.start().<span class="kw">await</span>.unwrap();
         <span class="kw">let </span>handle = node.get_node_handle().unwrap();
-        <span class="self">self</span>.fullnodes.insert(name, node);
+        <span class="self">self</span>.nodes.insert(name, node);
         handle
     }
 
@@ -877,7 +897,7 @@
 
         swarm.launch().<span class="kw">await</span>.unwrap();
 
-        <span class="kw">for </span>validator <span class="kw">in </span>swarm.validators() {
+        <span class="kw">for </span>validator <span class="kw">in </span>swarm.validator_nodes() {
             validator.health_check(<span class="bool-val">true</span>).<span class="kw">await</span>.unwrap();
         }
 

@@ -790,6 +790,10 @@
 <a href="#790" id="790">790</a>
 <a href="#791" id="791">791</a>
 <a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1033,6 +1037,10 @@
 
     <span class="kw">pub fn </span>genesis(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>genesis::Genesis&gt; {
         <span class="self">self</span>.genesis.genesis()
+    }
+
+    <span class="kw">pub fn </span>sui_address(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SuiAddress {
+        (<span class="kw-2">&amp;</span><span class="self">self</span>.account_key_pair.keypair().public()).into()
     }
 }
 
