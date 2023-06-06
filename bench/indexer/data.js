@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686009213040,
+  "lastUpdate": 1686012722924,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11303,6 +11303,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 321531,
             "range": "± 98804",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "distinct": true,
+          "id": "c93b957593ec62e6986697267d53883f27085551",
+          "message": "[TestCluster] Add validator management (#12354)\n\n## Description \r\n\r\nThis PR makes it easy to introduce new validators and remove validators\r\nfrom a test cluster:\r\n1. Added `with_validator_candidates` function in TestCluster to make\r\nsure we give enough tokens to them in genesis.\r\n2. Added a few functions in TestTransactionBuilder to generate validator\r\nmanagement related transactions, such as validator candidate, activating\r\ncandidate, staking, leaving and etc.\r\n3. Some cleanups in validator genesis config to make config construction\r\neasier.\r\n\r\nUpdate all dynamic committee change tests in reconfiguration_tests to\r\nuse the new way.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-05T17:40:48-07:00",
+          "tree_id": "cf18955e5c461dbca303a6cb199a0e671cec8cf4",
+          "url": "https://github.com/MystenLabs/sui/commit/c93b957593ec62e6986697267d53883f27085551"
+        },
+        "date": 1686012702488,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149551317,
+            "range": "± 5439705",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 373707,
+            "range": "± 52888",
             "unit": "ns/iter"
           }
         ]
