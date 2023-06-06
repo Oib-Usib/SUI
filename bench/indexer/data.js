@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686012722924,
+  "lastUpdate": 1686014406612,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11339,6 +11339,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 373707,
             "range": "± 52888",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0d482b2f74743157381a52071d53d8391e0fea71",
+          "message": "indexer: update TPS calculation to be checkpoint based (#12355)\n\n## Description \r\n\r\nBefore this change, the TPS was calculated over time window of 10\r\nseconds, which was not able to catch spike of one checkpoint with many\r\ntx.\r\n\r\nChanging this to be checkpoint based, which will catch a spike\r\ncheckpoint and also the max consistent TPS we can get.\r\n\r\nMore details can be found in thread:\r\nhttps://mysten-labs.slack.com/archives/C032676BWGN/p1685996135421019?thread_ts=1685996115.167529&cid=C032676BWGN\r\n\r\n## Test Plan \r\n\r\nThis change has been on production mainnet. \r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-05T21:08:38-04:00",
+          "tree_id": "e95e30e1107a7ae223b2c7c7d9746fe260750557",
+          "url": "https://github.com/MystenLabs/sui/commit/0d482b2f74743157381a52071d53d8391e0fea71"
+        },
+        "date": 1686014384627,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151235372,
+            "range": "± 6087011",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314391,
+            "range": "± 75802",
             "unit": "ns/iter"
           }
         ]
