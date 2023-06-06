@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686066121929,
+  "lastUpdate": 1686071586148,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11483,6 +11483,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 301618,
             "range": "± 15242",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "akihidis@gmail.com",
+            "name": "Anastasios Kichidis",
+            "username": "akichidis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "13023af20f6a9020e002b9f3b082297a827a8a76",
+          "message": "[fix] fix failing test in the long running suite (#12361)\n\n## Description \r\n\r\n`test_loss_of_liveness_without_recovery` test has been failing lately in\r\nthe Narwhal nightly\r\nhttps://github.com/MystenLabs/sui/actions/runs/5184155035 . I've added\r\nsome extra threshold in the acceptable commits as some node might be a\r\nlittle bit faster than the others - still valid though.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-06T18:01:40+01:00",
+          "tree_id": "28cc00d7c243dc4c7c36302972fcae89008ae874",
+          "url": "https://github.com/MystenLabs/sui/commit/13023af20f6a9020e002b9f3b082297a827a8a76"
+        },
+        "date": 1686071563801,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149473728,
+            "range": "± 5911942",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 344582,
+            "range": "± 33175",
             "unit": "ns/iter"
           }
         ]
