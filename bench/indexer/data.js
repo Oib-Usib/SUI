@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686071586148,
+  "lastUpdate": 1686078826326,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11519,6 +11519,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 344582,
             "range": "± 33175",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "44470b3eb19b83db48381d0e48d262f428a68e15",
+          "message": "Separate snapshot tests for mainnet and testnet (#12350)",
+          "timestamp": "2023-06-06T12:00:25-07:00",
+          "tree_id": "0eca11a3783e8a84be1e2d442735ad13bcf4bff7",
+          "url": "https://github.com/MystenLabs/sui/commit/44470b3eb19b83db48381d0e48d262f428a68e15"
+        },
+        "date": 1686078797049,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 156209076,
+            "range": "± 6635384",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 322135,
+            "range": "± 58090",
             "unit": "ns/iter"
           }
         ]
