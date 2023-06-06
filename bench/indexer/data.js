@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686078826326,
+  "lastUpdate": 1686081887283,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11555,6 +11555,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 322135,
             "range": "± 58090",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30a0b56e47ca38a224a2293dcb3e38e8fd953db9",
+          "message": "Add storage format enum to file metadata in archive manifest (#12325)\n\n## Description \r\n\r\nRight now we always assume the underlying storage format is blob. This\r\nallows us to migrate to with other storage formats in the future without\r\nneeding to migrate older data to newer format. We would be able to just\r\nadd a new enum value and start writing newer checkpoints with newer\r\nstorage format.\r\n\r\n## Test Plan \r\n\r\nExisting tests",
+          "timestamp": "2023-06-06T12:52:07-07:00",
+          "tree_id": "2fc0272ad5ef41a3184375dc52f0acf49e7037e9",
+          "url": "https://github.com/MystenLabs/sui/commit/30a0b56e47ca38a224a2293dcb3e38e8fd953db9"
+        },
+        "date": 1686081863246,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109133854,
+            "range": "± 4415188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 257091,
+            "range": "± 5250",
             "unit": "ns/iter"
           }
         ]
