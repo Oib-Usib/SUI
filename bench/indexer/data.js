@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686044997493,
+  "lastUpdate": 1686045202303,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11411,6 +11411,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 427102,
             "range": "± 60876",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "95379755+losman0s@users.noreply.github.com",
+            "name": "man0s",
+            "username": "losman0s"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "273a91f65159c38486b9819005399c6d42c6262f",
+          "message": "feat(rust-sdk): support `dev_inspect_transaction_block` in the read API (#12233)\n\n## Description \r\n\r\nExpose `dev_inspect_transaction_block` next to\r\n`dry_run_transaction_block` in the read API of the rust SDK. Necessary\r\nsince the underlying `HttpClient` packing the relevant trait is private.\r\n\r\nNote: I'd be interested to know why the rust SDK breaks away from the\r\nJSON-RPC spec in its terminology / hierarchy, i.e. introducing a\r\n`quorum_driver_api` for `execute_transaction_block`, instead of slotting\r\nit in the write API, and slotting `dry_run_transaction_block` under read\r\nAPI. I can see how that can make sense logically, it's just a bit of a\r\nthrow-off initially.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n## Release Notes\r\n\r\nIntroduce `ReadApi::dev_inspect_transaction_block` to Rust SDK. External\r\ncontribution by @losman0s.",
+          "timestamp": "2023-06-06T02:41:43-07:00",
+          "tree_id": "2b6e54eb63f3de8ae462a349bac325f954b7cbd6",
+          "url": "https://github.com/MystenLabs/sui/commit/273a91f65159c38486b9819005399c6d42c6262f"
+        },
+        "date": 1686045180067,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149836452,
+            "range": "± 4587079",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309386,
+            "range": "± 11704",
             "unit": "ns/iter"
           }
         ]
