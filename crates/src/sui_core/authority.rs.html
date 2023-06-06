@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority.rs`."><title>authority.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (101fa903b 2023-06-04)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority.rs`."><title>authority.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (e6d4725c7 2023-06-05)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -4233,30 +4233,6 @@
 <a href="#4233" id="4233">4233</a>
 <a href="#4234" id="4234">4234</a>
 <a href="#4235" id="4235">4235</a>
-<a href="#4236" id="4236">4236</a>
-<a href="#4237" id="4237">4237</a>
-<a href="#4238" id="4238">4238</a>
-<a href="#4239" id="4239">4239</a>
-<a href="#4240" id="4240">4240</a>
-<a href="#4241" id="4241">4241</a>
-<a href="#4242" id="4242">4242</a>
-<a href="#4243" id="4243">4243</a>
-<a href="#4244" id="4244">4244</a>
-<a href="#4245" id="4245">4245</a>
-<a href="#4246" id="4246">4246</a>
-<a href="#4247" id="4247">4247</a>
-<a href="#4248" id="4248">4248</a>
-<a href="#4249" id="4249">4249</a>
-<a href="#4250" id="4250">4250</a>
-<a href="#4251" id="4251">4251</a>
-<a href="#4252" id="4252">4252</a>
-<a href="#4253" id="4253">4253</a>
-<a href="#4254" id="4254">4254</a>
-<a href="#4255" id="4255">4255</a>
-<a href="#4256" id="4256">4256</a>
-<a href="#4257" id="4257">4257</a>
-<a href="#4258" id="4258">4258</a>
-<a href="#4259" id="4259">4259</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -4274,6 +4250,7 @@
 <span class="kw">use </span>itertools::Itertools;
 <span class="kw">use </span>move_binary_format::CompiledModule;
 <span class="kw">use </span>move_core_types::language_storage::ModuleId;
+<span class="kw">use </span>move_core_types::value::MoveStructLayout;
 <span class="kw">use </span>mysten_metrics::{TX_TYPE_SHARED_OBJ_TX, TX_TYPE_SINGLE_WRITER_TX};
 <span class="kw">use </span>parking_lot::Mutex;
 <span class="kw">use </span>prometheus::{
@@ -4300,9 +4277,6 @@
 };
 <span class="kw">use </span>once_cell::sync::OnceCell;
 <span class="kw">use </span>shared_crypto::intent::{Intent, IntentScope};
-<span class="kw">use </span>sui_adapter::adapter;
-<span class="kw">use </span>sui_adapter::execution_engine;
-<span class="kw">use </span>sui_adapter::type_layout_resolver::TypeLayoutResolver;
 <span class="kw">use </span>sui_config::certificate_deny_config::CertificateDenyConfig;
 <span class="kw">use </span>sui_config::genesis::Genesis;
 <span class="kw">use </span>sui_config::node::{
@@ -4334,7 +4308,6 @@
 <span class="kw">use </span>sui_types::error::{ExecutionError, UserInputError};
 <span class="kw">use </span>sui_types::event::{Event, EventID};
 <span class="kw">use </span>sui_types::executable_transaction::VerifiedExecutableTransaction;
-<span class="kw">use </span>sui_types::execution_mode;
 <span class="kw">use </span>sui_types::gas::{GasCostSummary, SuiGasStatus};
 <span class="kw">use </span>sui_types::message_envelope::Message;
 <span class="kw">use </span>sui_types::messages_checkpoint::{
@@ -4357,7 +4330,6 @@
 <span class="kw">use </span>sui_types::temporary_store::{
     InnerTemporaryStore, ObjectMap, TemporaryModuleResolver, TxCoins, WrittenObjects,
 };
-<span class="kw">use </span>sui_types::type_resolver::LayoutResolver;
 <span class="kw">use </span>sui_types::{
     base_types::<span class="kw-2">*</span>,
     committee::Committee,
@@ -5470,17 +5442,7 @@
         <span class="kw">let </span>transaction_data = <span class="kw-2">&amp;</span>certificate.data().intent_message().value;
         <span class="kw">let </span>(kind, signer, gas) = transaction_data.execution_parts();
         <span class="kw">let </span>(inner_temp_store, effects, execution_error_opt) =
-            execution_engine::execute_transaction_to_effects::&lt;execution_mode::Normal, <span class="kw">_</span>&gt;(
-                shared_object_refs,
-                temporary_store,
-                kind,
-                signer,
-                <span class="kw-2">&amp;</span>gas,
-                <span class="kw-2">*</span>certificate.digest(),
-                transaction_dependencies,
-                epoch_store.move_vm(),
-                gas_status,
-                <span class="kw-2">&amp;</span>epoch_store.epoch_start_config().epoch_data(),
+            epoch_store.executor().execute_transaction_to_effects(
                 epoch_store.protocol_config(),
                 <span class="self">self</span>.metrics.limits_metrics.clone(),
                 <span class="comment">// TODO: would be nice to pass the whole NodeConfig here, but it creates a
@@ -5488,6 +5450,19 @@
                 </span><span class="self">self</span>.expensive_safety_check_config
                     .enable_deep_per_tx_sui_conservation_check(),
                 <span class="self">self</span>.certificate_deny_config.certificate_deny_set(),
+                <span class="kw-2">&amp;</span>epoch_store.epoch_start_config().epoch_data().epoch_id(),
+                epoch_store
+                    .epoch_start_config()
+                    .epoch_data()
+                    .epoch_start_timestamp(),
+                temporary_store,
+                shared_object_refs,
+                gas_status,
+                <span class="kw-2">&amp;</span>gas,
+                kind,
+                signer,
+                <span class="kw-2">*</span>certificate.digest(),
+                transaction_dependencies,
             );
 
         <span class="prelude-val">Ok</span>((inner_temp_store, effects, execution_error_opt.err()))
@@ -5571,32 +5546,37 @@
             epoch_store.protocol_config(),
         );
         <span class="kw">let </span>(kind, signer, <span class="kw">_</span>) = transaction.execution_parts();
+
+        <span class="kw">let </span>silent = <span class="bool-val">true</span>;
         <span class="comment">// don&#39;t bother with paranoid checks in dry run
         </span><span class="kw">let </span>enable_move_vm_paranoid_checks = <span class="bool-val">false</span>;
-        <span class="kw">let </span>move_vm = Arc::new(
-            adapter::new_move_vm(
-                epoch_store.native_functions().clone(),
-                epoch_store.protocol_config(),
-                enable_move_vm_paranoid_checks,
-            )
-            .expect(<span class="string">&quot;We defined natives to not fail here&quot;</span>),
-        );
-        <span class="kw">let </span>(inner_temp_store, effects, _execution_error) =
-            execution_engine::execute_transaction_to_effects::&lt;execution_mode::Normal, <span class="kw">_</span>&gt;(
-                shared_object_refs,
-                temporary_store,
-                kind,
-                signer,
-                <span class="kw-2">&amp;</span>gas_object_refs,
-                transaction_digest,
-                transaction_dependencies,
-                <span class="kw-2">&amp;</span>move_vm,
-                gas_status,
-                <span class="kw-2">&amp;</span>epoch_store.epoch_start_config().epoch_data(),
+        <span class="kw">let </span>executor = sui_execution::executor(
+            epoch_store.protocol_config(),
+            enable_move_vm_paranoid_checks,
+            silent,
+        )
+        .expect(<span class="string">&quot;Creating an executor should not fail here&quot;</span>);
+
+        <span class="kw">let </span>expensive_checks = <span class="bool-val">false</span>;
+        <span class="kw">let </span>(inner_temp_store, effects, _execution_error) = executor
+            .execute_transaction_to_effects(
                 epoch_store.protocol_config(),
                 <span class="self">self</span>.metrics.limits_metrics.clone(),
-                <span class="bool-val">false</span>, <span class="comment">// enable_expensive_checks
-                </span><span class="self">self</span>.certificate_deny_config.certificate_deny_set(),
+                expensive_checks,
+                <span class="self">self</span>.certificate_deny_config.certificate_deny_set(),
+                <span class="kw-2">&amp;</span>epoch_store.epoch_start_config().epoch_data().epoch_id(),
+                epoch_store
+                    .epoch_start_config()
+                    .epoch_data()
+                    .epoch_start_timestamp(),
+                temporary_store,
+                shared_object_refs,
+                gas_status,
+                <span class="kw-2">&amp;</span>gas_object_refs,
+                kind,
+                signer,
+                transaction_digest,
+                transaction_dependencies,
             );
         <span class="kw">let </span>tx_digest = <span class="kw-2">*</span>effects.transaction_digest();
 
@@ -5712,32 +5692,34 @@
             protocol_config,
         );
         <span class="kw">let </span>gas_status = SuiGasStatus::new_with_budget(max_tx_gas, gas_price, protocol_config);
-        <span class="kw">let </span>move_vm = Arc::new(
-            adapter::new_move_vm(
-                epoch_store.native_functions().clone(),
-                epoch_store.protocol_config(),
-                <span class="self">self</span>.expensive_safety_check_config
-                    .enable_move_vm_paranoid_checks(),
-            )
-            .expect(<span class="string">&quot;We defined natives to not fail here&quot;</span>),
+        <span class="kw">let </span>silent = <span class="bool-val">true</span>;
+        <span class="kw">let </span>executor = sui_execution::executor(
+            epoch_store.protocol_config(),
+            <span class="self">self</span>.expensive_safety_check_config
+                .enable_move_vm_paranoid_checks(),
+            silent,
+        )
+        .expect(<span class="string">&quot;Creating an executor should not fail here&quot;</span>);
+        <span class="kw">let </span>expensive_checks = <span class="bool-val">false</span>;
+        <span class="kw">let </span>(inner_temp_store, effects, execution_result) = executor.dev_inspect_transaction(
+            protocol_config,
+            <span class="self">self</span>.metrics.limits_metrics.clone(),
+            expensive_checks,
+            <span class="self">self</span>.certificate_deny_config.certificate_deny_set(),
+            <span class="kw-2">&amp;</span>epoch_store.epoch_start_config().epoch_data().epoch_id(),
+            epoch_store
+                .epoch_start_config()
+                .epoch_data()
+                .epoch_start_timestamp(),
+            temporary_store,
+            shared_object_refs,
+            gas_status,
+            <span class="kw-2">&amp;</span>[gas_object_ref],
+            transaction_kind,
+            sender,
+            transaction_digest,
+            transaction_dependencies,
         );
-        <span class="kw">let </span>(inner_temp_store, effects, execution_result) =
-            execution_engine::execute_transaction_to_effects::&lt;execution_mode::DevInspect, <span class="kw">_</span>&gt;(
-                shared_object_refs,
-                temporary_store,
-                transaction_kind,
-                sender,
-                <span class="kw-2">&amp;</span>[gas_object_ref],
-                transaction_digest,
-                transaction_dependencies,
-                <span class="kw-2">&amp;</span>move_vm,
-                gas_status,
-                <span class="kw-2">&amp;</span>epoch_store.epoch_start_config().epoch_data(),
-                protocol_config,
-                <span class="self">self</span>.metrics.limits_metrics.clone(),
-                <span class="bool-val">false</span>, <span class="comment">// enable_expensive_checks
-                </span><span class="self">self</span>.certificate_deny_config.certificate_deny_set(),
-            );
 
         <span class="kw">let </span>module_cache =
             TemporaryModuleResolver::new(<span class="kw-2">&amp;</span>inner_temp_store, epoch_store.module_cache().clone());
@@ -6101,10 +6083,12 @@
         <span class="kw">let </span>layout = <span class="kw">if let </span>(<span class="prelude-val">Some</span>(format), <span class="prelude-val">Some</span>(move_obj)) =
             (request.object_format_options, object.data.try_as_move())
         {
-            <span class="kw">let </span>epoch_store = <span class="self">self</span>.load_epoch_store_one_call_per_task();
-            <span class="kw">let </span>move_vm = epoch_store.move_vm();
-            <span class="kw">let </span><span class="kw-2">mut </span>layout_resolver = TypeLayoutResolver::new(move_vm, <span class="self">self</span>.database.as_ref());
-            <span class="prelude-val">Some</span>(layout_resolver.get_layout(move_obj, format)<span class="question-mark">?</span>)
+            <span class="prelude-val">Some</span>(
+                <span class="self">self</span>.load_epoch_store_one_call_per_task()
+                    .executor()
+                    .type_layout_resolver(Box::new(<span class="self">self</span>.database.as_ref()))
+                    .get_layout(move_obj, format)<span class="question-mark">?</span>,
+            )
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>};
@@ -6572,45 +6556,26 @@
     }
 
     <span class="kw">pub fn </span>get_object_read(<span class="kw-2">&amp;</span><span class="self">self</span>, object_id: <span class="kw-2">&amp;</span>ObjectID) -&gt; SuiResult&lt;ObjectRead&gt; {
-        <span class="kw">match </span><span class="self">self</span>.database.get_object_or_tombstone(<span class="kw-2">*</span>object_id)<span class="question-mark">? </span>{
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(ObjectRead::NotExists(<span class="kw-2">*</span>object_id)),
-            <span class="prelude-val">Some</span>(obj_ref) =&gt; {
-                <span class="kw">if </span>obj_ref.<span class="number">2</span>.is_alive() {
-                    <span class="kw">match </span><span class="self">self</span>.database.get_object_by_key(object_id, obj_ref.<span class="number">1</span>)<span class="question-mark">? </span>{
-                        <span class="prelude-val">None </span>=&gt; {
-                            <span class="macro">error!</span>(<span class="string">&quot;Object with in parent_entry is missing from object store, datastore is inconsistent&quot;</span>);
-                            <span class="prelude-val">Err</span>(UserInputError::ObjectNotFound {
-                                object_id: <span class="kw-2">*</span>object_id,
-                                version: <span class="prelude-val">Some</span>(obj_ref.<span class="number">1</span>),
-                            }
-                            .into())
-                        }
-                        <span class="prelude-val">Some</span>(object) =&gt; {
-                            <span class="kw">let </span>layout = {
-                                <span class="kw">match </span>object.data.try_as_move() {
-                                    <span class="prelude-val">None </span>=&gt; <span class="prelude-val">None</span>,
-                                    <span class="prelude-val">Some</span>(move_obj) =&gt; {
-                                        <span class="kw">let </span>epoch_store = <span class="self">self</span>.load_epoch_store_one_call_per_task();
-                                        <span class="kw">let </span>move_vm = epoch_store.move_vm();
-                                        <span class="kw">let </span><span class="kw-2">mut </span>layout_resolver = TypeLayoutResolver::new(
-                                            move_vm,
-                                            <span class="self">self</span>.database.as_ref(),
-                                        );
-                                        <span class="prelude-val">Some</span>(
-                                            layout_resolver.get_layout(
-                                                move_obj,
-                                                ObjectFormatOptions::default(),
-                                            )<span class="question-mark">?</span>,
-                                        )
-                                    }
-                                }
-                            };
-                            <span class="prelude-val">Ok</span>(ObjectRead::Exists(obj_ref, object, layout))
-                        }
-                    }
-                } <span class="kw">else </span>{
-                    <span class="prelude-val">Ok</span>(ObjectRead::Deleted(obj_ref))
+        <span class="kw">let </span><span class="prelude-val">Some</span>(obj_ref) = <span class="self">self</span>.database.get_object_or_tombstone(<span class="kw-2">*</span>object_id)<span class="question-mark">? </span><span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(ObjectRead::NotExists(<span class="kw-2">*</span>object_id))
+        };
+
+        <span class="kw">if </span>!obj_ref.<span class="number">2</span>.is_alive() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(ObjectRead::Deleted(obj_ref));
+        }
+
+        <span class="kw">match </span><span class="self">self</span>.read_object_at_version(object_id, obj_ref.<span class="number">1</span>)<span class="question-mark">? </span>{
+            <span class="prelude-val">Some</span>((object, layout)) =&gt; <span class="prelude-val">Ok</span>(ObjectRead::Exists(obj_ref, object, layout)),
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="macro">error!</span>(
+                    <span class="string">&quot;Object with in parent_entry is missing from object store, datastore is \
+                     inconsistent&quot;</span>,
+                );
+                <span class="prelude-val">Err</span>(UserInputError::ObjectNotFound {
+                    object_id: <span class="kw-2">*</span>object_id,
+                    version: <span class="prelude-val">Some</span>(obj_ref.<span class="number">1</span>),
                 }
+                .into())
             }
         }
     }
@@ -6674,85 +6639,72 @@
         object_id: <span class="kw-2">&amp;</span>ObjectID,
         version: SequenceNumber,
     ) -&gt; SuiResult&lt;PastObjectRead&gt; {
-        <span class="comment">// Firstly we see if the object ever exists by getting its latest data
-        </span><span class="kw">match </span><span class="self">self</span>.database.get_object_or_tombstone(<span class="kw-2">*</span>object_id)<span class="question-mark">? </span>{
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(PastObjectRead::ObjectNotExists(<span class="kw-2">*</span>object_id)),
-            <span class="prelude-val">Some</span>(obj_ref) =&gt; {
-                <span class="kw">if </span>version &gt; obj_ref.<span class="number">1 </span>{
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(PastObjectRead::VersionTooHigh {
-                        object_id: <span class="kw-2">*</span>object_id,
-                        asked_version: version,
-                        latest_version: obj_ref.<span class="number">1</span>,
-                    });
+        <span class="comment">// Firstly we see if the object ever existed by getting its latest data
+        </span><span class="kw">let </span><span class="prelude-val">Some</span>(obj_ref) = <span class="self">self</span>.database.get_object_or_tombstone(<span class="kw-2">*</span>object_id)<span class="question-mark">? </span><span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(PastObjectRead::ObjectNotExists(<span class="kw-2">*</span>object_id));
+        };
+
+        <span class="kw">if </span>version &gt; obj_ref.<span class="number">1 </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(PastObjectRead::VersionTooHigh {
+                object_id: <span class="kw-2">*</span>object_id,
+                asked_version: version,
+                latest_version: obj_ref.<span class="number">1</span>,
+            });
+        }
+
+        <span class="kw">if </span>version &lt; obj_ref.<span class="number">1 </span>{
+            <span class="comment">// Read past objects
+            </span><span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="kw">match </span><span class="self">self</span>.read_object_at_version(object_id, version)<span class="question-mark">? </span>{
+                <span class="prelude-val">Some</span>((object, layout)) =&gt; {
+                    <span class="kw">let </span>obj_ref = object.compute_object_reference();
+                    PastObjectRead::VersionFound(obj_ref, object, layout)
                 }
-                <span class="kw">if </span>version &lt; obj_ref.<span class="number">1 </span>{
-                    <span class="comment">// Read past objects
-                    </span><span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="kw">match </span><span class="self">self</span>.database.get_object_by_key(object_id, version)<span class="question-mark">? </span>{
-                        <span class="prelude-val">None </span>=&gt; PastObjectRead::VersionNotFound(<span class="kw-2">*</span>object_id, version),
-                        <span class="prelude-val">Some</span>(object) =&gt; {
-                            <span class="kw">let </span>layout = {
-                                <span class="kw">match </span>object.data.try_as_move() {
-                                    <span class="prelude-val">None </span>=&gt; <span class="prelude-val">None</span>,
-                                    <span class="prelude-val">Some</span>(move_obj) =&gt; {
-                                        <span class="kw">let </span>epoch_store = <span class="self">self</span>.load_epoch_store_one_call_per_task();
-                                        <span class="kw">let </span>move_vm = epoch_store.move_vm();
-                                        <span class="kw">let </span><span class="kw-2">mut </span>layout_resolver = TypeLayoutResolver::new(
-                                            move_vm,
-                                            <span class="self">self</span>.database.as_ref(),
-                                        );
-                                        <span class="prelude-val">Some</span>(
-                                            layout_resolver.get_layout(
-                                                move_obj,
-                                                ObjectFormatOptions::default(),
-                                            )<span class="question-mark">?</span>,
-                                        )
-                                    }
-                                }
-                            };
-                            <span class="kw">let </span>obj_ref = object.compute_object_reference();
-                            PastObjectRead::VersionFound(obj_ref, object, layout)
-                        }
-                    });
+
+                <span class="prelude-val">None </span>=&gt; PastObjectRead::VersionNotFound(<span class="kw-2">*</span>object_id, version),
+            });
+        }
+
+        <span class="kw">if </span>!obj_ref.<span class="number">2</span>.is_alive() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(PastObjectRead::ObjectDeleted(obj_ref));
+        }
+
+        <span class="kw">match </span><span class="self">self</span>.read_object_at_version(object_id, obj_ref.<span class="number">1</span>)<span class="question-mark">? </span>{
+            <span class="prelude-val">Some</span>((object, layout)) =&gt; <span class="prelude-val">Ok</span>(PastObjectRead::VersionFound(obj_ref, object, layout)),
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="macro">error!</span>(
+                    <span class="string">&quot;Object with in parent_entry is missing from object store, datastore is \
+                     inconsistent&quot;</span>,
+                );
+                <span class="prelude-val">Err</span>(UserInputError::ObjectNotFound {
+                    object_id: <span class="kw-2">*</span>object_id,
+                    version: <span class="prelude-val">Some</span>(obj_ref.<span class="number">1</span>),
                 }
-                <span class="comment">// version is equal to the latest seq number this node knows
-                </span><span class="kw">if </span>obj_ref.<span class="number">2</span>.is_alive() {
-                    <span class="kw">match </span><span class="self">self</span>.database.get_object_by_key(object_id, obj_ref.<span class="number">1</span>)<span class="question-mark">? </span>{
-                        <span class="prelude-val">None </span>=&gt; {
-                            <span class="macro">error!</span>(<span class="string">&quot;Object with in parent_entry is missing from object store, datastore is inconsistent&quot;</span>);
-                            <span class="prelude-val">Err</span>(UserInputError::ObjectNotFound {
-                                object_id: <span class="kw-2">*</span>object_id,
-                                version: <span class="prelude-val">Some</span>(obj_ref.<span class="number">1</span>),
-                            }
-                            .into())
-                        }
-                        <span class="prelude-val">Some</span>(object) =&gt; {
-                            <span class="kw">let </span>layout = {
-                                <span class="kw">match </span>object.data.try_as_move() {
-                                    <span class="prelude-val">None </span>=&gt; <span class="prelude-val">None</span>,
-                                    <span class="prelude-val">Some</span>(move_obj) =&gt; {
-                                        <span class="kw">let </span>epoch_store = <span class="self">self</span>.load_epoch_store_one_call_per_task();
-                                        <span class="kw">let </span>move_vm = epoch_store.move_vm();
-                                        <span class="kw">let </span><span class="kw-2">mut </span>layout_resolver = TypeLayoutResolver::new(
-                                            move_vm,
-                                            <span class="self">self</span>.database.as_ref(),
-                                        );
-                                        <span class="prelude-val">Some</span>(
-                                            layout_resolver.get_layout(
-                                                move_obj,
-                                                ObjectFormatOptions::default(),
-                                            )<span class="question-mark">?</span>,
-                                        )
-                                    }
-                                }
-                            };
-                            <span class="prelude-val">Ok</span>(PastObjectRead::VersionFound(obj_ref, object, layout))
-                        }
-                    }
-                } <span class="kw">else </span>{
-                    <span class="prelude-val">Ok</span>(PastObjectRead::ObjectDeleted(obj_ref))
-                }
+                .into())
             }
         }
+    }
+
+    <span class="kw">fn </span>read_object_at_version(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        object_id: <span class="kw-2">&amp;</span>ObjectID,
+        version: SequenceNumber,
+    ) -&gt; SuiResult&lt;<span class="prelude-ty">Option</span>&lt;(Object, <span class="prelude-ty">Option</span>&lt;MoveStructLayout&gt;)&gt;&gt; {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(object) = <span class="self">self</span>.database.get_object_by_key(object_id, version)<span class="question-mark">? </span><span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+        };
+
+        <span class="kw">let </span>layout = object
+            .data
+            .try_as_move()
+            .map(|object| {
+                <span class="self">self</span>.load_epoch_store_one_call_per_task()
+                    .executor()
+                    .type_layout_resolver(Box::new(<span class="self">self</span>.database.as_ref()))
+                    .get_layout(object, ObjectFormatOptions::default())
+            })
+            .transpose()<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((object, layout)))
     }
 
     <span class="kw">fn </span>get_owner_at_version(

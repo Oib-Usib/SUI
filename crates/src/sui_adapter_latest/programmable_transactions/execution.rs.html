@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `sui-execution/latest/sui-adapter/src/programmable_transactions/execution.rs`."><title>execution.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="sui_adapter_latest" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (101fa903b 2023-06-04)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../sui_adapter_latest/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `sui-execution/latest/sui-adapter/src/programmable_transactions/execution.rs`."><title>execution.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="sui_adapter_latest" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (e6d4725c7 2023-06-05)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../sui_adapter_latest/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1666,41 +1666,6 @@
 <a href="#1666" id="1666">1666</a>
 <a href="#1667" id="1667">1667</a>
 <a href="#1668" id="1668">1668</a>
-<a href="#1669" id="1669">1669</a>
-<a href="#1670" id="1670">1670</a>
-<a href="#1671" id="1671">1671</a>
-<a href="#1672" id="1672">1672</a>
-<a href="#1673" id="1673">1673</a>
-<a href="#1674" id="1674">1674</a>
-<a href="#1675" id="1675">1675</a>
-<a href="#1676" id="1676">1676</a>
-<a href="#1677" id="1677">1677</a>
-<a href="#1678" id="1678">1678</a>
-<a href="#1679" id="1679">1679</a>
-<a href="#1680" id="1680">1680</a>
-<a href="#1681" id="1681">1681</a>
-<a href="#1682" id="1682">1682</a>
-<a href="#1683" id="1683">1683</a>
-<a href="#1684" id="1684">1684</a>
-<a href="#1685" id="1685">1685</a>
-<a href="#1686" id="1686">1686</a>
-<a href="#1687" id="1687">1687</a>
-<a href="#1688" id="1688">1688</a>
-<a href="#1689" id="1689">1689</a>
-<a href="#1690" id="1690">1690</a>
-<a href="#1691" id="1691">1691</a>
-<a href="#1692" id="1692">1692</a>
-<a href="#1693" id="1693">1693</a>
-<a href="#1694" id="1694">1694</a>
-<a href="#1695" id="1695">1695</a>
-<a href="#1696" id="1696">1696</a>
-<a href="#1697" id="1697">1697</a>
-<a href="#1698" id="1698">1698</a>
-<a href="#1699" id="1699">1699</a>
-<a href="#1700" id="1700">1700</a>
-<a href="#1701" id="1701">1701</a>
-<a href="#1702" id="1702">1702</a>
-<a href="#1703" id="1703">1703</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1739,7 +1704,7 @@
     error::{command_argument_error, ExecutionError, ExecutionErrorKind},
     event::Event,
     execution::{
-        CommandKind, ExecutionResults, ObjectContents, ObjectValue, RawValueType, SuiResolver,
+        CommandKind, ExecutionResults, ExecutionState, ObjectContents, ObjectValue, RawValueType,
         Value,
     },
     gas::{SuiGasStatus, SuiGasStatusAPI},
@@ -1749,14 +1714,13 @@
         normalize_deserialized_modules, MovePackage, TypeOrigin, UpgradeCap, UpgradePolicy,
         UpgradeReceipt, UpgradeTicket,
     },
-    storage::StorageView,
+    storage::get_packages,
     transaction::{Argument, Command, ProgrammableMoveCall, ProgrammableTransaction},
     Identifier, SUI_FRAMEWORK_ADDRESS,
 };
 <span class="kw">use </span>sui_types::{
     execution_mode::ExecutionMode,
     execution_status::{CommandArgumentError, PackageUpgradeError},
-    storage::BackingPackageStore,
 };
 <span class="kw">use </span>sui_verifier::{
     private_generics::{EVENT_MODULE, PRIVATE_TRANSFER_FUNCTIONS, TRANSFER_MODULE},
@@ -1768,19 +1732,16 @@
 
 <span class="macro">sui_macros::checked_arithmetic! </span>{
 
-<span class="kw">pub fn </span>execute&lt;S: StorageView, Mode: ExecutionMode&gt;(
+<span class="kw">pub fn </span>execute&lt;Mode: ExecutionMode&gt;(
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     metrics: Arc&lt;LimitsMetrics&gt;,
     vm: <span class="kw-2">&amp;</span>MoveVM,
-    state_view: <span class="kw-2">&amp;mut </span>S,
+    state_view: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>ExecutionState,
     tx_context: <span class="kw-2">&amp;mut </span>TxContext,
     gas_status: <span class="kw-2">&amp;mut </span>SuiGasStatus,
     gas_coin: <span class="prelude-ty">Option</span>&lt;ObjectID&gt;,
     pt: ProgrammableTransaction,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Mode::ExecutionResults, ExecutionError&gt;
-<span class="kw">where
-    for</span>&lt;<span class="lifetime">&#39;state</span>&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
-{
+) -&gt; <span class="prelude-ty">Result</span>&lt;Mode::ExecutionResults, ExecutionError&gt; {
     <span class="kw">let </span>ProgrammableTransaction { inputs, commands } = pt;
     <span class="kw">let </span><span class="kw-2">mut </span>context = ExecutionContext::new(
         protocol_config,
@@ -1795,7 +1756,7 @@
     <span class="comment">// execute commands
     </span><span class="kw">let </span><span class="kw-2">mut </span>mode_results = Mode::empty_results();
     <span class="kw">for </span>(idx, command) <span class="kw">in </span>commands.into_iter().enumerate() {
-        <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = execute_command::&lt;<span class="kw">_</span>, Mode&gt;(<span class="kw-2">&amp;mut </span>context, <span class="kw-2">&amp;mut </span>mode_results, command) {
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = execute_command::&lt;Mode&gt;(<span class="kw-2">&amp;mut </span>context, <span class="kw-2">&amp;mut </span>mode_results, command) {
             <span class="kw">let </span>object_runtime: <span class="kw-2">&amp;</span>ObjectRuntime = context.session.get_native_extensions().get();
             <span class="comment">// We still need to record the loaded child objects for replay
             </span><span class="kw">let </span>loaded_child_objects = object_runtime.loaded_child_objects();
@@ -1833,13 +1794,11 @@
 }
 
 <span class="doccomment">/// Execute a single command
-</span><span class="kw">fn </span>execute_command&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>execute_command&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     mode_results: <span class="kw-2">&amp;mut </span>Mode::ExecutionResults,
     command: Command,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">let </span><span class="kw-2">mut </span>argument_updates = Mode::empty_arguments();
     <span class="kw">let </span>results = <span class="kw">match </span>command {
@@ -1891,7 +1850,7 @@
             };
             <span class="kw">for </span>(idx, arg) <span class="kw">in </span>arg_iter {
                 <span class="kw">let </span>value: Value = context.by_value_arg(CommandKind::MakeMoveVec, idx, arg)<span class="question-mark">?</span>;
-                check_param_type::&lt;<span class="kw">_</span>, Mode&gt;(context, idx, <span class="kw-2">&amp;</span>value, <span class="kw-2">&amp;</span>elem_ty)<span class="question-mark">?</span>;
+                check_param_type::&lt;Mode&gt;(context, idx, <span class="kw-2">&amp;</span>value, <span class="kw-2">&amp;</span>elem_ty)<span class="question-mark">?</span>;
                 used_in_non_entry_move_call =
                     used_in_non_entry_move_call || value.was_used_in_non_entry_move_call();
                 value.write_bcs_bytes(<span class="kw-2">&amp;mut </span>res);
@@ -2011,7 +1970,7 @@
 
             <span class="kw">let </span>original_address = context.set_link_context(package)<span class="question-mark">?</span>;
             <span class="kw">let </span>runtime_id = ModuleId::new(original_address, module);
-            <span class="kw">let </span>return_values = execute_move_call::&lt;<span class="kw">_</span>, Mode&gt;(
+            <span class="kw">let </span>return_values = execute_move_call::&lt;Mode&gt;(
                 context,
                 <span class="kw-2">&amp;mut </span>argument_updates,
                 <span class="kw-2">&amp;</span>runtime_id,
@@ -2025,10 +1984,10 @@
             return_values<span class="question-mark">?
         </span>}
         Command::Publish(modules, dep_ids) =&gt; {
-            execute_move_publish::&lt;<span class="kw">_</span>, Mode&gt;(context, <span class="kw-2">&amp;mut </span>argument_updates, modules, dep_ids)<span class="question-mark">?
+            execute_move_publish::&lt;Mode&gt;(context, <span class="kw-2">&amp;mut </span>argument_updates, modules, dep_ids)<span class="question-mark">?
         </span>}
         Command::Upgrade(modules, dep_ids, current_package_id, upgrade_ticket) =&gt; {
-            execute_move_upgrade::&lt;<span class="kw">_</span>, Mode&gt;(
+            execute_move_upgrade::&lt;Mode&gt;(
                 context,
                 modules,
                 dep_ids,
@@ -2044,8 +2003,8 @@
 }
 
 <span class="doccomment">/// Execute a single Move call
-</span><span class="kw">fn </span>execute_move_call&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>execute_move_call&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     argument_updates: <span class="kw-2">&amp;mut </span>Mode::ArgumentUpdates,
     module_id: <span class="kw-2">&amp;</span>ModuleId,
     function: <span class="kw-2">&amp;</span>IdentStr,
@@ -2053,8 +2012,6 @@
     arguments: Vec&lt;Argument&gt;,
     is_init: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Value&gt;, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="comment">// check that the function is either an entry function or a valid public function
     </span><span class="kw">let </span>LoadedFunctionInfo {
@@ -2063,7 +2020,7 @@
         return_value_kinds,
         index,
         last_instr,
-    } = check_visibility_and_signature::&lt;<span class="kw">_</span>, Mode&gt;(
+    } = check_visibility_and_signature::&lt;Mode&gt;(
         context,
         module_id,
         function,
@@ -2072,7 +2029,7 @@
     )<span class="question-mark">?</span>;
     <span class="comment">// build the arguments, storing meta data about by-mut-ref args
     </span><span class="kw">let </span>(tx_context_kind, by_mut_ref, serialized_arguments) =
-        build_move_args::&lt;<span class="kw">_</span>, Mode&gt;(context, module_id, function, kind, <span class="kw-2">&amp;</span>signature, <span class="kw-2">&amp;</span>arguments)<span class="question-mark">?</span>;
+        build_move_args::&lt;Mode&gt;(context, module_id, function, kind, <span class="kw-2">&amp;</span>signature, <span class="kw-2">&amp;</span>arguments)<span class="question-mark">?</span>;
     <span class="comment">// invoke the VM
     </span><span class="kw">let </span>SerializedReturnValues {
         mutable_reference_outputs,
@@ -2098,7 +2055,7 @@
     <span class="comment">// write back mutable inputs. We also update if they were used in non entry Move calls
     // though we do not care for immutable usages of objects or other values
     </span><span class="kw">let </span>used_in_non_entry_move_call = kind == FunctionKind::NonEntry;
-    <span class="kw">let </span>res = write_back_results::&lt;<span class="kw">_</span>, Mode&gt;(
+    <span class="kw">let </span>res = write_back_results::&lt;Mode&gt;(
         context,
         argument_updates,
         <span class="kw-2">&amp;</span>arguments,
@@ -2115,8 +2072,8 @@
     res
 }
 
-<span class="kw">fn </span>write_back_results&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+<span class="kw">fn </span>write_back_results&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     argument_updates: <span class="kw-2">&amp;mut </span>Mode::ArgumentUpdates,
     arguments: <span class="kw-2">&amp;</span>[Argument],
     non_entry_move_call: bool,
@@ -2125,8 +2082,6 @@
     return_values: <span class="kw">impl </span>IntoIterator&lt;Item = Vec&lt;u8&gt;&gt;,
     return_value_kinds: <span class="kw">impl </span>IntoIterator&lt;Item = ValueKind&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Value&gt;, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">for </span>((i, bytes), (j, kind)) <span class="kw">in </span>mut_ref_values.into_iter().zip(mut_ref_kinds) {
         <span class="macro">assert_invariant!</span>(i == j, <span class="string">&quot;lost mutable input&quot;</span>);
@@ -2147,14 +2102,12 @@
         .collect()
 }
 
-<span class="kw">fn </span>make_value&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+<span class="kw">fn </span>make_value(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     value_info: ValueKind,
     bytes: Vec&lt;u8&gt;,
     used_in_non_entry_move_call: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Value, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver
 {
     <span class="prelude-val">Ok</span>(<span class="kw">match </span>value_info {
         ValueKind::Object {
@@ -2181,14 +2134,12 @@
 
 <span class="doccomment">/// Publish Move modules and call the init functions.  Returns an `UpgradeCap` for the newly
 /// published package on success.
-</span><span class="kw">fn </span>execute_move_publish&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>execute_move_publish&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     argument_updates: <span class="kw-2">&amp;mut </span>Mode::ArgumentUpdates,
     module_bytes: Vec&lt;Vec&lt;u8&gt;&gt;,
     dep_ids: Vec&lt;ObjectID&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Value&gt;, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="macro">assert_invariant!</span>(
         !module_bytes.is_empty(),
@@ -2198,7 +2149,7 @@
         .gas_status
         .charge_publish_package(module_bytes.iter().map(|v| v.len()).sum())<span class="question-mark">?</span>;
 
-    <span class="kw">let </span><span class="kw-2">mut </span>modules = deserialize_modules::&lt;<span class="kw">_</span>, Mode&gt;(context, <span class="kw-2">&amp;</span>module_bytes)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>modules = deserialize_modules::&lt;Mode&gt;(context, <span class="kw-2">&amp;</span>module_bytes)<span class="question-mark">?</span>;
 
     <span class="comment">// It should be fine that this does not go through ExecutionContext::fresh_id since the Move
     // runtime does not to know about new packages created, since Move objects and Move packages
@@ -2227,7 +2178,7 @@
 
         context.set_linkage(package)<span class="question-mark">?</span>;
         <span class="kw">let </span>res = publish_and_verify_modules(context, runtime_id, <span class="kw-2">&amp;</span>modules)
-            .and_then(|<span class="kw">_</span>| init_modules::&lt;<span class="kw">_</span>, Mode&gt;(context, argument_updates, <span class="kw-2">&amp;</span>modules));
+            .and_then(|<span class="kw">_</span>| init_modules::&lt;Mode&gt;(context, argument_updates, <span class="kw-2">&amp;</span>modules));
         context.reset_linkage();
         res<span class="question-mark">?</span>;
 
@@ -2238,7 +2189,7 @@
         </span>publish_and_verify_modules(context, runtime_id, <span class="kw-2">&amp;</span>modules)<span class="question-mark">?</span>;
         <span class="kw">let </span>dependencies = fetch_packages(context, <span class="kw-2">&amp;</span>dep_ids)<span class="question-mark">?</span>;
         <span class="kw">let </span>package = context.new_package(<span class="kw-2">&amp;</span>modules, <span class="kw-2">&amp;</span>dependencies)<span class="question-mark">?</span>;
-        init_modules::&lt;<span class="kw">_</span>, Mode&gt;(context, argument_updates, <span class="kw-2">&amp;</span>modules)<span class="question-mark">?</span>;
+        init_modules::&lt;Mode&gt;(context, argument_updates, <span class="kw-2">&amp;</span>modules)<span class="question-mark">?</span>;
         package
     };
 
@@ -2261,15 +2212,13 @@
 }
 
 <span class="doccomment">/// Upgrade a Move package.  Returns an `UpgradeReceipt` for the upgraded package on success.
-</span><span class="kw">fn </span>execute_move_upgrade&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>execute_move_upgrade&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     module_bytes: Vec&lt;Vec&lt;u8&gt;&gt;,
     dep_ids: Vec&lt;ObjectID&gt;,
     current_package_id: ObjectID,
     upgrade_ticket_arg: Argument,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Value&gt;, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="comment">// Check that package upgrades are supported.
     </span>context
@@ -2293,7 +2242,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>ticket_bytes = Vec::new();
         <span class="kw">let </span>ticket_val: Value =
             context.by_value_arg(CommandKind::Upgrade, <span class="number">0</span>, upgrade_ticket_arg)<span class="question-mark">?</span>;
-        check_param_type::&lt;<span class="kw">_</span>, Mode&gt;(context, <span class="number">0</span>, <span class="kw-2">&amp;</span>ticket_val, <span class="kw-2">&amp;</span>upgrade_ticket_type)<span class="question-mark">?</span>;
+        check_param_type::&lt;Mode&gt;(context, <span class="number">0</span>, <span class="kw-2">&amp;</span>ticket_val, <span class="kw-2">&amp;</span>upgrade_ticket_type)<span class="question-mark">?</span>;
         ticket_val.write_bcs_bytes(<span class="kw-2">&amp;mut </span>ticket_bytes);
         bcs::from_bytes(<span class="kw-2">&amp;</span>ticket_bytes).map_err(|<span class="kw">_</span>| {
             ExecutionError::from_kind(ExecutionErrorKind::CommandArgumentError {
@@ -2335,7 +2284,7 @@
     <span class="comment">// Check that this package ID points to a package and get the package we&#39;re upgrading.
     </span><span class="kw">let </span>current_package = fetch_package(context, <span class="kw-2">&amp;</span>upgrade_ticket.package.bytes)<span class="question-mark">?</span>;
 
-    <span class="kw">let </span><span class="kw-2">mut </span>modules = deserialize_modules::&lt;<span class="kw">_</span>, Mode&gt;(context, <span class="kw-2">&amp;</span>module_bytes)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>modules = deserialize_modules::&lt;Mode&gt;(context, <span class="kw-2">&amp;</span>module_bytes)<span class="question-mark">?</span>;
     <span class="kw">let </span>runtime_id = current_package.original_package_id();
     substitute_package_id(<span class="kw-2">&amp;mut </span>modules, runtime_id)<span class="question-mark">?</span>;
 
@@ -2400,8 +2349,8 @@
     )])
 }
 
-<span class="kw">fn </span>check_compatibility&lt;<span class="lifetime">&#39;a</span>, S: StorageView&gt;(
-    context: <span class="kw-2">&amp;</span>ExecutionContext&lt;S&gt;,
+<span class="kw">fn </span>check_compatibility&lt;<span class="lifetime">&#39;a</span>&gt;(
+    context: <span class="kw-2">&amp;</span>ExecutionContext,
     existing_package: <span class="kw-2">&amp;</span>MovePackage,
     upgrading_modules: <span class="kw">impl </span>IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>CompiledModule&gt;,
     policy: u8,
@@ -2415,7 +2364,12 @@
         ));
     };
 
-    <span class="kw">let </span><span class="prelude-val">Ok</span>(current_normalized) = existing_package.normalize(context.protocol_config.move_binary_format_version(), context.protocol_config.no_extraneous_module_bytes()) <span class="kw">else </span>{
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(current_normalized) = existing_package
+        .normalize(
+            context.protocol_config.move_binary_format_version(),
+            context.protocol_config.no_extraneous_module_bytes(),
+        )
+    <span class="kw">else </span>{
         <span class="macro">invariant_violation!</span>(<span class="string">&quot;Tried to normalize modules in existing package but failed&quot;</span>)
     };
 
@@ -2446,12 +2400,10 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn </span>fetch_package&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt;(
-    context: <span class="kw-2">&amp;</span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+<span class="kw">fn </span>fetch_package(
+    context: <span class="kw-2">&amp;</span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     package_id: <span class="kw-2">&amp;</span>ObjectID,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;MovePackage, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">let </span><span class="kw-2">mut </span>fetched_packages = fetch_packages(context, <span class="macro">vec!</span>[package_id])<span class="question-mark">?</span>;
     <span class="macro">assert_invariant!</span>(
@@ -2466,15 +2418,13 @@
     }
 }
 
-<span class="kw">fn </span>fetch_packages&lt;<span class="lifetime">&#39;ctx</span>, <span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt;(
-    context: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ctx </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+<span class="kw">fn </span>fetch_packages&lt;<span class="lifetime">&#39;ctx</span>, <span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>&gt;(
+    context: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ctx </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>&gt;,
     package_ids: <span class="kw">impl </span>IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;ctx </span>ObjectID&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;MovePackage&gt;, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">let </span>package_ids: BTreeSet&lt;<span class="kw">_</span>&gt; = package_ids.into_iter().collect();
-    <span class="kw">match </span>context.state_view.get_packages(package_ids) {
+    <span class="kw">match </span>get_packages(<span class="kw-2">&amp;</span>context.state_view, package_ids) {
         <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(ExecutionError::new_with_source(
             ExecutionErrorKind::PublishUpgradeMissingDependency,
             e,
@@ -2501,16 +2451,14 @@
  * Move execution
  **************************************************************************************************/
 
-</span><span class="kw">fn </span>vm_move_call&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>vm_move_call(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     module_id: <span class="kw-2">&amp;</span>ModuleId,
     function: <span class="kw-2">&amp;</span>IdentStr,
     type_arguments: Vec&lt;Type&gt;,
     tx_context_kind: TxContextKind,
     <span class="kw-2">mut </span>serialized_arguments: Vec&lt;Vec&lt;u8&gt;&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;SerializedReturnValues, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">match </span>tx_context_kind {
         TxContextKind::None =&gt; (),
@@ -2551,12 +2499,10 @@
     <span class="prelude-val">Ok</span>(result)
 }
 
-<span class="kw">fn </span>deserialize_modules&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+<span class="kw">fn </span>deserialize_modules&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     module_bytes: <span class="kw-2">&amp;</span>[Vec&lt;u8&gt;],
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;CompiledModule&gt;, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">let </span>modules = module_bytes
         .iter()
@@ -2579,13 +2525,11 @@
     <span class="prelude-val">Ok</span>(modules)
 }
 
-<span class="kw">fn </span>publish_and_verify_modules&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+<span class="kw">fn </span>publish_and_verify_modules(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     package_id: ObjectID,
     modules: <span class="kw-2">&amp;</span>[CompiledModule],
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="comment">// TODO(https://github.com/MystenLabs/sui/issues/69): avoid this redundant serialization by exposing VM API that allows us to run the linker directly on `Vec&lt;CompiledModule&gt;`
     </span><span class="kw">let </span>new_module_bytes: Vec&lt;<span class="kw">_</span>&gt; = modules
@@ -2621,13 +2565,11 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn </span>init_modules&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+<span class="kw">fn </span>init_modules&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     argument_updates: <span class="kw-2">&amp;mut </span>Mode::ArgumentUpdates,
     modules: <span class="kw-2">&amp;</span>[CompiledModule],
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">let </span>modules_to_init = modules.iter().filter_map(|module| {
         <span class="kw">for </span>fdef <span class="kw">in </span><span class="kw-2">&amp;</span>module.function_defs {
@@ -2641,7 +2583,7 @@
     </span>});
 
     <span class="kw">for </span>module_id <span class="kw">in </span>modules_to_init {
-        <span class="kw">let </span>return_values = execute_move_call::&lt;<span class="kw">_</span>, Mode&gt;(
+        <span class="kw">let </span>return_values = execute_move_call::&lt;Mode&gt;(
             context,
             argument_updates,
             <span class="kw-2">&amp;</span>module_id,
@@ -2699,15 +2641,13 @@
 /// - an entry function
 /// - a public function that does not return references
 /// - module init (only internal usage)
-</span><span class="kw">fn </span>check_visibility_and_signature&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>check_visibility_and_signature&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     module_id: <span class="kw-2">&amp;</span>ModuleId,
     function: <span class="kw-2">&amp;</span>IdentStr,
     type_arguments: <span class="kw-2">&amp;</span>[Type],
     from_init: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;LoadedFunctionInfo, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">if </span>from_init {
         <span class="comment">// the session is weird and does not load the module on publishing. This is a temporary
@@ -2788,7 +2728,7 @@
             <span class="macro">vec!</span>[]
         }
         FunctionKind::PrivateEntry | FunctionKind::PublicEntry | FunctionKind::NonEntry =&gt; {
-            check_non_entry_signature::&lt;<span class="kw">_</span>, Mode&gt;(context, module_id, function, <span class="kw-2">&amp;</span>signature)<span class="question-mark">?
+            check_non_entry_signature::&lt;Mode&gt;(context, module_id, function, <span class="kw-2">&amp;</span>signature)<span class="question-mark">?
         </span>}
     };
     check_private_generics(context, module_id, function, type_arguments)<span class="question-mark">?</span>;
@@ -2828,14 +2768,12 @@
 
 <span class="doccomment">/// Checks that the non-entry function does not return references. And marks the return values
 /// as object or non-object return values
-</span><span class="kw">fn </span>check_non_entry_signature&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>check_non_entry_signature&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     _module_id: <span class="kw-2">&amp;</span>ModuleId,
     _function: <span class="kw-2">&amp;</span>IdentStr,
     signature: <span class="kw-2">&amp;</span>LoadedFunctionInstantiation,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;ValueKind&gt;, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     signature
         .return_
@@ -2893,8 +2831,8 @@
         .collect()
 }
 
-<span class="kw">fn </span>check_private_generics&lt;S: StorageView&gt;(
-    _context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;S&gt;,
+<span class="kw">fn </span>check_private_generics(
+    _context: <span class="kw-2">&amp;mut </span>ExecutionContext,
     module_id: <span class="kw-2">&amp;</span>ModuleId,
     function: <span class="kw-2">&amp;</span>IdentStr,
     _type_arguments: <span class="kw-2">&amp;</span>[Type],
@@ -2934,16 +2872,14 @@
 
 <span class="doccomment">/// Serializes the arguments into BCS values for Move. Performs the necessary type checking for
 /// each value
-</span><span class="kw">fn </span>build_move_args&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>build_move_args&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     module_id: <span class="kw-2">&amp;</span>ModuleId,
     function: <span class="kw-2">&amp;</span>IdentStr,
     function_kind: FunctionKind,
     signature: <span class="kw-2">&amp;</span>LoadedFunctionInstantiation,
     args: <span class="kw-2">&amp;</span>[Argument],
 ) -&gt; <span class="prelude-ty">Result</span>&lt;ArgInfo, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="comment">// check the arity
     </span><span class="kw">let </span>parameters = <span class="kw-2">&amp;</span>signature.parameters;
@@ -3035,7 +2971,7 @@
                 idx,
             ));
         }
-        check_param_type::&lt;<span class="kw">_</span>, Mode&gt;(context, idx, <span class="kw-2">&amp;</span>value, non_ref_param_ty)<span class="question-mark">?</span>;
+        check_param_type::&lt;Mode&gt;(context, idx, <span class="kw-2">&amp;</span>value, non_ref_param_ty)<span class="question-mark">?</span>;
         <span class="kw">let </span>bytes = {
             <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="macro">vec!</span>[];
             value.write_bcs_bytes(<span class="kw-2">&amp;mut </span>v);
@@ -3047,14 +2983,12 @@
 }
 
 <span class="doccomment">/// checks that the value is compatible with the specified type
-</span><span class="kw">fn </span>check_param_type&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView, Mode: ExecutionMode&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>check_param_type&lt;Mode: ExecutionMode&gt;(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     idx: usize,
     value: <span class="kw-2">&amp;</span>Value,
     param_ty: <span class="kw-2">&amp;</span>Type,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">let </span>ty = <span class="kw">match </span>value {
         <span class="comment">// For dev-spect, allow any BCS bytes. This does mean internal invariants for types can
@@ -3113,12 +3047,10 @@
 <span class="comment">// Returns Some(kind) if the type is a reference to the TxnContext. kind being Mutable with
 // a MutableReference, and Immutable otherwise.
 // Returns None for all other types
-</span><span class="kw">pub fn </span>is_tx_context&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">pub fn </span>is_tx_context(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     t: <span class="kw-2">&amp;</span>Type,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;TxContextKind, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="kw">let </span>(is_mut, inner) = <span class="kw">match </span>t {
         Type::MutableReference(inner) =&gt; (<span class="bool-val">true</span>, inner),
@@ -3145,12 +3077,10 @@
 }
 
 <span class="doccomment">/// Returns Some(layout) iff it is a primitive, an ID, a String, or an option/vector of a valid type
-</span><span class="kw">fn </span>primitive_serialization_layout&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S: StorageView&gt;(
-    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;vm</span>, <span class="lifetime">&#39;state</span>, <span class="lifetime">&#39;a</span>, S&gt;,
+</span><span class="kw">fn </span>primitive_serialization_layout(
+    context: <span class="kw-2">&amp;mut </span>ExecutionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     param_ty: <span class="kw-2">&amp;</span>Type,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;PrimitiveArgumentLayout&gt;, ExecutionError&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>S: SuiResolver,
 {
     <span class="prelude-val">Ok</span>(<span class="kw">match </span>param_ty {
         Type::Signer =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),

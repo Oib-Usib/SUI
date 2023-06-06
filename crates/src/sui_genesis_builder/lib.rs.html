@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-genesis-builder/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_genesis_builder" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (101fa903b 2023-06-04)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_genesis_builder/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-genesis-builder/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_genesis_builder" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (e6d4725c7 2023-06-05)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_genesis_builder/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1162,15 +1162,6 @@
 <a href="#1162" id="1162">1162</a>
 <a href="#1163" id="1163">1163</a>
 <a href="#1164" id="1164">1164</a>
-<a href="#1165" id="1165">1165</a>
-<a href="#1166" id="1166">1166</a>
-<a href="#1167" id="1167">1167</a>
-<a href="#1168" id="1168">1168</a>
-<a href="#1169" id="1169">1169</a>
-<a href="#1170" id="1170">1170</a>
-<a href="#1171" id="1171">1171</a>
-<a href="#1172" id="1172">1172</a>
-<a href="#1173" id="1173">1173</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1180,17 +1171,16 @@
 <span class="kw">use </span>fastcrypto::traits::KeyPair;
 <span class="kw">use </span>move_binary_format::CompiledModule;
 <span class="kw">use </span>move_core_types::ident_str;
-<span class="kw">use </span>move_vm_runtime::move_vm::MoveVM;
 <span class="kw">use </span>shared_crypto::intent::{Intent, IntentMessage, IntentScope};
-<span class="kw">use </span>std::collections::{BTreeMap, HashSet};
+<span class="kw">use </span>std::collections::{BTreeMap, BTreeSet, HashSet};
 <span class="kw">use </span>std::fs;
 <span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>sui_adapter::{adapter, programmable_transactions};
 <span class="kw">use </span>sui_config::genesis::{
     Genesis, GenesisCeremonyParameters, GenesisChainParameters, TokenDistributionSchedule,
     UnsignedGenesis,
 };
+<span class="kw">use </span>sui_execution::{<span class="self">self</span>, Executor};
 <span class="kw">use </span>sui_framework::BuiltInFramework;
 <span class="kw">use </span>sui_protocol_config::{Chain, ProtocolConfig, ProtocolVersion};
 <span class="kw">use </span>sui_types::base_types::{
@@ -1203,7 +1193,6 @@
 };
 <span class="kw">use </span>sui_types::effects::{TransactionEffects, TransactionEvents};
 <span class="kw">use </span>sui_types::epoch_data::EpochData;
-<span class="kw">use </span>sui_types::execution_mode;
 <span class="kw">use </span>sui_types::gas::SuiGasStatus;
 <span class="kw">use </span>sui_types::gas_coin::GasCoin;
 <span class="kw">use </span>sui_types::governance::StakedSui;
@@ -1982,46 +1971,40 @@
 
     <span class="comment">// execute txn to effects
     </span><span class="kw">let </span>(effects, events, objects) = {
-        <span class="kw">let </span><span class="kw-2">mut </span>store = sui_types::in_memory_storage::InMemoryStorage::new(Vec::new());
         <span class="kw">let </span>temporary_store = TemporaryStore::new(
-            <span class="kw-2">&amp;mut </span>store,
+            InMemoryStorage::new(Vec::new()),
             InputObjects::new(<span class="macro">vec!</span>[]),
             <span class="kw-2">*</span>genesis_transaction.digest(),
             protocol_config,
         );
 
-        <span class="kw">let </span>native_functions = sui_move_natives::all_natives(<span class="comment">/* silent */ </span><span class="bool-val">true</span>);
-        <span class="kw">let </span>enable_move_vm_paranoid_checks = <span class="bool-val">false</span>;
-        <span class="kw">let </span>move_vm = std::sync::Arc::new(
-            adapter::new_move_vm(
-                native_functions,
-                protocol_config,
-                enable_move_vm_paranoid_checks,
-            )
-            .expect(<span class="string">&quot;We defined natives to not fail here&quot;</span>),
-        );
+        <span class="kw">let </span>silent = <span class="bool-val">true</span>;
+        <span class="kw">let </span>paranoid_checks = <span class="bool-val">false</span>;
+        <span class="kw">let </span>executor = sui_execution::executor(protocol_config, paranoid_checks, silent)
+            .expect(<span class="string">&quot;Creating an executor should not fail here&quot;</span>);
 
+        <span class="kw">let </span>expensive_checks = <span class="bool-val">false</span>;
+        <span class="kw">let </span>certificate_deny_set = HashSet::new();
+        <span class="kw">let </span>shared_object_refs = <span class="macro">vec!</span>[];
         <span class="kw">let </span>transaction_data = <span class="kw-2">&amp;</span>genesis_transaction.data().intent_message().value;
         <span class="kw">let </span>(kind, signer, gas) = transaction_data.execution_parts();
-        <span class="kw">let </span>(inner_temp_store, effects, _execution_error) =
-            sui_adapter::execution_engine::execute_transaction_to_effects::&lt;
-                execution_mode::Normal,
-                <span class="kw">_</span>,
-            &gt;(
-                <span class="macro">vec!</span>[],
-                temporary_store,
-                kind,
-                signer,
-                <span class="kw-2">&amp;</span>gas,
-                <span class="kw-2">*</span>genesis_transaction.digest(),
-                Default::default(),
-                <span class="kw-2">&amp;</span>move_vm,
-                SuiGasStatus::new_unmetered(protocol_config),
-                epoch_data,
+        <span class="kw">let </span>transaction_dependencies = BTreeSet::new();
+        <span class="kw">let </span>(inner_temp_store, effects, _execution_error) = executor
+            .execute_transaction_to_effects(
                 protocol_config,
                 metrics,
-                <span class="bool-val">false</span>, <span class="comment">// enable_expensive_checks
-                </span><span class="kw-2">&amp;</span>HashSet::new(),
+                expensive_checks,
+                <span class="kw-2">&amp;</span>certificate_deny_set,
+                <span class="kw-2">&amp;</span>epoch_data.epoch_id(),
+                epoch_data.epoch_start_timestamp(),
+                temporary_store,
+                shared_object_refs,
+                SuiGasStatus::new_unmetered(protocol_config),
+                <span class="kw-2">&amp;</span>gas,
+                kind,
+                signer,
+                <span class="kw-2">*</span>genesis_transaction.digest(),
+                transaction_dependencies,
             );
         <span class="macro">assert!</span>(inner_temp_store.objects.is_empty());
         <span class="macro">assert!</span>(inner_temp_store.mutable_inputs.is_empty());
@@ -2058,20 +2041,16 @@
         Chain::Unknown,
     );
 
-    <span class="kw">let </span>native_functions = sui_move_natives::all_natives(<span class="comment">/* silent */ </span><span class="bool-val">true</span>);
+    <span class="kw">let </span>silent = <span class="bool-val">true</span>;
     <span class="comment">// paranoid checks are a last line of defense for malicious code, no need to run them in genesis
-    </span><span class="kw">let </span>enable_move_vm_paranoid_checks = <span class="bool-val">false</span>;
-    <span class="kw">let </span>move_vm = adapter::new_move_vm(
-        native_functions.clone(),
-        <span class="kw-2">&amp;</span>protocol_config,
-        enable_move_vm_paranoid_checks,
-    )
-    .expect(<span class="string">&quot;We defined natives to not fail here&quot;</span>);
+    </span><span class="kw">let </span>paranoid_checks = <span class="bool-val">false</span>;
+    <span class="kw">let </span>executor = sui_execution::executor(<span class="kw-2">&amp;</span>protocol_config, paranoid_checks, silent)
+        .expect(<span class="string">&quot;Creating an executor should not fail here&quot;</span>);
 
     <span class="kw">for </span>system_package <span class="kw">in </span>BuiltInFramework::iter_system_packages() {
         process_package(
             <span class="kw-2">&amp;mut </span>store,
-            <span class="kw-2">&amp;</span>move_vm,
+            executor.as_ref(),
             genesis_ctx,
             <span class="kw-2">&amp;</span>system_package.modules(),
             system_package.dependencies().to_vec(),
@@ -2081,13 +2060,16 @@
         .unwrap();
     }
 
-    <span class="kw">for </span>object <span class="kw">in </span>input_objects {
-        store.insert_object(object.to_owned());
+    {
+        <span class="kw">let </span>store = Arc::get_mut(<span class="kw-2">&amp;mut </span>store).expect(<span class="string">&quot;only one reference to store&quot;</span>);
+        <span class="kw">for </span>object <span class="kw">in </span>input_objects {
+            store.insert_object(object.to_owned());
+        }
     }
 
     generate_genesis_system_object(
         <span class="kw-2">&amp;mut </span>store,
-        <span class="kw-2">&amp;</span>move_vm,
+        executor.as_ref(),
         validators,
         genesis_ctx,
         parameters,
@@ -2096,12 +2078,13 @@
     )
     .unwrap();
 
+    <span class="kw">let </span>store = Arc::try_unwrap(store).expect(<span class="string">&quot;only one reference to store&quot;</span>);
     store.into_inner().into_values().collect()
 }
 
 <span class="kw">fn </span>process_package(
-    store: <span class="kw-2">&amp;mut </span>InMemoryStorage,
-    vm: <span class="kw-2">&amp;</span>MoveVM,
+    store: <span class="kw-2">&amp;mut </span>Arc&lt;InMemoryStorage&gt;,
+    executor: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Executor,
     ctx: <span class="kw-2">&amp;mut </span>TxContext,
     modules: <span class="kw-2">&amp;</span>[CompiledModule],
     dependencies: Vec&lt;ObjectID&gt;,
@@ -2141,7 +2124,7 @@
         .collect();
 
     <span class="kw">let </span><span class="kw-2">mut </span>temporary_store = TemporaryStore::new(
-        <span class="kw-2">&amp;*</span>store,
+        store.clone(),
         InputObjects::new(loaded_dependencies),
         ctx.digest(),
         protocol_config,
@@ -2161,14 +2144,12 @@
         </span>builder.command(Command::Publish(module_bytes, dependencies));
         builder.finish()
     };
-    programmable_transactions::execution::execute::&lt;<span class="kw">_</span>, execution_mode::Genesis&gt;(
+    executor.update_genesis_state(
         protocol_config,
         metrics,
-        vm,
         <span class="kw-2">&amp;mut </span>temporary_store,
         ctx,
         <span class="kw-2">&amp;mut </span>gas_status,
-        <span class="prelude-val">None</span>,
         pt,
     )<span class="question-mark">?</span>;
 
@@ -2176,14 +2157,15 @@
         written, deleted, ..
     } = temporary_store.into_inner();
 
+    <span class="kw">let </span>store = Arc::get_mut(store).expect(<span class="string">&quot;only one reference to store&quot;</span>);
     store.finish(written, deleted);
 
     <span class="prelude-val">Ok</span>(())
 }
 
 <span class="kw">pub fn </span>generate_genesis_system_object(
-    store: <span class="kw-2">&amp;mut </span>InMemoryStorage,
-    move_vm: <span class="kw-2">&amp;</span>MoveVM,
+    store: <span class="kw-2">&amp;mut </span>Arc&lt;InMemoryStorage&gt;,
+    executor: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Executor,
     genesis_validators: <span class="kw-2">&amp;</span>[GenesisValidatorMetadata],
     genesis_ctx: <span class="kw-2">&amp;mut </span>TxContext,
     genesis_chain_parameters: <span class="kw-2">&amp;</span>GenesisChainParameters,
@@ -2199,7 +2181,7 @@
         sui_protocol_config::Chain::Unknown,
     );
     <span class="kw">let </span><span class="kw-2">mut </span>temporary_store = TemporaryStore::new(
-        <span class="kw-2">&amp;*</span>store,
+        store.clone(),
         InputObjects::new(<span class="macro">vec!</span>[]),
         genesis_digest,
         <span class="kw-2">&amp;</span>protocol_config,
@@ -2256,14 +2238,13 @@
         );
         builder.finish()
     };
-    programmable_transactions::execution::execute::&lt;<span class="kw">_</span>, execution_mode::Genesis&gt;(
+
+    executor.update_genesis_state(
         <span class="kw-2">&amp;</span>protocol_config,
         metrics,
-        move_vm,
         <span class="kw-2">&amp;mut </span>temporary_store,
         genesis_ctx,
         <span class="kw-2">&amp;mut </span>SuiGasStatus::new_unmetered(<span class="kw-2">&amp;</span>protocol_config),
-        <span class="prelude-val">None</span>,
         pt,
     )<span class="question-mark">?</span>;
 
@@ -2271,6 +2252,7 @@
         written, deleted, ..
     } = temporary_store.into_inner();
 
+    <span class="kw">let </span>store = Arc::get_mut(store).expect(<span class="string">&quot;only one reference to store&quot;</span>);
     store.finish(written, deleted);
 
     <span class="prelude-val">Ok</span>(())

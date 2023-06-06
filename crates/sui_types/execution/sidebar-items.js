@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["CommandKind","ObjectContents","RawValueType","UsageKind","Value"],"struct":["ExecutionResults","InputObjectMetadata","InputValue","ObjectValue","ResultValue"],"trait":["SuiResolver","TryFromValue"]};
+window.SIDEBAR_ITEMS = {"enum":["CommandKind","ObjectContents","RawValueType","UsageKind","Value"],"struct":["ExecutionResults","InputObjectMetadata","InputValue","ObjectValue","ResultValue"],"trait":["ExecutionState","SuiResolver","TryFromValue","TypeLayoutStore"]};
