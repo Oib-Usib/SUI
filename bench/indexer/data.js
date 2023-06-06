@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686045202303,
+  "lastUpdate": 1686066121929,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11447,6 +11447,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309386,
             "range": "± 11704",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "49657dd789290a54aab206e3ee8e227449ae12e2",
+          "message": "Revert \"make sui CLI log file gated by env flag (#12095)\" (#12363)\n\n## Description \r\n\r\nThis reverts commit 8ff1005df0a6c093905d0dc7c903442ef9488a90.\r\n\r\nFollowing the previous fix, logs were showing up in terminal output even\r\nwhen `RUST_LOG` was not enabled.\r\n\r\n## Test Plan \r\n\r\n```\r\nsui$ cargo build --bin sui\r\nsui$ ./target/debug/sui client active-address\r\nsui/crates/sui$ cargo nextest run \r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nRevert behaviour where log output was controlled by an env flag, because\r\nwhen it was gated off, logs started showing up in command-line output.\r\nCLI now behaves as it did before: Producing a log file in the current\r\nworking directory, but not displaying logs in line under normal\r\noperation.",
+          "timestamp": "2023-06-06T11:32:27-04:00",
+          "tree_id": "4e9c403a6341877d0868ea059d17d7ab6c9f12fc",
+          "url": "https://github.com/MystenLabs/sui/commit/49657dd789290a54aab206e3ee8e227449ae12e2"
+        },
+        "date": 1686066097294,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109097961,
+            "range": "± 6049939",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 301618,
+            "range": "± 15242",
             "unit": "ns/iter"
           }
         ]
