@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686014406612,
+  "lastUpdate": 1686044997493,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11375,6 +11375,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314391,
             "range": "± 75802",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "531f01125c814ea0004a59ed69483cb1a3212b8a",
+          "message": "[sui-execution] Introduce Executor interface (#12264)\n\n## Description\r\n\r\nThis will be the uniform interface through which requests are made to\r\nthe MoveVM within nodes. It allows us to easily bundle multiple versions\r\nof the VM, adapter, natives and verifier into node software, and switch\r\nbetween them according to protocol config.\r\n\r\n### Dynamic Interfaces\r\n\r\nThis change requires making previously static generics into trait\r\nobjects, or shifting where the dynamism/ownership lies.\r\n\r\n- Access to execution will be via the new `Executor` trait object.\r\n- `TemporaryStore`'s access to the backing store (now via the\r\n`BackingStore` grouping trait).\r\n- `ObjectRuntime` previously took a `Box<dyn ChildObjectResolver>`, now\r\nit's just a `&dyn ChildObjectResolver`.\r\n- Execution engine's access to the store (now via the `ExecutionState`\r\ngrouping trait).\r\n- Type layout resolver's access to modules/packages etc (now via the\r\n`TypeLayoutStore` grouping trait).\r\n- `LinkageView`'s access to the sui resolver traits is now via a trait\r\nobject.\r\n\r\nSome of these traits group multiple other traits, so extra functions\r\nhave been added to do explicit conversion (e.g. from the vtable for an\r\n`A + B` trait object to the vtable for an `A` or a `B` trait object).\r\n\r\n### Other Changes\r\n\r\n- `InMemoryStorage::new` returns `Arc`\r\n- Don't save native functions in `ExecutionComponents` -- create fresh,\r\neach time (hides native function related types in execution layer)\r\n- Re-order function parameters for execution functions (only in newly\r\nintroduced execution layer, will push this change down into execution\r\nimplementations in a follow-up PR) to group together similar parameters.\r\n-  genesis-related crates fully ported over to execution crate.\r\n- `sui-replay` fully ported over to execution crate.\r\n- De-nested implementation of `get_object_read` and\r\n`get_past_object_read` on `AuthorityState`.\r\n- `sui-move/src/unit_test` creates a lazy `TEST_STORE` instead of\r\nrelying on the `ObjectRuntime` to keep the store alive.\r\n- `sui-replay`'s `LocalExec` implementation of all the various backing\r\nstore traits return `SuiError` instead of `LocalExecError` (now that we\r\nuse dynamic dispatch, the error type needs to be standardised).\r\n- `get_package_objects` and `get_packages` helper functions on\r\n`BackingPackageStore` were previously default implemented trait\r\nfunctions, but they have turned into free functions. This is because\r\nthey are lifetime generic, and this interfered with the ability to use\r\nthis trait (or any trait derived from it) as the basis of a trait\r\nobject.\r\n- Removed `temporary_store::empty_for_testing` and\r\n`::with_input_objects_for_testing` as unused, rather than port them\r\n(which would have been complicated and messy).\r\n- Replaced `execute_transaction_to_effects` with\r\n`execute_transaction_to_effects_impl`, to avoid doubling up the number\r\nof functions in the new `Executor` interface.\r\n\r\n## Test Plan\r\n\r\n```\r\nsui$ cargo simtest\r\nsui$ env SUI_SKIP_SIMTESTS=1 cargo nextest run\r\n```\r\n\r\nAlso manually test replay tool on a recent transaction digest:\r\n\r\n```\r\nsui/crates/sui-tool$ cargo run replay --rpc https://fullnode.testnet.sui.io:443 tx -t <digest>\r\n```",
+          "timestamp": "2023-06-06T02:37:56-07:00",
+          "tree_id": "b8d77b9ea838d9fd25eccd198e112e5d1d46acda",
+          "url": "https://github.com/MystenLabs/sui/commit/531f01125c814ea0004a59ed69483cb1a3212b8a"
+        },
+        "date": 1686044974015,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 170897785,
+            "range": "± 5060248",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 427102,
+            "range": "± 60876",
             "unit": "ns/iter"
           }
         ]
