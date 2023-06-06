@@ -315,22 +315,6 @@
 <a href="#315" id="315">315</a>
 <a href="#316" id="316">316</a>
 <a href="#317" id="317">317</a>
-<a href="#318" id="318">318</a>
-<a href="#319" id="319">319</a>
-<a href="#320" id="320">320</a>
-<a href="#321" id="321">321</a>
-<a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
-<a href="#324" id="324">324</a>
-<a href="#325" id="325">325</a>
-<a href="#326" id="326">326</a>
-<a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 </span><span class="attr">#![allow(dead_code)]
@@ -349,12 +333,10 @@
 <span class="kw">use </span>object_store::path::Path;
 <span class="kw">use </span>object_store::DynObjectStore;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
-<span class="kw">use </span>std::fs::File;
-<span class="kw">use </span>std::io::{BufReader, BufWriter, Read, Seek, SeekFrom, Write};
+<span class="kw">use </span>std::io::{BufWriter, Cursor, Read, Seek, SeekFrom, Write};
 <span class="kw">use </span>std::ops::Range;
-<span class="kw">use </span>std::path::PathBuf;
 <span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>sui_storage::object_store::util::{copy_file, path_to_filesystem, put};
+<span class="kw">use </span>sui_storage::object_store::util::{get, put};
 <span class="kw">use </span>sui_storage::{compute_sha3_checksum, Blob, Encoding, FileCompression, SHA3_BYTES};
 
 <span class="doccomment">/// The following describes the format of checkpoint (*.chk) and summary (*.sum) files used for
@@ -604,22 +586,11 @@
     <span class="prelude-val">Ok</span>(file_metadata)
 }
 
-<span class="kw">pub async fn </span>read_manifest(
-    local_root_path: PathBuf,
-    local_store: Arc&lt;DynObjectStore&gt;,
-    remote_store: Arc&lt;DynObjectStore&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Manifest&gt; {
+<span class="kw">pub async fn </span>read_manifest(remote_store: Arc&lt;DynObjectStore&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Manifest&gt; {
     <span class="kw">let </span>manifest_file_path = Path::from(MANIFEST_FILENAME);
-    copy_file(
-        manifest_file_path.clone(),
-        manifest_file_path.clone(),
-        remote_store,
-        local_store,
-    )
-    .<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span>manifest_file = File::open(path_to_filesystem(local_root_path, <span class="kw-2">&amp;</span>manifest_file_path)<span class="question-mark">?</span>)<span class="question-mark">?</span>;
-    <span class="kw">let </span>manifest_file_size = manifest_file.metadata()<span class="question-mark">?</span>.len() <span class="kw">as </span>usize;
-    <span class="kw">let </span><span class="kw-2">mut </span>manifest_reader = BufReader::new(manifest_file);
+    <span class="kw">let </span>vec = get(<span class="kw-2">&amp;</span>manifest_file_path, remote_store).<span class="kw">await</span><span class="question-mark">?</span>.to_vec();
+    <span class="kw">let </span>manifest_file_size = vec.len();
+    <span class="kw">let </span><span class="kw-2">mut </span>manifest_reader = Cursor::new(vec);
     manifest_reader.rewind()<span class="question-mark">?</span>;
     <span class="kw">let </span>magic = manifest_reader.read_u32::&lt;BigEndian&gt;()<span class="question-mark">?</span>;
     <span class="kw">if </span>magic != MANIFEST_FILE_MAGIC {
@@ -643,21 +614,18 @@
     }
     manifest_reader.rewind()<span class="question-mark">?</span>;
     manifest_reader.seek(SeekFrom::Start(MAGIC_BYTES <span class="kw">as </span>u64))<span class="question-mark">?</span>;
-    <span class="kw">let </span>blob = Blob::read(<span class="kw-2">&amp;mut </span>manifest_reader)<span class="question-mark">?</span>;
-    blob.decode()
+    Blob::read(<span class="kw-2">&amp;mut </span>manifest_reader)<span class="question-mark">?</span>.decode()
 }
 
-<span class="kw">pub async fn </span>write_manifest(
-    manifest: Manifest,
-    path: Path,
-    remote_store: Arc&lt;DynObjectStore&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+<span class="kw">pub async fn </span>write_manifest(manifest: Manifest, remote_store: Arc&lt;DynObjectStore&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">let </span>path = Path::from(MANIFEST_FILENAME);
     <span class="kw">let </span><span class="kw-2">mut </span>buf = BufWriter::new(<span class="macro">vec!</span>[]);
     buf.write_u32::&lt;BigEndian&gt;(MANIFEST_FILE_MAGIC)<span class="question-mark">?</span>;
     <span class="kw">let </span>blob = Blob::encode(<span class="kw-2">&amp;</span>manifest, Encoding::Bcs)<span class="question-mark">?</span>;
     blob.write(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
+    buf.flush()<span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>hasher = Sha3_256::default();
-    hasher.update(buf.buffer());
+    hasher.update(buf.get_ref());
     <span class="kw">let </span>computed_digest = hasher.finalize().digest;
     buf.write_all(<span class="kw-2">&amp;</span>computed_digest)<span class="question-mark">?</span>;
     <span class="kw">let </span>bytes = Bytes::from(buf.into_inner()<span class="question-mark">?</span>);

@@ -161,7 +161,7 @@
 <span class="kw">use </span>serde::de::DeserializeOwned;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>std::fs::File;
-<span class="kw">use </span>std::io::{BufReader, BufWriter, Read, Write};
+<span class="kw">use </span>std::io::{BufReader, Read, Write};
 <span class="kw">use </span>std::path::PathBuf;
 <span class="kw">use </span>std::{fs, io};
 <span class="kw">use </span>sui_simulator::fastcrypto::hash::{HashFunction, Sha3_256};
@@ -251,7 +251,7 @@
         <span class="kw">let </span>res = bcs::from_bytes(<span class="kw-2">&amp;</span>data)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(res)
     }
-    <span class="kw">pub fn </span>read&lt;R: Read&gt;(rbuf: <span class="kw-2">&amp;mut </span>BufReader&lt;R&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Blob&gt; {
+    <span class="kw">pub fn </span>read&lt;R: Read&gt;(rbuf: <span class="kw-2">&amp;mut </span>R) -&gt; <span class="prelude-ty">Result</span>&lt;Blob&gt; {
         <span class="kw">let </span>len = rbuf.read_varint::&lt;u64&gt;()<span class="question-mark">? </span><span class="kw">as </span>usize;
         <span class="kw">if </span>len == <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Invalid object length of 0 in file&quot;</span>));
@@ -265,7 +265,7 @@
         };
         <span class="prelude-val">Ok</span>(blob)
     }
-    <span class="kw">pub fn </span>write&lt;W: Write&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, wbuf: <span class="kw-2">&amp;mut </span>BufWriter&lt;W&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
+    <span class="kw">pub fn </span>write&lt;W: Write&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, wbuf: <span class="kw-2">&amp;mut </span>W) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0u8</span>; MAX_VARINT_LENGTH];
         <span class="kw">let </span><span class="kw-2">mut </span>counter = <span class="number">0</span>;
         <span class="kw">let </span>n = (<span class="self">self</span>.data.len() <span class="kw">as </span>u64).encode_var(<span class="kw-2">&amp;mut </span>buf);

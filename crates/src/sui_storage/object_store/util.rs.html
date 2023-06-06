@@ -259,6 +259,9 @@
 <a href="#259" id="259">259</a>
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -271,8 +274,22 @@
 <span class="kw">use </span>std::num::NonZeroUsize;
 <span class="kw">use </span>std::path::PathBuf;
 <span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>tracing::warn;
+<span class="kw">use </span>tracing::{error, warn};
 <span class="kw">use </span>url::Url;
+
+<span class="kw">pub async fn </span>get(location: <span class="kw-2">&amp;</span>Path, from: Arc&lt;DynObjectStore&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Bytes, object_store::Error&gt; {
+    <span class="kw">let </span>backoff = backoff::ExponentialBackoff::default();
+    <span class="kw">let </span>bytes = retry(backoff, || <span class="kw">async </span>{
+        from.get(location).<span class="kw">await</span>.map_err(|e| {
+            <span class="macro">error!</span>(<span class="string">&quot;Failed to read file from object store with error: {:?}&quot;</span>, <span class="kw-2">&amp;</span>e);
+            backoff::Error::transient(e)
+        })
+    })
+    .<span class="kw">await</span><span class="question-mark">?
+    </span>.bytes()
+    .<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(bytes)
+}
 
 <span class="kw">pub async fn </span>put(
     location: <span class="kw-2">&amp;</span>Path,
@@ -282,9 +299,10 @@
     <span class="kw">let </span>backoff = backoff::ExponentialBackoff::default();
     retry(backoff, || <span class="kw">async </span>{
         <span class="kw">if </span>!bytes.is_empty() {
-            to.put(location, bytes.clone())
-                .<span class="kw">await
-                </span>.map_err(backoff::Error::transient)
+            to.put(location, bytes.clone()).<span class="kw">await</span>.map_err(|e| {
+                <span class="macro">error!</span>(<span class="string">&quot;Failed to write file to object store with error: {:?}&quot;</span>, <span class="kw-2">&amp;</span>e);
+                backoff::Error::transient(e)
+            })
         } <span class="kw">else </span>{
             <span class="macro">warn!</span>(<span class="string">&quot;Not copying empty file: {:?}&quot;</span>, location);
             <span class="prelude-val">Ok</span>(())
@@ -300,20 +318,14 @@
     from: Arc&lt;DynObjectStore&gt;,
     to: Arc&lt;DynObjectStore&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), object_store::Error&gt; {
-    <span class="kw">let </span>backoff = backoff::ExponentialBackoff::default();
-    retry(backoff, || <span class="kw">async </span>{
-        <span class="kw">let </span>bytes = from.get(<span class="kw-2">&amp;</span>path_in).<span class="kw">await</span><span class="question-mark">?</span>.bytes().<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">if </span>!bytes.is_empty() {
-            to.put(<span class="kw-2">&amp;</span>path_out, bytes)
-                .<span class="kw">await
-                </span>.map_err(backoff::Error::transient)
-        } <span class="kw">else </span>{
-            <span class="macro">warn!</span>(<span class="string">&quot;Not copying empty file: {:?}&quot;</span>, path_in);
-            <span class="prelude-val">Ok</span>(())
-        }
-    })
-    .<span class="kw">await
-</span>}
+    <span class="kw">let </span>bytes = from.get(<span class="kw-2">&amp;</span>path_in).<span class="kw">await</span><span class="question-mark">?</span>.bytes().<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">if </span>!bytes.is_empty() {
+        put(<span class="kw-2">&amp;</span>path_out, bytes, to).<span class="kw">await
+    </span>} <span class="kw">else </span>{
+        <span class="macro">warn!</span>(<span class="string">&quot;Not copying empty file: {:?}&quot;</span>, path_in);
+        <span class="prelude-val">Ok</span>(())
+    }
+}
 
 <span class="kw">pub async fn </span>copy_files(
     files_in: <span class="kw-2">&amp;</span>[Path],
@@ -325,12 +337,7 @@
     <span class="kw">let </span>results: Vec&lt;<span class="prelude-ty">Result</span>&lt;(), object_store::Error&gt;&gt; =
         futures::stream::iter(files_in.iter().zip(files_out.iter()))
             .map(|(path_in, path_out)| {
-                <span class="kw">let </span>backoff = backoff::ExponentialBackoff::default();
-                retry(backoff, || <span class="kw">async </span>{
-                    copy_file(path_in.clone(), path_out.clone(), from.clone(), to.clone())
-                        .<span class="kw">await
-                        </span>.map_err(backoff::Error::transient)
-                })
+                copy_file(path_in.clone(), path_out.clone(), from.clone(), to.clone())
             })
             .boxed()
             .buffer_unordered(concurrency.get())
@@ -375,11 +382,10 @@
         .map(|f| {
             <span class="kw">let </span>backoff = backoff::ExponentialBackoff::default();
             retry(backoff, || <span class="kw">async </span>{
-                store
-                    .clone()
-                    .delete(f)
-                    .<span class="kw">await
-                    </span>.map_err(backoff::Error::transient)
+                store.clone().delete(f).<span class="kw">await</span>.map_err(|e| {
+                    <span class="macro">error!</span>(<span class="string">&quot;Failed to delete file on object store with error: {:?}&quot;</span>, <span class="kw-2">&amp;</span>e);
+                    backoff::Error::transient(e)
+                })
             })
         })
         .boxed()
