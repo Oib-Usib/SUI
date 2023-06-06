@@ -333,7 +333,6 @@ async fn test_request_vote_has_missing_parents() {
         tx_parents,
         rx_consensus_round_updates,
         rx_synchronizer_network,
-        None,
         metrics.clone(),
         &primary_channel_metrics,
     ));
@@ -505,7 +504,6 @@ async fn test_request_vote_accept_missing_parents() {
         tx_parents,
         rx_consensus_round_updates,
         rx_synchronizer_network,
-        None,
         metrics.clone(),
         &primary_channel_metrics,
     ));
@@ -665,7 +663,6 @@ async fn test_request_vote_missing_batches() {
         tx_parents,
         rx_consensus_round_updates,
         rx_synchronizer_network,
-        None,
         metrics.clone(),
         &primary_channel_metrics,
     ));
@@ -815,7 +812,6 @@ async fn test_request_vote_already_voted() {
         tx_parents,
         rx_consensus_round_updates,
         rx_synchronizer_network,
-        None,
         metrics.clone(),
         &primary_channel_metrics,
     ));
@@ -1008,7 +1004,6 @@ async fn test_fetch_certificates_handler() {
         tx_parents,
         rx_consensus_round_updates.clone(),
         rx_synchronizer_network,
-        None,
         metrics.clone(),
         &primary_channel_metrics,
     ));
@@ -1182,7 +1177,6 @@ async fn test_process_payload_availability_success() {
         tx_parents,
         rx_consensus_round_updates,
         rx_synchronizer_network,
-        None,
         metrics.clone(),
         &primary_channel_metrics,
     ));
@@ -1348,7 +1342,6 @@ async fn test_process_payload_availability_when_failures() {
         tx_parents,
         rx_consensus_round_updates,
         rx_synchronizer_network,
-        None,
         metrics.clone(),
         &primary_channel_metrics,
     ));
@@ -1461,7 +1454,6 @@ async fn test_request_vote_created_at_in_future() {
         tx_parents,
         rx_consensus_round_updates,
         rx_synchronizer_network,
-        None,
         metrics.clone(),
         &primary_channel_metrics,
     ));

@@ -61,7 +61,7 @@ pub trait Cache {
         &self,
         digests: Vec<CertificateDigest>,
     ) -> Vec<(CertificateDigest, Option<Certificate>)>;
-    fn contains(&self, digest: &CertificateDigest) -> bool;
+
     fn remove(&self, digest: &CertificateDigest);
     fn remove_all(&self, digests: Vec<CertificateDigest>);
 }
@@ -136,15 +136,6 @@ impl Cache for CertificateStoreCache {
             .collect()
     }
 
-    /// Checks whether the value exists in the LRU cache. The method does not update the LRU record, thus
-    /// it will not count as a "last access" for the provided digest.
-    fn contains(&self, digest: &CertificateDigest) -> bool {
-        let guard = self.cache.lock();
-        guard
-            .contains(digest)
-            .tap(|result| self.report_result(*result))
-    }
-
     fn remove(&self, digest: &CertificateDigest) {
         let mut guard = self.cache.lock();
         let _ = guard.pop(digest);
@@ -180,10 +171,6 @@ impl Cache for NoCache {
         digests: Vec<CertificateDigest>,
     ) -> Vec<(CertificateDigest, Option<Certificate>)> {
         digests.into_iter().map(|digest| (digest, None)).collect()
-    }
-
-    fn contains(&self, _digest: &CertificateDigest) -> bool {
-        false
     }
 
     fn remove(&self, _digest: &CertificateDigest) {
@@ -357,12 +344,17 @@ impl<T: Cache> CertificateStore<T> {
 
     /// Retrieves a certificate from the store. If not found
     /// then None is returned as result.
-    pub fn contains(&self, id: &CertificateDigest) -> StoreResult<bool> {
-        if self.cache.contains(id) {
-            return Ok(true);
-        }
+    pub fn contains(&self, digest: &CertificateDigest) -> StoreResult<bool> {
+        self.certificates_by_id.contains_key(digest)
+    }
 
-        self.certificates_by_id.contains_key(id)
+    /// Retrieves a certificate from the store. If not found
+    /// then None is returned as result.
+    pub fn multi_contains<'a>(
+        &self,
+        digests: impl Iterator<Item = &'a CertificateDigest>,
+    ) -> StoreResult<Vec<bool>> {
+        self.certificates_by_id.multi_contains_keys(digests)
     }
 
     /// Retrieves multiple certificates by their provided ids. The results
