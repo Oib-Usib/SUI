@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686081887283,
+  "lastUpdate": 1686088132553,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11591,6 +11591,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 257091,
             "range": "± 5250",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d41072797247850771ed17d01ff1a300c986fc0d",
+          "message": "[easy] Flush write buffer when writing manifest before computing checksum (#12294)\n\n## Description \r\n\r\nWithout manually flushing the buffer, we may not be guaranteed to read\r\nthe right data. Also, fix the manifest read/write api and make it\r\nsimpler\r\n## Test Plan \r\n\r\nAdded unit test",
+          "timestamp": "2023-06-06T14:36:35-07:00",
+          "tree_id": "c2d3b9f3b8de0d0b9300b53227fdb54cd558834e",
+          "url": "https://github.com/MystenLabs/sui/commit/d41072797247850771ed17d01ff1a300c986fc0d"
+        },
+        "date": 1686088110973,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 111523102,
+            "range": "± 2790487",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 255829,
+            "range": "± 26418",
             "unit": "ns/iter"
           }
         ]
