@@ -559,6 +559,25 @@
 <a href="#559" id="559">559</a>
 <a href="#560" id="560">560</a>
 <a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -580,7 +599,7 @@
     CoinReadApiClient, IndexerApiClient, MoveUtilsClient, ReadApiClient, WriteApiClient,
 };
 <span class="kw">use </span>sui_json_rpc_types::{
-    Balance, Checkpoint, CheckpointId, Coin, CoinPage, DelegatedStake,
+    Balance, Checkpoint, CheckpointId, Coin, CoinPage, DelegatedStake, DevInspectResults,
     DryRunTransactionBlockResponse, DynamicFieldPage, EventFilter, EventPage, ObjectsPage,
     ProtocolConfigResponse, SuiCoinMetadata, SuiCommittee, SuiEvent, SuiGetPastObjectRequest,
     SuiMoveNormalizedModule, SuiObjectDataOptions, SuiObjectResponse, SuiObjectResponseQuery,
@@ -595,7 +614,7 @@
 <span class="kw">use </span>sui_types::quorum_driver_types::ExecuteTransactionRequestType;
 <span class="kw">use </span>sui_types::sui_serde::BigInt;
 <span class="kw">use </span>sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
-<span class="kw">use </span>sui_types::transaction::{TransactionData, VerifiedTransaction};
+<span class="kw">use </span>sui_types::transaction::{TransactionData, TransactionKind, VerifiedTransaction};
 
 <span class="kw">const </span>WAIT_FOR_LOCAL_EXECUTION_RETRY_COUNT: u8 = <span class="number">3</span>;
 
@@ -820,6 +839,25 @@
             </span>.api
             .http
             .dry_run_transaction_block(Base64::from_bytes(<span class="kw-2">&amp;</span>bcs::to_bytes(<span class="kw-2">&amp;</span>tx)<span class="question-mark">?</span>))
+            .<span class="kw">await</span><span class="question-mark">?</span>)
+    }
+
+    <span class="kw">pub async fn </span>dev_inspect_transaction_block(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        sender_address: SuiAddress,
+        tx: TransactionKind,
+        gas_price: <span class="prelude-ty">Option</span>&lt;BigInt&lt;u64&gt;&gt;,
+        epoch: <span class="prelude-ty">Option</span>&lt;BigInt&lt;u64&gt;&gt;,
+    ) -&gt; SuiRpcResult&lt;DevInspectResults&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.api
+            .http
+            .dev_inspect_transaction_block(
+                sender_address,
+                Base64::from_bytes(<span class="kw-2">&amp;</span>bcs::to_bytes(<span class="kw-2">&amp;</span>tx)<span class="question-mark">?</span>),
+                gas_price,
+                epoch,
+            )
             .<span class="kw">await</span><span class="question-mark">?</span>)
     }
 
