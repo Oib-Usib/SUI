@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686110569636,
+  "lastUpdate": 1686119742006,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11699,6 +11699,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 322687,
             "range": "± 58139",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "996c583935d0b440e8cc1909bbaebaf32a833dbf",
+          "message": "Add metric for command per sec (#10559)\n\n## Description \r\n\r\nAs title says",
+          "timestamp": "2023-06-06T23:24:24-07:00",
+          "tree_id": "87a53cb22682b2db8516d21202771920647f452d",
+          "url": "https://github.com/MystenLabs/sui/commit/996c583935d0b440e8cc1909bbaebaf32a833dbf"
+        },
+        "date": 1686119719689,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 154010624,
+            "range": "± 7069229",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 378865,
+            "range": "± 44611",
             "unit": "ns/iter"
           }
         ]
