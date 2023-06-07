@@ -146,6 +146,11 @@
 <a href="#146" id="146">146</a>
 <a href="#147" id="147">147</a>
 <a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -184,6 +189,7 @@
                 adversarial_cfg,
                 batch_payment_size,
                 shared_counter_hotness_factor,
+                shared_counter_max_tip,
                 ..
             } =&gt; {
                 <span class="self">Self</span>::build_workloads(
@@ -197,6 +203,7 @@
                     AdversarialPayloadCfg::from_str(<span class="kw-2">&amp;</span>adversarial_cfg).unwrap(),
                     batch_payment_size,
                     shared_counter_hotness_factor,
+                    shared_counter_max_tip,
                     target_qps,
                     in_flight_ratio,
                     bank,
@@ -219,6 +226,7 @@
         adversarial_cfg: AdversarialPayloadCfg,
         batch_payment_size: u32,
         shared_counter_hotness_factor: u32,
+        shared_counter_max_tip: u64,
         target_qps: u64,
         in_flight_ratio: u64,
         <span class="kw-2">mut </span>bank: BenchmarkBank,
@@ -230,6 +238,7 @@
             + delegation_weight
             + batch_payment_weight
             + adversarial_weight;
+        <span class="kw">let </span>reference_gas_price = system_state_observer.state.borrow().reference_gas_price;
         <span class="kw">let </span><span class="kw-2">mut </span>workload_builders = <span class="macro">vec!</span>[];
         <span class="kw">let </span>shared_workload = SharedCounterWorkloadBuilder::from(
             shared_counter_weight <span class="kw">as </span>f32 / total_weight <span class="kw">as </span>f32,
@@ -237,6 +246,8 @@
             num_workers,
             in_flight_ratio,
             shared_counter_hotness_factor,
+            shared_counter_max_tip,
+            reference_gas_price,
         );
         workload_builders.push(shared_workload);
         <span class="kw">let </span>transfer_workload = TransferObjectWorkloadBuilder::from(
@@ -275,7 +286,6 @@
             .flatten()
             .map(|x| (x.workload_params, x.workload_builder))
             .unzip();
-        <span class="kw">let </span>reference_gas_price = system_state_observer.state.borrow().reference_gas_price;
         <span class="kw">let </span><span class="kw-2">mut </span>workloads = bank
             .generate(workload_builders, reference_gas_price, chunk_size)
             .<span class="kw">await</span><span class="question-mark">?</span>;

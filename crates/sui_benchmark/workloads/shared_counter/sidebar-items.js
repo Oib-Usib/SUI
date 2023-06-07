@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["SharedCounterTestPayload","SharedCounterWorkload","SharedCounterWorkloadBuilder"]};
+window.SIDEBAR_ITEMS = {"constant":["MAX_GAS_IN_UNIT"],"struct":["SharedCounterTestPayload","SharedCounterWorkload","SharedCounterWorkloadBuilder"]};

@@ -183,6 +183,10 @@
 <a href="#183" id="183">183</a>
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -195,7 +199,7 @@
 <span class="attr">#[derive(Parser)]
 #[clap(name = <span class="string">&quot;Stress Testing Framework&quot;</span>)]
 </span><span class="kw">pub struct </span>Opts {
-    <span class="doccomment">/// Si&amp;ze of the Sui committee.
+    <span class="doccomment">/// Size of the Sui committee.
     </span><span class="attr">#[clap(long, default_value = <span class="string">&quot;4&quot;</span>, global = <span class="bool-val">true</span>)]
     </span><span class="kw">pub </span>committee_size: u64,
     <span class="doccomment">/// Num of accounts to use for transfer objects
@@ -346,6 +350,10 @@
         // total_shared_counters = max(1, qps * (1.0 - hotness/100.0))
         </span><span class="attr">#[clap(long, default_value = <span class="string">&quot;50&quot;</span>)]
         </span>shared_counter_hotness_factor: u32,
+        <span class="comment">// Maximum gas price increment over the RGP for shared counter transactions.
+        // The actual increment for each transaction is chosen at random a value between 0 and this value.
+        </span><span class="attr">#[clap(long, default_value = <span class="string">&quot;0&quot;</span>)]
+        </span>shared_counter_max_tip: u64,
         <span class="comment">// batch size use for batch payment workload
         </span><span class="attr">#[clap(long, default_value = <span class="string">&quot;15&quot;</span>)]
         </span>batch_payment_size: u32,
