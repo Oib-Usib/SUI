@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686099945974,
+  "lastUpdate": 1686110569636,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11663,6 +11663,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 302957,
             "range": "± 4478",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7aa4619f8c112a0ffe72559818798d7716b4a97a",
+          "message": "Authority Aggregator exits early when there are too many conflicting txes (#12358)\n\n## Description \r\n\r\nCurrently, if a tx has a lot of conflicts, it's likely that we don't\r\nexit until we talk to every validator, which isn't effective, most times\r\nthan not. This PR adds an early exit point, when the stake of most\r\nstaked tx + retryable stake is less than the quorum stake, we know for\r\nsure this object is equivocated. One example it tackles with is, when\r\none obj has two txes, each with f+1 stake.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nAuthority Aggregator exits early when there are too many conflicting\r\ntxes",
+          "timestamp": "2023-06-07T03:51:08Z",
+          "tree_id": "de12ea79aeb3095a86b30c90d815f4097ceb0399",
+          "url": "https://github.com/MystenLabs/sui/commit/7aa4619f8c112a0ffe72559818798d7716b4a97a"
+        },
+        "date": 1686110547641,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 156803370,
+            "range": "± 6146199",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 322687,
+            "range": "± 58139",
             "unit": "ns/iter"
           }
         ]
