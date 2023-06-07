@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority_aggregator.rs`."><title>authority_aggregator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (e6d4725c7 2023-06-05)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sui-core/src/authority_aggregator.rs`."><title>authority_aggregator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="sui_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (b2b34bd83 2023-06-06)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-48600a9606eff342.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../sui_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1912,6 +1912,20 @@
 <a href="#1912" id="1912">1912</a>
 <a href="#1913" id="1913">1913</a>
 <a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
+<a href="#1919" id="1919">1919</a>
+<a href="#1920" id="1920">1920</a>
+<a href="#1921" id="1921">1921</a>
+<a href="#1922" id="1922">1922</a>
+<a href="#1923" id="1923">1923</a>
+<a href="#1924" id="1924">1924</a>
+<a href="#1925" id="1925">1925</a>
+<a href="#1926" id="1926">1926</a>
+<a href="#1927" id="1927">1927</a>
+<a href="#1928" id="1928">1928</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2021, Facebook, Inc. and its affiliates
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -2195,7 +2209,8 @@
         .collect()
 }
 
-<span class="kw">struct </span>ProcessTransactionState {
+<span class="attr">#[derive(Debug)]
+</span><span class="kw">struct </span>ProcessTransactionState {
     <span class="comment">// The list of signatures gathered at any point
     </span>tx_signatures: StakeAggregator&lt;AuthoritySignInfo, <span class="bool-val">true</span>&gt;,
     effects_map: MultiStakeAggregator&lt;TransactionEffectsDigest, TransactionEffects, <span class="bool-val">true</span>&gt;,
@@ -2214,9 +2229,13 @@
     // 1) &gt;= 2f+1 signatures
     // 2) &gt;= f+1 non-retryable errors
     // 3) &gt;= 2f+1 object not found errors
-    // Note: For conflicting transactions we wait till we receive all responses to make
-    // a determination on whether to retry or not.
+    // Note: For conflicting transactions we collect as many responses as possible
+    // before we know for sure no tx can reach quorum. Namely, stake of the most
+    // promising tx + retryable stake &lt; 2f+1.
     </span>retryable: bool,
+
+    conflicting_tx_total_stake: StakeUnit,
+    most_staked_conflicting_tx_stake: StakeUnit,
 }
 
 <span class="kw">impl </span>ProcessTransactionState {
@@ -2234,12 +2253,31 @@
             .map(|(digest, (validators, stake))| (<span class="kw-2">*</span>digest, validators, <span class="kw-2">*</span>stake))
     }
 
-    <span class="kw">pub fn </span>conflicting_tx_digests_total_stake(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; StakeUnit {
-        <span class="self">self</span>.conflicting_tx_digests
-            .iter()
-            .map(|(<span class="kw">_</span>, (<span class="kw">_</span>, stake))| <span class="kw-2">*</span>stake)
-            .sum()
-    }
+    <span class="kw">pub fn </span>record_conflicting_transaction_if_any(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        validator_name: AuthorityName,
+        weight: StakeUnit,
+        err: <span class="kw-2">&amp;</span>SuiError,
+    ) -&gt; bool {
+        <span class="kw">if let </span>SuiError::ObjectLockConflict {
+            obj_ref,
+            pending_transaction: transaction,
+        } = err
+        {
+            <span class="kw">let </span>(lock_records, total_stake) = <span class="self">self
+                </span>.conflicting_tx_digests
+                .entry(<span class="kw-2">*</span>transaction)
+                .or_insert((Vec::new(), <span class="number">0</span>));
+            lock_records.push((validator_name, <span class="kw-2">*</span>obj_ref));
+            <span class="kw-2">*</span>total_stake += weight;
+            <span class="self">self</span>.conflicting_tx_total_stake += weight;
+            <span class="kw">if </span><span class="kw-2">*</span>total_stake &gt; <span class="self">self</span>.most_staked_conflicting_tx_stake {
+                <span class="self">self</span>.most_staked_conflicting_tx_stake = <span class="kw-2">*</span>total_stake;
+            }
+            <span class="kw">return </span><span class="bool-val">true</span>;
+        }
+        <span class="bool-val">false
+    </span>}
 }
 
 <span class="kw">struct </span>ProcessCertificateState {
@@ -3025,6 +3063,8 @@
             overloaded_stake: <span class="number">0</span>,
             retryable: <span class="bool-val">true</span>,
             conflicting_tx_digests: Default::default(),
+            conflicting_tx_total_stake: <span class="number">0</span>,
+            most_staked_conflicting_tx_stake: <span class="number">0</span>,
         };
 
         <span class="kw">let </span>transaction_ref = <span class="kw-2">&amp;</span>transaction;
@@ -3051,19 +3091,9 @@
                         ) {
                             <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(result)) =&gt; {
                                 <span class="self">self</span>.record_process_transaction_metrics(tx_digest, <span class="kw-2">&amp;</span>state);
-                                ReduceOutput::Success(result)
+                                <span class="kw">return </span>ReduceOutput::Success(result);
                             }
-                            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) =&gt; {
-                                <span class="comment">// When the result is none, it is possible that the
-                                // non_retryable_stake had been incremented due to
-                                // failed individual signature verification.
-                                </span><span class="kw">if </span>state.non_retryable_stake &gt;= validity_threshold {
-                                    state.retryable = <span class="bool-val">false</span>;
-                                    ReduceOutput::Failed(state)
-                                } <span class="kw">else </span>{
-                                    ReduceOutput::Continue(state)
-                                }
-                            },
+                            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) =&gt; {},
                             <span class="prelude-val">Err</span>(err) =&gt; {
                                 <span class="kw">let </span>concise_name = name.concise();
                                 <span class="macro">debug!</span>(<span class="question-mark">?</span>tx_digest, name=<span class="question-mark">?</span>concise_name, weight, <span class="string">&quot;Error processing transaction from validator: {:?}&quot;</span>, err);
@@ -3091,23 +3121,42 @@
                                     // and notify the user.
                                     </span>state.overloaded_stake += weight;
                                 }
-                                <span class="kw">else if </span>!retryable &amp;&amp; !<span class="self">self</span>.record_conflicting_transaction_if_any(<span class="kw-2">&amp;mut </span>state, name, weight, <span class="kw-2">&amp;</span>err) {
-                                    <span class="comment">// Error is neither retryable or a potentially retryable conflicting transaction.
+                                <span class="kw">else if </span>!retryable &amp;&amp; !state.record_conflicting_transaction_if_any(name, weight, <span class="kw-2">&amp;</span>err) {
+                                    <span class="comment">// We don&#39;t count conflicting transactions as non-retryable errors here
+                                    // because its handling is a bit different.
                                     </span>state.non_retryable_stake += weight;
                                 }
                                 state.errors.push((err, <span class="macro">vec!</span>[name], weight));
 
-                                <span class="kw">if </span>state.non_retryable_stake &gt;= validity_threshold
-                                    || state.object_or_package_not_found_stake &gt;= quorum_threshold
-                                    || state.overloaded_stake &gt;= quorum_threshold {
-                                    <span class="comment">// We have hit an exit condition, f+1 non-retryable err or 2f+1 object not found or overload,
-                                    // so we no longer consider the transaction state as retryable.
-                                    </span>state.retryable = <span class="bool-val">false</span>;
-                                    ReduceOutput::Failed(state)
-                                } <span class="kw">else </span>{
-                                    ReduceOutput::Continue(state)
-                                }
                             }
+                        };
+
+                        <span class="kw">let </span>retryable_stake = <span class="self">self</span>.get_retryable_stake(<span class="kw-2">&amp;</span>state);
+                        <span class="kw">let </span>good_stake = std::cmp::max(state.tx_signatures.total_votes(), state.effects_map.total_votes());
+                        <span class="kw">let </span>stake_of_most_promising_tx = std::cmp::max(good_stake, state.most_staked_conflicting_tx_stake);
+                        <span class="kw">if </span>stake_of_most_promising_tx + retryable_stake &lt; quorum_threshold {
+                            <span class="macro">debug!</span>(
+                                tx_digest = <span class="question-mark">?</span>tx_digest,
+                                good_stake,
+                                most_staked_conflicting_tx_stake =<span class="question-mark">? </span>state.most_staked_conflicting_tx_stake,
+                                retryable_stake,
+                                <span class="string">&quot;No chance for any tx to get quorum, exiting. Confliting_txes: {:?}&quot;</span>,
+                                state.conflicting_tx_digests
+                            );
+                            <span class="comment">// If there is no chance for any tx to get quorum, exit.
+                            </span>state.retryable = <span class="bool-val">false</span>;
+                            <span class="kw">return </span>ReduceOutput::Failed(state);
+                        }
+
+                        <span class="kw">if </span>state.non_retryable_stake &gt;= validity_threshold
+                            || state.object_or_package_not_found_stake &gt;= quorum_threshold
+                            || state.overloaded_stake &gt;= quorum_threshold {
+                            <span class="comment">// We have hit an exit condition, f+1 non-retryable err or 2f+1 object not found or overload,
+                            // so we no longer consider the transaction state as retryable.
+                            </span>state.retryable = <span class="bool-val">false</span>;
+                            ReduceOutput::Failed(state)
+                        } <span class="kw">else </span>{
+                            ReduceOutput::Continue(state)
                         }
                     })
                 },
@@ -3154,13 +3203,9 @@
             };
         }
 
-        <span class="kw">if </span>!state.retryable {
-            <span class="kw">return </span>AggregatorProcessTransactionError::FatalTransaction {
-                errors: group_errors(state.errors),
-            };
-        }
-
-        <span class="kw">if let </span><span class="prelude-val">Some</span>((most_staked_conflicting_tx, validators, most_staked_conflicting_tx_stake)) =
+        <span class="comment">// Handle possible conflicts first as `FatalConflictingTransaction` is
+        // more meaningful than `FatalTransaction`.
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>((most_staked_conflicting_tx, validators, most_staked_conflicting_tx_stake)) =
             state.conflicting_tx_digest_with_most_stake()
         {
             <span class="kw">let </span>good_stake = state.tx_signatures.total_votes();
@@ -3195,15 +3240,21 @@
                 .total_client_double_spend_attempts_detected
                 .inc();
 
-            AggregatorProcessTransactionError::FatalConflictingTransaction {
+            <span class="kw">return </span>AggregatorProcessTransactionError::FatalConflictingTransaction {
                 errors: group_errors(state.errors),
                 conflicting_tx_digests: state.conflicting_tx_digests,
-            }
-        } <span class="kw">else </span>{
-            <span class="comment">// No conflicting transaction, the system is not overloaded and transaction state is still retryable.
-            </span>AggregatorProcessTransactionError::RetryableTransaction {
+            };
+        }
+
+        <span class="kw">if </span>!state.retryable {
+            <span class="kw">return </span>AggregatorProcessTransactionError::FatalTransaction {
                 errors: group_errors(state.errors),
-            }
+            };
+        }
+
+        <span class="comment">// No conflicting transaction, the system is not overloaded and transaction state is still retryable.
+        </span>AggregatorProcessTransactionError::RetryableTransaction {
+            errors: group_errors(state.errors),
         }
     }
 
@@ -3257,29 +3308,6 @@
             <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
         }
     }
-
-    <span class="kw">fn </span>record_conflicting_transaction_if_any(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        state: <span class="kw-2">&amp;mut </span>ProcessTransactionState,
-        name: AuthorityName,
-        weight: StakeUnit,
-        err: <span class="kw-2">&amp;</span>SuiError,
-    ) -&gt; bool {
-        <span class="kw">if let </span>SuiError::ObjectLockConflict {
-            obj_ref,
-            pending_transaction,
-        } = err
-        {
-            <span class="kw">let </span>(lock_records, total_stake) = state
-                .conflicting_tx_digests
-                .entry(<span class="kw-2">*</span>pending_transaction)
-                .or_insert((Vec::new(), <span class="number">0</span>));
-            lock_records.push((name, <span class="kw-2">*</span>obj_ref));
-            <span class="kw-2">*</span>total_stake += weight;
-            <span class="kw">return </span><span class="bool-val">true</span>;
-        }
-        <span class="bool-val">false
-    </span>}
 
     <span class="kw">fn </span>handle_transaction_response_with_signed(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -3421,7 +3449,7 @@
 
     <span class="kw">fn </span>get_retryable_stake(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;</span>ProcessTransactionState) -&gt; StakeUnit {
         <span class="self">self</span>.committee.total_votes()
-            - state.conflicting_tx_digests_total_stake()
+            - state.conflicting_tx_total_stake
             - state.non_retryable_stake
             - state.effects_map.total_votes()
             - state.tx_signatures.total_votes()
