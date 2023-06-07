@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686175981033,
+  "lastUpdate": 1686182179696,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11879,6 +11879,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 369980,
             "range": "± 64434",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "tmn@mystenlabs.com",
+            "name": "Todd Nowacki",
+            "username": "tnowacki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "80e1bbd51dfad2f8437ce2506488b31bc5284f5a",
+          "message": "[move-compiler] Added warning suppression (#12084)\n\n## Description \r\n\r\n- Added warning suppression via an `#[allow(..)]` attribute\r\n- Warnings now tell you how to suppress them \r\n- Special ones include `allow(unused)` and `allow(all)` to suppress\r\nunused item warnings or any warning respectively\r\n  - Thoughts on surfacing these in the help message?\r\n\r\n## Test Plan \r\n\r\n- Added tests\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-07T16:45:17-07:00",
+          "tree_id": "9e4418f462308d06b74d8f2217c4c1d53c37e7cf",
+          "url": "https://github.com/MystenLabs/sui/commit/80e1bbd51dfad2f8437ce2506488b31bc5284f5a"
+        },
+        "date": 1686182158685,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 161176188,
+            "range": "± 4469868",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314550,
+            "range": "± 52863",
             "unit": "ns/iter"
           }
         ]
