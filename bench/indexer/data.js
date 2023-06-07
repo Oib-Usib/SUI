@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686162277675,
+  "lastUpdate": 1686169413494,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11771,6 +11771,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 256758,
             "range": "± 11931",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "93547199+oxade@users.noreply.github.com",
+            "name": "oxade",
+            "username": "oxade"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f3e2d7c86e39eae70e7c3c1c120818a3d252a1bc",
+          "message": "[move: hardening] enforce enum order on variants (#12157)\n\n## Description \r\n\r\nWhen introducing u16, u32, u256 a while back, I noticed it was possible\r\nto break multiple dependent systems if some enums were modified out of\r\norder.\r\nSo I put a comment to warn folks\r\n```\r\n    // NOTE: Added in bytecode version v6, do not reorder!\r\n```\r\nThis PR now adds a test which ensures that new enum variants are\r\nappended in a backward-compat manner\r\nSample output:\r\n```\r\npanicked at 'Enum variant Address has been swapped with AddressNew at position 3. Not allowed: enum must be backward compatible.'\r\n```\r\nUsage:\r\n`#[test_variant_order(path/to/snapshot/file.yaml)]`\r\n\r\n\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-07T16:09:19-04:00",
+          "tree_id": "7056d4e7d594cb6b5e968f4dd0fb0d8a0c23aad5",
+          "url": "https://github.com/MystenLabs/sui/commit/f3e2d7c86e39eae70e7c3c1c120818a3d252a1bc"
+        },
+        "date": 1686169390773,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 164559607,
+            "range": "± 5067478",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 337808,
+            "range": "± 35347",
             "unit": "ns/iter"
           }
         ]
