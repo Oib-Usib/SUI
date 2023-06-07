@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686119742006,
+  "lastUpdate": 1686162277675,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11735,6 +11735,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 378865,
             "range": "± 44611",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": false,
+          "id": "36ae45e3dd1a29fb1bc0a854922148c6dacbc42c",
+          "message": "[benchmark] add option to use different gas price in shared counter txns (#12195)\n\n## Description \r\n\r\nThis PR adds an option to `sui-benchmark` allowing us to pass in a max\r\ntip amount for shared counter workloads. Each shared counter transaction\r\npicks a random gas price increment between 0 and this max amount, and\r\nuse RGP + the picked increment as the gas price. This will be useful for\r\nexperimenting later. Following PRs will add metrics exposing the rank\r\ncorrelation between gas price and txn processing order. We may also\r\nintroduce separate workloads with specific gas price behavior later.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-07T17:24:40Z",
+          "tree_id": "941ea205d87cd9b5c2deb8c41c9bbd460788c198",
+          "url": "https://github.com/MystenLabs/sui/commit/36ae45e3dd1a29fb1bc0a854922148c6dacbc42c"
+        },
+        "date": 1686162249886,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109058833,
+            "range": "± 8725262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 256758,
+            "range": "± 11931",
             "unit": "ns/iter"
           }
         ]
