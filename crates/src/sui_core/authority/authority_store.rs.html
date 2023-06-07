@@ -1985,8 +1985,6 @@
 <a href="#1985" id="1985">1985</a>
 <a href="#1986" id="1986">1986</a>
 <a href="#1987" id="1987">1987</a>
-<a href="#1988" id="1988">1988</a>
-<a href="#1989" id="1989">1989</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2303,9 +2301,7 @@
         <span class="kw">let </span>data = <span class="self">self
             </span>.perpetual_tables
             .events
-            .unbounded_iter()
-            .skip_to(<span class="kw-2">&amp;</span>(<span class="kw-2">*</span>event_digest, <span class="number">0</span>))<span class="question-mark">?
-            </span>.take_while(|((digest, <span class="kw">_</span>), <span class="kw">_</span>)| digest == event_digest)
+            .range_iter((<span class="kw-2">*</span>event_digest, <span class="number">0</span>)..=(<span class="kw-2">*</span>event_digest, usize::MAX))
             .map(|(<span class="kw">_</span>, e)| e)
             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
         <span class="prelude-val">Ok</span>(data.is_empty().not().then_some(TransactionEvents { data }))
