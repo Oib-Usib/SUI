@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686088132553,
+  "lastUpdate": 1686099945974,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11627,6 +11627,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 255829,
             "range": "± 26418",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "rvantonder@gmail.com",
+            "name": "Rijnard van Tonder",
+            "username": "rvantonder"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7bdbe3934f72354ad90746dcab75f17dc4d38bdf",
+          "message": "docs: fix link to event filter anchor (#12357)\n\n## Description \r\n\r\nSee title.\r\n\r\nSide question: is there a command to generate `openrpc.json` from the\r\n`indexer.rs` file, because it looks like `openrpc.json` descriptions are\r\ngenerated from there? I didn't discover one and just made the manual\r\ncorresponding changes.\r\n\r\n## Test Plan \r\n\r\nJust a doc link fix (manually checked the correct link works at\r\nhttps://docs.sui.io/build/event_api#event-filters)\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nDoc fix for broken link.",
+          "timestamp": "2023-06-07T00:56:33Z",
+          "tree_id": "1e272276cb71bf9f6ca73ce10d36738385d04265",
+          "url": "https://github.com/MystenLabs/sui/commit/7bdbe3934f72354ad90746dcab75f17dc4d38bdf"
+        },
+        "date": 1686099925899,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109692758,
+            "range": "± 9607133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 302957,
+            "range": "± 4478",
             "unit": "ns/iter"
           }
         ]
