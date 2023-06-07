@@ -225,8 +225,11 @@ impl Env {
                 .await,
             )]
         };
+        // We should use the same proxy because when it comes to the fullnodes
+        // we want to make sure the latest object versions are available for future
+        // stress clients that might be stood up.
         let proxy = proxies
-            .choose(&mut rand::thread_rng())
+            .get(0)
             .context("Failed to get proxy for reconfiguration")?;
         info!(
             "Reconfiguration - Reconfiguration to epoch {} is done",
