@@ -175,7 +175,7 @@
     </span><span class="attr">#[method(name = <span class="string">&quot;queryEvents&quot;</span>)]
     </span><span class="kw">async fn </span>query_events(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="doccomment">/// the event query criteria.
+        <span class="doccomment">/// The event query criteria. See [Event filter](https://docs.sui.io/build/event_api#event-filters) documentation for examples.
         </span>query: EventFilter,
         <span class="doccomment">/// optional paging cursor
         </span>cursor: <span class="prelude-ty">Option</span>&lt;EventID&gt;,
@@ -189,7 +189,7 @@
     </span><span class="attr">#[subscription(name = <span class="string">&quot;subscribeEvent&quot;</span>, item = SuiEvent)]
     </span><span class="kw">fn </span>subscribe_event(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="doccomment">/// the filter criteria of the event stream, see the [Sui docs](https://docs.sui.io/build/pubsub#event-filters) for detailed examples.
+        <span class="doccomment">/// The filter criteria of the event stream. See [Event filter](https://docs.sui.io/build/event_api#event-filters) documentation for examples.
         </span>filter: EventFilter,
     );
 
