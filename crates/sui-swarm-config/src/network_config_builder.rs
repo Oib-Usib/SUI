@@ -12,7 +12,7 @@ use sui_config::genesis::{TokenAllocation, TokenDistributionScheduleBuilder};
 use sui_protocol_config::SupportedProtocolVersions;
 use sui_types::base_types::{AuthorityName, SuiAddress};
 use sui_types::committee::{Committee, ProtocolVersion};
-use sui_types::crypto::{AccountKeyPair, KeypairTraits, PublicKey};
+use sui_types::crypto::{get_key_pair_from_rng, AccountKeyPair, KeypairTraits, PublicKey};
 use sui_types::object::Object;
 
 pub enum CommitteeConfig {
@@ -51,6 +51,7 @@ pub struct ConfigBuilder<R = OsRng> {
     reference_gas_price: Option<u64>,
     additional_objects: Vec<Object>,
     num_unpruned_validators: Option<usize>,
+    with_extra_faucet_account: bool,
 }
 
 impl ConfigBuilder {
@@ -64,6 +65,7 @@ impl ConfigBuilder {
             reference_gas_price: None,
             additional_objects: vec![],
             num_unpruned_validators: None,
+            with_extra_faucet_account: false,
         }
     }
 
@@ -151,6 +153,11 @@ impl<R> ConfigBuilder<R> {
         self
     }
 
+    pub fn with_extra_faucet_account(mut self) -> Self {
+        self.with_extra_faucet_account = true;
+        self
+    }
+
     pub fn rng<N: rand::RngCore + rand::CryptoRng>(self, rng: N) -> ConfigBuilder<N> {
         ConfigBuilder {
             rng: Some(rng),
@@ -161,6 +168,7 @@ impl<R> ConfigBuilder<R> {
             reference_gas_price: self.reference_gas_price,
             additional_objects: self.additional_objects,
             num_unpruned_validators: self.num_unpruned_validators,
+            with_extra_faucet_account: self.with_extra_faucet_account,
         }
     }
 
@@ -222,13 +230,28 @@ impl<R: rand::RngCore + rand::CryptoRng> ConfigBuilder<R> {
             .genesis_config
             .unwrap_or_else(GenesisConfig::for_local_testing);
 
-        let (account_keys, allocations) = genesis_config.generate_accounts(&mut rng).unwrap();
+        let (mut account_keys, allocations) = genesis_config.generate_accounts(&mut rng).unwrap();
 
         let token_distribution_schedule = {
             let mut builder = TokenDistributionScheduleBuilder::new();
             for allocation in allocations {
                 builder.add_allocation(allocation);
             }
+
+            // Build an extra faucet address with allocation for sui-test-validator
+            if self.with_extra_faucet_account {
+                let (address, keypair) = get_key_pair_from_rng(&mut rng);
+                // Prepend to account_keys because we read from index 0 sui-cluster
+                account_keys.insert(0, keypair);
+
+                let faucet_allocation = TokenAllocation {
+                    recipient_address: address,
+                    amount_mist: DEFAULT_GAS_AMOUNT,
+                    staked_with_validator: None,
+                };
+                builder.add_allocation(faucet_allocation);
+            }
+
             // Add allocations for each validator
             for validator in &validators {
                 let account_key: PublicKey = validator.account_key_pair.public();

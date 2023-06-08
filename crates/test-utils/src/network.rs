@@ -4,8 +4,10 @@
 use futures::future::join_all;
 use std::net::SocketAddr;
 use std::num::NonZeroUsize;
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use sui_swarm_config::network_config::NetworkConfig;
 
 use jsonrpsee::http_client::{HttpClient, HttpClientBuilder};
 use jsonrpsee::ws_client::WsClient;
@@ -434,6 +436,7 @@ impl Drop for RandomNodeRestarter {
 
 pub struct TestClusterBuilder {
     genesis_config: Option<GenesisConfig>,
+    network_config: Option<NetworkConfig>,
     additional_objects: Vec<Object>,
     num_validators: Option<usize>,
     fullnode_rpc_port: Option<u16>,
@@ -444,12 +447,14 @@ pub struct TestClusterBuilder {
     db_checkpoint_config_validators: DBCheckpointConfig,
     db_checkpoint_config_fullnodes: DBCheckpointConfig,
     num_unpruned_validators: Option<usize>,
+    config_dir: Option<PathBuf>,
 }
 
 impl TestClusterBuilder {
     pub fn new() -> Self {
         TestClusterBuilder {
             genesis_config: None,
+            network_config: None,
             additional_objects: vec![],
             fullnode_rpc_port: None,
             num_validators: None,
@@ -459,6 +464,7 @@ impl TestClusterBuilder {
             db_checkpoint_config_validators: DBCheckpointConfig::default(),
             db_checkpoint_config_fullnodes: DBCheckpointConfig::default(),
             num_unpruned_validators: None,
+            config_dir: None,
         }
     }
 
@@ -468,8 +474,14 @@ impl TestClusterBuilder {
     }
 
     pub fn set_genesis_config(mut self, genesis_config: GenesisConfig) -> Self {
-        assert!(self.genesis_config.is_none());
+        assert!(self.genesis_config.is_none() && self.network_config.is_none());
         self.genesis_config = Some(genesis_config);
+        self
+    }
+
+    pub fn set_network_config(mut self, network_config: NetworkConfig) -> Self {
+        assert!(self.genesis_config.is_none() && self.network_config.is_none());
+        self.network_config = Some(network_config);
         self
     }
 
@@ -576,6 +588,11 @@ impl TestClusterBuilder {
         self
     }
 
+    pub fn with_config_dir(mut self, config_dir: PathBuf) -> Self {
+        self.config_dir = Some(config_dir);
+        self
+    }
+
     pub async fn build(self) -> anyhow::Result<TestCluster> {
         let cluster = self.start_test_network_with_customized_ports().await?;
         Ok(cluster)
@@ -638,11 +655,20 @@ impl TestClusterBuilder {
         if let Some(genesis_config) = self.genesis_config.take() {
             builder = builder.with_genesis_config(genesis_config);
         }
+
+        if let Some(network_config) = self.network_config.take() {
+            builder = builder.with_network_config(network_config);
+        }
+
         if let Some(fullnode_rpc_port) = self.fullnode_rpc_port {
             builder = builder.with_fullnode_rpc_port(fullnode_rpc_port);
         }
         if let Some(num_unpruned_validators) = self.num_unpruned_validators {
             builder = builder.with_num_unpruned_validators(num_unpruned_validators);
+        }
+
+        if let Some(config_dir) = self.config_dir.take() {
+            builder = builder.dir(config_dir);
         }
 
         let mut swarm = builder.build();

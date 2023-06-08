@@ -420,11 +420,13 @@ async fn genesis(
         builder
             .with_genesis_config(genesis_conf)
             .with_validators(validators)
+            .with_extra_faucet_account()
             .build()
     } else {
         builder
             .committee_size(NonZeroUsize::new(DEFAULT_NUMBER_OF_AUTHORITIES).unwrap())
             .with_genesis_config(genesis_conf)
+            .with_extra_faucet_account()
             .build()
     };
 
