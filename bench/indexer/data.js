@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686248141119,
+  "lastUpdate": 1686256124465,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11987,6 +11987,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 281697,
             "range": "± 22354",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3dc281a1e53d85537eca55073d92d63dbf882272",
+          "message": "[transaction orchestrator] also subscribe to effects when waiting for a WIP transaction (#12372)\n\n## Description \r\n\r\nSome transaction timeout happens with a data race in this way (ordered\r\nby time):\r\n1. client sends Tx (1)\r\n2. Tx(1) is processed, quorum driver notifies transaction orchestrator\r\nthe tx finishes.\r\n3. transaction orchestrator gets the notification, working on finishing\r\nup (e.g. removing the tx from the write ahead log, local execution)\r\n4. client sends Tx(2) again, Tx(2) registers for notification, and see\r\nthe same tx is already WIP, so it awaits.\r\n5. transaction orchestrator cleans up write ahead log and finishes local\r\nexecution, responds to Tx(1)\r\n6. Tx(2) times out because no more notification is coming\r\n\r\nThis PR fixes it by also subscribing to effects when it awaits, such\r\nthat if the effects is available before the tickets, it means it misses\r\nthe notification, and will ask quorum driver to form a cert again.\r\n\r\nThis PR also removes `fn notify_read_executed_effects_digests` because\r\nit's not in use.\r\n\r\n## Test Plan \r\n\r\nThis change is a bit hard to test because of the nature of race\r\nconditions. But we make sure it does not break the existing tests.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nFixes a race condition that may very occasionally time out a transaction\r\nrequest when it's submitted multiple times. Removes unused function\r\n`notify_read_executed_effects_digests`.",
+          "timestamp": "2023-06-08T13:14:15-07:00",
+          "tree_id": "2d375419de3bcd6abe9175976f1c137bf55ac782",
+          "url": "https://github.com/MystenLabs/sui/commit/3dc281a1e53d85537eca55073d92d63dbf882272"
+        },
+        "date": 1686256102006,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145720486,
+            "range": "± 6712722",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314303,
+            "range": "± 10887",
             "unit": "ns/iter"
           }
         ]
