@@ -594,6 +594,34 @@
 <a href="#594" id="594">594</a>
 <a href="#595" id="595">595</a>
 <a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -602,13 +630,15 @@ Transaction Orchestrator is a Node component that utilizes Quorum Driver to
 submit transactions to validators for finality, and proactively executes
 finalized transactions locally, when possible.
 */
-</span><span class="kw">use </span><span class="kw">crate</span>::authority::AuthorityState;
+</span><span class="kw">use </span><span class="kw">crate</span>::authority::{AuthorityState, EffectsNotifyRead};
 <span class="kw">use </span><span class="kw">crate</span>::authority_aggregator::{AuthAggMetrics, AuthorityAggregator};
 <span class="kw">use </span><span class="kw">crate</span>::authority_client::{AuthorityAPI, NetworkAuthorityClient};
 <span class="kw">use </span><span class="kw">crate</span>::quorum_driver::reconfig_observer::{OnsiteReconfigObserver, ReconfigObserver};
 <span class="kw">use </span><span class="kw">crate</span>::quorum_driver::{QuorumDriverHandler, QuorumDriverHandlerBuilder, QuorumDriverMetrics};
 <span class="kw">use </span><span class="kw">crate</span>::safe_client::SafeClientMetricsBase;
-<span class="kw">use </span>mysten_common::sync::notify_read::{NotifyRead, Registration};
+<span class="kw">use </span>futures::future::{select, Either, Future};
+<span class="kw">use </span>futures::FutureExt;
+<span class="kw">use </span>mysten_common::sync::notify_read::NotifyRead;
 <span class="kw">use </span>mysten_metrics::histogram::{Histogram, HistogramVec};
 <span class="kw">use </span>mysten_metrics::spawn_monitored_task;
 <span class="kw">use </span>mysten_metrics::{TX_TYPE_SHARED_OBJ_TX, TX_TYPE_SINGLE_WRITER_TX};
@@ -798,8 +828,12 @@ finalized transactions locally, when possible.
         };
         drop(_txn_finality_timer);
         <span class="kw">match </span>result {
-            <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
-            <span class="prelude-val">Ok</span>(response) =&gt; {
+            <span class="prelude-val">Err</span>(err) =&gt; {
+                <span class="macro">warn!</span>(<span class="question-mark">?</span>tx_digest, <span class="string">&quot;QuorumDriverInternalError: {err:?}&quot;</span>);
+                <span class="prelude-val">Err</span>(QuorumDriverError::QuorumDriverInternalError(err))
+            }
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">Err</span>(err)) =&gt; <span class="prelude-val">Err</span>(err),
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">Ok</span>(response)) =&gt; {
                 good_response_metrics.inc();
                 <span class="kw">let </span>QuorumDriverResponse {
                     effects_cert,
@@ -842,11 +876,12 @@ finalized transactions locally, when possible.
         }
     }
 
-    <span class="doccomment">/// Submits the transaction for execution queue, returns a Future to be awaited
+    <span class="doccomment">/// Submits the transaction to Quorum Driver for execution.
+    /// Returns an awaitable Future.
     </span><span class="kw">async fn </span>submit(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         transaction: VerifiedTransaction,
-    ) -&gt; SuiResult&lt;Registration&lt;TransactionDigest, QuorumDriverResult&gt;&gt; {
+    ) -&gt; SuiResult&lt;<span class="kw">impl </span>Future&lt;Output = SuiResult&lt;QuorumDriverResult&gt;&gt; + <span class="lifetime">&#39;_</span>&gt; {
         <span class="kw">let </span>tx_digest = <span class="kw-2">*</span>transaction.digest();
         <span class="kw">let </span>ticket = <span class="self">self</span>.notifier.register_one(<span class="kw-2">&amp;</span>tx_digest);
         <span class="kw">if </span><span class="self">self
@@ -856,10 +891,31 @@ finalized transactions locally, when possible.
         </span>{
             <span class="macro">debug!</span>(<span class="question-mark">?</span>tx_digest, <span class="string">&quot;no pending request in flight, submitting.&quot;</span>);
             <span class="self">self</span>.quorum_driver()
-                .submit_transaction_no_ticket(transaction)
+                .submit_transaction_no_ticket(transaction.clone())
                 .<span class="kw">await</span><span class="question-mark">?</span>;
         }
-        <span class="prelude-val">Ok</span>(ticket)
+        <span class="comment">// It&#39;s possible that the transaction effects is already stored in DB at this point.
+        // So we also subscribe to that. If we hear from `effects_await` first, it means
+        // the ticket misses the previous notification, and we want to ask quorum driver
+        // to form a certificate for us again, to serve this request.
+        </span><span class="kw">let </span>effects_await = <span class="self">self
+            </span>.validator_state
+            .database
+            .notify_read_executed_effects(<span class="macro">vec!</span>[tx_digest]);
+        <span class="kw">let </span>qd = <span class="self">self</span>.clone_quorum_driver();
+        <span class="prelude-val">Ok</span>(<span class="kw">async move </span>{
+            <span class="kw">match </span>select(ticket, effects_await.boxed()).<span class="kw">await </span>{
+                Either::Left((quorum_driver_response, <span class="kw">_</span>)) =&gt; <span class="prelude-val">Ok</span>(quorum_driver_response),
+                Either::Right((<span class="kw">_</span>, unfinished_quorum_driver_task)) =&gt; {
+                    <span class="macro">debug!</span>(
+                        <span class="question-mark">?</span>tx_digest,
+                        <span class="string">&quot;Effects are available in DB, use quorum driver to get a certificate&quot;
+                    </span>);
+                    qd.submit_transaction_no_ticket(transaction).<span class="kw">await</span><span class="question-mark">?</span>;
+                    <span class="prelude-val">Ok</span>(unfinished_quorum_driver_task.<span class="kw">await</span>)
+                }
+            }
+        })
     }
 
     <span class="attr">#[instrument(name = <span class="string">&quot;tx_orchestrator_execute_finalized_tx_locally_with_timeout&quot;</span>, level = <span class="string">&quot;debug&quot;</span>, skip_all, fields(tx_digest = <span class="question-mark">?</span>transaction.digest()), err)]
