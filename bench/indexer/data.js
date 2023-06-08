@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686243767285,
+  "lastUpdate": 1686248141119,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -11951,6 +11951,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 385079,
             "range": "± 40955",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jonas-lj@users.noreply.github.com",
+            "name": "Jonas Lindstrøm",
+            "username": "jonas-lj"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "73b2a424efc0a0fd5e7286c5be5611cbfeb797f3",
+          "message": "Support for Secp256r1 in Typescript (#12250)\n\n## Description \r\n\r\nAdd support for Sec256r1 (P-256) in the typescript SDK.\r\n\r\n## Test Plan \r\n\r\nUnit tests.\r\n\r\n### Release notes\r\n\r\nAdd support for ECDSA over the sec256r1 curve, also known as P-256, in the Typescript SDK.",
+          "timestamp": "2023-06-08T20:01:50+02:00",
+          "tree_id": "e43353b2f6af6b6886d5638a8e572fda4366ed63",
+          "url": "https://github.com/MystenLabs/sui/commit/73b2a424efc0a0fd5e7286c5be5611cbfeb797f3"
+        },
+        "date": 1686248108377,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 105329277,
+            "range": "± 2895449",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 281697,
+            "range": "± 22354",
             "unit": "ns/iter"
           }
         ]
