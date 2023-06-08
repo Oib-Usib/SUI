@@ -19,7 +19,7 @@ use std::hash::Hash;
 use std::sync::Arc;
 
 #[derive(Default, Debug, Clone)]
-pub struct AuxVerifyData {
+pub struct VerifyParams {
     pub epoch: Option<EpochId>,
     //pub google_jwk_as_bytes: Option<Vec<u8>>,
     //pub oauth_provider_jwk: Option<Arc<OAuthProviderContent>>,
@@ -28,7 +28,7 @@ pub struct AuxVerifyData {
     pub oauth_provider_jwks: ImHashMap<String, Arc<OAuthProviderContent>>,
 }
 
-impl AuxVerifyData {
+impl VerifyParams {
     pub fn new(
         epoch: Option<EpochId>,
         oauth_provider_jwks: ImHashMap<String, Arc<OAuthProviderContent>>,
@@ -47,7 +47,7 @@ pub trait AuthenticatorTrait {
         &self,
         value: &IntentMessage<T>,
         author: SuiAddress,
-        aux_verify_data: &AuxVerifyData,
+        aux_verify_data: &VerifyParams,
     ) -> Result<(), SuiError>
     where
         T: Serialize;
@@ -150,7 +150,7 @@ impl AuthenticatorTrait for Signature {
         &self,
         value: &IntentMessage<T>,
         author: SuiAddress,
-        _aux_verify_data: &AuxVerifyData,
+        _aux_verify_data: &VerifyParams,
     ) -> Result<(), SuiError>
     where
         T: Serialize,
