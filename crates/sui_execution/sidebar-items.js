@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["executor"],"mod":["executor","latest"]};
+window.SIDEBAR_ITEMS = {"fn":["executor","verifier"],"mod":["executor","verifier"]};

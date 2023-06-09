@@ -1818,7 +1818,7 @@
 <span class="kw">use </span>prometheus::Registry;
 <span class="kw">use </span>serde::Serialize;
 <span class="kw">use </span>serde_json::{json, Value};
-<span class="kw">use </span>sui_adapter::adapter::{default_verifier_config, run_metered_move_bytecode_verifier_impl};
+<span class="kw">use </span>sui_adapter::adapter::{default_verifier_config, run_metered_move_bytecode_verifier};
 <span class="kw">use </span>sui_move::build::resolve_lock_file_path;
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
 <span class="kw">use </span>sui_source_validation::{BytecodeSourceVerifier, SourceMode};
@@ -2569,7 +2569,7 @@
                 metered_verifier_config.max_per_mod_meter_units = <span class="prelude-val">None</span>;
                 <span class="kw">let </span><span class="kw-2">mut </span>meter = SuiVerifierMeter::new(<span class="kw-2">&amp;</span>metered_verifier_config);
                 <span class="macro">println!</span>(<span class="string">&quot;Running bytecode verifier for {} modules&quot;</span>, modules.len());
-                run_metered_move_bytecode_verifier_impl(
+                run_metered_move_bytecode_verifier(
                     <span class="kw-2">&amp;</span>modules,
                     <span class="kw-2">&amp;</span>protocol_config,
                     <span class="kw-2">&amp;</span>metered_verifier_config,

@@ -21,27 +21,51 @@
 <a href="#21" id="21">21</a>
 <a href="#22" id="22">22</a>
 <a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 </span><span class="kw">use </span>std::sync::Arc;
 
-<span class="kw">pub use </span>executor::Executor;
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
-<span class="kw">use </span>sui_types::error::SuiError;
+<span class="kw">use </span>sui_types::{error::SuiResult, metrics::BytecodeVerifierMetrics};
+
+<span class="kw">pub use </span>executor::Executor;
+<span class="kw">pub use </span>verifier::Verifier;
 
 <span class="kw">pub mod </span>executor;
-<span class="kw">pub mod </span>latest;
+<span class="kw">pub mod </span>verifier;
+
+<span class="kw">mod </span>latest;
 
 <span class="kw">pub fn </span>executor(
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     paranoid_type_checks: bool,
     silent: bool,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;<span class="kw">dyn </span>Executor + Send + Sync&gt;, SuiError&gt; {
-    <span class="prelude-val">Ok</span>(Arc::new(latest::VM::new(
+) -&gt; SuiResult&lt;Arc&lt;<span class="kw">dyn </span>Executor + Send + Sync&gt;&gt; {
+    <span class="prelude-val">Ok</span>(Arc::new(latest::Executor::new(
         protocol_config,
         paranoid_type_checks,
         silent,
     )<span class="question-mark">?</span>))
+}
+
+<span class="kw">pub fn </span>verifier&lt;<span class="lifetime">&#39;m</span>&gt;(
+    protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
+    is_metered: bool,
+    metrics: <span class="kw-2">&amp;</span><span class="lifetime">&#39;m </span>Arc&lt;BytecodeVerifierMetrics&gt;,
+) -&gt; Box&lt;<span class="kw">dyn </span>Verifier + <span class="lifetime">&#39;m</span>&gt; {
+    Box::new(latest::Verifier::new(protocol_config, is_metered, metrics))
 }
 </code></pre></div></section></main></body></html>

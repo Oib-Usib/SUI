@@ -237,8 +237,6 @@
 <a href="#237" id="237">237</a>
 <a href="#238" id="238">238</a>
 <a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -408,73 +406,71 @@
 }
 
 <span class="doccomment">/// Run the bytecode verifier with a meter limit
-/// This function only fails if the verification does not complete within the limit
+///
+/// This function only fails if the verification does not complete within the limit.  If the
+/// modules fail to verify but verification completes within the meter limit, the function
+/// succeeds.
 </span><span class="attr">#[instrument(level = <span class="string">&quot;trace&quot;</span>, skip_all)]
 </span><span class="kw">pub fn </span>run_metered_move_bytecode_verifier(
-    module_bytes: <span class="kw-2">&amp;</span>[Vec&lt;u8&gt;],
-    protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
-    metered_verifier_config: <span class="kw-2">&amp;</span>VerifierConfig,
-    meter: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>Meter,
-    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
-) -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt; {
-    <span class="kw">let </span>modules_stat = module_bytes
-        .iter()
-        .map(|b| {
-            CompiledModule::deserialize_with_config(
-                b,
-                protocol_config.move_binary_format_version(),
-                protocol_config.no_extraneous_module_bytes(),
-            )
-            .map_err(|e| e.finish(move_binary_format::errors::Location::Undefined))
-        })
-        .collect::&lt;move_binary_format::errors::VMResult&lt;Vec&lt;CompiledModule&gt;&gt;&gt;();
-    <span class="kw">let </span>modules = <span class="kw">if let </span><span class="prelude-val">Ok</span>(m) = modules_stat {
-        m
-    } <span class="kw">else </span>{
-        <span class="comment">// Although we failed, we dont care since it failed withing the timeout
-        </span><span class="kw">return </span><span class="prelude-val">Ok</span>(());
-    };
-
-    run_metered_move_bytecode_verifier_impl(
-        <span class="kw-2">&amp;</span>modules,
-        protocol_config,
-        metered_verifier_config,
-        meter,
-        metrics,
-    )
-}
-
-<span class="kw">pub fn </span>run_metered_move_bytecode_verifier_impl(
     modules: <span class="kw-2">&amp;</span>[CompiledModule],
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
     verifier_config: <span class="kw-2">&amp;</span>VerifierConfig,
     meter: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>Meter,
-    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SuiError&gt; {
     <span class="comment">// run the Move verifier
     </span><span class="kw">for </span>module <span class="kw">in </span>modules.iter() {
-        <span class="kw">let </span>per_module_meter_verifier_timer = metrics.verifier_runtime_per_module_success_latency.start_timer();
+        <span class="kw">let </span>per_module_meter_verifier_timer = metrics
+            .verifier_runtime_per_module_success_latency
+            .start_timer();
 
         <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = verify_module_with_config_metered(verifier_config, module, meter) {
             <span class="comment">// Check that the status indicates mtering timeout
             </span><span class="kw">if </span>check_for_verifier_timeout(<span class="kw-2">&amp;</span>e.major_status()) {
                 <span class="comment">// Discard success timer, but record timeout/failure timer
-                </span>metrics.verifier_runtime_per_module_timeout_latency.observe(per_module_meter_verifier_timer.stop_and_discard());
-                metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[BytecodeVerifierMetrics::MOVE_VERIFIER_TAG, BytecodeVerifierMetrics::TIMEOUT_TAG]).inc();
+                </span>metrics
+                    .verifier_runtime_per_module_timeout_latency
+                    .observe(per_module_meter_verifier_timer.stop_and_discard());
+                metrics
+                    .verifier_timeout_metrics
+                    .with_label_values(<span class="kw-2">&amp;</span>[
+                        BytecodeVerifierMetrics::MOVE_VERIFIER_TAG,
+                        BytecodeVerifierMetrics::TIMEOUT_TAG,
+                    ])
+                    .inc();
                 <span class="kw">return </span><span class="prelude-val">Err</span>(SuiError::ModuleVerificationFailure {
                     error: <span class="macro">format!</span>(<span class="string">&quot;Verification timedout: {}&quot;</span>, e),
                 });
             };
-        } <span class="kw">else if let </span><span class="prelude-val">Err</span>(err) = sui_verify_module_metered_check_timeout_only(protocol_config, module, <span class="kw-2">&amp;</span>BTreeMap::new(), meter) {
+        } <span class="kw">else if let </span><span class="prelude-val">Err</span>(err) = sui_verify_module_metered_check_timeout_only(
+            protocol_config,
+            module,
+            <span class="kw-2">&amp;</span>BTreeMap::new(),
+            meter,
+        ) {
             <span class="comment">// We only checked that the failure was due to timeout
             // Discard success timer, but record timeout/failure timer
-            </span>metrics.verifier_runtime_per_module_timeout_latency.observe(per_module_meter_verifier_timer.stop_and_discard());
-            metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[ BytecodeVerifierMetrics::SUI_VERIFIER_TAG, BytecodeVerifierMetrics::TIMEOUT_TAG]).inc();
+            </span>metrics
+                .verifier_runtime_per_module_timeout_latency
+                .observe(per_module_meter_verifier_timer.stop_and_discard());
+            metrics
+                .verifier_timeout_metrics
+                .with_label_values(<span class="kw-2">&amp;</span>[
+                    BytecodeVerifierMetrics::SUI_VERIFIER_TAG,
+                    BytecodeVerifierMetrics::TIMEOUT_TAG,
+                ])
+                .inc();
             <span class="kw">return </span><span class="prelude-val">Err</span>(err.into());
         }
         <span class="comment">// Save the success timer
         </span>per_module_meter_verifier_timer.stop_and_record();
-        metrics.verifier_timeout_metrics.with_label_values(<span class="kw-2">&amp;</span>[BytecodeVerifierMetrics::OVERALL_TAG, BytecodeVerifierMetrics::SUCCESS_TAG]).inc();
+        metrics
+            .verifier_timeout_metrics
+            .with_label_values(<span class="kw-2">&amp;</span>[
+                BytecodeVerifierMetrics::OVERALL_TAG,
+                BytecodeVerifierMetrics::SUCCESS_TAG,
+            ])
+            .inc();
     }
     <span class="prelude-val">Ok</span>(())
 }

@@ -445,6 +445,18 @@
 <a href="#445" id="445">445</a>
 <a href="#446" id="446">446</a>
 <a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -453,8 +465,6 @@
 <span class="kw">use </span><span class="kw">crate</span>::transaction_signing_filter;
 <span class="kw">use </span>std::collections::{BTreeMap, HashSet};
 <span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>sui_adapter::adapter::default_verifier_config;
-<span class="kw">use </span>sui_adapter::adapter::run_metered_move_bytecode_verifier;
 <span class="kw">use </span>sui_config::transaction_deny_config::TransactionDenyConfig;
 <span class="kw">use </span>sui_macros::checked_arithmetic;
 <span class="kw">use </span>sui_protocol_config::ProtocolConfig;
@@ -474,7 +484,6 @@
     object::{Object, Owner},
 };
 <span class="kw">use </span>sui_types::{SUI_CLOCK_OBJECT_ID, SUI_CLOCK_OBJECT_SHARED_VERSION};
-<span class="kw">use </span>sui_verifier::meter::SuiVerifierMeter;
 <span class="kw">use </span>tracing::instrument;
 
 <span class="macro">checked_arithmetic! </span>{
@@ -513,7 +522,7 @@
     epoch_store: <span class="kw-2">&amp;</span>AuthorityPerEpochStore,
     transaction: <span class="kw-2">&amp;</span>TransactionData,
     transaction_deny_config: <span class="kw-2">&amp;</span>TransactionDenyConfig,
-    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;,
 ) -&gt; SuiResult&lt;(SuiGasStatus, InputObjects)&gt; {
     transaction.check_version_supported(epoch_store.protocol_config())<span class="question-mark">?</span>;
     transaction.validity_check(epoch_store.protocol_config())<span class="question-mark">?</span>;
@@ -539,7 +548,7 @@
     epoch_store: <span class="kw-2">&amp;</span>AuthorityPerEpochStore,
     transaction: <span class="kw-2">&amp;</span>TransactionData,
     gas_object: Object,
-    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;,
 ) -&gt; SuiResult&lt;(SuiGasStatus, InputObjects)&gt; {
     transaction.check_version_supported(epoch_store.protocol_config())<span class="question-mark">?</span>;
     transaction.validity_check_no_gas_check(epoch_store.protocol_config())<span class="question-mark">?</span>;
@@ -571,7 +580,11 @@
         TransactionKind::ChangeEpoch(<span class="kw">_</span>)
         | TransactionKind::Genesis(<span class="kw">_</span>)
         | TransactionKind::ConsensusCommitPrologue(<span class="kw">_</span>) =&gt; {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(UserInputError::Unsupported(<span class="macro">format!</span>(<span class="string">&quot;Transaction kind {} is not supported in dev-inspect&quot;</span>, kind)).into())
+            <span class="kw">return </span><span class="prelude-val">Err</span>(UserInputError::Unsupported(<span class="macro">format!</span>(
+                <span class="string">&quot;Transaction kind {} is not supported in dev-inspect&quot;</span>,
+                kind
+            ))
+            .into())
         }
     }
     <span class="kw">let </span><span class="kw-2">mut </span>input_objects = kind.input_objects()<span class="question-mark">?</span>;
@@ -652,7 +665,8 @@
             }
             .into());
         }
-        <span class="kw">if </span>protocol_config.gas_model_version() &gt;= <span class="number">4 </span>&amp;&amp; gas_price &gt;= protocol_config.max_gas_price() {
+        <span class="kw">if </span>protocol_config.gas_model_version() &gt;= <span class="number">4 </span>&amp;&amp; gas_price &gt;= protocol_config.max_gas_price()
+        {
             <span class="kw">return </span><span class="prelude-val">Err</span>(UserInputError::GasPriceTooHigh {
                 max_gas_price: protocol_config.max_gas_price(),
             }
@@ -857,36 +871,46 @@
 </span><span class="kw">pub fn </span>check_non_system_packages_to_be_published(
     transaction: <span class="kw-2">&amp;</span>TransactionData,
     protocol_config: <span class="kw-2">&amp;</span>ProtocolConfig,
-    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;
+    metrics: <span class="kw-2">&amp;</span>Arc&lt;BytecodeVerifierMetrics&gt;,
 ) -&gt; UserInputResult&lt;()&gt; {
-    <span class="comment">// Only meter non-system TXes
-    </span><span class="kw">if </span>!transaction.is_system_tx() {
-        <span class="comment">// We use a custom config with metering enabled
-        </span><span class="kw">let </span>metered_verifier_config =
-            default_verifier_config(protocol_config, <span class="bool-val">true </span><span class="comment">/* enable metering */</span>);
-        <span class="comment">// Use the same meter for all packages
-        </span><span class="kw">let </span><span class="kw-2">mut </span>meter = SuiVerifierMeter::new(<span class="kw-2">&amp;</span>metered_verifier_config);
-        <span class="kw">if let </span>TransactionKind::ProgrammableTransaction(pt) = transaction.kind() {
-            <span class="comment">// Measure time for verifying all packages in the PTB
-            </span><span class="kw">let </span>shared_meter_verifier_timer = metrics.verifier_runtime_per_ptb_success_latency.start_timer();
-            <span class="kw">let </span>verifier_status = pt.non_system_packages_to_be_published()
-                .try_for_each(|q| run_metered_move_bytecode_verifier(q, protocol_config, <span class="kw-2">&amp;</span>metered_verifier_config, <span class="kw-2">&amp;mut </span>meter, metrics))
-                .map_err(|e| UserInputError::PackageVerificationTimedout { err: e.to_string() });
-
-            <span class="kw">match </span>verifier_status {
-                <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-                    <span class="comment">// Success: stop and record the success timer
-                    </span>shared_meter_verifier_timer.stop_and_record();
-                },
-                <span class="prelude-val">Err</span>(err) =&gt; {
-                    <span class="comment">// Failure: redirect the success timers output to the failure timer and
-                    // discard the success timer
-                    </span>metrics.verifier_runtime_per_ptb_timeout_latency.observe(shared_meter_verifier_timer.stop_and_discard());
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(err);
-                }
-            };
-        }
+    <span class="comment">// Only meter non-system programmable transaction blocks
+    </span><span class="kw">if </span>transaction.is_system_tx() {
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
     }
+
+    <span class="kw">let </span>TransactionKind::ProgrammableTransaction(pt) = transaction.kind() <span class="kw">else </span>{
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+    };
+
+    <span class="comment">// We use a custom config with metering enabled
+    </span><span class="kw">let </span>is_metered = <span class="bool-val">true</span>;
+    <span class="comment">// Use the same verifier and meter for all packages
+    </span><span class="kw">let </span><span class="kw-2">mut </span>verifier = sui_execution::verifier(protocol_config, is_metered, metrics);
+
+    <span class="comment">// Measure time for verifying all packages in the PTB
+    </span><span class="kw">let </span>shared_meter_verifier_timer = metrics
+        .verifier_runtime_per_ptb_success_latency
+        .start_timer();
+
+    <span class="kw">let </span>verifier_status = pt
+        .non_system_packages_to_be_published()
+        .try_for_each(|module_bytes| verifier.meter_module_bytes(protocol_config, module_bytes))
+        .map_err(|e| UserInputError::PackageVerificationTimedout { err: e.to_string() });
+
+    <span class="kw">match </span>verifier_status {
+        <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
+            <span class="comment">// Success: stop and record the success timer
+            </span>shared_meter_verifier_timer.stop_and_record();
+        }
+        <span class="prelude-val">Err</span>(err) =&gt; {
+            <span class="comment">// Failure: redirect the success timers output to the failure timer and
+            // discard the success timer
+            </span>metrics
+                .verifier_runtime_per_ptb_timeout_latency
+                .observe(shared_meter_verifier_timer.stop_and_discard());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(err);
+        }
+    };
 
     <span class="prelude-val">Ok</span>(())
 }
