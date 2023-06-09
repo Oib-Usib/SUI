@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686336194961,
+  "lastUpdate": 1686340357497,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12167,6 +12167,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 337580,
             "range": "± 63751",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b29b1fe4116c4f8d2a23a32857d9b903d27504da",
+          "message": "indexer: exact epoch tx count (#12395)\n\n## Description\r\nBefore this PR, tx count was updated within an epoch. This is\r\nproblematic on backfill when data racing happens, as a result, epoch tx\r\ncount is not accurate.\r\n\r\nAlso removed the epoch updating on each checkpoint b/c it has caused\r\nconstant DB commit errors like\r\n```\r\n2023-06-07T23:13:27.759942Z  INFO sui_indexer::store::pg_indexer_store: Persisting epoch 19\r\n2023-06-07T23:13:36.865246Z  WARN sui_indexer::handlers::checkpoint_handler: Indexer epoch commit failed with error: PostgresWriteError(\"could not serialize access due to read/write dependencies among transactions\"), retrying after 100 milli-secs...\r\n2023-06-07T23:13:36.965945Z  INFO sui_indexer::store::pg_indexer_store: Persisting epoch 19\r\n2023-06-07T23:13:46.059553Z  WARN sui_indexer::handlers::checkpoint_handler: Indexer epoch commit failed with error: PostgresWriteError(\"could not serialize access due to read/write dependencies among transactions\"), retrying after 100 milli-secs...\r\n2023-06-07T23:13:46.160704Z  INFO sui_indexer::store::pg_indexer_store: Persisting epoch 19\r\n```\r\n\r\n## Test Plan\r\nBuild image and test with mainnet, verify in the DB.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-09T15:43:08-04:00",
+          "tree_id": "8eea034f16f9ebc38832eeff551de4655d48639c",
+          "url": "https://github.com/MystenLabs/sui/commit/b29b1fe4116c4f8d2a23a32857d9b903d27504da"
+        },
+        "date": 1686340316170,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 107087397,
+            "range": "± 6588974",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 306466,
+            "range": "± 11356",
             "unit": "ns/iter"
           }
         ]
