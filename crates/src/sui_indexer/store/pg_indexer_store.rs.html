@@ -1989,6 +1989,7 @@
 <a href="#1989" id="1989">1989</a>
 <a href="#1990" id="1990">1990</a>
 <a href="#1991" id="1991">1991</a>
+<a href="#1992" id="1992">1992</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -2001,7 +2002,6 @@
 <span class="kw">use </span>cached::proc_macro::once;
 <span class="kw">use </span>diesel::dsl::{count, max};
 <span class="kw">use </span>diesel::pg::PgConnection;
-<span class="kw">use </span>diesel::query_builder::AsQuery;
 <span class="kw">use </span>diesel::sql_types::{BigInt, VarChar};
 <span class="kw">use </span>diesel::upsert::excluded;
 <span class="kw">use </span>diesel::{ExpressionMethods, PgArrayExpressionMethods};
@@ -3322,46 +3322,31 @@ GROUP BY table_name;
 
     <span class="kw">async fn </span>persist_object_changes(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        checkpoint: <span class="kw-2">&amp;</span>Checkpoint,
         tx_object_changes: <span class="kw-2">&amp;</span>[TransactionObjectChanges],
         object_mutation_latency: Histogram,
         object_deletion_latency: Histogram,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt; {
         <span class="macro">transactional_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
-            <span class="comment">// update epoch transaction count
-            </span><span class="kw">let </span>sql = <span class="string">&quot;UPDATE epochs e1
-SET epoch_total_transactions = e2.epoch_total_transactions + $1
-FROM epochs e2
-WHERE e1.epoch = e2.epoch
-  AND e1.epoch = $2;&quot;</span>;
-            diesel::sql_query(sql)
-                .bind::&lt;BigInt, <span class="kw">_</span>&gt;(checkpoint.transactions.len() <span class="kw">as </span>i64)
-                .bind::&lt;BigInt, <span class="kw">_</span>&gt;(checkpoint.epoch)
-                .as_query()
-                .execute(conn)<span class="question-mark">?</span>;
-
-            {
-                <span class="kw">let </span>mutated_objects: Vec&lt;Object&gt; = tx_object_changes
-                    .iter()
-                    .flat_map(|changes| changes.changed_objects.iter().cloned())
-                    .collect();
-                <span class="kw">let </span>deleted_changes = tx_object_changes
-                    .iter()
-                    .flat_map(|changes| changes.deleted_objects.iter().cloned())
-                    .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-                <span class="kw">let </span>deleted_objects: Vec&lt;Object&gt; = deleted_changes
-                    .iter()
-                    .map(|deleted_object| deleted_object.clone().into())
-                    .collect();
-                persist_transaction_object_changes(
-                    conn,
-                    mutated_objects,
-                    deleted_objects,
-                    <span class="prelude-val">Some</span>(object_mutation_latency),
-                    <span class="prelude-val">Some</span>(object_deletion_latency),
-                )<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>::&lt;(), IndexerError&gt;(())
-            }
+            <span class="kw">let </span>mutated_objects: Vec&lt;Object&gt; = tx_object_changes
+                .iter()
+                .flat_map(|changes| changes.changed_objects.iter().cloned())
+                .collect();
+            <span class="kw">let </span>deleted_changes = tx_object_changes
+                .iter()
+                .flat_map(|changes| changes.deleted_objects.iter().cloned())
+                .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+            <span class="kw">let </span>deleted_objects: Vec&lt;Object&gt; = deleted_changes
+                .iter()
+                .map(|deleted_object| deleted_object.clone().into())
+                .collect();
+            persist_transaction_object_changes(
+                conn,
+                mutated_objects,
+                deleted_objects,
+                <span class="prelude-val">Some</span>(object_mutation_latency),
+                <span class="prelude-val">Some</span>(object_deletion_latency),
+            )<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>::&lt;(), IndexerError&gt;(())
         })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
@@ -3488,6 +3473,20 @@ WHERE e1.epoch = e2.epoch
         <span class="prelude-val">Ok</span>(())
     }
 
+    <span class="kw">async fn </span>get_network_total_transactions_previous_epoch(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        epoch: i64,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;i64, IndexerError&gt; {
+        <span class="macro">read_only_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            checkpoints::table
+                .filter(checkpoints::epoch.eq(epoch - <span class="number">1</span>))
+                .select(max(checkpoints::network_total_transactions))
+                .first::&lt;<span class="prelude-ty">Option</span>&lt;i64&gt;&gt;(conn)
+                .map(|o| o.unwrap_or(<span class="number">0</span>))
+        })
+        .context(<span class="string">&quot;Failed to count network transactions in previous epoch&quot;</span>)
+    }
+
     <span class="kw">async fn </span>persist_epoch(<span class="kw-2">&amp;</span><span class="self">self</span>, data: <span class="kw-2">&amp;</span>TemporaryEpochStore) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt; {
         <span class="comment">// MUSTFIX(gegaowp): temporarily disable the epoch advance logic.
         // let last_epoch_cp_id = if data.last_epoch.is_none() {
@@ -3501,11 +3500,9 @@ WHERE e1.epoch = e2.epoch
                 .advance_epoch(<span class="kw-2">&amp;</span>data.new_epoch, last_epoch_cp_id)
                 .<span class="kw">await</span><span class="question-mark">?</span>;
         }
-        <span class="kw">let </span>epoch = data.new_epoch.epoch;
-        <span class="macro">info!</span>(<span class="string">&quot;Persisting epoch {}&quot;</span>, epoch);
-
         <span class="macro">transactional_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(last_epoch) = <span class="kw-2">&amp;</span>data.last_epoch {
+                <span class="macro">info!</span>(<span class="string">&quot;Persisting at the end of epoch {}&quot;</span>, last_epoch.epoch);
                 diesel::insert_into(epochs::table)
                     .values(last_epoch)
                     .on_conflict(epochs::epoch)
@@ -3513,6 +3510,8 @@ WHERE e1.epoch = e2.epoch
                     .set((
                         epochs::last_checkpoint_id.eq(excluded(epochs::last_checkpoint_id)),
                         epochs::epoch_end_timestamp.eq(excluded(epochs::epoch_end_timestamp)),
+                        epochs::epoch_total_transactions
+                            .eq(excluded(epochs::epoch_total_transactions)),
                         epochs::protocol_version.eq(excluded(epochs::protocol_version)),
                         epochs::next_epoch_version.eq(excluded(epochs::next_epoch_version)),
                         epochs::next_epoch_committee.eq(excluded(epochs::next_epoch_committee)),
@@ -3534,12 +3533,8 @@ WHERE e1.epoch = e2.epoch
                             .eq(excluded(epochs::leftover_storage_fund_inflow)),
                     ))
                     .execute(conn)<span class="question-mark">?</span>;
+                <span class="macro">info!</span>(<span class="string">&quot;Persisted epoch {}&quot;</span>, last_epoch.epoch);
             }
-            diesel::insert_into(epochs::table)
-                .values(<span class="kw-2">&amp;</span>data.new_epoch)
-                .on_conflict_do_nothing()
-                .execute(conn)<span class="question-mark">?</span>;
-
             diesel::insert_into(system_states::table)
                 .values(<span class="kw-2">&amp;</span>data.system_state)
                 .on_conflict_do_nothing()
@@ -3550,7 +3545,14 @@ WHERE e1.epoch = e2.epoch
                 .on_conflict_do_nothing()
                 .execute(conn)
         })<span class="question-mark">?</span>;
-        <span class="macro">info!</span>(<span class="string">&quot;Persisted epoch {}&quot;</span>, epoch);
+        <span class="macro">info!</span>(<span class="string">&quot;Persisting initial state of epoch {}&quot;</span>, data.new_epoch.epoch);
+        <span class="macro">transactional_blocking!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.blocking_cp, |conn| {
+            diesel::insert_into(epochs::table)
+                .values(<span class="kw-2">&amp;</span>data.new_epoch)
+                .on_conflict_do_nothing()
+                .execute(conn)
+        })<span class="question-mark">?</span>;
+        <span class="macro">info!</span>(<span class="string">&quot;Persisted initial state of epoch {}&quot;</span>, data.new_epoch.epoch);
         <span class="prelude-val">Ok</span>(())
     }
 

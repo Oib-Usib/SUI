@@ -929,6 +929,9 @@
 <a href="#929" id="929">929</a>
 <a href="#930" id="930">930</a>
 <a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1342,7 +1345,6 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>object_changes_commit_res = <span class="self">self
                     </span>.state
                     .persist_object_changes(
-                        <span class="kw-2">&amp;</span>checkpoint,
                         <span class="kw-2">&amp;</span>object_changes,
                         <span class="self">self</span>.metrics.object_mutation_db_commit_latency.clone(),
                         <span class="self">self</span>.metrics.object_deletion_db_commit_latency.clone(),
@@ -1360,7 +1362,6 @@
                     object_changes_commit_res = <span class="self">self
                         </span>.state
                         .persist_object_changes(
-                            <span class="kw-2">&amp;</span>checkpoint,
                             <span class="kw-2">&amp;</span>object_changes,
                             <span class="self">self</span>.metrics.object_mutation_db_commit_latency.clone(),
                             <span class="self">self</span>.metrics.object_deletion_db_commit_latency.clone(),
@@ -1407,7 +1408,6 @@
                     }
                     epoch_db_guard.stop_and_record();
                     <span class="self">self</span>.metrics.total_epoch_committed.inc();
-                    <span class="macro">info!</span>(<span class="string">&quot;Epoch {} committed.&quot;</span>, indexed_epoch.new_epoch.epoch);
                 }
             } <span class="kw">else </span>{
                 <span class="comment">// sleep for 1 sec to avoid occupying the mutex, as this happens once per epoch / day
@@ -1649,14 +1649,20 @@
 
             <span class="kw">let </span>event = event.as_ref();
 
+            <span class="kw">let </span>last_epoch = system_state.epoch <span class="kw">as </span>i64 - <span class="number">1</span>;
+            <span class="kw">let </span>network_tx_count_prev_epoch = <span class="self">self
+                </span>.state
+                .get_network_total_transactions_previous_epoch(last_epoch)
+                .<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="prelude-val">Some</span>(TemporaryEpochStore {
                 last_epoch: <span class="prelude-val">Some</span>(DBEpochInfo {
-                    epoch: system_state.epoch <span class="kw">as </span>i64 - <span class="number">1</span>,
+                    epoch: last_epoch,
                     first_checkpoint_id: <span class="number">0</span>,
                     last_checkpoint_id: <span class="prelude-val">Some</span>(checkpoint.sequence_number <span class="kw">as </span>i64),
                     epoch_start_timestamp: <span class="number">0</span>,
                     epoch_end_timestamp: <span class="prelude-val">Some</span>(checkpoint.timestamp_ms <span class="kw">as </span>i64),
-                    epoch_total_transactions: <span class="number">0</span>,
+                    epoch_total_transactions: checkpoint.network_total_transactions <span class="kw">as </span>i64
+                        - network_tx_count_prev_epoch,
                     next_epoch_version: <span class="prelude-val">Some</span>(
                         end_of_epoch_data.next_epoch_protocol_version.as_u64() <span class="kw">as </span>i64,
                     ),

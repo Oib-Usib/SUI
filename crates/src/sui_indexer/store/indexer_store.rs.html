@@ -331,6 +331,9 @@
 <a href="#331" id="331">331</a>
 <a href="#332" id="332">332</a>
 <a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -547,7 +550,6 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, IndexerError&gt;;
     <span class="kw">async fn </span>persist_object_changes(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        checkpoint: <span class="kw-2">&amp;</span>Checkpoint,
         tx_object_changes: <span class="kw-2">&amp;</span>[TransactionObjectChanges],
         object_mutation_latency: Histogram,
         object_deletion_latency: Histogram,
@@ -568,6 +570,10 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt;;
 
     <span class="kw">async fn </span>persist_epoch(<span class="kw-2">&amp;</span><span class="self">self</span>, data: <span class="kw-2">&amp;</span>TemporaryEpochStore) -&gt; <span class="prelude-ty">Result</span>&lt;(), IndexerError&gt;;
+    <span class="kw">async fn </span>get_network_total_transactions_previous_epoch(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        epoch: i64,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;i64, IndexerError&gt;;
 
     <span class="kw">async fn </span>get_epochs(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
