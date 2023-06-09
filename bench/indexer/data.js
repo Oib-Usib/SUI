@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686353108623,
+  "lastUpdate": 1686353247186,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12275,6 +12275,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 317063,
             "range": "± 15619",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "97870774+arun-koshy@users.noreply.github.com",
+            "name": "Arun Koshy",
+            "username": "arun-koshy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e3da84a126d688834dfb1a15f42e0cb7d4f05fd",
+          "message": "Add sui-metric-checker crate (#12326)\n\n## Description \r\n\r\nThe sui-metric-checker crate is used for querying prometheus metrics and\r\nvalidating the results. It will primarily be used to check for\r\nperformance regressions in nightly deployments. Requires api_key,\r\napi_user & prometheus url which can be found in sui-ops repo or by\r\nasking the PE team.\r\n\r\nExample usage:\r\n```\r\nRUST_LOG=debug cargo run --package sui-metric-checker --bin sui-metric-checker  -- --api-key xxxxxx --api-user incoming_metrics --config  private-testnet-performance-test.yaml\r\n```\r\n\r\nExample .yaml contents: \r\n```\r\nqueries:\r\n  # ***** Validator ******\r\n  # Check current epoch\r\n  - query: 'max(current_epoch{network=\"private-testnet\"})'\r\n    type: Instant\r\n  # Narwhal batch execution latency - p50\r\n  - query: 'histogram_quantile(0.50, sum by(le) (rate(batch_execution_latency_bucket{network=\"private-testnet\"}[15m])))'\r\n    type: !Range\r\n      start: \"now-8h\"\r\n      end: \"now\"\r\n      step: 60.0\r\n    validate_result:\r\n      threshold: 3.0\r\n      failure_condition: Greater\r\n  # TPS\r\n  - query: 'avg(rate(total_transaction_effects{network=\"private-testnet\"}[5m]))'\r\n    type: !Range\r\n      start: \"now-8h\"\r\n      end: \"now\"\r\n      step: 60.0\r\n    validate_result:\r\n      threshold: 5000.0\r\n      failure_condition: Less\r\n  # CPS\r\n  - query: 'avg (rate(batch_size_sum{network=\"private-testnet\"}[5m]))'\r\n    type: !Range\r\n      start: \"now-8h\"\r\n      end: \"now\"\r\n      step: 60.0\r\n    validate_result:\r\n      threshold: 5000.0\r\n      failure_condition: Less\r\n\r\n```\r\n\r\nExample error output:\r\n\r\n```\r\nError: Following queries failed to meet threshold conditions: [\r\n    \"After 3 retry attempts - Did not get expected response from server for histogram_quantile(0.5, sum by(le) (rate(latency_s_bucket{network=\\\"private-testnet\\\"}[15m])))\",\r\n    \"After 3 retry attempts - Did not get expected response from server for histogram_quantile(0.95, sum by(le) (rate(latency_s_bucket{network=\\\"private-testnet\\\"}[15m])))\",\r\n    \"After 3 retry attempts - Did not get expected response from server for sum(rate(num_success{network=\\\"private-testnet\\\"}[5m]))\",\r\n    \"Query \\\"histogram_quantile(0.50, sum by(le) (rate(batch_execution_latency_bucket{network=\\\"private-testnet\\\"}[15m])))\\\" returned value of 3.112150385622982 which is Greater 3\",\r\n    \"Query \\\"avg(rate(total_transaction_effects{network=\\\"private-testnet\\\"}[5m]))\\\" returned value of 1.081275647819765 which is Less 5500\",\r\n    \"Query \\\"avg (rate(batch_size_sum{network=\\\"private-testnet\\\"}[5m]))\\\" returned value of 0.24698238962944846 which is Less 5500\",\r\n]\r\n```",
+          "timestamp": "2023-06-09T23:15:16Z",
+          "tree_id": "07c15f13e40bb4408602c7cce12c3f9a2f9fdc04",
+          "url": "https://github.com/MystenLabs/sui/commit/5e3da84a126d688834dfb1a15f42e0cb7d4f05fd"
+        },
+        "date": 1686353225181,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 162831248,
+            "range": "± 6499085",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 349070,
+            "range": "± 69483",
             "unit": "ns/iter"
           }
         ]
