@@ -4,7 +4,7 @@
     verifier_config: &amp;VerifierConfig,
     meter: &amp;mut impl Meter,
     metrics: &amp;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html" title="struct alloc::sync::Arc">Arc</a>&lt;BytecodeVerifierMetrics&gt;
-) -&gt; <a class="type" href="https://docs.rs/anyhow/1.0.69/anyhow/type.Result.html" title="type anyhow::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, SuiError&gt;</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Run the bytecode verifier with a meter limit</p>
+) -&gt; <a class="type" href="https://docs.rs/anyhow/1.0.71/anyhow/type.Result.html" title="type anyhow::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, SuiError&gt;</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Run the bytecode verifier with a meter limit</p>
 <p>This function only fails if the verification does not complete within the limit.  If the
 modules fail to verify but verification completes within the meter limit, the function
 succeeds.</p>

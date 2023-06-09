@@ -1,5 +1,6 @@
 var sourcesIndex = JSON.parse('{\
 "anemo_benchmark":["",[],["lib.rs","server.rs"]],\
+"cut":["",[],["args.rs","main.rs","plan.rs"]],\
 "demo_client":["",[],["demo_client.rs"]],\
 "indexer_data_validation":["",[],["indexer_data_validation.rs"]],\
 "merge_coins":["",[],["merge_coins.rs"]],\

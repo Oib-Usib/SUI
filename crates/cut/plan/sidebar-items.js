@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PlanError","WorkspaceState"],"fn":["discover_root","package_name","toml_path_array_to_set"],"struct":["CutPackage","CutPlan","Workspace"],"type":["PlanResult"]};
