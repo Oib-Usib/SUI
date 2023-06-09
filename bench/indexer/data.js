@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686276625785,
+  "lastUpdate": 1686326032755,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12095,6 +12095,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 405000,
             "range": "± 60977",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b50fc32867efa3385f311696691672a8a8871cf2",
+          "message": "[sui-execution] Introduce Verifier interface (#12329)\n\n## Description\r\n\r\nThis interface is used to perform metered verification during signing\r\n(verification during execution is handled internally, within the\r\nexecution layer).\r\n\r\nTo fully encapsulate metering within the execution layer, some tests\r\nneeded to be moved from `sui-core` to `sui-framework-tests` (which is\r\nlinked against the latest execution layer, so therefore can access\r\ninternal types).\r\n\r\nThis change also gets rid of the distinction between metered\r\nverification of module bytes and of deserialized `CompiledModules`\r\nwithin the execution layer, to reduce the interface surface area.\r\nInstead, a helper function has been added to the interface to first\r\ndeserialize the module.\r\n\r\n## Test Plan\r\n\r\n```\r\ncargo simtest\r\nenv SUI_SKIP_SIMTESTS=1 cargo nextest run\r\n```",
+          "timestamp": "2023-06-09T08:42:09-07:00",
+          "tree_id": "0550b3b747fd32ed5f46eb68db95cfb5d2e3949f",
+          "url": "https://github.com/MystenLabs/sui/commit/b50fc32867efa3385f311696691672a8a8871cf2"
+        },
+        "date": 1686326008820,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148801068,
+            "range": "± 6170565",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 329316,
+            "range": "± 20091",
             "unit": "ns/iter"
           }
         ]
