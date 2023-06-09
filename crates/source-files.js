@@ -46,6 +46,7 @@ var sourcesIndex = JSON.parse('{\
 "sui_json_rpc_types":["",[],["balance_changes.rs","lib.rs","object_changes.rs","sui_checkpoint.rs","sui_coin.rs","sui_event.rs","sui_extended.rs","sui_governance.rs","sui_move.rs","sui_object.rs","sui_protocol.rs","sui_transaction.rs"]],\
 "sui_keys":["",[],["key_derive.rs","keypair_file.rs","keystore.rs","lib.rs"]],\
 "sui_macros":["",[],["lib.rs"]],\
+"sui_metric_checker":["",[],["lib.rs","query.rs"]],\
 "sui_move":["",[],["build.rs","coverage.rs","disassemble.rs","lib.rs","new.rs","prove.rs","unit_test.rs"]],\
 "sui_move_build":["",[],["lib.rs"]],\
 "sui_move_natives_latest":["",[["crypto",[],["bls12381.rs","ecdsa_k1.rs","ecdsa_r1.rs","ecvrf.rs","ed25519.rs","groth16.rs","hash.rs","hmac.rs","mod.rs"]],["object_runtime",[],["mod.rs","object_store.rs"]]],["address.rs","dynamic_field.rs","event.rs","lib.rs","object.rs","test_scenario.rs","test_utils.rs","transfer.rs","tx_context.rs","types.rs","validator.rs"]],\

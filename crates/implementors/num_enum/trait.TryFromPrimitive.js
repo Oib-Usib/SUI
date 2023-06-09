@@ -1,5 +1,5 @@
 (function() {var implementors = {
-"sui_archival":[["impl TryFromPrimitive for <a class=\"enum\" href=\"sui_archival/enum.StorageFormat.html\" title=\"enum sui_archival::StorageFormat\">StorageFormat</a>"],["impl TryFromPrimitive for <a class=\"enum\" href=\"sui_archival/enum.FileType.html\" title=\"enum sui_archival::FileType\">FileType</a>"]],
+"sui_archival":[["impl TryFromPrimitive for <a class=\"enum\" href=\"sui_archival/enum.FileType.html\" title=\"enum sui_archival::FileType\">FileType</a>"],["impl TryFromPrimitive for <a class=\"enum\" href=\"sui_archival/enum.StorageFormat.html\" title=\"enum sui_archival::StorageFormat\">StorageFormat</a>"]],
 "sui_snapshot":[["impl TryFromPrimitive for <a class=\"enum\" href=\"sui_snapshot/enum.FileType.html\" title=\"enum sui_snapshot::FileType\">FileType</a>"]],
 "sui_storage":[["impl TryFromPrimitive for <a class=\"enum\" href=\"sui_storage/enum.Encoding.html\" title=\"enum sui_storage::Encoding\">Encoding</a>"],["impl TryFromPrimitive for <a class=\"enum\" href=\"sui_storage/enum.FileCompression.html\" title=\"enum sui_storage::FileCompression\">FileCompression</a>"]]
 };if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
