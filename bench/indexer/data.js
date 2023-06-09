@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686351845333,
+  "lastUpdate": 1686353108623,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12239,6 +12239,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 497689,
             "range": "± 42279",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e9f3f1fb775a7e4d1959d1a01161dab7cdda0a76",
+          "message": "Fix memory leak in simtests, detect future leaks automatically (#11893)\n\n@longbowlu for some reason my previous attempt at this did not work,\r\neven though I remember staring at a memory profile showing that I had\r\nfixed it.",
+          "timestamp": "2023-06-09T23:13:47Z",
+          "tree_id": "e48b6168909a49bda897a2e5d075609a23f5607a",
+          "url": "https://github.com/MystenLabs/sui/commit/e9f3f1fb775a7e4d1959d1a01161dab7cdda0a76"
+        },
+        "date": 1686353085706,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 154771826,
+            "range": "± 7121985",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 317063,
+            "range": "± 15619",
             "unit": "ns/iter"
           }
         ]
