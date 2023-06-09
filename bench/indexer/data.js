@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686326032755,
+  "lastUpdate": 1686336194961,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12131,6 +12131,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 329316,
             "range": "± 20091",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "69e4e48ba217351c64d15dd06081b50aec309816",
+          "message": "[sui-execution] Scaffold script to automate cutting new features (#12387)\n\n## Description\r\n\r\nThe scaffolding deals with argument parsing, and building a \"plan\" of\r\nwhich packages to duplicate based on that.\r\n\r\n## Test Plan:\r\n\r\nNew unit tests:\r\n\r\n```\r\nsui/sui-execution/cut$ cargo nextest run\r\n```\r\n\r\nRunning the plan that would create a new sui-execution cut:\r\n\r\n```\r\nsui$ cargo run --bin cut -- --feature v1 \\\r\n     -d sui-execution/latest:sui-execution/v1:-latest \\\r\n     -d external-crates/move:external-crates/move-execution \\\r\n     -p sui-adapter-latest \\\r\n     -p sui-move-natives-latest \\\r\n     -p sui-verifier-latest \\\r\n     -p move-bytecode-verifier \\\r\n     -p move-stdlib \\\r\n     -p move-vm-runtime\r\n```\r\n\r\nWhich produces the following output (locally):\r\n\r\n```\r\nCutting directories: [\r\n    Directory {\r\n        src: \"/Users/ashokmenon/sui/sui-execution/latest\",\r\n        dst: \"/Users/ashokmenon/sui/sui-execution/v1\",\r\n        suffix: Some(\r\n            \"-latest\",\r\n        ),\r\n    },\r\n    Directory {\r\n        src: \"/Users/ashokmenon/sui/external-crates/move\",\r\n        dst: \"/Users/ashokmenon/sui/external-crates/move-execution\",\r\n        suffix: None,\r\n    },\r\n]\r\n\r\nIncluding packages: [\r\n    \"sui-adapter-latest\",\r\n    \"sui-move-natives-latest\",\r\n    \"sui-verifier-latest\",\r\n    \"move-bytecode-verifier\",\r\n    \"move-stdlib\",\r\n    \"move-vm-runtime\",\r\n]\r\n\r\nPlan: Ok(\r\n    CutPlan(\r\n        {\r\n            \"move-bytecode-verifier\": CutPackage {\r\n                dst_name: \"move-bytecode-verifier-v1\",\r\n                src_path: \"/Users/ashokmenon/sui/external-crates/move/move-bytecode-verifier\",\r\n                dst_path: \"/Users/ashokmenon/sui/external-crates/move-execution/move-bytecode-verifier\",\r\n                ws_state: Exclude,\r\n            },\r\n            \"move-stdlib\": CutPackage {\r\n                dst_name: \"move-stdlib-v1\",\r\n                src_path: \"/Users/ashokmenon/sui/external-crates/move/move-stdlib\",\r\n                dst_path: \"/Users/ashokmenon/sui/external-crates/move-execution/move-stdlib\",\r\n                ws_state: Exclude,\r\n            },\r\n            \"move-vm-runtime\": CutPackage {\r\n                dst_name: \"move-vm-runtime-v1\",\r\n                src_path: \"/Users/ashokmenon/sui/external-crates/move/move-vm/runtime\",\r\n                dst_path: \"/Users/ashokmenon/sui/external-crates/move-execution/move-vm/runtime\",\r\n                ws_state: Exclude,\r\n            },\r\n            \"sui-adapter-latest\": CutPackage {\r\n                dst_name: \"sui-adapter-v1\",\r\n                src_path: \"/Users/ashokmenon/sui/sui-execution/latest/sui-adapter\",\r\n                dst_path: \"/Users/ashokmenon/sui/sui-execution/v1/sui-adapter\",\r\n                ws_state: Member,\r\n            },\r\n            \"sui-move-natives-latest\": CutPackage {\r\n                dst_name: \"sui-move-natives-v1\",\r\n                src_path: \"/Users/ashokmenon/sui/sui-execution/latest/sui-move-natives\",\r\n                dst_path: \"/Users/ashokmenon/sui/sui-execution/v1/sui-move-natives\",\r\n                ws_state: Member,\r\n            },\r\n            \"sui-verifier-latest\": CutPackage {\r\n                dst_name: \"sui-verifier-v1\",\r\n                src_path: \"/Users/ashokmenon/sui/sui-execution/latest/sui-verifier\",\r\n                dst_path: \"/Users/ashokmenon/sui/sui-execution/v1/sui-verifier\",\r\n                ws_state: Member,\r\n            },\r\n        },\r\n    ),\r\n)\r\n```",
+          "timestamp": "2023-06-09T18:31:52Z",
+          "tree_id": "2a0573356465787e9f343ebe869a89cca8de21ed",
+          "url": "https://github.com/MystenLabs/sui/commit/69e4e48ba217351c64d15dd06081b50aec309816"
+        },
+        "date": 1686336172890,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151561204,
+            "range": "± 4740006",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 337580,
+            "range": "± 63751",
             "unit": "ns/iter"
           }
         ]
