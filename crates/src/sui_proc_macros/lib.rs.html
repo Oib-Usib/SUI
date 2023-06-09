@@ -560,6 +560,35 @@
 <a href="#560" id="560">560</a>
 <a href="#561" id="561">561</a>
 <a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -755,11 +784,39 @@
     <span class="kw">let </span>arg_parser = Punctuated::&lt;syn::Meta, <span class="macro">Token!</span>[,]&gt;::parse_terminated;
     <span class="kw">let </span>args = arg_parser.parse(args).unwrap().into_iter();
 
+    <span class="kw">let </span>ignore = input
+        .attrs
+        .iter()
+        .find(|attr| attr.path().is_ident(<span class="string">&quot;ignore&quot;</span>))
+        .map_or(<span class="macro">quote! </span>{}, |<span class="kw">_</span>| <span class="macro">quote! </span>{ <span class="attr">#[ignore] </span>});
+
     <span class="kw">let </span>result = <span class="kw">if </span><span class="macro">cfg!</span>(msim) {
+        <span class="kw">let </span>sig = <span class="kw-2">&amp;</span>input.sig;
+        <span class="kw">let </span>return_type = <span class="kw-2">&amp;</span>sig.output;
+        <span class="kw">let </span>body = <span class="kw-2">&amp;</span>input.block;
         <span class="macro">quote! </span>{
             <span class="attr">#[::sui_simulator::sim_test(<span class="kw">crate </span>= <span class="string">&quot;sui_simulator&quot;</span>, #(#args)<span class="kw-2">*</span>)]
             #[::sui_macros::init_static_initializers]
-            </span>#input
+            </span>#ignore
+            #sig {
+                <span class="kw">async fn </span>body_fn() #return_type { #body }
+
+                <span class="kw">let </span>ret = body_fn().<span class="kw">await</span>;
+
+                ::sui_simulator::task::shutdown_all_nodes();
+
+                <span class="comment">// all node handles should have been dropped after the above block exits, but task
+                // shutdown is asynchronous, so we need a brief delay before checking for leaks.
+                </span>tokio::time::sleep(tokio::time::Duration::from_millis(<span class="number">10</span>)).<span class="kw">await</span>;
+
+                <span class="macro">assert_eq!</span>(
+                    sui_simulator::NodeLeakDetector::get_current_node_count(),
+                    <span class="number">0</span>,
+                    <span class="string">&quot;SuiNode leak detected&quot;
+                </span>);
+
+                ret
+            }
         }
     } <span class="kw">else </span>{
         <span class="kw">let </span>fn_name = <span class="kw-2">&amp;</span>input.sig.ident;
@@ -767,7 +824,8 @@
         <span class="kw">let </span>body = <span class="kw-2">&amp;</span>input.block;
         <span class="macro">quote! </span>{
             <span class="attr">#[tokio::test]
-            </span>#sig {
+            </span>#ignore
+            #sig {
                 <span class="kw">if </span>std::env::var(<span class="string">&quot;SUI_SKIP_SIMTESTS&quot;</span>).is_ok() {
                     <span class="macro">println!</span>(<span class="string">&quot;not running test {} in `cargo test`: SUI_SKIP_SIMTESTS is set&quot;</span>, <span class="macro">stringify!</span>(#fn_name));
 

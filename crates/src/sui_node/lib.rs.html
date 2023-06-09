@@ -1361,6 +1361,19 @@
 <a href="#1361" id="1361">1361</a>
 <a href="#1362" id="1362">1362</a>
 <a href="#1363" id="1363">1363</a>
+<a href="#1364" id="1364">1364</a>
+<a href="#1365" id="1365">1365</a>
+<a href="#1366" id="1366">1366</a>
+<a href="#1367" id="1367">1367</a>
+<a href="#1368" id="1368">1368</a>
+<a href="#1369" id="1369">1369</a>
+<a href="#1370" id="1370">1370</a>
+<a href="#1371" id="1371">1371</a>
+<a href="#1372" id="1372">1372</a>
+<a href="#1373" id="1373">1373</a>
+<a href="#1374" id="1374">1374</a>
+<a href="#1375" id="1375">1375</a>
+<a href="#1376" id="1376">1376</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1489,6 +1502,13 @@
     sui_tx_validator_metrics: Arc&lt;SuiTxValidatorMetrics&gt;,
 }
 
+<span class="attr">#[cfg(msim)]
+</span><span class="kw">struct </span>SimState {
+    sim_node: sui_simulator::runtime::NodeHandle,
+    sim_safe_mode_expected: AtomicBool,
+    _leak_detector: sui_simulator::NodeLeakDetector,
+}
+
 <span class="kw">pub struct </span>SuiNode {
     config: NodeConfig,
     validator_components: Mutex&lt;<span class="prelude-ty">Option</span>&lt;ValidatorComponents&gt;&gt;,
@@ -1512,10 +1532,7 @@
     _db_checkpoint_handle: <span class="prelude-ty">Option</span>&lt;oneshot::Sender&lt;()&gt;&gt;,
 
     <span class="attr">#[cfg(msim)]
-    </span>sim_node: sui_simulator::runtime::NodeHandle,
-
-    <span class="attr">#[cfg(msim)]
-    </span>sim_safe_mode_expected: AtomicBool,
+    </span>sim_state: SimState,
 
     _state_archive_handle: <span class="prelude-ty">Option</span>&lt;broadcast::Sender&lt;()&gt;&gt;,
 }
@@ -1926,10 +1943,14 @@
             trusted_peer_change_tx,
 
             _db_checkpoint_handle: db_checkpoint_handle,
+
             <span class="attr">#[cfg(msim)]
-            </span>sim_node: sui_simulator::runtime::NodeHandle::current(),
-            <span class="attr">#[cfg(msim)]
-            </span>sim_safe_mode_expected: AtomicBool::new(<span class="bool-val">false</span>),
+            </span>sim_state: SimState {
+                sim_node: sui_simulator::runtime::NodeHandle::current(),
+                sim_safe_mode_expected: AtomicBool::new(<span class="bool-val">false</span>),
+                _leak_detector: sui_simulator::NodeLeakDetector::new(),
+            },
+
             _state_archive_handle: state_archive_handle,
         };
 
@@ -1951,7 +1972,8 @@
     <span class="attr">#[cfg(msim)]
     </span><span class="kw">pub fn </span>set_safe_mode_expected(<span class="kw-2">&amp;</span><span class="self">self</span>, new_value: bool) {
         <span class="macro">info!</span>(<span class="string">&quot;Setting safe mode expected to {}&quot;</span>, new_value);
-        <span class="self">self</span>.sim_safe_mode_expected
+        <span class="self">self</span>.sim_state
+            .sim_safe_mode_expected
             .store(new_value, Ordering::Relaxed);
     }
 
@@ -2462,7 +2484,11 @@
                 .expect(<span class="string">&quot;Read Sui System State object cannot fail&quot;</span>);
 
             <span class="attr">#[cfg(msim)]
-            </span><span class="kw">if </span>!<span class="self">self</span>.sim_safe_mode_expected.load(Ordering::Relaxed) {
+            </span><span class="kw">if </span>!<span class="self">self
+                </span>.sim_state
+                .sim_safe_mode_expected
+                .load(Ordering::Relaxed)
+            {
                 <span class="macro">debug_assert!</span>(!latest_system_state.safe_mode());
             }
 
@@ -2645,7 +2671,7 @@
 
     <span class="attr">#[cfg(msim)]
     </span><span class="kw">pub fn </span>get_sim_node_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; sui_simulator::task::NodeId {
-        <span class="self">self</span>.sim_node.id()
+        <span class="self">self</span>.sim_state.sim_node.id()
     }
 
     <span class="kw">pub fn </span>get_config(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>NodeConfig {

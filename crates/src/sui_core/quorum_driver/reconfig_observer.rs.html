@@ -134,6 +134,11 @@
 <a href="#134" id="134">134</a>
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -250,7 +255,12 @@
                     <span class="kw">continue</span>;
                 }
                 <span class="prelude-val">Err</span>(RecvError::Closed) =&gt; {
-                    <span class="macro">panic!</span>(<span class="string">&quot;Do not expect the channel to be closed&quot;</span>)
+                    <span class="comment">// Closing the channel only happens in simtest when a node is shut down.
+                    </span><span class="kw">if </span><span class="macro">cfg!</span>(msim) {
+                        <span class="kw">return</span>;
+                    } <span class="kw">else </span>{
+                        <span class="macro">panic!</span>(<span class="string">&quot;Do not expect the channel to be closed&quot;</span>)
+                    }
                 }
             }
         }
