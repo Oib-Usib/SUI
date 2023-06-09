@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686340357497,
+  "lastUpdate": 1686351845333,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12203,6 +12203,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 306466,
             "range": "± 11356",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "johnjosephmartin@icloud.com",
+            "name": "John Martin",
+            "username": "johnjmartin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "84aa25ee3f2477f7d18e49498728df5c9eddc32c",
+          "message": "sui cli: support ssfn config generation (#12370)\n\n## Description \r\n\r\nAdding state sync fullnodes to internal test networks means needing a\r\nset of up-to-date peer ids within both validator configs and ssfn\r\nconfigs, eg:\r\n**ssfn-config-0.yaml**\r\n```\r\np2p-config:\r\n  listen-address: \"0.0.0.0:8084\"\r\n  external-address: /dns/lax-ssfn-2.ci.sui.io/udp/8084\r\n  seed-peers:\r\n    - peer-id: 61ff2d5b789815986984f132404bc81ca7e0d7aedfb5d6dea94d477ee2dfbd2a\r\n      address: /dns/lax-suival-f9471.ci.sui.io/udp/8084\r\n    - peer-id: a1df08a64bec30bddfed076c038d5104b0dcb03932c58128c4aa073c1a068f2f\r\n      address: /dns/lax-suival-add2f.ci.sui.io/udp/8084\r\n    - peer-id: c7cd54ebfed347df9831ebbf690711ba628cf9ca02aa2e5388907b918be6de8f\r\n```\r\n\r\n**validator-config-0.yaml**\r\n```\r\np2p-config:\r\n  listen-address: \"0.0.0.0:8084\"\r\n  external-address: /dns/lax-suival-f9471.ci.sui.io/udp/8084\r\n  seed-peers:\r\n    - peer-id: c9f0aae2d154496c36c581fd0c4c4f1e6c996df754ebb82eaa1547f549d62158\r\n      address: /dns/lax-ssfn-2.ci.sui.io/udp/8084\r\n    - peer-id: 440ec833f766fc9159c48aa8bc8b21a4885a4db2fc356921e7f33cda5cb3b39c\r\n      address: /dns/lax-ssfn-1.ci.sui.io/udp/8084\r\n```\r\n\r\nThis PR supports generating the two sets of peer-ids, it also makes\r\n`FullnodeConfigBuilder::new()` a bit more flexible with regard to\r\nsupporting different input generation.\r\n\r\n## Test Plan \r\n\r\nI'll test this works with an internal network before shipping \r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nAdding support for an optional `ssfn_config_info` to the `sui genesis\r\n--from-config genesis.yaml` cli command. Using the additional\r\n`ssfn_config_info:`, a list of ssfn hosts can be passed to the `sui\r\ngenesis` cli, creating `ssfn-config-0.yaml` files which be used by state\r\nsync fullnodes.",
+          "timestamp": "2023-06-09T15:52:34-07:00",
+          "tree_id": "4de915886c2c5e71ad276d66faca62263eb41771",
+          "url": "https://github.com/MystenLabs/sui/commit/84aa25ee3f2477f7d18e49498728df5c9eddc32c"
+        },
+        "date": 1686351821953,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 152869384,
+            "range": "± 4002614",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 497689,
+            "range": "± 42279",
             "unit": "ns/iter"
           }
         ]
