@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686256176415,
+  "lastUpdate": 1686276625785,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12059,6 +12059,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314337,
             "range": "± 26169",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "8418040+longbowlu@users.noreply.github.com",
+            "name": "Lu Zhang",
+            "username": "longbowlu"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4128c2f629ffc91f7520b1297e2fe9e90b65d821",
+          "message": "fix test flakiness introduced with early return upon many conflicts (#12415)\n\n## Description \r\n\r\nNow we don't exhaust every response when the tx is deadlock, the\r\nreturned conflicting txes list may look different depending on the order\r\nvalidators respond. In this PR we relax the assertion conditions\r\nadaptively.\r\n\r\n\r\n## Test Plan \r\n\r\ncargo test\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nFix test flakiness introduced with early return upon many conflicts",
+          "timestamp": "2023-06-08T18:56:28-07:00",
+          "tree_id": "0aa95e92f8b694eee594682019a0588c6520330d",
+          "url": "https://github.com/MystenLabs/sui/commit/4128c2f629ffc91f7520b1297e2fe9e90b65d821"
+        },
+        "date": 1686276604158,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146561395,
+            "range": "± 4792282",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 405000,
+            "range": "± 60977",
             "unit": "ns/iter"
           }
         ]
