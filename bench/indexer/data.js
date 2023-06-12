@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686606625049,
+  "lastUpdate": 1686611041589,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12671,6 +12671,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312740,
             "range": "± 85233",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "17d8c411f4621f03420aa60b89469fdd43be61d6",
+          "message": "Multiple small refactor to blob related code (#12400)\n\n## Description \r\n\r\nThis PR mostly cleans up some existing code. Primarily the main changes\r\nare:\r\n1. Move `blob` related code to blob.rs\r\n2. Have one single file format which is used for both summary and\r\ncontent files. It is already written as blobs, so just introduce a\r\ncommon abstraction\r\n3. Stop writing individual file's storage format and file compression in\r\nmanifest. It can be read from the file header directly\r\n\r\n5. ## Test Plan \r\n\r\nExisting tests",
+          "timestamp": "2023-06-12T15:49:33-07:00",
+          "tree_id": "1b3243fec7541fd59db07665cc48d21ced470a1c",
+          "url": "https://github.com/MystenLabs/sui/commit/17d8c411f4621f03420aa60b89469fdd43be61d6"
+        },
+        "date": 1686611021834,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 161943866,
+            "range": "± 4720053",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 429546,
+            "range": "± 33632",
             "unit": "ns/iter"
           }
         ]
