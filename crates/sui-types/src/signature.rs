@@ -17,22 +17,19 @@ use schemars::JsonSchema;
 use serde::Serialize;
 use shared_crypto::intent::IntentMessage;
 use std::hash::Hash;
-use std::sync::Arc;
 
 #[derive(Default, Debug, Clone)]
 pub struct VerifyParams {
     pub epoch: Option<EpochId>,
-    //pub google_jwk_as_bytes: Option<Vec<u8>>,
-    //pub oauth_provider_jwk: Option<Arc<OAuthProviderContent>>,
 
     // map from kid => OauthProviderContent
-    pub oauth_provider_jwks: ImHashMap<String, Arc<OAuthProviderContent>>,
+    pub oauth_provider_jwks: ImHashMap<String, OAuthProviderContent>,
 }
 
 impl VerifyParams {
     pub fn new(
         epoch: Option<EpochId>,
-        oauth_provider_jwks: ImHashMap<String, Arc<OAuthProviderContent>>,
+        oauth_provider_jwks: ImHashMap<String, OAuthProviderContent>,
     ) -> Self {
         Self {
             epoch,

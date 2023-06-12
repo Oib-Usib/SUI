@@ -307,6 +307,9 @@ where
     pub fn verify_committee_sigs_only(
         self,
         committee: &Committee,
+        // The purpose of this parameter is to express the intent that the caller should be
+        // providing a VerifiedEnvelope as a "ticket" that proves that the user sig has already
+        // been verified.
         original_data: &VerifiedEnvelope<T, EmptySignInfo>,
     ) -> SuiResult<VerifiedEnvelope<T, AuthorityQuorumSignInfo<S>>>
     where
