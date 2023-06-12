@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686604259029,
+  "lastUpdate": 1686605873797,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12599,6 +12599,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 381326,
             "range": "± 47989",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jordan@mystenlabs.com",
+            "name": "Jordan Gensler",
+            "username": "Jordan-Mysten"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1cfb1c9da3fb38bb73cf7a6ed8b6fdb595fda47b",
+          "message": "[ts-sdk] Use protocol config in transaction builder (#12081)\n\n## Description \r\n\r\n- Adds `getProtocolConfig()`\r\n- Reworks the hard-coded limits to instead use the protocol config. As a\r\nperformance optimization, a `protocolConfig` option can be used instead\r\nof having it fetch whenever it builds the transaction. Additionally, you\r\ncan hard-code `limits` if you wish, to entirely avoid working with\r\nprotocol config (not recommended, but can be used to override protocol\r\nconfig if you wanted to for whatever reason).\r\n- I had to rework the limit for pure inputs so that it happens as\r\nvalidation instead of during serialization to bytes. This means that\r\npure inputs are completely unlimited (can grow to infinity).\r\n- Some things that previously errored during setting properties will now\r\nerror during transaction construction to bytes (for example, setting\r\npayment coins).\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\n---------\r\n\r\nCo-authored-by: Michael Hayes <michael.hayes@mystenlabs.com>",
+          "timestamp": "2023-06-12T14:27:52-07:00",
+          "tree_id": "007dccdc579fee79c634eba0c9caa3d55b6c3ce7",
+          "url": "https://github.com/MystenLabs/sui/commit/1cfb1c9da3fb38bb73cf7a6ed8b6fdb595fda47b"
+        },
+        "date": 1686605813826,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 108991602,
+            "range": "± 4842742",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 258703,
+            "range": "± 14767",
             "unit": "ns/iter"
           }
         ]
