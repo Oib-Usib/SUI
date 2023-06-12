@@ -14,6 +14,7 @@ rand = { version = "0.8.5", optional = true }
 thiserror = "1.0.35"
 tokio = { workspace = true, features = ["sync"] }
 tracing = "0.1.36"
+parking_lot = "0.12.1"
 
 config = { path = "../config", package = "narwhal-config" }
 fastcrypto.workspace = true
