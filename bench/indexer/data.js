@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686605873797,
+  "lastUpdate": 1686606625049,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12635,6 +12635,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 258703,
             "range": "± 14767",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "johnjosephmartin@icloud.com",
+            "name": "John Martin",
+            "username": "johnjmartin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "87935bff4a24562ff50b27c76a9dd1d4d41d9b6d",
+          "message": "[sui cli] Optional network_key_pair to ssfn_genesis_config (#12447)\n\n## Description \r\n\r\nAdds a optional network key to ssfn_genesis_config, eg:\r\n```\r\nssfn_config_info:\r\n  - p2p_address: /dns/lax-ssfn-2.testing.sui.io/udp/8084\r\n    network_key_pair: abcdefg123\r\n ```\r\n \r\nThis allows the fullnodes which consume from the ssfn's to use a static list of peer id's\r\n\r\n## Test Plan \r\n\r\nTested locally\r\n\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade binaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-12T14:38:39-07:00",
+          "tree_id": "f1dd013a9a4b463e78541797cb48445bf40e1b77",
+          "url": "https://github.com/MystenLabs/sui/commit/87935bff4a24562ff50b27c76a9dd1d4d41d9b6d"
+        },
+        "date": 1686606605565,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 152399468,
+            "range": "± 4361022",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312740,
+            "range": "± 85233",
             "unit": "ns/iter"
           }
         ]
