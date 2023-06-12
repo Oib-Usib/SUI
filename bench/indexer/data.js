@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686541229828,
+  "lastUpdate": 1686549909856,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12383,6 +12383,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314154,
             "range": "± 13559",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1009fed9f732ad98741364e8993f19b44db7ead6",
+          "message": "[consensus handler] reorder txns by gas price (#12266)\n\n## Description \r\n\r\nThis PR adds a step in consensus handler to reorder transactions in a\r\nNarwhal commit by their gas prices. Right now the reordering is purely\r\nbased on gas price, which will be later changed to be based on object\r\nhotness, etc, as well.\r\n\r\n## Test Plan \r\n\r\nAdded a test.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nPreviously transactions in a Narwhal commit were ordered as the sub-dag\r\nis flattened in a depth-first traversal. Now we have added a round of\r\nordering that orders the user transactions in the same commit by gas\r\nprice, where a transaction with higher gas price will be added for\r\nexecution in the transaction manager first.",
+          "timestamp": "2023-06-11T22:50:06-07:00",
+          "tree_id": "614f9d1f2e06c3fca306ce390785c2550bc606f4",
+          "url": "https://github.com/MystenLabs/sui/commit/1009fed9f732ad98741364e8993f19b44db7ead6"
+        },
+        "date": 1686549882454,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 151343443,
+            "range": "± 4732468",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309757,
+            "range": "± 28883",
             "unit": "ns/iter"
           }
         ]
