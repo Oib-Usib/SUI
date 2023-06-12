@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686353247186,
+  "lastUpdate": 1686539034931,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12311,6 +12311,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 349070,
             "range": "± 69483",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "113150618+dariorussi@users.noreply.github.com",
+            "name": "Dario Russi",
+            "username": "dariorussi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "98413acceafa3e9a9e48af2eee21f0bbe74ffa60",
+          "message": "Use steps to charge for gas instead of buckets (#11929)\n\n## Description \r\n\r\nUse a round up function instead of buckets to charge for gas\r\n\r\n## Test Plan \r\n\r\nTests passing, I am also going to run a node to see the gas charged\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nComplete release note will be tracked in\r\nhttps://github.com/MystenLabs/sui/pull/12429 because there is more than\r\none change coming and it makes more sense to track them all in one\r\nplace.\r\n\r\nWe are changing bucket computation for gas charges. \r\nBefore this protocol version gas for computation was put into buckets in\r\norder to group transactions that were roughly similar into the same\r\nprice/cost.\r\nThat, however, has created an inconsistency in the way charges operate\r\nand the way people optimize for gas.\r\nWith this change in the gas model, charges for gas do not follow the\r\nsteep progression that was defined with buckets. Charges are rounded up\r\nto the closest 1000 and that is all we do",
+          "timestamp": "2023-06-11T21:54:14-05:00",
+          "tree_id": "354d0d089221e53b814b3b78326b133033a8658e",
+          "url": "https://github.com/MystenLabs/sui/commit/98413acceafa3e9a9e48af2eee21f0bbe74ffa60"
+        },
+        "date": 1686539007437,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109181012,
+            "range": "± 6644541",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 321943,
+            "range": "± 11901",
             "unit": "ns/iter"
           }
         ]
