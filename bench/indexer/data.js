@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686579886982,
+  "lastUpdate": 1686588191594,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12527,6 +12527,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 322145,
             "range": "± 27129",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "tmn@mystenlabs.com",
+            "name": "Todd Nowacki",
+            "username": "tnowacki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d1d097ca380109586cdc2723d8cd026f86b1679",
+          "message": "[move-compiler] Beginnings of a visitor framework. Expose Abstract Interpreter framework  (#12356)\n\n## Description \r\n\r\n- Added a notion of visitors to the compiler, but it is only currently\r\nimplemented for the abstract interpreter\r\n- Added a Helper trait for simple abstract interpreter passes \r\n- Implemented the ID leak verifier as an example of that interpreter\r\n  - Will hook it up in a future PR\r\n  \r\nExample output (when I turned off the filtering)\r\n```\r\n  error[Sui E01001]: invalid object construction\r\n     ┌─ /Users/tmn/sui/crates/sui-framework/packages/sui-framework/sources/clock.move:42:32\r\n     │  \r\n  42 │           transfer::share_object(Clock {\r\n     │ ╭────────────────────────────────^\r\n  43 │ │             id: object::clock(),\r\n     │ │             --  --------------- Non fresh UID from this position\r\n     │ │             │    \r\n     │ │             \r\n                  The UID must come directly from sui::object::new. Or for tests, it can come from sui::test_scenario::new_object\r\n  44 │ │             // Initialised to zero, but set to a real timestamp by a\r\n  45 │ │             // system transaction before it can be witnessed by a move\r\n  46 │ │             // call.\r\n  47 │ │             timestamp_ms: 0,\r\n  48 │ │         })\r\n     │ ╰─────────^ Invalid object creation without a newly created UID.\r\n```\r\n\r\n## Test Plan \r\n\r\nTested with the ID leak verifier \r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-12T09:29:18-07:00",
+          "tree_id": "2ffca4bec3a1b292e056438713ac2b1d5d3be1fb",
+          "url": "https://github.com/MystenLabs/sui/commit/7d1d097ca380109586cdc2723d8cd026f86b1679"
+        },
+        "date": 1686588169124,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 162928090,
+            "range": "± 4591620",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 438142,
+            "range": "± 32858",
             "unit": "ns/iter"
           }
         ]
