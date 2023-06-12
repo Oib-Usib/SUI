@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686539034931,
+  "lastUpdate": 1686541229828,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12347,6 +12347,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 321943,
             "range": "± 11901",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96da55d600ec6cc238ef4a2fdf361fa61db4f31b",
+          "message": "Bump baptiste0928/cargo-install from 2.0.0 to 2.1.0 (#12432)",
+          "timestamp": "2023-06-12T03:28:19Z",
+          "tree_id": "c25db659136ef53f7f3c7e4daa4387e4ca1433e7",
+          "url": "https://github.com/MystenLabs/sui/commit/96da55d600ec6cc238ef4a2fdf361fa61db4f31b"
+        },
+        "date": 1686541208561,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 145657236,
+            "range": "± 4357603",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314154,
+            "range": "± 13559",
             "unit": "ns/iter"
           }
         ]
