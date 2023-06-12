@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use std::str::FromStr;
-use std::sync::Arc;
 
 use crate::signature::{AuthenticatorTrait, VerifyParams};
 use crate::utils::{make_transaction, make_zklogin_tx};
@@ -32,7 +31,7 @@ fn zklogin_authenticator_scenarios() {
         tx.into_data().transaction_data().clone(),
     );
 
-    let parsed: ImHashMap<String, Arc<OAuthProviderContent>> =
+    let parsed: ImHashMap<String, OAuthProviderContent> =
         parse_jwks(DEFAULT_JWK_BYTES).unwrap().into_iter().collect();
 
     // Construct the required info required to verify a zk login authenticator
@@ -44,7 +43,7 @@ fn zklogin_authenticator_scenarios() {
         .verify_secure_generic(&intent_msg, user_address, &aux_verify_data)
         .is_ok());
 
-    let parsed: ImHashMap<String, Arc<OAuthProviderContent>> = parsed
+    let parsed: ImHashMap<String, OAuthProviderContent> = parsed
         .into_iter()
         .enumerate()
         .map(|(i, (_, v))| (format!("nosuchkey_{}", i), v))
