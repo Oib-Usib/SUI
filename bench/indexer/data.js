@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686588191594,
+  "lastUpdate": 1686604259029,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12563,6 +12563,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 438142,
             "range": "± 32858",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "208dda73ac506aaa32e043ff22d9b6f6b17fe46c",
+          "message": "[protocol-config] Introduce Protocol Config 14 (#12448)\n\n## Description\r\n\r\nReserve Protocol Config 13 for only framework changes, in preparation to\r\ncherry-pick those changes to an earlier release. Moves gas rounding and\r\ntransaction ordering changes to version 14 (which isn't going to an\r\nearlier release)\r\n\r\n## Test Plan\r\n\r\n```\r\nsui$ cargo nextest run -p sui-protocol-config\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nReserve Protocol Config 13 for only framework changes, in preparation to\r\ncherry-pick those changes to an earlier release. Moves gas rounding and\r\ntransaction ordering changes to version 14 (which isn't going to an\r\nearlier release)",
+          "timestamp": "2023-06-12T13:54:35-07:00",
+          "tree_id": "6930c861b6dfc90ff603303d5fcb4639bbe0824a",
+          "url": "https://github.com/MystenLabs/sui/commit/208dda73ac506aaa32e043ff22d9b6f6b17fe46c"
+        },
+        "date": 1686604236658,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 157697967,
+            "range": "± 4566528",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 381326,
+            "range": "± 47989",
             "unit": "ns/iter"
           }
         ]
