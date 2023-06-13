@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686685391370,
+  "lastUpdate": 1686687385111,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12851,6 +12851,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312579,
             "range": "± 27485",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e4e634331147b3f3ac0be7ddb19e25aee44d68d1",
+          "message": "Add archive state reader (#12402)\n\n## Description \r\n\r\nThis PR adds functions to allow reading checkpoints from archive. The\r\nmain functionality is in reader.rs\r\n## Test Plan \r\n\r\nAdded unit tests",
+          "timestamp": "2023-06-13T13:05:09-07:00",
+          "tree_id": "f45a2d73009bf04c76f07815c4ff627e984864ac",
+          "url": "https://github.com/MystenLabs/sui/commit/e4e634331147b3f3ac0be7ddb19e25aee44d68d1"
+        },
+        "date": 1686687365628,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147028364,
+            "range": "± 6540123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 504928,
+            "range": "± 63540",
             "unit": "ns/iter"
           }
         ]
