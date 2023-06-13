@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686618026715,
+  "lastUpdate": 1686672156994,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12743,6 +12743,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 369532,
             "range": "± 108855",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "108701016+joyqvq@users.noreply.github.com",
+            "name": "Joy Wang",
+            "username": "joyqvq"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3ea9adb71a0fe38cab59a12928bfbaa5cb10b467",
+          "message": "crypto: Multisig support in typescript (#12298)\n\n## Description \r\n\r\nThis PR 1) updates serialization for multisig signature format and still\r\nmaintain MultisigLegacy 2) add typescript support for the latest\r\nmultisig.\r\n\r\nDue to the incompatibility of roaring bitmap in typescript (no broswer\r\nsupport), we decide to upgrade the bitmap in multisig format to use\r\nplain bitmap instead of roaring bitmap in sui protocol. This results in\r\nmore compact serialization of a multisig: the bitmap field is reduced\r\nfrom 37 bytes to at most 10 bytes (max number of signers = 10).\r\n\r\nIn addition, we upgrade the public key serialization to use plain bytes\r\ninstead of string. This also reduce each pubkey serialization in\r\nmultisig.\r\n\r\nThe typescript sdk and rust keytool introduced in this PR follows the\r\nnew protocol. MultisigLegacy is still supported in the sui protocol to\r\nprovide backward compatibility. i.e. multisig returned from old rust\r\nkeytool or legacy client impl in other languages using the legacy format\r\ncan still be executed, but upgrade client to use latest serialization is\r\nstrongly recommended with better compression and first class support.\r\n\r\nThe multisig address remains unchanged. \r\n\r\nAfter https://github.com/MystenLabs/sui/pull/12250 lands rebase and\r\ninclude r1.\r\nThanks @damirka for bcs help!\r\n\r\n## Test Plan \r\n\r\nunit test ser/de for multisig legacy + latest. consistency test in\r\ntypescript vs rust.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-13T15:51:22Z",
+          "tree_id": "88b89272456af5d1fa1926d11cad5e1bbc8875ab",
+          "url": "https://github.com/MystenLabs/sui/commit/3ea9adb71a0fe38cab59a12928bfbaa5cb10b467"
+        },
+        "date": 1686672136879,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 149009882,
+            "range": "± 8386643",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 323025,
+            "range": "± 55222",
             "unit": "ns/iter"
           }
         ]
