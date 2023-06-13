@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686672156994,
+  "lastUpdate": 1686684474415,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12779,6 +12779,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 323025,
             "range": "± 55222",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "51927076+phoenix-o@users.noreply.github.com",
+            "name": "phoenix",
+            "username": "phoenix-o"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aa471b7ae6b517623ff65fea41a58d55d49fe371",
+          "message": "[pruner] remove point delete option (#12462)\n\nremove point delete method from the pruner",
+          "timestamp": "2023-06-13T21:15:11+02:00",
+          "tree_id": "5fd2c2cd216cbd347199357e9d709281fa5752d0",
+          "url": "https://github.com/MystenLabs/sui/commit/aa471b7ae6b517623ff65fea41a58d55d49fe371"
+        },
+        "date": 1686684445351,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 107152569,
+            "range": "± 7126159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 364861,
+            "range": "± 18845",
             "unit": "ns/iter"
           }
         ]
