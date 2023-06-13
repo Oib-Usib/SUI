@@ -30,7 +30,6 @@ use sui_json_rpc_types::{
 };
 use sui_network::{DEFAULT_CONNECT_TIMEOUT_SEC, DEFAULT_REQUEST_TIMEOUT_SEC};
 use sui_sdk::{SuiClient, SuiClientBuilder};
-use sui_types::effects::{CertifiedTransactionEffects, TransactionEffectsAPI, TransactionEvents};
 use sui_types::programmable_transaction_builder::ProgrammableTransactionBuilder;
 use sui_types::sui_system_state::sui_system_state_summary::SuiSystemStateSummary;
 use sui_types::transaction::Argument;
@@ -52,6 +51,10 @@ use sui_types::{base_types::SequenceNumber, gas_coin::GasCoin};
 use sui_types::{
     base_types::{AuthorityName, SuiAddress},
     sui_system_state::SuiSystemStateTrait,
+};
+use sui_types::{
+    effects::{CertifiedTransactionEffects, TransactionEffectsAPI, TransactionEvents},
+    quorum_driver_types::ExecuteTransactionRequestType,
 };
 use sui_types::{error::SuiError, gas::GasCostSummary};
 use tokio::{
@@ -732,7 +735,7 @@ impl ValidatorProxy for FullNodeProxy {
                 .execute_transaction_block(
                     tx.clone(),
                     SuiTransactionBlockResponseOptions::new().with_effects(),
-                    None,
+                    Some(ExecuteTransactionRequestType::WaitForLocalExecution),
                 )
                 .await
             {
