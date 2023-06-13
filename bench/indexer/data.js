@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686684474415,
+  "lastUpdate": 1686685391370,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12815,6 +12815,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 364861,
             "range": "± 18845",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sam@mystenlabs.com",
+            "name": "Sam Blackshear",
+            "username": "sblackshear"
+          },
+          "committer": {
+            "email": "sam@mystenlabs.com",
+            "name": "Sam Blackshear",
+            "username": "sblackshear"
+          },
+          "distinct": true,
+          "id": "d06b0ddc6ec0e3e6b83c5a52efad8c5ae9c11317",
+          "message": "[deepbook] Use fresh object ID rather than sender address in AccountCap\n\nUsing the sender address makes it possible to create AccountCap's that can access the same pool of funds in a tx that does not require an AccountCap as input. This is dangerous because it makes it easier for a malicious app to trick a user into signing a tx that creates an AccountCap that can access an existing pool of funds.",
+          "timestamp": "2023-06-13T12:33:27-07:00",
+          "tree_id": "d412ff58835a53e458d149f3c531ae6c08c4b13c",
+          "url": "https://github.com/MystenLabs/sui/commit/d06b0ddc6ec0e3e6b83c5a52efad8c5ae9c11317"
+        },
+        "date": 1686685374625,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 108798421,
+            "range": "± 9834953",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312579,
+            "range": "± 27485",
             "unit": "ns/iter"
           }
         ]
