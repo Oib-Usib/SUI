@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686761095781,
+  "lastUpdate": 1686767220044,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13031,6 +13031,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 317394,
             "range": "± 18546",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "123408603+healthydeve@users.noreply.github.com",
+            "name": "Jian Lu",
+            "username": "healthydeve"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a0bb4de7f60c061c45246b02c41479b2e05f1950",
+          "message": "[Faucet] Adding batch request to sui faucet (#12257)\n\n## Description \r\n\r\nThis PR adds the `/v1/gas` api to the faucet which is the batch send\r\nrequest. The request gets put into a MCSP queue which another thread\r\npulls routinely from to serve up to 500 paysui transactions at once.\r\n\r\nThis also adds the `/v1/status` api to the faucet which checks on the\r\nstatus of the request based on a Uuid that is generated from the initial\r\ngas request. The status of any given Uuid is cached for 5 minutes after\r\nthe request completes, and if it is deleted the user will get nothing\r\nback.\r\n\r\nAdding batch request on faucet: \r\n\r\n<img width=\"1243\" alt=\"image\"\r\nsrc=\"https://github.com/MystenLabs/sui/assets/123408603/bfa62f4a-8d14-4cf6-b17a-91bbb9c54378\">\r\n\r\nIn Progress:\r\n\r\n![image](https://github.com/MystenLabs/sui/assets/123408603/f6546c54-774f-44dd-b07d-a2a30d4df777)\r\n\r\nSuccess:\r\n\r\n![image](https://github.com/MystenLabs/sui/assets/123408603/8ac43331-c4ae-49b1-97cd-12bd6bd7e39f)\r\n\r\nFollow up items:\r\nChange wallet to use new API\r\n\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\nLocal Testing / CI / CD / Will redirect discord devnet faucuet, and then\r\ntestnet faucet onto this endpoint\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-14T11:17:22-07:00",
+          "tree_id": "9fa3175a70f3ac995cd2bc0dcbefc963303c7d2d",
+          "url": "https://github.com/MystenLabs/sui/commit/a0bb4de7f60c061c45246b02c41479b2e05f1950"
+        },
+        "date": 1686767203642,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 112838633,
+            "range": "± 5573612",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 309644,
+            "range": "± 21793",
             "unit": "ns/iter"
           }
         ]
