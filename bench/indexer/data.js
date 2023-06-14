@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686756282776,
+  "lastUpdate": 1686758663987,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12959,6 +12959,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 329805,
             "range": "± 65833",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "williamprincesmith@gmail.com",
+            "name": "William Smith",
+            "username": "williampsmith"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "edaa731c4d85863ccfbed39abc586f7a55cb5635",
+          "message": "[Core] Move executed_transactions_to_checkpoint table to epoch store (#12228)",
+          "timestamp": "2023-06-14T08:54:35-07:00",
+          "tree_id": "78d10916a38679c3b7be0630a78f55e79e256745",
+          "url": "https://github.com/MystenLabs/sui/commit/edaa731c4d85863ccfbed39abc586f7a55cb5635"
+        },
+        "date": 1686758634208,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 108399720,
+            "range": "± 3158779",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 361145,
+            "range": "± 18762",
             "unit": "ns/iter"
           }
         ]
