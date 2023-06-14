@@ -208,6 +208,7 @@ where
             )
         });
 
+    checkpoint.data().verify();
     checkpoint
         .verify_signature(&committee, &VerifyParams::default())
         .map_err(|e| {

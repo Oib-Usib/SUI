@@ -85,7 +85,13 @@ impl Message for TransactionEffects {
         TransactionEffectsDigest::new(default_hash(self))
     }
 
-    fn verify(&self, _verify_params: &VerifyParams) -> SuiResult {
+    fn verify_message_signature(&self, _verify_params: &VerifyParams) -> SuiResult {
+        Ok(())
+    }
+
+    fn verify_epoch(&self, _: EpochId) -> SuiResult {
+        // Authorities are allowed to re-sign effects from prior epochs, so we do not verify the
+        // epoch here.
         Ok(())
     }
 }

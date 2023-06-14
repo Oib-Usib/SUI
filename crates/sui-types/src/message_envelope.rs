@@ -51,6 +51,7 @@ pub fn get_google_jwk_bytes() -> Arc<RwLock<Vec<u8>>> {
             ))
         }).clone()
 }
+
 pub trait Message {
     type DigestType: Clone + Debug;
     const SCOPE: IntentScope;
@@ -61,10 +62,12 @@ pub trait Message {
 
     fn digest(&self) -> Self::DigestType;
 
-    /// Verify the internal data consistency of this message.
-    /// In some cases, such as user signed transaction, we also need
-    /// to verify the user signature here.
-    fn verify(&self, verify_params: &VerifyParams) -> SuiResult;
+    /// Verify internal signatures, e.g. for Transaction we verify the user signature(s).
+    fn verify_message_signature(&self, verify_params: &VerifyParams) -> SuiResult;
+
+    /// Verify that the message is from the correct epoch (e.g. for CertifiedCheckpointSummary
+    /// we verify that the checkpoint is from the same epoch as the committee signatures).
+    fn verify_epoch(&self, epoch: EpochId) -> SuiResult;
 }
 
 #[derive(Clone, Debug, Eq, Serialize, Deserialize)]
@@ -150,7 +153,7 @@ impl<T: Message> Envelope<T, EmptySignInfo> {
     }
 
     pub fn verify_signature(&self, verify_params: &VerifyParams) -> SuiResult {
-        self.data.verify(verify_params)
+        self.data.verify_message_signature(verify_params)
     }
 
     pub fn verify_with_params(
@@ -163,6 +166,7 @@ impl<T: Message> Envelope<T, EmptySignInfo> {
         ))
     }
 
+    // XXX
     pub fn verify(self) -> SuiResult<VerifiedEnvelope<T, EmptySignInfo>> {
         self.verify_with_params(&VerifyParams::default())
     }
@@ -204,9 +208,8 @@ where
         committee: &Committee,
         verify_params: &VerifyParams,
     ) -> SuiResult {
-        let mut verify_params = verify_params.clone();
-        verify_params.epoch = Some(self.auth_sig().epoch);
-        self.data.verify(&verify_params)?;
+        self.data.verify_epoch(self.auth_sig().epoch)?;
+        self.data.verify_message_signature(verify_params)?;
         self.auth_signature
             .verify_secure(self.data(), Intent::sui_app(T::SCOPE), committee)
     }
@@ -222,6 +225,7 @@ where
         ))
     }
 
+    // XXX
     pub fn verify(
         self,
         committee: &Committee,
@@ -281,9 +285,8 @@ where
         committee: &Committee,
         verify_params: &VerifyParams,
     ) -> SuiResult {
-        let mut verify_params = verify_params.clone();
-        verify_params.epoch = Some(self.auth_sig().epoch);
-        self.data.verify(&verify_params)?;
+        self.data.verify_epoch(self.auth_sig().epoch)?;
+        self.data.verify_message_signature(verify_params)?;
         self.auth_signature
             .verify_secure(self.data(), Intent::sui_app(T::SCOPE), committee)
     }
@@ -320,6 +323,7 @@ where
                 error: "original_data must have same digest as cert".to_string(),
             });
         }
+        self.data.verify_epoch(self.auth_sig().epoch)?;
         self.auth_signature
             .verify_secure(self.data(), Intent::sui_app(T::SCOPE), committee)?;
         Ok(VerifiedEnvelope::<T, AuthorityQuorumSignInfo<S>>::new_from_verified(self))

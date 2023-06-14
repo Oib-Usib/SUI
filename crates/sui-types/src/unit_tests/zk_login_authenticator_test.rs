@@ -36,11 +36,11 @@ fn zklogin_authenticator_scenarios() {
 
     // Construct the required info required to verify a zk login authenticator
     // in authority server (i.e. epoch and default JWK).
-    let aux_verify_data = VerifyParams::new(Some(0), parsed.clone());
+    let aux_verify_data = VerifyParams::new(parsed.clone());
 
     // Verify passes.
     assert!(authenticator
-        .verify_secure_generic(&intent_msg, user_address, &aux_verify_data)
+        .verify_secure_generic(&intent_msg, user_address, Some(0), &aux_verify_data)
         .is_ok());
 
     let parsed: ImHashMap<String, OAuthProviderContent> = parsed
@@ -50,11 +50,11 @@ fn zklogin_authenticator_scenarios() {
         .collect();
 
     // correct kid can no longer be found
-    let aux_verify_data = VerifyParams::new(Some(9999), parsed);
+    let aux_verify_data = VerifyParams::new(parsed);
 
     // Verify fails.
     assert!(authenticator
-        .verify_secure_generic(&intent_msg, user_address, &aux_verify_data)
+        .verify_secure_generic(&intent_msg, user_address, Some(9999), &aux_verify_data)
         .is_err());
 }
 

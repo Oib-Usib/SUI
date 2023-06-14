@@ -160,14 +160,15 @@ impl Message for CheckpointSummary {
         CheckpointDigest::new(default_hash(self))
     }
 
-    fn verify(&self, verify_params: &VerifyParams) -> SuiResult {
-        // Signatures over CheckpointSummaries from other epochs are not valid.
-        if let Some(sig_epoch) = verify_params.epoch {
-            fp_ensure!(
-                self.epoch == sig_epoch,
-                SuiError::from("Epoch in the summary doesn't match with the signature")
-            );
-        }
+    fn verify_message_signature(&self, _: &VerifyParams) -> SuiResult {
+        Ok(())
+    }
+
+    fn verify_epoch(&self, epoch: EpochId) -> SuiResult {
+        fp_ensure!(
+            self.epoch == epoch,
+            SuiError::from("Epoch in the summary doesn't match with the signature")
+        );
         Ok(())
     }
 }

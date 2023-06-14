@@ -1740,7 +1740,15 @@ impl Message for SenderSignedData {
         TransactionDigest::new(default_hash(&self.intent_message().value))
     }
 
-    fn verify(&self, verify_params: &VerifyParams) -> SuiResult {
+    fn verify_epoch(&self, _: EpochId) -> SuiResult {
+        for sig in &self.inner().tx_signatures {
+            signa
+        }
+
+        Ok(())
+    }
+
+    fn verify_message_signature(&self, verify_params: &VerifyParams) -> SuiResult {
         fp_ensure!(
             self.0.len() == 1,
             SuiError::UserInputError {

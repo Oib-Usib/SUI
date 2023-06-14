@@ -22,7 +22,7 @@ use shared_crypto::intent::IntentMessage;
 use std::hash::{Hash, Hasher};
 
 use crate::{
-    base_types::SuiAddress,
+    base_types::{EpochId, SuiAddress},
     crypto::{PublicKey, Signature},
     error::SuiError,
 };
@@ -86,17 +86,34 @@ impl Hash for MultiSigLegacy {
 }
 
 impl AuthenticatorTrait for MultiSigLegacy {
+    fn verify_epoch(&self, epoch: EpochId) -> Result<(), SuiError> {
+        unimplemented!();
+    }
+
+    fn verify_claims<T>(
+        &self,
+        _: &IntentMessage<T>,
+        _: SuiAddress,
+        _: &VerifyParams,
+    ) -> Result<(), SuiError>
+    where
+        T: Serialize,
+    {
+        unimplemented!();
+    }
+
     fn verify_secure_generic<T>(
         &self,
         value: &IntentMessage<T>,
         author: SuiAddress,
-        _aux_verify_data: &VerifyParams,
+        epoch: Option<EpochId>,
+        aux_verify_data: &VerifyParams,
     ) -> Result<(), SuiError>
     where
         T: Serialize,
     {
         let multisig: MultiSig = self.clone().try_into()?;
-        multisig.verify_secure_generic(value, author, _aux_verify_data)
+        multisig.verify_secure_generic(value, author, epoch, aux_verify_data)
     }
 }
 
