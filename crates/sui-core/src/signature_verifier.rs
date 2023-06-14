@@ -292,9 +292,10 @@ impl SignatureVerifier {
     pub fn verify_tx(&self, signed_tx: &SenderSignedData) -> SuiResult {
         self.signed_data_cache
             .is_verified(signed_tx.full_message_digest(), || {
+                signed_tx.verify_epoch(self.committee.epoch())?;
                 let oauth_provider_jwk = self.oauth_provider_jwk.read().clone();
-                let aux_data = VerifyParams::new(None, oauth_provider_jwk);
-                signed_tx.verify(&aux_data)
+                let aux_data = VerifyParams::new(oauth_provider_jwk);
+                signed_tx.verify_message_signature(&aux_data)
             })
     }
 }
@@ -380,9 +381,8 @@ pub fn batch_verify_all_certificates_and_checkpoints(
 ) -> SuiResult {
     // certs.data() is assumed to be verified already by the caller.
 
-    let verify_params = VerifyParams::new(Some(committee.epoch()), Default::default());
     for ckpt in checkpoints {
-        ckpt.data().verify(&verify_params)?;
+        ckpt.data().verify_epoch(committee.epoch())?;
     }
 
     batch_verify(committee, certs, checkpoints)
@@ -395,7 +395,7 @@ pub fn batch_verify_certificates(
 ) -> Vec<SuiResult> {
     // certs.data() is assumed to be verified already by the caller.
 
-    let verify_params = VerifyParams::new(None, Default::default());
+    let verify_params = VerifyParams::new(Default::default());
     match batch_verify(committee, certs, &[]) {
         Ok(_) => vec![Ok(()); certs.len()],
 

@@ -163,7 +163,7 @@ impl<'de> ::serde::Deserialize<'de> for GenericSignature {
 
 /// This ports the wrapper trait to the verify_secure defined on [enum Signature].
 impl AuthenticatorTrait for Signature {
-    fn verify_epoch(&self, epoch: EpochId) -> SuiResult {
+    fn verify_epoch(&self, _: EpochId) -> SuiResult {
         Ok(())
     }
 

@@ -86,8 +86,8 @@ impl Hash for MultiSigLegacy {
 }
 
 impl AuthenticatorTrait for MultiSigLegacy {
-    fn verify_epoch(&self, epoch: EpochId) -> Result<(), SuiError> {
-        unimplemented!();
+    fn verify_epoch(&self, _: EpochId) -> Result<(), SuiError> {
+        unreachable!("cannot be called because verify_secure_generic is overridden");
     }
 
     fn verify_claims<T>(
@@ -99,7 +99,7 @@ impl AuthenticatorTrait for MultiSigLegacy {
     where
         T: Serialize,
     {
-        unimplemented!();
+        unreachable!("cannot be called because verify_secure_generic is overridden");
     }
 
     fn verify_secure_generic<T>(
