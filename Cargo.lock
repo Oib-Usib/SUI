@@ -9406,6 +9406,7 @@ dependencies = [
  "shared-crypto",
  "signature 1.6.4",
  "sui-adapter-latest",
+ "sui-archival",
  "sui-config",
  "sui-execution",
  "sui-framework",

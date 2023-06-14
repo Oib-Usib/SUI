@@ -1967,6 +1967,7 @@ impl AuthorityState {
         certificate_deny_config: CertificateDenyConfig,
         indirect_objects_threshold: usize,
         debug_dump_config: StateDebugDumpConfig,
+        archive_readers: ArchiveReaderBalancer,
     ) -> Arc<Self> {
         Self::check_protocol_version(supported_protocol_versions, epoch_store.protocol_version());
 
@@ -1990,6 +1991,7 @@ impl AuthorityState {
             epoch_store.epoch_start_state().epoch_duration_ms(),
             prometheus_registry,
             indirect_objects_threshold,
+            archive_readers,
         );
         let state = Arc::new(AuthorityState {
             name,
@@ -4107,6 +4109,7 @@ pub mod framework_injection {
 
 use std::fs::File;
 use std::io::Write;
+use sui_archival::reader::ArchiveReaderBalancer;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct NodeStateDump {
