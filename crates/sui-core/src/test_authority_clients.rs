@@ -24,7 +24,7 @@ use sui_types::{
     crypto::AuthorityKeyPair,
     error::SuiError,
     messages_checkpoint::{CheckpointRequest, CheckpointResponse},
-    transaction::{CertifiedTransaction, Transaction},
+    transaction::{CertifiedTransaction, Transaction, VerifiedTransaction},
 };
 
 #[derive(Clone, Copy, Default)]
@@ -58,7 +58,11 @@ impl AuthorityAPI for LocalAuthorityClient {
         }
         let epoch_store = self.state.load_epoch_store_one_call_per_task();
         let state = self.state.clone();
-        let transaction = transaction.verify()?;
+        let epoch_store = self.state.load_epoch_store_one_call_per_task();
+        let transaction = epoch_store
+            .signature_verifier
+            .verify_tx(transaction.data())
+            .map(|_| VerifiedTransaction::new_from_verified(transaction))?;
         let result = state.handle_transaction(&epoch_store, transaction).await;
         if self.fault_config.fail_after_handle_transaction {
             return Err(SuiError::GenericAuthorityError {

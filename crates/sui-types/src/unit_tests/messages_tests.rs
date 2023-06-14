@@ -60,7 +60,7 @@ fn test_signed_values() {
         Intent::sui_transaction(),
         vec![&sender_sec],
     )
-    .verify()
+    .verify_with_params(&Default::default())
     .unwrap();
 
     let bad_transaction = VerifiedTransaction::new_unchecked(Transaction::from_data_and_signer(
@@ -139,7 +139,7 @@ fn test_certificates() {
         Intent::sui_transaction(),
         vec![&sender_sec],
     )
-    .verify()
+    .verify_with_params(&Default::default())
     .unwrap();
 
     let v1 = SignedTransaction::new(
@@ -474,7 +474,7 @@ fn test_digest_caching() {
         Intent::sui_transaction(),
         vec![&ssec2],
     )
-    .verify()
+    .verify_with_params(&Default::default())
     .unwrap();
 
     let mut signed_tx = SignedTransaction::new(
@@ -610,7 +610,7 @@ fn test_user_signature_committed_in_signed_transactions() {
         Intent::sui_transaction(),
         vec![&sender_sec],
     )
-    .verify()
+    .verify_with_params(&Default::default())
     .unwrap();
     // transaction_b intentionally invalid (sender does not match signer).
     let transaction_b = VerifiedTransaction::new_unchecked(Transaction::from_data_and_signer(
@@ -713,7 +713,7 @@ fn test_sponsored_transaction_message() {
         intent.clone(),
         vec![sender_sig.clone(), sponsor_sig.clone()],
     )
-    .verify()
+    .verify_with_params(&Default::default())
     .unwrap();
 
     assert_eq!(
@@ -730,7 +730,7 @@ fn test_sponsored_transaction_message() {
         intent.clone(),
         vec![sponsor_sig.clone(), sender_sig.clone()],
     )
-    .verify()
+    .verify_with_params(&Default::default())
     .unwrap();
 
     // Test incomplete signature lists (missing sponsor sig)
@@ -740,7 +740,7 @@ fn test_sponsored_transaction_message() {
             intent.clone(),
             vec![sender_sig.clone()],
         )
-        .verify()
+        .verify_with_params(&Default::default())
         .unwrap_err(),
         SuiError::SignerSignatureNumberMismatch { .. }
     ));
@@ -752,7 +752,7 @@ fn test_sponsored_transaction_message() {
             intent.clone(),
             vec![sponsor_sig.clone()],
         )
-        .verify()
+        .verify_with_params(&Default::default())
         .unwrap_err(),
         SuiError::SignerSignatureNumberMismatch { .. }
     ));
@@ -767,7 +767,7 @@ fn test_sponsored_transaction_message() {
             intent.clone(),
             vec![sender_sig, sponsor_sig.clone(), third_party_sig.clone()],
         )
-        .verify()
+        .verify_with_params(&Default::default())
         .unwrap_err(),
         SuiError::SignerSignatureNumberMismatch { .. }
     ));
@@ -775,7 +775,7 @@ fn test_sponsored_transaction_message() {
     // Test irrelevant sigs
     assert!(matches!(
         Transaction::from_generic_sig_data(tx_data, intent, vec![sponsor_sig, third_party_sig],)
-            .verify()
+            .verify_with_params(&Default::default())
             .unwrap_err(),
         SuiError::SignerSignatureAbsent { .. }
     ));
@@ -938,7 +938,7 @@ fn verify_sender_signature_correctly_with_flag() {
 
     let transaction =
         Transaction::from_data_and_signer(tx_data, Intent::sui_transaction(), vec![&sender_kp])
-            .verify()
+            .verify_with_params(&Default::default())
             .unwrap();
 
     // create tx also signed by authority
@@ -968,7 +968,7 @@ fn verify_sender_signature_correctly_with_flag() {
 
     let transaction_1 =
         Transaction::from_data_and_signer(tx_data_2, Intent::sui_transaction(), vec![&sender_kp_2])
-            .verify()
+            .verify_with_params(&Default::default())
             .unwrap();
 
     let signed_tx_1 = SignedTransaction::new(
@@ -1011,8 +1011,8 @@ fn verify_sender_signature_correctly_with_flag() {
     let tx_32 = tx_3.clone();
 
     // r1 signature tx verifies ok
-    assert!(tx_3.verify().is_ok());
-    let verified_tx_3 = tx_31.verify().unwrap();
+    assert!(tx_3.verify_with_params(&Default::default()).is_ok());
+    let verified_tx_3 = tx_31.verify_with_params(&Default::default()).unwrap();
     // r1 signature verified and accepted by authority
     let signed_tx_3 = SignedTransaction::new(
         committee.epoch(),
@@ -1270,7 +1270,7 @@ fn test_certificate_digest() {
             Intent::sui_transaction(),
             vec![&sender_sec],
         )
-        .verify()
+        .verify_with_params(&Default::default())
         .unwrap()
     };
 

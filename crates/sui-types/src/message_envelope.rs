@@ -165,11 +165,6 @@ impl<T: Message> Envelope<T, EmptySignInfo> {
             self,
         ))
     }
-
-    // XXX
-    pub fn verify(self) -> SuiResult<VerifiedEnvelope<T, EmptySignInfo>> {
-        self.verify_with_params(&VerifyParams::default())
-    }
 }
 
 impl<T> Envelope<T, AuthoritySignInfo>
