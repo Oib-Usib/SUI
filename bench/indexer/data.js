@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686758663987,
+  "lastUpdate": 1686761095781,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12995,6 +12995,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 361145,
             "range": "± 18762",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "113150618+dariorussi@users.noreply.github.com",
+            "name": "Dario Russi",
+            "username": "dariorussi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2d3f82201b8e9c99b2a4b52d1d40813a779e3a8b",
+          "message": "Enable rounding for gas (#12467)\n\n## Description \r\n\r\nActually enable rounding\r\n\r\n## Test Plan \r\n\r\ncurrent tests\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-14T11:32:18-05:00",
+          "tree_id": "75d81bc7bb03172d0bbf2c6e20661ca2512942ba",
+          "url": "https://github.com/MystenLabs/sui/commit/2d3f82201b8e9c99b2a4b52d1d40813a779e3a8b"
+        },
+        "date": 1686761075792,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 158760542,
+            "range": "± 4382058",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 317394,
+            "range": "± 18546",
             "unit": "ns/iter"
           }
         ]
