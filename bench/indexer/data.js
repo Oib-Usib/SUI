@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686712135374,
+  "lastUpdate": 1686756282776,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -12923,6 +12923,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 331035,
             "range": "± 69339",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "2895723+tzakian@users.noreply.github.com",
+            "name": "Tim Zakian",
+            "username": "tzakian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "67bd0a5d15689755b3511e68ce85fee19f61f6ad",
+          "message": "[move-unit-test] Add stack traces for tests that abort in natives (#12472)\n\n## Description \r\n\r\nFixes an issue where Move unit tests that had an unexpected abort in a\r\nnative function would not report a stack trace since we didn't capture\r\nexecution state on a call failure to a native function.\r\n\r\n## Test Plan \r\n\r\nAdded a regression test to make sure that we produce stack traces for\r\nnative functions that abort.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [X] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n* Adds stack traces for failing Move unit tests that abort in a Move\r\nnative function.",
+          "timestamp": "2023-06-14T15:11:19Z",
+          "tree_id": "812a26ac3a94ece2e7272b88524f47664f496480",
+          "url": "https://github.com/MystenLabs/sui/commit/67bd0a5d15689755b3511e68ce85fee19f61f6ad"
+        },
+        "date": 1686756262541,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 157996074,
+            "range": "± 4495119",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 329805,
+            "range": "± 65833",
             "unit": "ns/iter"
           }
         ]
