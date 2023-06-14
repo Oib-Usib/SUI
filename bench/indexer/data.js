@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686767220044,
+  "lastUpdate": 1686771288648,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13067,6 +13067,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 309644,
             "range": "± 21793",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2c4e01c63986d2cda615e63c05ef96b3f520c480",
+          "message": "Add a few more functions to move_building_blocks (#12477)\n\n## Description \r\n\r\nAdd a few cases, including unwrap (but not re-wrap), and\r\ncreate-and-wrap.\r\n\r\n## Test Plan \r\n\r\nCI\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-14T12:25:17-07:00",
+          "tree_id": "23e8316eba0f5764f37e35848ebc90668e5ea795",
+          "url": "https://github.com/MystenLabs/sui/commit/2c4e01c63986d2cda615e63c05ef96b3f520c480"
+        },
+        "date": 1686771269665,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 111986537,
+            "range": "± 6169613",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311102,
+            "range": "± 25024",
             "unit": "ns/iter"
           }
         ]
