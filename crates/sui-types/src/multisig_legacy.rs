@@ -4,7 +4,7 @@
 use crate::{
     crypto::{CompressedSignature, SignatureScheme},
     multisig::{MultiSig, MultiSigPublicKey},
-    signature::{AuthenticatorTrait, AuxVerifyData},
+    signature::{AuthenticatorTrait, VerifyParams},
     sui_serde::SuiBitmap,
 };
 pub use enum_dispatch::enum_dispatch;
@@ -90,7 +90,7 @@ impl AuthenticatorTrait for MultiSigLegacy {
         &self,
         value: &IntentMessage<T>,
         author: SuiAddress,
-        _aux_verify_data: AuxVerifyData,
+        _aux_verify_data: &VerifyParams,
     ) -> Result<(), SuiError>
     where
         T: Serialize,

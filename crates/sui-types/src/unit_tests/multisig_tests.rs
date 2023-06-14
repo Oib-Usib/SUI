@@ -136,7 +136,7 @@ fn multisig_scenarios() {
     let multi_sig_legacy_7 =
         MultiSigLegacy::combine(vec![sig2.clone(), sig1.clone()], multisig_pk_legacy_2).unwrap();
     assert!(multi_sig_legacy_7
-        .verify_secure_generic(&msg, addr_2, AuxVerifyData::default())
+        .verify_secure_generic(&msg, addr_2, &VerifyParams::default())
         .is_err());
 
     // sig3 itself (3 of 6) verifies ok.
@@ -479,7 +479,7 @@ fn multisig_serde_test() {
     assert_eq!(Base64::encode(multi_sig.as_bytes()), "AwIAvlJnUP0iJFZL+QTxkKC9FHZGwCa5I4TITHS/QDQ12q1sYW6SMt2Yp3PSNzsAay0Fp2MPVohqyyA02UtdQ2RNAQGH0eLk4ifl9h1I8Uc+4QlRYfJC21dUbP8aFaaRqiM/f32TKKg/4PSsGf9lFTGwKsHJYIMkDoqKwI8Xqr+3apQzAwADAFriILSy9l6XfBLt5hV5/1FwtsIsAGFow3tefGGvAYCDAQECHRUjB8a3Kw7QQYsOcM2A5/UpW42G9XItP1IT+9I5TzYCADtqJ7zOtqQtYqOo0CpvDXNlMhV3HeJDpjrASKGLWdopAwMA");
 
     assert!(multi_sig
-        .verify_secure_generic(&msg, addr, AuxVerifyData::default())
+        .verify_secure_generic(&msg, addr, &VerifyParams::default())
         .is_ok());
 
     assert_eq!(
@@ -514,7 +514,7 @@ fn multisig_legacy_serde_test() {
     let serialized_multisig = binding.as_ref();
     let deserialized_multisig = GenericSignature::from_bytes(serialized_multisig).unwrap();
     assert!(deserialized_multisig
-        .verify_secure_generic(&msg, addr, AuxVerifyData::default())
+        .verify_secure_generic(&msg, addr, &VerifyParams::default())
         .is_ok());
 }
 

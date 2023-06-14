@@ -17,6 +17,7 @@ use std::path::PathBuf;
 use std::{fs, io};
 use sui_simulator::fastcrypto::hash::{HashFunction, Sha3_256};
 use sui_types::messages_checkpoint::{CertifiedCheckpointSummary, VerifiedCheckpoint};
+use sui_types::signature::VerifyParams;
 use sui_types::storage::{ReadStore, WriteStore};
 use tracing::debug;
 
@@ -207,9 +208,11 @@ where
             )
         });
 
-    checkpoint.verify_signature(&committee).map_err(|e| {
-        debug!("error verifying checkpoint: {e}");
-        checkpoint.clone()
-    })?;
+    checkpoint
+        .verify_signature(&committee, &VerifyParams::default())
+        .map_err(|e| {
+            debug!("error verifying checkpoint: {e}");
+            checkpoint.clone()
+        })?;
     Ok(VerifiedCheckpoint::new_unchecked(checkpoint))
 }
