@@ -732,10 +732,10 @@ impl<'backing> TemporaryStore<'backing> {
                         panic!("Mutated object must exist in the store: ID = {:?}", id)
                     });
                     match &old_obj.owner {
-                        Owner::ObjectOwner(_parent) => {
+                        Owner::ObjectOwner(_)  => {
                             objs_to_authenticate.push(*id);
                         }
-                        Owner::AddressOwner(_) | Owner::Shared { .. } => {
+                        Owner::AddressOwner(_) | Owner::Shared { .. }  => {
                             unreachable!("Should already be in authenticated_objs")
                         }
                         Owner::Immutable => {

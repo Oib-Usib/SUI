@@ -5,7 +5,6 @@ use std::{
     collections::{BTreeMap, BTreeSet, HashMap},
     sync::Arc,
 };
-
 use move_binary_format::{
     errors::{Location, VMError, VMResult},
     file_format::{CodeOffset, FunctionDefinitionIndex, TypeParameterIndex},
@@ -320,14 +319,16 @@ impl<'vm, 'state, 'a> ExecutionContext<'vm, 'state, 'a> {
         command_kind: CommandKind<'_>,
         arg_idx: usize,
         arg: Argument,
+        protocol_config: &ProtocolConfig,
     ) -> Result<V, ExecutionError> {
-        self.by_value_arg_(command_kind, arg)
+        self.by_value_arg_(command_kind, arg, protocol_config)
             .map_err(|e| command_argument_error(e, arg_idx))
     }
     fn by_value_arg_<V: TryFromValue>(
         &mut self,
         command_kind: CommandKind<'_>,
         arg: Argument,
+        protocol_config: &ProtocolConfig,
     ) -> Result<V, CommandArgumentError> {
         let is_borrowed = self.arg_is_borrowed(&arg);
         let (input_metadata_opt, val_opt) = self.borrow_mut(arg, UsageKind::ByValue)?;
@@ -349,15 +350,28 @@ impl<'vm, 'state, 'a> ExecutionContext<'vm, 'state, 'a> {
         {
             return Err(CommandArgumentError::InvalidGasCoinUsage);
         }
-        // Immutable objects and shared objects cannot be taken by value
-        if matches!(
-            input_metadata_opt,
-            Some(InputObjectMetadata {
-                owner: Owner::Immutable | Owner::Shared { .. },
-                ..
-            })
-        ) {
-            return Err(CommandArgumentError::InvalidObjectByValue);
+        if protocol_config.shared_object_deletion() {
+            // Immutable objects cannot be taken by value
+            if matches!(
+                input_metadata_opt,
+                Some(InputObjectMetadata {
+                    owner: Owner::Immutable,
+                    ..
+                })
+            ) {
+                return Err(CommandArgumentError::InvalidObjectByValue);
+            }
+        } else {
+            // Immutable and shared objects cannot be taken by value
+            if matches!(
+                input_metadata_opt,
+                Some(InputObjectMetadata {
+                    owner: Owner::Immutable | Owner::Shared { .. },
+                    ..
+                })
+            ) {
+                return Err(CommandArgumentError::InvalidObjectByValue);
+            }
         }
         let val = if is_copyable {
             val_opt.as_ref().unwrap().clone()

@@ -234,7 +234,7 @@ impl<'a> MoveTestAdapter<'a> for SuiTestAdapter<'a> {
             pre_compiled_deps.is_some(),
             "Must populate 'pre_compiled_deps' with Sui framework"
         );
-        let (additional_mapping, account_names, protocol_config) = match task_opt.map(|t| t.command)
+        let (additional_mapping, account_names, mut protocol_config) = match task_opt.map(|t| t.command)
         {
             Some((
                 InitCommand { named_addresses },
@@ -265,6 +265,7 @@ impl<'a> MoveTestAdapter<'a> for SuiTestAdapter<'a> {
             ),
         };
 
+        protocol_config.set_shared_object_deletion();protocol_config.set_shared_object_deletion();
         let mut named_address_mapping = NAMED_ADDRESSES.clone();
 
         let mut objects = clone_genesis_packages();
