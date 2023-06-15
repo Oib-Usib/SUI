@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686789083859,
+  "lastUpdate": 1686821933633,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13175,6 +13175,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 308300,
             "range": "± 21446",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3a399bb13c7589185de248fa24fed7a163c07905",
+          "message": "[deepbook] Refresh framework snapshot for protocol 13 (#12471)\n\n## Description\r\n\r\nBased on an update to `releases/sui-v1.3.0-release` (#12468)\r\n\r\n## Test Plan\r\n\r\n```\r\ncrates/sui-framework-snapshot$ cargo nextest run\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration",
+          "timestamp": "2023-06-15T02:25:57-07:00",
+          "tree_id": "04cf7e8b49d069bfdb0a1e13a88fdc454ec99497",
+          "url": "https://github.com/MystenLabs/sui/commit/3a399bb13c7589185de248fa24fed7a163c07905"
+        },
+        "date": 1686821911214,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109516960,
+            "range": "± 3192340",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 307908,
+            "range": "± 31476",
             "unit": "ns/iter"
           }
         ]
