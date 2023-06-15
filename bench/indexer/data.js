@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686847706874,
+  "lastUpdate": 1686865744961,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13283,6 +13283,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 387984,
             "range": "± 58145",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "113150618+dariorussi@users.noreply.github.com",
+            "name": "Dario Russi",
+            "username": "dariorussi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a8837a52d675d8fbb54ed115d12e8cb2517d52b",
+          "message": "Change cost tables for gas (#12505)\n\n## Description \r\n\r\nChange gas cost tables to reduce cost of transactions.\r\nRationale: \r\n- instructions start affecting time of execution on the upper end. Some\r\nnatives are more important than instructions. Also the change is still\r\nprotecting against DOS attacks by making the cost rise abruptly after a\r\ncertain point\r\n- stack height does not seem to have a strong correlation to execution\r\ntime, so we are making it matter less\r\n- for memory size we are going with the intuition that up to approx 1M\r\ncost is pretty linear. 1k transaction executing concurrently at the same\r\ntime (which we do not do and it's pretty foolish requiring 1k threads)\r\nwould take up to 1G of RAM. All those numbers do not seem problematic\r\n\r\nGoing to evaluate the impact against existing transactions\r\n\r\n## Test Plan \r\n\r\nExisting tests and manual checks against transaction executed to see the\r\nimpact\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-15T16:36:39-05:00",
+          "tree_id": "ed6929f2ba765e9b6e3bb3bf3b937f3579248522",
+          "url": "https://github.com/MystenLabs/sui/commit/0a8837a52d675d8fbb54ed115d12e8cb2517d52b"
+        },
+        "date": 1686865727834,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106513781,
+            "range": "± 4686941",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314745,
+            "range": "± 17496",
             "unit": "ns/iter"
           }
         ]
