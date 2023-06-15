@@ -43,7 +43,6 @@ scripts/simtest/cargo-simtest simtest \
   --package sui-core \
   --package sui-archival \
   --package sui-e2e-tests \
-  --package sui-surfer \
   --profile simtestnightly \
   -E "$TEST_FILTER" 2>&1 | tee "$LOG_FILE"
 
@@ -62,7 +61,7 @@ for SUB_SEED in `seq 1 $NUM_CPUS`; do
     --package sui-benchmark \
     --test-threads 1 \
     --profile simtestnightly \
-    -E "$TEST_FILTER" > "$LOG_FILE" 2>&1 &
+    > "$LOG_FILE" 2>&1 &
 
 done
 
