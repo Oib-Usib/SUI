@@ -130,7 +130,7 @@ impl CommitteeFixture {
 
         let checkpoint = CertifiedCheckpointSummary::new(checkpoint, signatures, self.committee())
             .unwrap()
-            .verify(self.committee())
+            .verify(self.committee(), &Default::default())
             .unwrap();
 
         checkpoint

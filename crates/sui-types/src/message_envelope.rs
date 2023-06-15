@@ -156,7 +156,7 @@ impl<T: Message> Envelope<T, EmptySignInfo> {
         self.data.verify_message_signature(verify_params)
     }
 
-    pub fn verify_with_params(
+    pub fn verify(
         self,
         verify_params: &VerifyParams,
     ) -> SuiResult<VerifiedEnvelope<T, EmptySignInfo>> {
@@ -209,7 +209,7 @@ where
             .verify_secure(self.data(), Intent::sui_app(T::SCOPE), committee)
     }
 
-    pub fn verify_with_params(
+    pub fn verify(
         self,
         committee: &Committee,
         verify_params: &VerifyParams,
@@ -218,14 +218,6 @@ where
         Ok(VerifiedEnvelope::<T, AuthoritySignInfo>::new_from_verified(
             self,
         ))
-    }
-
-    // XXX
-    pub fn verify(
-        self,
-        committee: &Committee,
-    ) -> SuiResult<VerifiedEnvelope<T, AuthoritySignInfo>> {
-        self.verify_with_params(committee, &VerifyParams::default())
     }
 }
 
@@ -286,20 +278,13 @@ where
             .verify_secure(self.data(), Intent::sui_app(T::SCOPE), committee)
     }
 
-    pub fn verify_with_params(
+    pub fn verify(
         self,
         committee: &Committee,
         verify_params: &VerifyParams,
     ) -> SuiResult<VerifiedEnvelope<T, AuthorityQuorumSignInfo<S>>> {
         self.verify_signature(committee, verify_params)?;
         Ok(VerifiedEnvelope::<T, AuthorityQuorumSignInfo<S>>::new_from_verified(self))
-    }
-
-    pub fn verify(
-        self,
-        committee: &Committee,
-    ) -> SuiResult<VerifiedEnvelope<T, AuthorityQuorumSignInfo<S>>> {
-        self.verify_with_params(committee, &VerifyParams::default())
     }
 
     pub fn verify_committee_sigs_only(

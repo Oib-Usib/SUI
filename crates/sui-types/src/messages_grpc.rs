@@ -159,7 +159,7 @@ pub struct TransactionInfoResponse {
 /// instead of in SafeClient.
 #[derive(Clone, Debug)]
 pub enum PlainTransactionInfoResponse {
-    Signed(SignedTransaction),
+    Signed(VerifiedSignedTransaction),
     ExecutedWithCert(
         VerifiedCertificate,
         SignedTransactionEffects,
