@@ -68,4 +68,4 @@ done
 # wait for all the jobs to end
 wait
 
-grep -Hn FAIL "$LOG_DIR"/*
+! grep -Hn FAIL "$LOG_DIR"/*
