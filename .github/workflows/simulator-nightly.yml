@@ -41,10 +41,11 @@ jobs:
           # valid for. This is optional and defaults to "1h"
           certificate-ttl: 2h
 
-      # Cargo clean and git restore on any left over files from git checkout      
+      # Cargo clean and git restore on any left over files from git checkout, and deletes all remote tracking branches
       - name: Environment clean
         run: | 
           tsh -i ${{ steps.auth.outputs.identity-file }} --ttl 5 ssh ubuntu@simtest-01 "source ~/.bashrc && source ~/.cargo/env && cd ~/sui && cargo clean && git restore ."
+          tsh -i ${{ steps.auth.outputs.identity-file }} --ttl 5 ssh ubuntu@simtest-01 "source ~/.bashrc && source ~/.cargo/env && git branch -r | xargs -L 1 git branch -rD"
  
       # Deleting files in tmpfs that usually fill up pretty quickly after each run
       - name: Tmpfs clean
