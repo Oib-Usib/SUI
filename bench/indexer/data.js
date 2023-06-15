@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686821933633,
+  "lastUpdate": 1686846428128,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13211,6 +13211,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 307908,
             "range": "± 31476",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "williamprincesmith@gmail.com",
+            "name": "William Smith",
+            "username": "williampsmith"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bbe7e272829c666ed6735c03b5fb782a5b941637",
+          "message": "Enable simtests for checkpoint pruning (#12513)\n\n## Description \r\n\r\n* Enable pruning in `msim`\r\n* Introduce builder methods for setting n validators in a `TestCluster`/\r\n`Swarm` / `NetworkConfig` to be unpruned\r\n* Fixes up committe change stress test to keep 2/7 validators unpruned\r\nin order to allow new validators to catchup via state sync (without use\r\nof archival node)\r\n\r\n## Test Plan \r\n\r\nExisting tests\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-15T16:15:13Z",
+          "tree_id": "cff188911cd6ee579bf2c87bd2cbcf23bdc107ba",
+          "url": "https://github.com/MystenLabs/sui/commit/bbe7e272829c666ed6735c03b5fb782a5b941637"
+        },
+        "date": 1686846408241,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 148297822,
+            "range": "± 4445951",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 313838,
+            "range": "± 30812",
             "unit": "ns/iter"
           }
         ]
