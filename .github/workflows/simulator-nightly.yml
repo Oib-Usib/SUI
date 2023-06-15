@@ -62,11 +62,6 @@ jobs:
         run: |
           tsh -i ${{ steps.auth.outputs.identity-file }} --ttl 10 ssh ubuntu@simtest-01 "source ~/.bashrc && source ~/.cargo/env && cd ~/sui && ./scripts/simtest/install.sh"
 
-      # Build simtest
-      - name: Build simtest
-        run: |
-          tsh -i ${{ steps.auth.outputs.identity-file }} --ttl 30 ssh ubuntu@simtest-01 "source ~/.bashrc && source ~/.cargo/env && cd ~/sui && CARGO_TERM_COLOR=always CARGO_INCREMENTAL=0 CARGO_NET_RETRY=10 USE_MOCK_CRYPTO=1 ./scripts/simtest/cargo-simtest simtest build"
-
       # Run simulator tests
       - name: Run simtest
         run: |
