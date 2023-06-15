@@ -18,7 +18,7 @@ if [ -z "$NUM_CPUS" ]; then
 fi
 
 # filter out some tests that give spurious failures.
-TEST_FILTER="(not (test(~cli_tests) or test(~batch_verification_tests)))"
+TEST_FILTER="(not test(~batch_verification_tests))"
 
 DATE=$(date +%s)
 SEED="$DATE"
@@ -40,7 +40,6 @@ MSIM_TEST_NUM=30 \
 scripts/simtest/cargo-simtest simtest \
   --color always \
   --test-threads "$NUM_CPUS" \
-  --package sui \
   --package sui-core \
   --package sui-archival \
   --package sui-e2e-tests \
