@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686774426490,
+  "lastUpdate": 1686789083859,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13139,6 +13139,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 328928,
             "range": "± 18567",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8ced0052d6a222cc0ba80cb622bb04b5cb6bd912",
+          "message": "Add sui tool to sync node from an archive (#12409)\n\n## Description \r\n\r\nBy passing in the remote store config, a node operator can choose to\r\nmanually sync the node from archive.\r\n\r\n## Test Plan \r\n\r\nExecuted on testnet fullnodes, and found it to be working as expected.",
+          "timestamp": "2023-06-14T17:21:59-07:00",
+          "tree_id": "f4529dabdac5d03315f080430e93ee356acae298",
+          "url": "https://github.com/MystenLabs/sui/commit/8ced0052d6a222cc0ba80cb622bb04b5cb6bd912"
+        },
+        "date": 1686789063565,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109862434,
+            "range": "± 7286843",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 308300,
+            "range": "± 21446",
             "unit": "ns/iter"
           }
         ]
