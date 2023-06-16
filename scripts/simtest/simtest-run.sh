@@ -68,4 +68,24 @@ done
 # wait for all the jobs to end
 wait
 
-! grep -Hn FAIL "$LOG_DIR"/*
+echo "All tests completed, checking for failures..."
+grep -Hn FAIL "$LOG_DIR"/*
+
+# if grep found no failures exit now
+[ $? -eq 1 ] && echo "No test failures detected" && exit 0
+
+echo "Failures detected, printing logs..."
+
+# read all filenames in $LOG_DIR that contain the string "FAIL" into a bash array
+# and print the line number and filename for each
+FAILED_LOG_FILES=() readarray -t FAILED_LOG_FILES < <(grep -l FAIL "$LOG_DIR"/*)
+
+# iterate over the array and print the contents of each file
+for LOG_FILE in "${FAILED_LOG_FILES[@]}"; do
+  echo "Failure detected in $LOG_FILE:"
+  echo "=============================="
+  cat "$LOG_FILE"
+  echo "=============================="
+done
+
+exit 1
