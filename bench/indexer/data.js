@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686865744961,
+  "lastUpdate": 1686921455466,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13319,6 +13319,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314745,
             "range": "± 17496",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "alex@mystenlabs.com",
+            "name": "Alex Tsiliris",
+            "username": "Eis-D-Z"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c30bd6f6e945b59aa8f07b0578f2de70f4c199cf",
+          "message": "Fix docstring inaccuracy for kiosk::place function (#12487)\n\n## Description \r\n\r\nCorrect a docstring inaccuracy.\r\n\r\n## Test Plan \r\n\r\nNo need for testing. Only comment changes.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\n- minor patch in the Kiosk module documentation",
+          "timestamp": "2023-06-16T16:02:39+03:00",
+          "tree_id": "1ea24f4853c6515cc8db23039a7680a43b283063",
+          "url": "https://github.com/MystenLabs/sui/commit/c30bd6f6e945b59aa8f07b0578f2de70f4c199cf"
+        },
+        "date": 1686921435067,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 159902856,
+            "range": "± 4900275",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 311383,
+            "range": "± 24018",
             "unit": "ns/iter"
           }
         ]
