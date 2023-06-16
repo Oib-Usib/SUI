@@ -1294,8 +1294,13 @@ impl ProtocolConfig {
     pub fn set_zklogin_auth(&mut self, val: bool) {
         self.feature_flags.zklogin_auth = val
     }
+
     pub fn set_max_tx_gas_for_testing(&mut self, max_tx_gas: u64) {
         self.max_tx_gas = Some(max_tx_gas)
+    }
+
+    pub fn set_narwhal_new_leader_election_schedule(&mut self, val: bool) {
+        self.feature_flags.narwhal_new_leader_election_schedule = val;
     }
 }
 
