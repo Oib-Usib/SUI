@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686927972927,
+  "lastUpdate": 1686933553393,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13391,6 +13391,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 350607,
             "range": "± 23297",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ad7decb5eda3cf96f6d826c3085456a60bd89d3a",
+          "message": "[sui-execution] Path utilities (#12517)\n\n## Description\r\n\r\nUtility functions for working with paths:\r\n\r\n- `normalize_path` to get rid of redundant `.` and `..` components.\r\n- `path_relative_to` to describe one path relative to another.\r\n- `shortest_new_prefix` to find the shortest path prefix that doesn't\r\nexist (i.e. needs to be created).\r\n- `deep_copy` to recursively copy files and directories with filtering\r\nby path.\r\n\r\nThese will be used when actually executing a plan.\r\n\r\n## Test Plan\r\n\r\nNew unit tests:\r\n\r\n```\r\nsui-execution/cut$ cargo nextest run\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-16T09:27:16-07:00",
+          "tree_id": "04e92613b682bf1b4abb49e8ff07f665dba09051",
+          "url": "https://github.com/MystenLabs/sui/commit/ad7decb5eda3cf96f6d826c3085456a60bd89d3a"
+        },
+        "date": 1686933537378,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 113133144,
+            "range": "± 8025025",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 362350,
+            "range": "± 12947",
             "unit": "ns/iter"
           }
         ]
