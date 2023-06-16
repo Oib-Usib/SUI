@@ -362,11 +362,11 @@ impl PrimaryNodeInner {
             .recovered_consensus_output
             .inc_by(num_sub_dags);
 
-        // TODO: restore the LeaderSchedule when recovering from storage to ensure that the correct one
-        // will be used
-        // Using a LeaderSwapTable::default() will make the leader schedule algorithm work as originally -
-        // no swaps will happen if we don't update them.
-        let leader_schedule = LeaderSchedule::new(committee.clone(), LeaderSwapTable::default());
+        let leader_schedule = LeaderSchedule::from_store(
+            committee.clone(),
+            store.consensus_store.clone(),
+            protocol_config.clone(),
+        );
 
         // Spawn the consensus core who only sequences transactions.
         let ordering_engine = Bullshark::new(
