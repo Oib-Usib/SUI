@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686933553393,
+  "lastUpdate": 1686935923530,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13427,6 +13427,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 362350,
             "range": "± 12947",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "135084671+stefan-mysten@users.noreply.github.com",
+            "name": "stefan-mysten",
+            "username": "stefan-mysten"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f4f37d6461a345a52541bff9babf88926f9fb122",
+          "message": "[CLI] Import wallet private key (#12504)\n\n## Description \r\n\r\nThe Sui CLI `keytool import` command now accepts either a MNEMONIC or a\r\nprivate key (from the Sui Wallet). The user exports a private key\r\nassociated with an account in the Wallet, and uses that private key in\r\nthe `keytool import` command in the CLI to import the account in the\r\nCLI.\r\n\r\n## Test Plan \r\n\r\nThere is a new function to test the new private key code\r\n(`test_private_keys_ed25519`)\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nAdd support to the `keytool import` command to allow for importing a\r\nprivate key (from the wallet) in addition to the existing support of\r\nimporting an account via a mnemonic.",
+          "timestamp": "2023-06-16T10:07:34-07:00",
+          "tree_id": "addaab20c3669e4faf60f41b00003559a4590610",
+          "url": "https://github.com/MystenLabs/sui/commit/f4f37d6461a345a52541bff9babf88926f9fb122"
+        },
+        "date": 1686935902938,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 147203020,
+            "range": "± 5042402",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 322464,
+            "range": "± 18912",
             "unit": "ns/iter"
           }
         ]
