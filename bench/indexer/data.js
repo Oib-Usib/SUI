@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686921455466,
+  "lastUpdate": 1686927972927,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13355,6 +13355,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 311383,
             "range": "± 24018",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "113177674+ldback-aftermath@users.noreply.github.com",
+            "name": "ldback-aftermath",
+            "username": "ldback-aftermath"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b69e31adc98b263fefd764253d2f4100b144d2c3",
+          "message": "[sui-framework] Add sui::table_vec::drop (#12536)\n\n## Description\r\n\r\nAutomatically drops a `sui::table_vec::TableVec<T>` where `T: drop`.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can skip the following section. Otherwise, please indicate what changed, and then add to the Release Notes section as highlighted during the release process.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade binaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nAdds `sui::table_vec::drop` to the Sui Framework, as of Protocol Version 14.\r\n\r\n---------\r\n\r\nCo-authored-by: Ashok Menon <ashok@mystenlabs.com>",
+          "timestamp": "2023-06-16T07:52:03-07:00",
+          "tree_id": "e43c5408be1e43eebb3f612ef4ea67130585a44e",
+          "url": "https://github.com/MystenLabs/sui/commit/b69e31adc98b263fefd764253d2f4100b144d2c3"
+        },
+        "date": 1686927952824,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 146568305,
+            "range": "± 4530347",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 350607,
+            "range": "± 23297",
             "unit": "ns/iter"
           }
         ]
