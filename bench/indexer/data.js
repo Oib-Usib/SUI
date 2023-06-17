@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1686935923530,
+  "lastUpdate": 1686968895319,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13463,6 +13463,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 322464,
             "range": "± 18912",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "emma@mystenlabs.com",
+            "name": "Emma Zhong",
+            "username": "emmazzz"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d1c34fa307eea1afdcaa9121c28d31fc90069b8",
+          "message": "Introduce protocol version 15 (#12548)\n\n## Description \r\n\r\nIntroduce a new protocol version 15 and move the txn reordering change\r\nand framework change from 14 to 15.\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [x] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [x] breaking change for FNs (FN binary must upgrade)\r\n- [x] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nWe want to limit the changes in protocol version 14 to gas changes so\r\nmoving the other changes, transaction reordering and framework change,\r\nto a new protocol version.",
+          "timestamp": "2023-06-16T19:18:55-07:00",
+          "tree_id": "04fbe68d78e9d6ff844b4a2d05c2e5437a04fec1",
+          "url": "https://github.com/MystenLabs/sui/commit/1d1c34fa307eea1afdcaa9121c28d31fc90069b8"
+        },
+        "date": 1686968875804,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 107511617,
+            "range": "± 6688487",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 314445,
+            "range": "± 22322",
             "unit": "ns/iter"
           }
         ]
