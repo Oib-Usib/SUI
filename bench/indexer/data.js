@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687051453131,
+  "lastUpdate": 1687180895008,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13607,6 +13607,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 410965,
             "range": "± 56875",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5982aa935b969022093abd3adfa5f9febb53e039",
+          "message": "[sui-execution] CutPlan::execute (#12518)\n\n## Description\r\n\r\nImplement the process of executing a cut plan to copy packages and\r\nfix-up manifest files (for the copied crates, and the workspace).\r\n\r\nAlso implements `CutPlan::rollback` which is used by `execute` to\r\nclean-up after itself, if it fails. To support this, `CutPlan::discover`\r\nhas been updated to track the new directories it needed to create.\r\n\r\nThis PR does not address various usability issues (adding context to\r\nerror messages, a dry-run option, etc) which are to come.\r\n\r\n## Test Plan\r\n\r\nNew unit tests:\r\n```\r\nsui-execution/cut$ cargo nextest run\r\n```\r\n\r\nTry the CLI on a real example (warning, this will make changes to the\r\nrepo's working tree):\r\n\r\n```\r\nsui$ cargo run --bin cut -- --feature v1                    \\\r\n  -d sui-execution/latest:sui-execution/v1:-latest          \\\r\n  -d external-crates/move:external-crates/move-execution/v1 \\\r\n  -p sui-adapter-latest                                     \\\r\n  -p sui-move-natives-latest                                \\\r\n  -p sui-verifier-latest                                    \\\r\n  -p move-bytecode-verifier                                 \\\r\n  -p move-stdlib                                            \\\r\n  -p move-vm-runtime\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-19T06:09:51-07:00",
+          "tree_id": "2c6d4286b22422667812371504e75ed4c9a52f43",
+          "url": "https://github.com/MystenLabs/sui/commit/5982aa935b969022093abd3adfa5f9febb53e039"
+        },
+        "date": 1687180874812,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 162421023,
+            "range": "± 4137402",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 435578,
+            "range": "± 28862",
             "unit": "ns/iter"
           }
         ]
