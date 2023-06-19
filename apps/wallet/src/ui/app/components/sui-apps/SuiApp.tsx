@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import DisconnectApp from './DisconnectApp';
 import ExternalLink from '_components/external-link';
+import { ampli } from '_src/shared/analytics/ampli';
 import { trackEvent } from '_src/shared/plausible';
 import { getDAppUrl } from '_src/shared/utils';
 
@@ -85,6 +86,7 @@ export function SuiApp({
 					title={name}
 					className={st.ecosystemApp}
 					onClick={() => {
+						ampli.openedApplication({ applicationName: name });
 						trackEvent('AppOpen', {
 							props: { name, source: 'AppPage' },
 						});
