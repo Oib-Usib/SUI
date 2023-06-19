@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687185379407,
+  "lastUpdate": 1687187350216,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13679,6 +13679,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 314667,
             "range": "± 20666",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ashok@mystenlabs.com",
+            "name": "Ashok Menon",
+            "username": "amnn"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "43c4502e837113c5477ceb9d1d191f338330d407",
+          "message": "[sui-execution] Add dry-run option (#12538)\n\n## Description\r\n\r\nAdd a flag to display the cut plan without executing it.\r\n\r\n## Test Plan\r\n\r\n```\r\nsui$ cargo run --bin cut -- --dry-run --feature v1          \\\r\n     -d sui-execution/latest:sui-execution/v1:-latest       \\\r\n     -d external-crates/move:external-crates/move-execution \\\r\n     -p sui-adapter-latest                                  \\\r\n     -p sui-move-natives-latest                             \\\r\n     -p sui-verifier-latest                                 \\\r\n     -p move-bytecode-verifier                              \\\r\n     -p move-stdlib                                         \\\r\n     -p move-vm-runtime\r\n\r\nCopying packages in: /Users/ashokmenon/sui\r\n\r\nnew [workspace] members:\r\n - to:   sui-adapter-v1\r\n         sui-execution/v1/sui-adapter\r\n   from: sui-adapter-latest\r\n         sui-execution/latest/sui-adapter\r\n - to:   sui-move-natives-v1\r\n         sui-execution/v1/sui-move-natives\r\n   from: sui-move-natives-latest\r\n         sui-execution/latest/sui-move-natives\r\n - to:   sui-verifier-v1\r\n         sui-execution/v1/sui-verifier\r\n   from: sui-verifier-latest\r\n         sui-execution/latest/sui-verifier\r\n\r\nnew [workspace] excludes:\r\n - to:   move-bytecode-verifier-v1\r\n         external-crates/move-execution/move-bytecode-verifier\r\n   from: move-bytecode-verifier\r\n         external-crates/move/move-bytecode-verifier\r\n - to:   move-stdlib-v1\r\n         external-crates/move-execution/move-stdlib\r\n   from: move-stdlib\r\n         external-crates/move/move-stdlib\r\n - to:   move-vm-runtime-v1\r\n         external-crates/move-execution/move-vm/runtime\r\n   from: move-vm-runtime\r\n         external-crates/move/move-vm/runtime\r\n\r\nother packages:\r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-19T14:59:24Z",
+          "tree_id": "0e923160f3e76cacb992d23d8812d8782353121b",
+          "url": "https://github.com/MystenLabs/sui/commit/43c4502e837113c5477ceb9d1d191f338330d407"
+        },
+        "date": 1687187315491,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106876762,
+            "range": "± 7562020",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 264591,
+            "range": "± 29307",
             "unit": "ns/iter"
           }
         ]
