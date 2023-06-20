@@ -599,16 +599,24 @@ impl Proposer {
                             let _ = self.tx_narwhal_round_updates.send(self.round);
                             self.last_parents = parents;
 
-                            // we re-calculate the timeout to give the opportunity to the node
-                            // to propose earlier if it's a leader for the round
-                            // Reschedule the timer.
+                            // Re-calculate the timeout to give the opportunity to the node
+                            // to propose earlier if it's a leader for the round.
+                            // But min_delay_timer should not be postponed: the network moves at
+                            // the interval of min_header_delay. Delaying header creation for
+                            // another min_header_delay after receiving parents from a higher
+                            // round and cancelling proposing, makes it very likely that higher
+                            // round parents will be received and header creation will be cancelled
+                            // again.
                             let timer_start = Instant::now();
                             max_delay_timer
                                 .as_mut()
                                 .reset(timer_start + self.max_delay());
-                            min_delay_timer
-                                .as_mut()
-                                .reset(timer_start + self.min_delay());
+                            let min_deadline = timer_start + self.min_delay();
+                            if min_deadline < min_delay_timer.deadline() {
+                                min_delay_timer
+                                    .as_mut()
+                                    .reset(timer_start + self.min_delay());
+                            }
                         },
                         Ordering::Less => {
                             info!("Proposer ignoring older parents, self.round={} parent.round={}", self.round, round);
