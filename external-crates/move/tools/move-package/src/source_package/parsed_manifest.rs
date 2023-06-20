@@ -58,14 +58,14 @@ pub struct InternalDependency {
     pub dep_override: DepOverride,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub enum DependencyKind {
     Local(PathBuf),
     Git(GitInfo),
     Custom(CustomDepInfo),
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub struct GitInfo {
     /// The git clone url to download from
     pub git_url: Symbol,
@@ -76,7 +76,7 @@ pub struct GitInfo {
     pub subdir: PathBuf,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub struct CustomDepInfo {
     /// The url of the node to download from
     pub node_url: Symbol,
