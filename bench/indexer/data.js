@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687283253226,
+  "lastUpdate": 1687288319057,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13895,6 +13895,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 313606,
             "range": "± 23789",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "103447440+mystenmark@users.noreply.github.com",
+            "name": "Mark Logan",
+            "username": "mystenmark"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8f1adfced90fb62ec87271786045a624aaf393e7",
+          "message": "update mysten sim (#12583)",
+          "timestamp": "2023-06-20T18:57:30Z",
+          "tree_id": "a27c22192e31b0c69cb55761fbf1672470b5d39a",
+          "url": "https://github.com/MystenLabs/sui/commit/8f1adfced90fb62ec87271786045a624aaf393e7"
+        },
+        "date": 1687288299116,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 153242712,
+            "range": "± 5193891",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 323961,
+            "range": "± 30281",
             "unit": "ns/iter"
           }
         ]
