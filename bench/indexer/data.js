@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687277345293,
+  "lastUpdate": 1687279531030,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13823,6 +13823,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 375157,
             "range": "± 92563",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "41b79cc6da4113718a1b8b1dfdb70300c6419b87",
+          "message": "Stop depending on wrapped tombstone (#12412)\n\n## Description \r\n\r\nThis PR simplifies the definition of unwrapped_then_delete in\r\ntransaction effects by introducing a new feature flag.\r\nThe flag is currently disabled.\r\nWith the flag is set, we no longer depend on tombstone when deciding\r\nwhether to include an object in unwrapped_then_delete. Since we no\r\nlonger query the store, we don't have the previous version number\r\nanymore.\r\nSo we added a new variant in ObjectChange to cover UnwrapThenDelete,\r\ninstead of inside DeleteKind.\r\nWith this, we no longer need to depend on wrapped tombstones.\r\nStateAccumulator can then also be simplified to ignore them.\r\nAt the epoch boundary where this is enabled, we also re-accumulate the\r\nstate and override the existing state.\r\n\r\n## Test Plan \r\n\r\nAny suggestions on how I may test this?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-20T09:30:29-07:00",
+          "tree_id": "e6f1993bba63b6c2e06255384feef4aa145fe007",
+          "url": "https://github.com/MystenLabs/sui/commit/41b79cc6da4113718a1b8b1dfdb70300c6419b87"
+        },
+        "date": 1687279502942,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 163739239,
+            "range": "± 6105628",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315988,
+            "range": "± 51524",
             "unit": "ns/iter"
           }
         ]
