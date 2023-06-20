@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687279531030,
+  "lastUpdate": 1687283253226,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13859,6 +13859,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 315988,
             "range": "± 51524",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "eugene@mystenlabs.com",
+            "name": "Eugene Boguslavsky",
+            "username": "ebmifa"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "85a740ffa121c9630fdea4a0180160ff54956467",
+          "message": "Moving release notes check into rust.yml (#12522)\n\n## Description \r\nMoving release notes check into rust.yml\r\n\r\n## Test Plan \r\nWill test once this lands",
+          "timestamp": "2023-06-20T10:32:46-07:00",
+          "tree_id": "12284996de895f685909e0ab4bd91100c13b9189",
+          "url": "https://github.com/MystenLabs/sui/commit/85a740ffa121c9630fdea4a0180160ff54956467"
+        },
+        "date": 1687283211104,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 112764717,
+            "range": "± 3654657",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 313606,
+            "range": "± 23789",
             "unit": "ns/iter"
           }
         ]
