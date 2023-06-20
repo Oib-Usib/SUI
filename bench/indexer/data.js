@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687288319057,
+  "lastUpdate": 1687300662444,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13931,6 +13931,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 323961,
             "range": "± 30281",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "tmn@mystenlabs.com",
+            "name": "Todd Nowacki",
+            "username": "tnowacki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8e1ac58bd4b178c67b20300b5f617b78df2647db",
+          "message": "[bytecode verifier] Improve performance of stacks (#11289)\n\n## Description \r\n\r\n- Reduce memory allocation for abstract stacks in the verifier\r\n- Certain operations can introduce multiple copies of the same type on\r\nthe stack. This run-length style encoding will reduce allocation in\r\nthose cases\r\n\r\n## Test Plan \r\n\r\n- Not a observable change, used existing tests \r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-20T22:28:06Z",
+          "tree_id": "fe88215d4945dd4baa9b33d3225cfff89605b2f9",
+          "url": "https://github.com/MystenLabs/sui/commit/8e1ac58bd4b178c67b20300b5f617b78df2647db"
+        },
+        "date": 1687300642373,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 111798554,
+            "range": "± 8625853",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 354684,
+            "range": "± 20999",
             "unit": "ns/iter"
           }
         ]
