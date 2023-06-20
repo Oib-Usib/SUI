@@ -534,6 +534,26 @@ impl AuthorityStore {
         Ok(result)
     }
 
+    pub fn check_inbox_references(
+        &self,
+        inbox_references: &[ObjectRef],
+        _protocol_config: &ProtocolConfig,
+    ) -> Result<(), SuiError> {
+        // TODO(tzakian): bound the number of inbox references.
+        // Since we're at signing we check that every object reference in an inbox reference is the
+        // most recent version of that object. Otherwise we return an error.
+        for (object_id, version, _) in inbox_references {
+            self.get_object_by_key(object_id, *version)?
+                .ok_or_else(|| {
+                    SuiError::from(UserInputError::ObjectNotFound {
+                        object_id: *object_id,
+                        version: Some(*version),
+                    })
+                })?;
+        }
+        Ok(())
+    }
+
     pub fn check_input_objects(
         &self,
         objects: &[InputObjectKind],
@@ -614,7 +634,8 @@ impl AuthorityStore {
     }
 
     /// Checks if the input object identified by the InputKey exists, with support for non-system
-    /// packages i.e. when version is None.
+    /// packages i.e. when version is None. If the input object doesn't exist and it's an inbox
+    /// reference, we also check if the object exists in the Inbox Marker table.
     pub fn multi_input_objects_exist(
         &self,
         keys: impl Iterator<Item = InputKey> + Clone,
@@ -622,17 +643,38 @@ impl AuthorityStore {
         let (keys_with_version, keys_without_version): (Vec<_>, Vec<_>) =
             keys.enumerate().partition(|(_, key)| key.1.is_some());
 
-        let versioned_results = keys_with_version.iter().map(|(idx, _)| *idx).zip(
-            self.perpetual_tables
-                .objects
-                .multi_get(
-                    keys_with_version
-                        .iter()
-                        .map(|(_, k)| ObjectKey(k.0, k.1.unwrap())),
-                )?
-                .into_iter()
-                .map(|o| o.is_some()),
-        );
+        let mut versioned_results = keys_with_version
+            .iter()
+            .map(|(idx, _)| *idx)
+            .zip(
+                self.perpetual_tables
+                    .objects
+                    .multi_get(
+                        keys_with_version
+                            .iter()
+                            .map(|(_, k)| ObjectKey(k.0, k.1.unwrap())),
+                    )?
+                    .into_iter()
+                    .map(|o| o.is_some()),
+            )
+            .collect::<Vec<_>>();
+
+        // For any objects that are unable to be fetched, lookup and determine if
+        // the object exists in the Inbox Marker table as well. If so we will then mark it as
+        // "available" to let it progress through.
+        for (_, available) in versioned_results.iter_mut() {
+            if !*available {
+                // TODO(tzakian): Need to add in the calls to the inbox marker table once that is
+                // added.
+                let has_inbox_marker =
+                    std::todo!("Check inbox marker table and mark available if present");
+                // If it has an inbox marker then we can mark it as available to let it progress
+                // through and fail execution.
+                if has_inbox_marker {
+                    *available = true;
+                }
+            }
+        }
 
         let unversioned_results = keys_without_version.into_iter().map(|(idx, key)| {
             (
@@ -648,6 +690,7 @@ impl AuthorityStore {
         });
 
         let mut results = versioned_results
+            .into_iter()
             .chain(unversioned_results)
             .collect::<Vec<_>>();
         results.sort_by_key(|(idx, _)| *idx);
