@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687189235408,
+  "lastUpdate": 1687265119112,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13751,6 +13751,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 265894,
             "range": "± 13669",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "akihidis@gmail.com",
+            "name": "Anastasios Kichidis",
+            "username": "akichidis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "068602247e00b8192a5209bac5ab37be2dd81802",
+          "message": "[narwhal] introduce the LeaderSwapTable (#12465)\n\n## Description \r\n\r\nAs part of the leader election schedule change epic\r\nhttps://www.notion.so/mystenlabs/Leader-election-schedule-31e9abd06477436b9a38fd3282879093?pvs=4\r\n, the first step is to build a \"swap\" table based on the calculated\r\nreputation scores. As a reminder we do calculate the leader reputation\r\nscores every K commit rounds. Our goal is based on those scores to come\r\nup with a set of good & bad nodes. Then for next K commit rounds we do\r\nswap the occurrences of leaders of the bad nodes with the ones of the\r\ngood nodes.\r\n\r\nThis PR is the first step. As part of the upcoming work we'll need to \r\n- [ ] calculate the swap table on every K committed subdags & wire into\r\nthe leader election algorithm\r\n- [ ] restore correct swap table after crash/recovery\r\n- [ ] modify the commit path so we repeat the leader election when we\r\ncommit recursively\r\n- [ ] modify the proposer to support the new leader election\r\ncapabilities\r\n- [ ] ensure whole feature is gated behind a protocol config feature\r\nflag - and probably a config switch as we might need to have it disabled\r\nfor longer than a release cycle.\r\n- [ ] add testing\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-20T12:33:05Z",
+          "tree_id": "41ce963bd300d41124690ec67880076405d70ef9",
+          "url": "https://github.com/MystenLabs/sui/commit/068602247e00b8192a5209bac5ab37be2dd81802"
+        },
+        "date": 1687265101446,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 112526863,
+            "range": "± 3256273",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 316821,
+            "range": "± 13703",
             "unit": "ns/iter"
           }
         ]
