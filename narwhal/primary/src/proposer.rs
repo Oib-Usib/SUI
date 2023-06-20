@@ -419,6 +419,14 @@ impl Proposer {
             let enough_digests = self.digests.len() >= self.header_num_of_batches_threshold;
             let max_delay_timed_out = max_delay_timer.is_elapsed();
             let min_delay_timed_out = min_delay_timer.is_elapsed();
+            let cond = (max_delay_timed_out
+                || ((enough_digests || min_delay_timed_out) && advance))
+                && enough_parents;
+
+            info!(
+                "Proposer loop starts: self.round={} enough_parents={} enough_digests={} advance={} max_delay_timed_out={} min_delay_timed_out={} cond={}", 
+                self.round, enough_parents, enough_digests, advance, max_delay_timed_out, min_delay_timed_out, cond
+            );
 
             if (max_delay_timed_out || ((enough_digests || min_delay_timed_out) && advance))
                 && enough_parents
@@ -434,6 +442,8 @@ impl Proposer {
                 // Advance to the next round.
                 self.round += 1;
                 let _ = self.tx_narwhal_round_updates.send(self.round);
+
+                info!("Proposer advanced to round {}", self.round);
 
                 // Update the metrics
                 self.metrics.current_round.set(self.round as i64);
@@ -480,9 +490,13 @@ impl Proposer {
                     .reset(timer_start + self.min_delay());
             }
 
+            info!("Proposer waiting for update: self.round={}", self.round);
+
             tokio::select! {
 
                 () = &mut header_repeat_timer => {
+                    info!("Proposer header_repeat_timer, self.round={}", self.round);
+
                     // If the round has not advanced within header_resend_timeout then try to
                     // re-process our own header.
                     if let Some(header) = &opt_latest_header {
@@ -499,6 +513,8 @@ impl Proposer {
                 }
 
                 Some((commit_round, commit_headers)) = self.rx_committed_own_headers.recv() => {
+                    info!("Proposer committed own header, self.round={}", self.round);
+
                     // Remove committed headers from the list of pending
                     let mut max_committed_round = 0;
                     for round in commit_headers {
@@ -555,6 +571,8 @@ impl Proposer {
                 },
 
                 Some((parents, round, epoch)) = self.rx_parents.recv() => {
+                    info!("Proposer received parents, self.round={} parent.round={} num_parents={}", self.round, round, parents.len());
+
                     // If the core already moved to the next epoch we should pull the next
                     // committee as well.
 
@@ -593,6 +611,7 @@ impl Proposer {
                                 .reset(timer_start + self.min_delay());
                         },
                         Ordering::Less => {
+                            info!("Proposer ignoring older parents, self.round={} parent.round={}", self.round, round);
                             // Ignore parents from older rounds.
                             continue;
                         },
@@ -616,6 +635,7 @@ impl Proposer {
                     } else {
                         false
                     };
+                    info!("Proposer advance={} self.round={}", advance, self.round);
 
                     let round_type = if self.round % 2 == 0 {
                         "even"
@@ -631,6 +651,8 @@ impl Proposer {
 
                 // Receive digests from our workers.
                 Some(mut message) = self.rx_our_digests.recv() => {
+                    info!("Proposer received digest, self.round={}", self.round);
+
                     // Signal back to the worker that the batch is recorded on the
                     // primary, and will be tracked until inclusion. This means that
                     // if the primary does not fail it will attempt to send the digest
@@ -643,9 +665,11 @@ impl Proposer {
 
                 // Check whether any timer expired.
                 () = &mut max_delay_timer, if !max_delay_timed_out => {
+                    info!("Proposer reached max_delay_timer, self.round={}", self.round);
                     // Continue to next iteration of the loop.
                 }
                 () = &mut min_delay_timer, if !min_delay_timed_out => {
+                    info!("Proposer reached min_delay_timer, self.round={}", self.round);
                     // Continue to next iteration of the loop.
                 }
 
