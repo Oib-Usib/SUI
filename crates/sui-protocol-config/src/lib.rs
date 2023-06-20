@@ -1237,6 +1237,7 @@ impl ProtocolConfig {
                 let mut cfg = Self::get_for_version_impl(version - 1, chain);
                 cfg.feature_flags.consensus_transaction_ordering =
                     ConsensusTransactionOrdering::ByGasPrice;
+                cfg.feature_flags.narwhal_new_leader_election_schedule = true;
                 cfg
             }
             // Use this template when making changes:
