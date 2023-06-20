@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687265119112,
+  "lastUpdate": 1687277345293,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -13787,6 +13787,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 316821,
             "range": "± 13703",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jnaulty@mystenlabs.com",
+            "name": "John Naulty Jr",
+            "username": "jnaulty"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b7c5dfe1d57613825df7210f4e15eaf91d845558",
+          "message": "Remove Dependabot Auto-Merge (#12503)\n\n## Description \r\n\r\nWhat: Turn off Dependabot Auto-Merge\r\n\r\nWhat this means for Maintainers: Project maintainers should provide a\r\nreview and sign-off on dependency update pull-requests.\r\n\r\nWhy: Trust, but verify.\r\nAuto-Approving code carries risk and signals blind trust in external\r\nthird-party code providers. Attackers can (and will) utilize this blind\r\ntrust to compromise downstream systems\r\n[1](https://arxiv.org/abs/2005.09535)\r\n\r\n## Test Plan \r\n\r\nHow did you test the new or updated feature?\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-20T08:57:17-07:00",
+          "tree_id": "4b61983a7381f1757829e91bd15cf4fc0ff20b4b",
+          "url": "https://github.com/MystenLabs/sui/commit/b7c5dfe1d57613825df7210f4e15eaf91d845558"
+        },
+        "date": 1687277324873,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 158112845,
+            "range": "± 5001980",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 375157,
+            "range": "± 92563",
             "unit": "ns/iter"
           }
         ]
