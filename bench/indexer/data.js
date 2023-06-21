@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687370889364,
+  "lastUpdate": 1687377814029,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -14255,6 +14255,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 315346,
             "range": "± 27858",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aschran@mystenlabs.com",
+            "name": "Andrew Schran",
+            "username": "aschran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "824887a3a9eafa125abcbbca03020de134255670",
+          "message": "Add metrics for anemo socket buffer sizes. (#12449)",
+          "timestamp": "2023-06-21T12:54:00-07:00",
+          "tree_id": "2d3535819bf2fd6fcaccce45b3a324dbde6761e6",
+          "url": "https://github.com/MystenLabs/sui/commit/824887a3a9eafa125abcbbca03020de134255670"
+        },
+        "date": 1687377797784,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 107094823,
+            "range": "± 5337127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 362324,
+            "range": "± 32057",
             "unit": "ns/iter"
           }
         ]
