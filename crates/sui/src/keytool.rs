@@ -35,7 +35,7 @@ use sui_types::crypto::{
 };
 use sui_types::crypto::{DefaultHash, PublicKey, Signature};
 use sui_types::multisig::{MultiSig, MultiSigPublicKey, ThresholdUnit, WeightUnit};
-use sui_types::signature::GenericSignature;
+use sui_types::signature::{AuthenticatorTrait, AuxVerifyData, GenericSignature};
 use sui_types::transaction::TransactionData;
 use sui_types::zk_login_authenticator::ZkLoginAuthenticator;
 use sui_types::zk_login_util::AddressParams;
@@ -156,6 +156,8 @@ pub enum KeyToolCommand {
     /// The order of `sigs` must be the same as the order of `pks`.
     /// e.g. for [pk1, pk2, pk3, pk4, pk5], [sig1, sig2, sig5] is valid, but
     /// [sig2, sig1, sig5] is invalid.
+    ///
+    /// If tx_bytes is passed in, verify the multisig.
     MultiSigCombinePartialSig {
         #[clap(long, multiple_occurrences = false, multiple_values = true)]
         sigs: Vec<Signature>,
@@ -165,12 +167,17 @@ pub enum KeyToolCommand {
         weights: Vec<WeightUnit>,
         #[clap(long)]
         threshold: ThresholdUnit,
+        #[clap(long)]
+        tx_bytes: Option<String>,
     },
 
     /// Given a Base64 encoded MultiSig signature, decode its components.
+    /// If tx_bytes is passed in, verify the multisig.
     DecodeMultiSig {
         #[clap(long)]
         multisig: MultiSig,
+        #[clap(long)]
+        tx_bytes: Option<String>,
     },
 
     /// Given a Base64 encoded transaction bytes, decode its components.
@@ -535,17 +542,29 @@ impl KeyToolCommand {
                 pks,
                 weights,
                 threshold,
+                tx_bytes,
             } => {
                 let multisig_pk = MultiSigPublicKey::new(pks, weights, threshold)?;
                 let address: SuiAddress = (&multisig_pk).into();
                 let multisig = MultiSig::combine(sigs, multisig_pk)?;
                 let generic_sig: GenericSignature = multisig.into();
+                if tx_bytes.is_some() {
+                    let tx_bytes = Base64::decode(&tx_bytes.unwrap())
+                        .map_err(|e| anyhow!("Invalid base64 tx bytes: {:?}", e))?;
+                    let tx_data: TransactionData = bcs::from_bytes(&tx_bytes)?;
+                    let res = generic_sig.verify_secure_generic(
+                        &IntentMessage::new(Intent::sui_transaction(), tx_data),
+                        address,
+                        AuxVerifyData::default(),
+                    );
+                    println!("Verify multisig: {:?}", res);
+                };
                 println!("MultiSig address: {address}");
                 println!("MultiSig parsed: {:?}", generic_sig);
                 println!("MultiSig serialized: {:?}", generic_sig.encode_base64());
             }
 
-            KeyToolCommand::DecodeMultiSig { multisig } => {
+            KeyToolCommand::DecodeMultiSig { multisig, tx_bytes } => {
                 let pks = multisig.get_pk().pubkeys();
                 let sigs = multisig.get_sigs();
                 let bitmap = multisig.get_indices()?;
@@ -573,10 +592,20 @@ impl KeyToolCommand {
                         w
                     );
                 }
-                println!(
-                    "Multisig address: {:?}",
-                    SuiAddress::from(multisig.get_pk())
-                );
+                let author = SuiAddress::from(multisig.get_pk());
+                println!("Multisig address: {:?}", author);
+
+                if tx_bytes.is_some() {
+                    let tx_bytes = Base64::decode(&tx_bytes.unwrap())
+                        .map_err(|e| anyhow!("Invalid base64 tx bytes: {:?}", e))?;
+                    let tx_data: TransactionData = bcs::from_bytes(&tx_bytes)?;
+                    let res = GenericSignature::MultiSig(multisig).verify_secure_generic(
+                        &IntentMessage::new(Intent::sui_transaction(), tx_data),
+                        author,
+                        AuxVerifyData::default(),
+                    );
+                    println!("Verify multisig: {:?}", res);
+                };
             }
 
             KeyToolCommand::DecodeTxBytes { tx_bytes } => {
