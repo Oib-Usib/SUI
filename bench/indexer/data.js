@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687308491493,
+  "lastUpdate": 1687338513125,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -14075,6 +14075,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 345211,
             "range": "± 43011",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "adam@mystenlabs.com",
+            "name": "Adam Welc",
+            "username": "awelc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "968605c8710d1863727a9a2cf5cb736b1e2bde00",
+          "message": "[move-compiler] Added warnings for unused functions and types (#12425)\n\n## Description \r\n\r\nAdded compiler warnings for unused (uninstantiated) struct types and\r\nunused (not called) private functions that were originally proposed as\r\nlinters in https://github.com/MystenLabs/sui/pull/11212\r\n\r\n## Test Plan \r\n\r\nWill add tests\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [x] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nThe compiler features additional warnings for unused private functions\r\nand unused (uninstantiated) struct types.",
+          "timestamp": "2023-06-21T01:55:48-07:00",
+          "tree_id": "51d5ba90976183663ec0d882aae271ace829f27f",
+          "url": "https://github.com/MystenLabs/sui/commit/968605c8710d1863727a9a2cf5cb736b1e2bde00"
+        },
+        "date": 1687338492396,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 106230832,
+            "range": "± 3601202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310273,
+            "range": "± 5333",
             "unit": "ns/iter"
           }
         ]
