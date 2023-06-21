@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687377814029,
+  "lastUpdate": 1687387602835,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -14291,6 +14291,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 362324,
             "range": "± 32057",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "eugene@mystenlabs.com",
+            "name": "Eugene Boguslavsky",
+            "username": "ebmifa"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "87a344e10204b484684afc14868a6da57598f79e",
+          "message": "Fixing checking for release notes (#12616)\n\n## Description \r\nFixing checking for release notes\r\n\r\n## Test Plan \r\n👀",
+          "timestamp": "2023-06-21T15:34:18-07:00",
+          "tree_id": "076e8744eba816a00bc858b85761913a62b9399e",
+          "url": "https://github.com/MystenLabs/sui/commit/87a344e10204b484684afc14868a6da57598f79e"
+        },
+        "date": 1687387582496,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 108869707,
+            "range": "± 5080376",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 261533,
+            "range": "± 21810",
             "unit": "ns/iter"
           }
         ]
