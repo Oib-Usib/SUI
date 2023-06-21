@@ -74,10 +74,10 @@ module sui::transfer {
 
     spec freeze_object_impl {
         pragma opaque;
-        // never aborts as it requires object by-value and:
+        // aborts if shared object:
         // - it's OK to freeze whether object is fresh or owned
-        // - shared or immutable object cannot be passed by value
-        aborts_if [abstract] false;
+        // - immutable object cannot be passed by value
+        aborts_if [abstract] sui::prover::shared(obj);
         modifies [abstract] global<object::Ownership>(object::id(obj).bytes);
         ensures [abstract] exists<object::Ownership>(object::id(obj).bytes);
         ensures [abstract] global<object::Ownership>(object::id(obj).bytes).status == prover::IMMUTABLE;
@@ -98,10 +98,10 @@ module sui::transfer {
 
     spec transfer_impl {
         pragma opaque;
-        // never aborts as it requires object by-value and:
+        // aborts if shared object:
         // - it's OK to transfer whether object is fresh or already owned
-        // - shared or immutable object cannot be passed by value
-        aborts_if [abstract] false;
+        // - immutable object cannot be passed by value
+        aborts_if [abstract] sui::prover::shared(obj);
         modifies [abstract] global<object::Ownership>(object::id(obj).bytes);
         ensures [abstract] exists<object::Ownership>(object::id(obj).bytes);
         ensures [abstract] global<object::Ownership>(object::id(obj).bytes).owner == recipient;

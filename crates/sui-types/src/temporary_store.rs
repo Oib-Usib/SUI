@@ -39,6 +39,7 @@ use crate::{
     transaction::InputObjects,
 };
 use crate::{is_system_package, SUI_SYSTEM_STATE_OBJECT_ID};
+use crate::error::ExecutionErrorKind;
 
 pub type WrittenObjects = BTreeMap<ObjectID, (ObjectRef, Object, WriteKind)>;
 pub type ObjectMap = BTreeMap<ObjectID, Object>;
@@ -554,7 +555,7 @@ impl<'backing> TemporaryStore<'backing> {
             // delete all gas objects except the primary_gas_object
             for (id, version, _digest) in &gas[1..] {
                 debug_assert_ne!(*id, primary_gas_object.id());
-                self.delete_object(id, DeleteKindWithOldVersion::Normal(*version));
+                self.delete_object(id, DeleteKindWithOldVersion::Normal(*version))?;
             }
             // unwrap is safe because we checked that the primary gas object was a coin object above.
             primary_gas_object
@@ -567,13 +568,11 @@ impl<'backing> TemporaryStore<'backing> {
         Ok(gas[0])
     }
 
-    pub fn delete_object(&mut self, id: &ObjectID, kind: DeleteKindWithOldVersion) {
+    pub fn delete_object(&mut self, id: &ObjectID, kind: DeleteKindWithOldVersion) -> Result<(), ExecutionError> {
         // there should be no deletion after write
         debug_assert!(self.written.get(id).is_none());
 
-        // TODO: promote this to an on-in-prod check that raises an invariant_violation
-        // Check that we are not deleting an immutable object
-        #[cfg(debug_assertions)]
+        // Check that we are not deleting an immutable object or wrapping a shared object
         if let Some(object) = self.read_object(id) {
             if object.is_immutable() {
                 // This is an internal invariant violation. Move only allows us to
@@ -581,13 +580,24 @@ impl<'backing> TemporaryStore<'backing> {
                 // In addition, gas objects should never be immutable, so gas smashing
                 // should not allow us to delete immutable objects
                 let digest = self.tx_digest;
-                panic!("Internal invariant violation in tx {digest}: Deleting immutable object {id}, delete kind {kind:?}")
+                return Err(ExecutionError::invariant_violation(
+                    format!("Internal invariant violation in tx {}: Deleting immutable object {}", digest, id)
+                ));
+            }
+            if object.owner.is_shared() && kind.to_delete_kind() == DeleteKind::Wrap  {
+                let digest = self.tx_digest;
+                return Err(ExecutionError::new(
+                    ExecutionErrorKind::SharedObjectOperationNotAllowed,
+                    Some(format!("Internal invariant violation in tx {}: Wrapping shared object {}", digest, id).into())
+                ));
             }
         }
 
         // For object deletion, we will increment the version when converting the store to effects
         // so the object will eventually show up in the parent_sync table with a new version.
         self.deleted.insert(*id, kind);
+
+        Ok(())
     }
 
     pub fn drop_writes(&mut self) {
@@ -619,13 +629,14 @@ impl<'backing> TemporaryStore<'backing> {
             .or_else(|| self.input_objects.get(id))
     }
 
-    pub fn apply_object_changes(&mut self, changes: BTreeMap<ObjectID, ObjectChange>) {
+    pub fn apply_object_changes(&mut self, changes: BTreeMap<ObjectID, ObjectChange>) -> Result<(), ExecutionError> {
         for (id, change) in changes {
             match change {
                 ObjectChange::Write(new_value, kind) => self.write_object(new_value, kind),
-                ObjectChange::Delete(kind) => self.delete_object(&id, kind),
+                ObjectChange::Delete(kind) => self.delete_object(&id, kind)?,
             }
         }
+        Ok(())
     }
     pub fn save_loaded_child_objects(
         &mut self,
@@ -1570,7 +1581,7 @@ impl<'backing> Storage for TemporaryStore<'backing> {
         TemporaryStore::read_object(self, id)
     }
 
-    fn apply_object_changes(&mut self, changes: BTreeMap<ObjectID, ObjectChange>) {
+    fn apply_object_changes(&mut self, changes: BTreeMap<ObjectID, ObjectChange>) -> Result<(), ExecutionError> {
         TemporaryStore::apply_object_changes(self, changes)
     }
 

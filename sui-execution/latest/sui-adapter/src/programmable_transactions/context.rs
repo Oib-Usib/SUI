@@ -313,7 +313,7 @@ impl<'vm, 'state, 'a> ExecutionContext<'vm, 'state, 'a> {
     /// Get the argument value. Cloning the value if it is copyable, and setting its value to None
     /// if it is not (making it unavailable).
     /// Errors if out of bounds, if the argument is borrowed, if it is unavailable (already taken),
-    /// or if it is an object that cannot be taken by value (shared or immutable)
+    /// or if it is an object that cannot be taken by value (immutable)
     pub fn by_value_arg<V: TryFromValue>(
         &mut self,
         command_kind: CommandKind<'_>,

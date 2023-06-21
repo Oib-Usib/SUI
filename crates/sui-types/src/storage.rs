@@ -7,7 +7,7 @@ use crate::digests::{
     CheckpointContentsDigest, CheckpointDigest, TransactionEffectsDigest, TransactionEventsDigest,
 };
 use crate::effects::{TransactionEffects, TransactionEvents};
-use crate::error::SuiError;
+use crate::error::{ExecutionError, SuiError};
 use crate::message_envelope::Message;
 use crate::messages_checkpoint::{
     CheckpointContents, CheckpointSequenceNumber, FullCheckpointContents, VerifiedCheckpoint,
@@ -113,7 +113,7 @@ pub trait Storage {
 
     fn read_object(&self, id: &ObjectID) -> Option<&Object>;
 
-    fn apply_object_changes(&mut self, changes: BTreeMap<ObjectID, ObjectChange>);
+    fn apply_object_changes(&mut self, changes: BTreeMap<ObjectID, ObjectChange>) -> Result<(), ExecutionError>;
 
     fn save_loaded_child_objects(
         &mut self,

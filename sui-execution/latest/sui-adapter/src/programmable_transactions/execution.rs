@@ -112,7 +112,7 @@ pub fn execute<Mode: ExecutionMode>(
         object_changes,
         user_events,
     } = finished?;
-    state_view.apply_object_changes(object_changes);
+    state_view.apply_object_changes(object_changes)?;
     for (module_id, tag, contents) in user_events {
         state_view.log_event(Event::new(
             module_id.address(),
