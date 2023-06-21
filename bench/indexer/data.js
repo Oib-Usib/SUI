@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687366138775,
+  "lastUpdate": 1687370889364,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -14219,6 +14219,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 312863,
             "range": "± 73031",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "williamprincesmith@gmail.com",
+            "name": "William Smith",
+            "username": "williampsmith"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6d5047bd55567201ab5133f4e2236ad07e49f27d",
+          "message": "Perform full checkpoint pruning at epoch boundary in simtests (#12529)\n\n## Description \r\n\r\nThis is just to be extra sure that we are testing the worst case tx/fx\r\npruning in order to maximize hitting edge cases. At epoch boundary,\r\nafter the epoch store has been swapped, we prune all eligible\r\ntransactions and effects (which should be all existing transactions and\r\neffects at that point), and ensure that we can continue. This more\r\nstrongly confirms that the protocol does not depend on prune-eligible\r\ntransactions and effects at any point.\r\n\r\n## Test Plan \r\n\r\nAll reconfig simtests will exercise this\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-21T10:58:45-07:00",
+          "tree_id": "1725ceb94f10d356447757fa3cc5549b94a2f8f2",
+          "url": "https://github.com/MystenLabs/sui/commit/6d5047bd55567201ab5133f4e2236ad07e49f27d"
+        },
+        "date": 1687370867244,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 109502425,
+            "range": "± 9505267",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 315346,
+            "range": "± 27858",
             "unit": "ns/iter"
           }
         ]
