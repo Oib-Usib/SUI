@@ -20,7 +20,9 @@ export function OwnedObjects({ id }: { id: string }) {
 	const ownedObjects = useGetOwnedObjects(id, {
 		MatchNone: [{ StructType: '0x2::coin::Coin' }],
 	});
-	const { data: kioskContents } = useGetKioskContents(id);
+	const {
+		data: { all: kioskContents },
+	} = useGetKioskContents(id);
 
 	const { data, isError, isFetching, pagination } = useCursorPagination(ownedObjects);
 

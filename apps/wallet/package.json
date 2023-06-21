@@ -125,6 +125,7 @@
 		"@mysten/icons": "workspace:*",
 		"@mysten/ledgerjs-hw-app-sui": "workspace:*",
 		"@mysten/sui.js": "workspace:*",
+		"@mysten/kiosk": "workspace:*",
 		"@mysten/wallet-standard": "workspace:*",
 		"@noble/hashes": "^1.3.0",
 		"@reduxjs/toolkit": "^1.9.3",

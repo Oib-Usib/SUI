@@ -9,9 +9,10 @@ export function useOwnedNFT(nftObjectId: string | null, address: SuiAddress | nu
 	const data = useGetObject(nftObjectId);
 	const { data: kioskContents } = useGetKioskContents(address);
 	const { data: objectData } = data;
+
 	const objectDetails = useMemo(() => {
 		if (!objectData || !is(objectData.data, SuiObjectData) || !address) return null;
-		const ownedKioskObjectIds = kioskContents?.map(({ data }) => data?.objectId) || [];
+		const ownedKioskObjectIds = kioskContents.all.map(({ data }) => data?.objectId) || [];
 		const objectOwner = getObjectOwner(objectData);
 		const isOwner =
 			ownedKioskObjectIds.includes(objectData.data.objectId) ||
@@ -23,5 +24,6 @@ export function useOwnedNFT(nftObjectId: string | null, address: SuiAddress | nu
 				: null;
 		return isOwner;
 	}, [address, objectData, kioskContents]);
+
 	return { ...data, data: objectDetails };
 }
