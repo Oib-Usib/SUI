@@ -12,24 +12,31 @@
 	"engines": {
 		"node": ">=16"
 	},
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
+	"type": "module",
+	"main": "./dist/cjs/index.js",
+	"module": "./dist/esm/index.js",
+	"types": "./dist/types/index.d.ts",
 	"exports": {
 		".": {
-			"types": "./dist/index.d.ts",
+			"types": "./dist/types/index.d.ts",
 			"source": "./src/index.ts",
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js"
+			"import": "./dist/esm/index.js",
+			"default": "./dist/cjs/index.js"
+		},
+		"./builder": {
+			"types": "./dist/types/builder/index.d.ts",
+			"source": "./src/builder/index.ts",
+			"import": "./dist/esm/builder/index.js",
+			"default": "./dist/cjs/builder/index.js"
 		}
 	},
 	"scripts": {
 		"clean": "rm -rf tsconfig.tsbuildinfo ./dist",
 		"codegen:version": "node genversion.mjs",
 		"dev": "pnpm build:tsup --watch",
-		"build": "node genversion.mjs && pnpm build:types && pnpm build:tsup",
+		"build": "node genversion.mjs && pnpm build:package && pnpm build:tsup",
+		"build:package": "ts-node ../build-scripts/src/build-package.ts",
 		"build:tsup": "tsup ./src/index.ts --format esm,cjs --sourcemap --env.NODE_ENV=production",
-		"build:types": "tsc --build",
 		"doc": "typedoc",
 		"vitest": "vitest",
 		"test": "pnpm test:typecheck && pnpm test:unit",
@@ -38,7 +45,6 @@
 		"test:e2e": "wait-on http://127.0.0.1:9123 -l --timeout 120000 && vitest run e2e",
 		"test:e2e:nowait": "vitest run e2e",
 		"prepare:e2e": "cargo build --bin sui-test-validator --bin sui --profile dev && cross-env RUST_LOG=info,sui=error,anemo_tower=warn,consensus=off cargo run --bin sui-test-validator",
-		"prettier:fix": "prettier --write .",
 		"prepublishOnly": "pnpm build",
 		"size": "size-limit",
 		"analyze": "size-limit --why",
