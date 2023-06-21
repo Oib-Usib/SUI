@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687364645363,
+  "lastUpdate": 1687366138775,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -14183,6 +14183,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 320365,
             "range": "± 27170",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106119108+gegaowp@users.noreply.github.com",
+            "name": "Ge Gao",
+            "username": "gegaowp"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d8d500edd17349930610b75cfd30c3d69dfb400",
+          "message": "indexer: unique transaction recipient row (#12597)\n\n## Description \r\n\r\nBefore this PR, `recipients` table had multiple rows for an recipient if\r\nthe recipient received multiple objects, this PR changed it to one row.\r\n\r\nOtherwise, on the reading side, I will have to group by transaction\r\ndigest to make sure the returned tx page will not have duplicate tx,\r\nwhich is super slow.\r\n\r\n## Test Plan \r\n\r\n1. cargo run indexer as a writer\r\n2. cargo run indexer as a reader and verify `recipients` related\r\nendpoints;\r\n```\r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"id\": 1,\r\n    \"method\": \"suix_queryTransactionBlocks\",\r\n    \"params\": [\r\n        {\r\n            \"filter\": {\r\n                \"FromOrToAddress\": \"0x3dc7a8a21f5d3bc17337260079688d8aefb76f27978e7ec082a5fb0d06bc8b39\"\r\n            }\r\n        },\r\n        null,\r\n        10,\r\n        false\r\n    ]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"error\":{\"code\":-32602,\"message\":\"invalid type: string \\\"0x3dc7a8a21f5d3bc17337260079688d8aefb76f27978e7ec082a5fb0d06bc8b39\\\", expected struct variant TransactionFilter::FromOrToAddress at line 4 column 103\"},\"id\":1}%                                                                                                                                          \r\n\r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"id\": 1,\r\n    \"method\": \"suix_queryTransactionBlocks\",\r\n    \"params\": [\r\n        {\r\n            \"filter\": {\r\n                \"FromOrToAddress\": {addr: \"0x3dc7a8a21f5d3bc17337260079688d8aefb76f27978e7ec082a5fb0d06bc8b39\"}\r\n            }\r\n        },\r\n        null,\r\n        10,\r\n        false\r\n    ]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"error\":{\"code\":-32700,\"message\":\"Parse error\"},\"id\":null}%                                                                                                              \r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"id\": 1,\r\n    \"method\": \"suix_queryTransactionBlocks\",\r\n    \"params\": [\r\n        {\r\n            \"filter\": {\r\n                \"FromOrToAddress\": {\"addr\": \"0x3dc7a8a21f5d3bc17337260079688d8aefb76f27978e7ec082a5fb0d06bc8b39\"}\r\n            }\r\n        },\r\n        null,\r\n        10,\r\n        false\r\n    ]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":{\"data\":[{\"digest\":\"7CuBm1AnLgkBMB6GiEn5d3RizznF5LbawjJTs8A5dcXF\",\"timestampMs\":\"1681318800000\",\"checkpoint\":\"0\"}],\"nextCursor\":\"7CuBm1AnLgkBMB6GiEn5d3RizznF5LbawjJTs8A5dcXF\",\"hasNextPage\":false},\"id\":1}%                                                                                                                                              \r\n\r\ncurl --location --request POST http://127.0.0.1:3030 \\\r\n--header 'Content-Type: application/json' \\\r\n--data-raw '{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"id\": 1,\r\n    \"method\": \"suix_queryTransactionBlocks\",\r\n    \"params\": [\r\n        {\r\n            \"filter\": {\r\n                \"FromAndToAddress\": {\"from\": \"0x0000000000000000000000000000000000000000000000000000000000000000\", \"to\": \"0x3dc7a8a21f5d3bc17337260079688d8aefb76f27978e7ec082a5fb0d06bc8b39\"}\r\n            }\r\n        },\r\n        null,\r\n        10,\r\n        false\r\n    ]\r\n}'\r\n{\"jsonrpc\":\"2.0\",\"result\":{\"data\":[{\"digest\":\"7CuBm1AnLgkBMB6GiEn5d3RizznF5LbawjJTs8A5dcXF\",\"timestampMs\":\"1681318800000\",\"checkpoint\":\"0\"}],\"nextCursor\":\"7CuBm1AnLgkBMB6GiEn5d3RizznF5LbawjJTs8A5dcXF\",\"hasNextPage\":false},\"id\":1}%       \r\n```\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [ ] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [ ] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes",
+          "timestamp": "2023-06-21T12:33:25-04:00",
+          "tree_id": "3386d15fe364bba77f64f990ec700633be9dbcb0",
+          "url": "https://github.com/MystenLabs/sui/commit/1d8d500edd17349930610b75cfd30c3d69dfb400"
+        },
+        "date": 1687366111690,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 159475625,
+            "range": "± 4781062",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 312863,
+            "range": "± 73031",
             "unit": "ns/iter"
           }
         ]
