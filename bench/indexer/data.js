@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687308228011,
+  "lastUpdate": 1687308491493,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -14039,6 +14039,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 317740,
             "range": "± 17553",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "106645797+sadhansood@users.noreply.github.com",
+            "name": "Sadhan Sood",
+            "username": "sadhansood"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f533b3f435903a858991cff798dbdfc1e7f9f452",
+          "message": "Switch to tokio::spawn_blocking for archive task which does blocking file i/o (#12531)\n\n## Description \r\n\r\nThe checkpoint tailer task does blocking file i/o in tight loop and yet\r\nit was being invoked in the async context. This would cause the receiver\r\nto not receive mpsc channel messages (or receive them after a very long\r\ndelay) as it was likely assigned to the same thread as tailer (the one\r\ninvoking blocking calls) and the tailer would not yield the thread\r\n(since it tails checkpoints in a loop). This was causing the archive\r\nfiles to wait a long time on local fs before they could get uploaded to\r\ns3.\r\n\r\nThe fix is simple - just move the tailer to `spawn_blocking` instead of\r\n`spawn` and that fixes the problem. After this change, I see no such\r\nissue and receiver receives channel messages instantly and files are\r\ngetting uploaded without any delay.\r\nAs an added bonus, the code is a little simpler too now as I was able to\r\neliminate one function call.\r\n\r\n## Test Plan \r\n\r\nExisting tests. Unfortunately, it seems like usage of `spawn_blocking`\r\nis incompatible with simulator because I keep getting deadlock detected\r\nerror messages and this log line seems to indicate why:\r\n```\r\n2022-01-03T02:04:56.000000Z  WARN node{id=1 name=\"client\"}: tokio::sim::runtime: /Users/sadhansood/.cargo/git/checkouts/mysten-sim-6c6e892b5d19dc47/e4b1466/msim-tokio/src/sim/runtime.rs:62: spawn_blocking() call in simulator may cause deadlocks if spawned task attempts to do I/O\r\n```\r\nSwitching sim tests to tokio tests to make them work.",
+          "timestamp": "2023-06-20T17:35:57-07:00",
+          "tree_id": "9822025af0396c1a98aa5bc0aab2c17338d263bc",
+          "url": "https://github.com/MystenLabs/sui/commit/f533b3f435903a858991cff798dbdfc1e7f9f452"
+        },
+        "date": 1687308471592,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 158621320,
+            "range": "± 6550386",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 345211,
+            "range": "± 43011",
             "unit": "ns/iter"
           }
         ]
