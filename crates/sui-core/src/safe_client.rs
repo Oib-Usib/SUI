@@ -224,7 +224,7 @@ impl<C: Clone> SafeClient<C> {
     fn check_transaction_info(
         &self,
         digest: &TransactionDigest,
-        transaction: VerifiedTransaction,
+        transaction: &VerifiedTransaction,
         status: TransactionStatus,
     ) -> SuiResult<PlainTransactionInfoResponse> {
         fp_ensure!(
@@ -311,7 +311,7 @@ where
             .await?;
         let response = check_error!(
             self.address,
-            self.check_transaction_info(&digest, transaction, response.status),
+            self.check_transaction_info(&digest, &transaction, response.status),
             "Client error in handle_transaction"
         )?;
         Ok(response)
@@ -450,17 +450,24 @@ where
             .handle_transaction_info_request(request.clone())
             .await?;
 
-        let transaction_info = Transaction::new(transaction_info.transaction)
-            .verify()
-            .and_then(|verified_tx| {
-                self.check_transaction_info(
-                    &request.transaction_digest,
-                    verified_tx,
-                    transaction_info.status,
-                )
-            }).tap_err(|err| {
-                error!(?err, authority=?self.address, "Client error in handle_transaction_info_request");
-            })?;
+        // TODO: Because we now support stateful authenticators (e.g. zklogin), we are not
+        // guaranteed to be able to verify the tx correctly without extensive light client
+        // functionality (in the case of zklogin we would need to know what the valid JWKs were
+        // at the time the transaction was accepted by the validator). For now, we skip
+        // verification. In the worst case, if a validator returns a transaction with an invalid
+        // signature, we might try to execute it on other validators
+        // (see AuthorityAggregator::handle_transaction_info_request_from_some_validators)
+        //
+        // This will fail, and the user might be annoyed, but this cannot lead to any security
+        // issues.
+        let verified_tx =
+            VerifiedTransaction::new_unchecked(Transaction::new(transaction_info.transaction));
+        let transaction_info = self.check_transaction_info(
+            &request.transaction_digest,
+            &verified_tx,
+            transaction_info.status,
+        )?;
+
         self.metrics
             .total_ok_responses_handle_transaction_info_request
             .inc();

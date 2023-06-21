@@ -34,7 +34,7 @@ use mysten_metrics::{spawn_monitored_task, GaugeGuard};
 use std::fmt::Write;
 use sui_types::error::{SuiError, SuiResult};
 use sui_types::messages_grpc::PlainTransactionInfoResponse;
-use sui_types::transaction::{VerifiedCertificate, VerifiedTransaction};
+use sui_types::transaction::{VerifiedCertificate, VerifiedSignedTransaction, VerifiedTransaction};
 
 use self::reconfig_observer::ReconfigObserver;
 
@@ -494,7 +494,8 @@ where
                 return Ok(result.is_ok());
             }
             PlainTransactionInfoResponse::Signed(signed) => {
-                signed.verify(&self.clone_committee())?.into_unsigned()
+                //signed.verify(&self.clone_committee())?.into_unsigned()
+                VerifiedSignedTransaction::new_unchecked(signed).into_unsigned()
             }
             PlainTransactionInfoResponse::ExecutedWithoutCert(transaction, _, _) => transaction,
         };
