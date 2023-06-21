@@ -448,7 +448,7 @@ impl TestCluster {
                 break replies;
             }
         };
-        let replies = replies.into_iter().map(|r| r.unwrap());
+        let replies: Vec<_> = replies.into_iter().map(|r| r.unwrap()).collect();
         let mut all_effects = HashMap::new();
         let mut all_events = HashMap::new();
         let mut all_objects = HashSet::new();
