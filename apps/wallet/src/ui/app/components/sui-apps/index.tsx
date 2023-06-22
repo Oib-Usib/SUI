@@ -70,7 +70,7 @@ function AppsPlayGround() {
 			) : null}
 
 			{ecosystemApps?.length ? (
-				<div className={st.apps}>
+				<div className="flex flex-col divide-y divide-gray-45 divide-solid divide-x-0 mt-2">
 					{ecosystemApps.map((app) => (
 						<SuiApp
 							key={app.link}
