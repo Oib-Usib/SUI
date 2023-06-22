@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687410254469,
+  "lastUpdate": 1687453370883,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -14399,6 +14399,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 310855,
             "range": "± 12024",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lxfind@gmail.com",
+            "name": "Xun Li",
+            "username": "lxfind"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "027d976ae3d698eec0aad2942d39b1c58cdfe83b",
+          "message": "Enable simplified_unwrap_then_delete (#12579)\n\n## Description \r\n\r\nThis PR adds protocol config version 16, and enables a new feature flag\r\nsimplified_unwrap_then_delete.\r\nUnder this new feature flag, we no longer consult the object store when\r\nconstructing unwrapped_then_deleted in the effects, and no longer\r\ninclude wrapped tombstones in state accumulator. It will require a\r\nre-accumulation at epoch change during the upgrade.\r\n\r\n## Test Plan \r\n\r\nAdded tests in previous CI.\r\nWill also sync testnet, and deploy this upgrade on devnet.\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [X] protocol change\r\n- [X] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [X] breaking change for FNs (FN binary must upgrade)\r\n- [X] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\nPrior to this change, unwrapped_then_deleted field in TransactionEffects\r\nonly contain unwrapped then deleted objects that previously existed in\r\nthe store (i.e. was once unwrapped in its lifetime). If an object was\r\nalways wrapped since creation and was never unwrapped ever, it wouldn't\r\nshow up in unwrapped_then_deleted. This this change, we no longer makes\r\nsuch distinction. As long as an object is unwrapped then deleted in a\r\ntransaction, it would show up in effects regardless of its history. This\r\nsimplifies the logic of handling them significantly.\r\nTo properly maintain the state of the system accurately with this\r\nchange, at the epoch boundary when this upgrades happens, we must\r\nre-accumulate the state root hash of all objects in the store. This\r\nprocess takes a few seconds on mainnet. Testnet can take a much longer\r\ntime (30s-1min) since it contains significantly more objects. Users may\r\nobserve a brief slow down of the network during epoch change when this\r\nis applied.",
+          "timestamp": "2023-06-22T09:50:41-07:00",
+          "tree_id": "f687f9e6e3f679a6a62a6ca9684f456046c57533",
+          "url": "https://github.com/MystenLabs/sui/commit/027d976ae3d698eec0aad2942d39b1c58cdfe83b"
+        },
+        "date": 1687453350532,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 154656072,
+            "range": "± 5245901",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 323700,
+            "range": "± 23685",
             "unit": "ns/iter"
           }
         ]
