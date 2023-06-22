@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687394733879,
+  "lastUpdate": 1687410254469,
   "repoUrl": "https://github.com/MystenLabs/sui",
   "entries": {
     "Benchmark": [
@@ -14363,6 +14363,42 @@ window.BENCHMARK_DATA = {
             "name": "get_checkpoint",
             "value": 352980,
             "range": "± 26990",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "115710624+wiggins-dev@users.noreply.github.com",
+            "name": "wiggins-dev",
+            "username": "wiggins-dev"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "652fa40efe5c90bf96a37998d6d59468ed93ddc3",
+          "message": "[deepbook] Introducing the implementation of self-matching prevention.  (#12464)\n\n## Description\r\n\r\nThe self-matching prevention mechanism ensures that the matching engine\r\ntakes measures to avoid unnecessary trades\r\nwhen matching a user's buy/sell order with their own sell/buy order.\r\n\r\nThere are four Self-Trade Prevention Options.\r\n1. Decrement & cancel: Cancel smaller order and decrement larger order\r\nby the smaller size.\r\n                                         If the same size, cancel both.\r\n2. Cancel oldest: Cancel older (resting) order in full.\r\nContinue to execute the newer taking order.\r\n3. Cancel newest: Cancel newer (taking) order in full.\r\nLet the old resting order remain on the order book.\r\n4. Cancel both: Cancel both orders immediately.\r\n\r\nFor now, we have only implemented the behavior of canceling the oldest\r\norder.\r\nHowever, we have reserved the self_matching_prevention option as a\r\nparameter\r\nin case we need to implement other behaviors in the future.\r\nThis approach allows us to maintain backward compatibility\r\nand provides us with the capability to extend functionality.\r\n\r\n## Test Plan\r\n\r\ncd to deepbook dir and run \"sui move test\"\r\n\r\n---\r\nIf your changes are not user-facing and not a breaking change, you can\r\nskip the following section. Otherwise, please indicate what changed, and\r\nthen add to the Release Notes section as highlighted during the release\r\nprocess.\r\n\r\n### Type of Change (Check all that apply)\r\n\r\n- [✅] protocol change\r\n- [ ] user-visible impact\r\n- [ ] breaking change for a client SDKs\r\n- [ ] breaking change for FNs (FN binary must upgrade)\r\n- [✅] breaking change for validators or node operators (must upgrade\r\nbinaries)\r\n- [ ] breaking change for on-chain data layout\r\n- [ ] necessitate either a data wipe or data migration\r\n\r\n### Release notes\r\n\r\nImplemented Self-matching prevention through canceling the oldest order.\r\n\r\n---------\r\n\r\n---------\r\n\r\nCo-authored-by: Mark Logan <mark@mystenlabs.com>",
+          "timestamp": "2023-06-22T00:48:37-04:00",
+          "tree_id": "fc11bf6edc036bbc4c594de0dff11dd2d7a1cfcc",
+          "url": "https://github.com/MystenLabs/sui/commit/652fa40efe5c90bf96a37998d6d59468ed93ddc3"
+        },
+        "date": 1687410234965,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "persist_checkpoint",
+            "value": 154526604,
+            "range": "± 5929145",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "get_checkpoint",
+            "value": 310855,
+            "range": "± 12024",
             "unit": "ns/iter"
           }
         ]
